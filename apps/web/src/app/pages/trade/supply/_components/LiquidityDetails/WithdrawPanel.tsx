@@ -76,11 +76,6 @@ export function getShareReward(
   totalBbalnSupply?: BigNumber,
   userBbalnBalance?: BigNumber,
 ): BigNumber {
-  //handle icx queue
-  if (!stakedRatio && boostData) {
-    return totalReward?.times(boostData.workingBalance.div(boostData.workingSupply));
-  }
-
   //handle standard LPs
   if (boostData && userBalances && stakedRatio && totalBbalnSupply && userBbalnBalance) {
     const stakedFractionNumber = new BigNumber(stakedRatio.toFixed(8)).div(100);

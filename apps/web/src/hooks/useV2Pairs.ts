@@ -201,44 +201,28 @@ export function useBalances(
 
       const poolKeys = Object.keys(pools);
 
-      const cds = poolKeys
-        .map(poolId => {
-          if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-            return {
-              target: bnJs.Dex.address,
-              method: 'getICXBalance',
-              params: [account],
-            };
-          } else {
-            return [
-              {
-                target: bnJs.Dex.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.Dex.address,
-                method: 'totalSupply',
-                params: [`0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.StakedLP.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-            ];
-          }
-        })
-        .concat({
-          target: bnJs.Dex.address,
-          method: 'getSicxEarnings',
-          params: [account],
-        });
+      const cds = poolKeys.map(poolId => {
+        return [
+          {
+            target: bnJs.Dex.address,
+            method: 'balanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.Dex.address,
+            method: 'totalSupply',
+            params: [`0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.StakedLP.address,
+            method: 'balanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+        ];
+      });
 
       const cdsFlatted: CallData[] = cds.flat();
       const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
-      const sicxBalance = data[data.length - 1];
-      const icxBalance = !Array.isArray(data[0]) ? data[0] : 0;
 
       // Remapping the result was returned by multicall based on the order of the cds
       let trackedIdx = 0;
@@ -266,26 +250,15 @@ export function useBalances(
 
         if (!pool) return undefined;
 
-        if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(icxBalance, 16).toFixed()),
-            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
-          };
-        } else {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
-            suppliedLP: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(totalSupply || 0, 16).toFixed(),
-            ),
-            stakedLPBalance: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
-            ),
-          };
-        }
+        return {
+          poolId: +poolId,
+          balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+          suppliedLP: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(totalSupply || 0, 16).toFixed()),
+          stakedLPBalance: CurrencyAmount.fromRawAmount(
+            pool.liquidityToken,
+            new BigNumber(stakedLPBalance || 0, 16).toFixed(),
+          ),
+        };
       });
 
       if (balances.length > 0) {
@@ -311,23 +284,15 @@ export function useSuppliedTokens(poolId: number, tokenA?: Currency, tokenB?: Cu
 
   return useMemo(() => {
     if (pair && balance) {
-      let suppliedBaseTokens: CurrencyAmount<Currency>;
-      let suppliedQuoteTokens: CurrencyAmount<Currency>;
-
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        suppliedBaseTokens = balance.balance;
-        suppliedQuoteTokens = balance.balance;
-      } else {
-        suppliedBaseTokens = pair.reserve0.multiply(share || 0);
-        suppliedQuoteTokens = pair.reserve1.multiply(share || 0);
-      }
+      const suppliedBaseTokens: CurrencyAmount<Currency> = pair.reserve0.multiply(share || 0);
+      const suppliedQuoteTokens: CurrencyAmount<Currency> = pair.reserve1.multiply(share || 0);
 
       return {
         base: suppliedBaseTokens,
         quote: suppliedQuoteTokens,
       };
     } else return;
-  }, [pair, balance, poolId, share]);
+  }, [pair, balance, share]);
 }
 
 export function useBalance(poolId: number) {

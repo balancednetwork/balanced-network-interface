@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import { Accordion } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
@@ -15,13 +14,9 @@ import Message from '@/app/Message';
 import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
-import { BIGINT_ZERO } from '@/constants/misc';
-import { BalanceData } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
-import { Source, useSources } from '@/store/bbaln/hooks';
+import { useSources } from '@/store/bbaln/hooks';
 import { useTokenListConfig } from '@/store/lists/hooks';
-import { useMintActionHandlers } from '@/store/mint/hooks';
-import { Field } from '@/store/mint/reducer';
 import { useRewards } from '@/store/reward/hooks';
 
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
@@ -32,7 +27,7 @@ import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
 import { PoolRecord } from './LiquidityDetails/PoolRecord';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
-import { WithdrawPanel, WithdrawPanelQ, getShareReward } from './LiquidityDetails/WithdrawPanel';
+import { WithdrawPanel } from './LiquidityDetails/WithdrawPanel';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import { usePoolPanelContext } from './PoolPanelContext';
 
@@ -49,18 +44,7 @@ export default function LiquidityDetails() {
   // prevent accordion expanded on mounted
   const [isHided, setIsHided] = useState(true);
 
-  const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
-  const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
-  const queueReward = rewards['sICX/ICX'];
-
-  const shouldShowQueue =
-    queuePair &&
-    queueBalance &&
-    (queueBalance.balance.quotient > BIGINT_ZERO ||
-      (queueBalance.balance1 && queueBalance.balance1.quotient > BIGINT_ZERO));
-
-  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const poolBalances = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
 
   const userPools = pools.filter(
     pool =>
@@ -68,24 +52,8 @@ export default function LiquidityDetails() {
       Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
   );
 
-  // const sortedPairs: { [key: string]: Pair } = userPools
-  //   .map(poolId => {
-  //     const pair: Pair = pairsWithoutQ[poolId];
-
-  //     if (pair.baseAddress === pair.token0.address) return pair;
-  //     return new Pair(pair.reserve1, pair.reserve0, {
-  //       poolId: pair.poolId,
-  //       totalSupply: pair.totalSupply?.quotient.toString(),
-  //       baseAddress: pair.baseAddress,
-  //     });
-  //   })
-  //   .reduce((acc, pair) => {
-  //     if (pair.poolId && pair.poolId > 0) acc[pair.poolId] = pair;
-  //     return acc;
-  //   }, {});
-
-  const hasLiquidity = shouldShowQueue || userPools.length;
-  const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
+  const hasLiquidity = !!userPools.length;
+  const isLiquidityInfoLoading = userPools.length === 0;
 
   return (
     <>
@@ -147,31 +115,7 @@ export default function LiquidityDetails() {
           </DashGrid>
 
           <Accordion collapsible>
-            {shouldShowQueue && (
-              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
-                <StyledAccordionButton onClick={() => setIsHided(false)}>
-                  <PoolRecordQ
-                    balance={queueBalance}
-                    pair={queuePair}
-                    totalReward={queueReward}
-                    source={sources && sources['sICX/ICX']}
-                    apy={0}
-                  />
-                </StyledAccordionButton>
-                <StyledAccordionPanel hidden={isHided}>
-                  <StyledBoxPanel bg="bg3">
-                    <WithdrawPanelQ
-                      balance={queueBalance}
-                      pair={queuePair}
-                      totalReward={queueReward}
-                      apy={0}
-                      source={sources && sources['sICX/ICX']}
-                    />
-                  </StyledBoxPanel>
-                </StyledAccordionPanel>
-              </StyledAccordionItem>
-            )}
-            {balancesWithoutQ &&
+            {poolBalances &&
               userPools.map((pool, index) => (
                 <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
@@ -269,62 +213,3 @@ const APYItem = styled(Flex)`
   align-items: flex-end;
   line-height: 25px;
 `;
-
-const PoolRecordQ = ({
-  balance,
-  pair,
-  totalReward,
-  source,
-  apy,
-}: {
-  balance: BalanceData;
-  pair: Pair;
-  totalReward: BigNumber;
-  source?: Source | undefined;
-  apy: number | null;
-}) => {
-  const upSmall = useMedia('(min-width: 800px)');
-
-  const reward = getShareReward(totalReward, source);
-
-  const { onCurrencySelection } = useMintActionHandlers(false);
-
-  const handlePoolClick = () => {
-    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
-    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
-  };
-
-  return (
-    <ListItem onClick={handlePoolClick}>
-      <StyledDataText>
-        <DataText>ICX queue</DataText>
-        <StyledArrowDownIcon />
-      </StyledDataText>
-
-      <DataText>
-        <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          balance.balance.currency.symbol || '...'
-        }`}</Typography>
-        <Typography color="text1">{`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          balance.balance1?.currency.symbol || '...'
-        }`}</Typography>
-      </DataText>
-      {upSmall && (
-        <DataText>{`${
-          apy && source
-            ? new BigNumber(apy)
-                .times(100)
-                .times(source.workingBalance.div(source.balance) || 1)
-                .isNaN()
-              ? '-'
-              : new BigNumber(apy)
-                  .times(100)
-                  .times(source.workingBalance.div(source.balance) || 1)
-                  .toFormat(2) + '%'
-            : '-'
-        }`}</DataText>
-      )}
-      {upSmall && <DataText>-</DataText>}
-    </ListItem>
-  );
-};

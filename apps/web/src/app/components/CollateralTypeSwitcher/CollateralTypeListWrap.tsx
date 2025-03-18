@@ -7,6 +7,8 @@ import { Box, Flex } from 'rebass';
 import { ChartControlButton as CollateralTabButton } from '@/app/components/ChartControl';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import CancelSearchButton from '../SearchModal/CancelSearchButton';
+import { SearchWrap } from '../SearchModal/CurrencySearch';
 import SearchInput from '../SearchModal/SearchInput';
 import CollateralTypeList from './CollateralTypeList';
 
@@ -30,19 +32,23 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
 
   return (
     <Box p={'25px 25px 25px'} width={width}>
-      <SearchInput
-        type="text"
-        id="collateral-search-input"
-        placeholder={t`Search assets...`}
-        autoComplete="off"
-        value={searchQuery}
-        ref={inputRef as RefObject<HTMLInputElement>}
-        tabIndex={isMobile ? -1 : 1}
-        onChange={e => {
-          setSearchQuery(e.target.value);
-        }}
-        style={{ marginBottom: '15px' }}
-      />
+      <SearchWrap>
+        <SearchInput
+          type="text"
+          id="collateral-search-input"
+          placeholder={t`Search assets...`}
+          autoComplete="off"
+          value={searchQuery}
+          ref={inputRef as RefObject<HTMLInputElement>}
+          tabIndex={isMobile ? -1 : 1}
+          onChange={e => {
+            setSearchQuery(e.target.value);
+          }}
+          style={{ marginBottom: '15px' }}
+        />
+        <CancelSearchButton isActive={searchQuery.length > 0} onClick={() => setSearchQuery('')}></CancelSearchButton>
+      </SearchWrap>
+
       {signedInWallets.length ? (
         <Flex justifyContent="center" mb={3}>
           <CollateralTabButton

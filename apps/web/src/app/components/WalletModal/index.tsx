@@ -32,6 +32,8 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { getXChainType, useSwitchChain, useXDisconnectAll, xChainMap } from '@balancednetwork/xwagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
+import CancelSearchButton from '../SearchModal/CancelSearchButton';
+import { SearchWrap } from '../SearchModal/CurrencySearch';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SolanaWalletOptionsModal } from './SolanaWalletOptionsModal';
@@ -232,14 +234,17 @@ export default function WalletModal() {
             </Box>
           )}
 
-          <StyledSearchInput
-            type="text"
-            value={chainQuery}
-            onChange={handleChainQuery}
-            placeholder="Search blockchains..."
-            style={{ minHeight: '40px' }}
-            tabIndex={isMobile ? -1 : 1}
-          />
+          <SearchWrap>
+            <StyledSearchInput
+              type="text"
+              value={chainQuery}
+              onChange={handleChainQuery}
+              placeholder="Search blockchains..."
+              style={{ minHeight: '40px' }}
+              tabIndex={isMobile ? -1 : 1}
+            />
+            <CancelSearchButton isActive={chainQuery.length > 0} onClick={() => setChainQuery('')}></CancelSearchButton>
+          </SearchWrap>
 
           <SignInOptionsWrap>
             <AnimatePresence>

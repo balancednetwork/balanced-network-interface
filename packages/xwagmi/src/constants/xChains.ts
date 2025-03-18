@@ -26,7 +26,7 @@ export const archway: XChain = {
   autoExecution: true,
   gasThreshold: 2,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -53,7 +53,7 @@ export const archwayTestnet: XChain = {
   autoExecution: true,
   gasThreshold: 10,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const icon: XChain = {
@@ -61,6 +61,7 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
+  intentChainId: 'icon',
   tracker: { tx: 'https://tracker.icon.community/transaction' },
   nativeCurrency: {
     decimals: 18,
@@ -80,7 +81,7 @@ export const icon: XChain = {
   autoExecution: true,
   gasThreshold: 2.5,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const lisbon: XChain = {
@@ -107,7 +108,7 @@ export const lisbon: XChain = {
   autoExecution: true,
   gasThreshold: 4,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const avalanche: XChain = {
@@ -132,7 +133,7 @@ export const avalanche: XChain = {
   autoExecution: true,
   gasThreshold: 0.05,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const fuji: XChain = {
@@ -157,7 +158,7 @@ export const fuji: XChain = {
   autoExecution: true,
   gasThreshold: 0,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const havah: XChain = {
@@ -183,7 +184,7 @@ export const havah: XChain = {
   autoExecution: true,
   gasThreshold: 0.2,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const bsc: XChain = {
@@ -208,7 +209,33 @@ export const bsc: XChain = {
   autoExecution: true,
   gasThreshold: 0.005,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
+};
+
+export const polygon: XChain = {
+  id: 137,
+  name: 'Polygon',
+  xChainId: '0x89.polygon',
+  xChainType: 'EVM',
+  tracker: { tx: 'https://polygonscan.com/tx/' },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Polygon',
+    symbol: 'POL',
+  },
+  rpc: {
+    http: 'https://polygon.llamarpc.com',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0x18274b9755C9d0D31e8863aDd1D6019B16a0B316',
+    bnUSD: '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699',
+  },
+  autoExecution: true,
+  gasThreshold: 0.5,
+  testnet: false,
+  useXCallScanner: false,
+  intentChainId: 'pol',
 };
 
 export const arbitrum: XChain = {
@@ -233,7 +260,8 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
+  intentChainId: 'arb',
 };
 
 export const base: XChain = {
@@ -258,7 +286,7 @@ export const base: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const injective: XChain = {
@@ -283,7 +311,7 @@ export const injective: XChain = {
   autoExecution: true,
   gasThreshold: 0.01,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const stellar: XChain = {
@@ -306,7 +334,7 @@ export const stellar: XChain = {
     bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
   },
   autoExecution: true,
-  gasThreshold: 2, // xCall fee: 1.07 XLM
+  gasThreshold: 1, // xCall fee: 0.1 XLM
   testnet: false,
   useXCallScanner: true,
 };
@@ -335,6 +363,7 @@ export const sui: XChain = {
   gasThreshold: 0.15, // xCall fee: 0.05 SUI
   testnet: false,
   useXCallScanner: true,
+  intentChainId: 'sui',
 };
 
 // TODO: complete solana chain
@@ -386,7 +415,7 @@ export const optimism: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 // the order is important, using manual order to display in the UI
@@ -402,6 +431,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   '0xa.optimism': optimism,
+  '0x89.polygon': polygon,
   'injective-1': injective,
   stellar: stellar,
   sui: sui,
@@ -416,31 +446,35 @@ export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 // destinations
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
-  '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
+  '0xa4b1.arbitrum': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   '0xa.optimism': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   '0x38.bsc': ['0x20b056e975EEB8Ad4552FAD829F7990dE45d23D5'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
-  'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  'injective-1': ['inj1s5kcc96d5yahlngr9tjcvdtwlyen4675u7arka'],
   stellar: [
     'CBPJSDR2QRMFUX25S5JXQMXDDMQVTN5M3TNYSCGFUJCCZ2LAJLKNJACQ',
     'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
   ],
   sui: ['centralized-1', 'centralized-2'],
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
+  '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
+  'archway-1': [],
 };
 
 /** to other chain from icon sources */
 // sources
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
-  '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0xa4b1.arbitrum': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0xa.optimism': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0x38.bsc': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
-  'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  'injective-1': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  'archway-1': [],
 };

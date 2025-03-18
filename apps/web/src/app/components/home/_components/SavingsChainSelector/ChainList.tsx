@@ -1,45 +1,80 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
+import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
-import useSortXPositions from '@/hooks/useSortXPositions';
-import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
-import { LPRewards } from '@/queries/reward';
-import { useCollateralType } from '@/store/collateral/hooks';
-import { formatPrice } from '@/utils/formatter';
-import { xChains } from '@balancednetwork/xwagmi';
-import { XChain, XChainId } from '@balancednetwork/xwagmi';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
-import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
+import styled from 'styled-components';
+import { ChainItemWrap } from '../LoanChainSelector/styledComponents';
+
+const SelectorWrap = styled(Box)<{ $width: number | undefined }>`
+  padding: 25px 25px 10px 25px;
+  ${({ $width }) => $width && `width: ${$width}px;`}
+
+  @media (max-width: 460px) {
+    padding: 20px 20px 10px 20px;
+  }
+`;
+
+export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  width: 100%;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.text};
+
+  &:hover {
+  color: ${({ theme }) => theme.colors.primaryBright};
+  }
+`;
+
+export const StyledHeaderText = styled(HeaderText)`
+  font-size: 12px;
+  @media (max-width: 460px) {
+    font-size: 10px;
+  }
+`;
+
+export const ScrollHelper = styled(Box)<{ $height?: string }>`
+  max-height: ${({ $height }) => ($height ? $height : '280px')}; 
+  overflow: auto; 
+  padding: 0 20px;
+  margin: 15px -20px 0 !important;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+`;
 
 type ChainListProps = {
   chainId: XChainId;
   setChainId: (chain: XChainId) => void;
-  chains?: XChain[];
+  rows: any[];
   width: number | undefined;
-  lpRewards: LPRewards;
 };
 
 type ChainItemProps = {
-  chain: XChain;
+  chain: any;
   isActive: boolean;
   isLast: boolean;
   setChainId: (chain: XChainId) => void;
-  rewardAmount: BigNumber;
 };
 
-const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) => {
+const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
-  const isSmall = useMedia('(max-width: 440px)');
-
+  const isSmall = useMedia('(max-width: 460px)');
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
       <ChainItemWrap>
@@ -47,50 +82,122 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           <ChainLogo chain={chain} />
         </Box>
         <Flex flexDirection={isSmall ? 'column' : 'row'} alignItems={'start'}>
-          <Typography fontWeight="bold" fontSize={14} color="inherit" mr={'6px'}>
+          <Typography fontWeight="bold" fontSize={isSmall ? 11 : 14} color="inherit" mr={'6px'}>
             {chain.name}
-            <span style={{ fontWeight: 'normal' }}></span>
           </Typography>
         </Flex>
       </ChainItemWrap>
-      {rewardAmount.gt(0) ? (
+      {chain.lockedAmount.gt(0) ? (
         <Typography
           color="inherit"
-          style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
-          fontSize={rewardAmount.gt(0) ? 14 : 12}
+          style={{ transition: 'all ease 0.3s', opacity: chain.lockedAmount.gt(0) ? 1 : 0.75 }}
+          fontSize={isSmall ? 11 : chain.lockedAmount.gt(0) ? 14 : 12}
+          textAlign="right"
         >
-          {rewardAmount.gt(0.01) ? rewardAmount.toFixed(2) : 'Pending'}
+          ${chain.lockedAmount.toFixed(2)}
         </Typography>
       ) : (
-        <Typography>-</Typography>
+        <>
+          {chain.bnUSDBalance && chain.bnUSDBalance?.greaterThan(0.01 * 10 ** chain.bnUSDBalance.currency.decimals) ? (
+            <Typography
+              color="inherit"
+              style={{
+                transition: 'all ease 0.3s',
+                opacity: chain.bnUSDBalance.greaterThan(0.01 * 10 ** chain.bnUSDBalance.currency.decimals) ? 1 : 0.75,
+              }}
+              fontSize={
+                isSmall
+                  ? 10
+                  : chain.bnUSDBalance.greaterThan(0.01 * 10 ** chain.bnUSDBalance.currency.decimals)
+                    ? 12
+                    : 10
+              }
+              textAlign="right"
+            >
+              ${chain.bnUSDBalance.toFixed(2)} available
+            </Typography>
+          ) : (
+            <Typography textAlign="right">-</Typography>
+          )}
+        </>
+      )}
+      {chain.rewardAmount.gte(0) ? (
+        <Typography
+          color="inherit"
+          style={{ transition: 'all ease 0.3s', opacity: chain.rewardAmount.gte(0) ? 1 : 0.75 }}
+          fontSize={isSmall ? 11 : chain.rewardAmount.gte(0) ? 14 : 12}
+          textAlign="right"
+        >
+          {chain.rewardAmount.gt(0.01) ? `$${chain.rewardAmount.toFixed(2)}` : 'Pending'}
+        </Typography>
+      ) : (
+        <Typography textAlign="right">-</Typography>
       )}
     </Grid>
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListProps) => {
-  const relevantChains = chains || xChains;
+const compareCurrencyAmount = (a: CurrencyAmount<XToken> | undefined, b: CurrencyAmount<XToken> | undefined) => {
+  if (!a && !b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  return a.equalTo(b) ? 0 : a.lessThan(b) ? -1 : 1;
+};
+
+const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const collateralType = useCollateralType();
-  const hasSignedIn = useHasSignedIn();
-  const { sortBy, handleSortSelect, sortData } = useSortXPositions(
-    hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
-    collateralType,
-  );
 
-  const filteredChains = React.useMemo(() => {
-    if (searchQuery === '') return relevantChains;
+  const [sortBy, setSortBy] = useState<{ key: string; order: 'ASC' | 'DESC' }>({ key: 'savings', order: 'DESC' });
 
-    return relevantChains.filter(
-      chain =>
-        chain.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        chain.xChainId.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredRows = React.useMemo(() => {
+    if (searchQuery === '') return rows;
+
+    return rows.filter(
+      row =>
+        row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.xChainId.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [relevantChains, searchQuery]);
+  }, [rows, searchQuery]);
 
-  const sortedFilteredChains = React.useMemo(() => {
-    return sortData(filteredChains, collateralType);
-  }, [filteredChains, sortData, collateralType]);
+  const sortedRows = useMemo(() => {
+    return filteredRows.sort((a, b) => {
+      if (sortBy.key === 'name') {
+        return sortBy.order === 'ASC' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      }
+      if (sortBy.key === 'savings') {
+        return sortBy.order === 'ASC'
+          ? a.lockedAmount.comparedTo(b.lockedAmount) ||
+              compareCurrencyAmount(a.bnUSDBalance, b.bnUSDBalance) ||
+              a.rewardAmount.comparedTo(b.rewardAmount) ||
+              b.name.localeCompare(a.name)
+          : b.lockedAmount.comparedTo(a.lockedAmount) ||
+              compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
+              b.rewardAmount.comparedTo(a.rewardAmount) ||
+              a.name.localeCompare(b.name);
+      }
+      if (sortBy.key === 'rewards') {
+        return sortBy.order === 'ASC'
+          ? a.rewardAmount.comparedTo(b.rewardAmount) ||
+              a.lockedAmount.comparedTo(b.lockedAmount) ||
+              compareCurrencyAmount(a.bnUSDBalance, b.bnUSDBalance) ||
+              b.name.localeCompare(a.name)
+          : b.rewardAmount.comparedTo(a.rewardAmount) ||
+              b.lockedAmount.comparedTo(a.lockedAmount) ||
+              compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
+              a.name.localeCompare(b.name);
+      }
+
+      return 0;
+    });
+  }, [filteredRows, sortBy]);
+
+  const handleSortSelect = (key: string, defaultOrder: 'ASC' | 'DESC' = 'ASC') => {
+    if (sortBy.key === key) {
+      setSortBy({ key, order: sortBy.order === 'ASC' ? 'DESC' : 'ASC' });
+    } else {
+      setSortBy({ key, order: defaultOrder });
+    }
+  };
 
   return (
     <SelectorWrap $width={width}>
@@ -105,15 +212,11 @@ const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListP
         }}
       />
       <ScrollHelper>
-        <Flex width="100%" justifyContent="space-between">
+        <Grid>
           <StyledHeaderText
             role="button"
             className={sortBy.key === 'name' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'name',
-              })
-            }
+            onClick={() => handleSortSelect('name')}
           >
             <span>
               <Trans>Blockchain</Trans>
@@ -121,30 +224,34 @@ const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListP
           </StyledHeaderText>
           <StyledHeaderText
             role="button"
-            className={sortBy.key === 'position' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'position',
-              })
-            }
+            className={sortBy.key === 'savings' ? sortBy.order : ''}
+            onClick={() => handleSortSelect('savings', 'DESC')}
           >
-            <span>
+            <span style={{ textAlign: 'right', width: '100%' }}>
+              <Trans>Savings</Trans>
+            </span>
+          </StyledHeaderText>
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'rewards' ? sortBy.order : ''}
+            onClick={() => handleSortSelect('rewards', 'DESC')}
+          >
+            <span style={{ textAlign: 'right', width: '100%' }}>
               <Trans>Rewards</Trans>
             </span>
           </StyledHeaderText>
-        </Flex>
-        {sortedFilteredChains.map((chainItem, index) => (
+        </Grid>
+        {sortedRows.map((chainItem, index) => (
           <Box key={chainItem.xChainId}>
             <ChainItem
               chain={chainItem}
               isActive={chainId === chainItem.xChainId}
-              isLast={sortedFilteredChains.length === index + 1}
+              isLast={sortedRows.length === index + 1}
               setChainId={setChainId}
-              rewardAmount={lpRewards[chainItem.xChainId]?.totalValueInUSD || new BigNumber(0)}
             />
           </Box>
         ))}
-        {sortedFilteredChains.length === 0 && searchQuery !== '' && (
+        {sortedRows.length === 0 && searchQuery !== '' && (
           <Typography textAlign="center" mt="20px" pb="22px">
             No blockchains found.
           </Typography>

@@ -21,9 +21,9 @@ export const useXStakeLPToken = () => {
         tokenA: XToken,
         tokenB: XToken,
       ) => {
-        const BALN = xTokenMapBySymbol[xChainId]['BALN'];
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD'];
         const inputAmount = CurrencyAmount.fromRawAmount(
-          BALN,
+          bnUSD,
           new BigNumber(rawStakeAmount).times((10n ** BigInt(decimals)).toString()).toFixed(0),
         );
         const direction = { from: xChainId, to: ICON_XCALL_NETWORK_ID };
@@ -34,8 +34,8 @@ export const useXStakeLPToken = () => {
           poolId,
           xCallFee: await getXCallFee(direction.from, direction.to),
           direction,
-          tokenA,
-          tokenB,
+          tokenASymbol: tokenA.symbol,
+          tokenBSymbol: tokenB.symbol,
         };
 
         return await sendXTransaction(xTransactionInput);

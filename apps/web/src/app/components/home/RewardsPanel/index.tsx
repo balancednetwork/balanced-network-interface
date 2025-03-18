@@ -13,7 +13,7 @@ import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
 
 import useWidth from '@/hooks/useWidth';
 import { useSavingsXChainId } from '@/store/savings/hooks';
-import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
+import { getNetworkDisplayName, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
 import SavingsChainSelector from '../_components/SavingsChainSelector';
@@ -44,7 +44,7 @@ const RewardsPanel = () => {
   const savingsXChainId = useSavingsXChainId();
 
   const account = useXAccount(getXChainType(savingsXChainId));
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards(savingsXChainId);
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
     setGlobalTooltip(shouldShow);
@@ -85,7 +85,11 @@ const RewardsPanel = () => {
         </SliderWrap>
       </Flex>
       <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">
-        {account.address && hasAnyKindOfRewards ? (
+        {savingsXChainId === 'archway-1' || savingsXChainId === '0x100.icon' ? (
+          <Typography textAlign="center" fontSize={14} opacity={0.75}>
+            <Trans>No rewards available on {getNetworkDisplayName(savingsXChainId)}.</Trans>
+          </Typography>
+        ) : account.address && hasAnyKindOfRewards ? (
           <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
             <SavingsRewards />
             {!isSmall ? (
@@ -102,9 +106,22 @@ const RewardsPanel = () => {
             <NetworkFeesReward showGlobalTooltip={showGlobalTooltip} />
           </Flex>
         ) : (
-          <Typography textAlign="center" fontSize={14} opacity={0.75}>
-            <Trans>To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN.</Trans>
-          </Typography>
+          <>
+            {savingsXChainId === '0x1.icon' ? (
+              <Typography textAlign="center" fontSize={14} opacity={0.75}>
+                <Trans>
+                  To earn rewards on ICON: supply liquidity, deposit bnUSD into the Savings Rate, or lock up BALN.
+                </Trans>
+              </Typography>
+            ) : (
+              <Typography textAlign="center" fontSize={14} opacity={0.75}>
+                <Trans>
+                  To earn rewards on {getNetworkDisplayName(savingsXChainId)}, supply liquidity or deposit bnUSD into
+                  the Savings Rate.
+                </Trans>
+              </Typography>
+            )}
+          </>
         )}
       </BoxPanel>
     </StyledBoxPanel>

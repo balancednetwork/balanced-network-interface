@@ -2,6 +2,7 @@ import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
 
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xChainMap } from '@/constants/xChains';
 import { allXTokens, wICX, xTokenMapBySymbol } from '@/constants/xTokens';
 import { XToken } from '../types';
@@ -140,7 +141,10 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
   const token = xTokenMapBySymbol[xChainId][currency.symbol];
 
   if (!token) {
-    return XToken.getXToken(xChainId, currency);
+    if (xChainId === ICON_XCALL_NETWORK_ID) {
+      return XToken.getXToken(xChainId, currency);
+    }
+    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 
   return token;

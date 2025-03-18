@@ -274,7 +274,7 @@ export default function CurrencyInputPanel({
           setXChainId={onChainSelect || (() => {})}
           isOpen={xChainOptionsOpen}
           setOpen={setXChainOptionsOpen}
-          xChains={xChains}
+          xChains={currencySelectionType !== CurrencySelectionType.TRADE_MINT_QUOTE ? xChains : []}
           editable={addressEditable}
           currency={currency}
           width={width ? width + (!isMobile ? 40 : 0) : undefined}

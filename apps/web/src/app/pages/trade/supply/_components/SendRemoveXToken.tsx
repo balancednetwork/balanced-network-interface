@@ -39,6 +39,9 @@ interface SendRemoveXTokenProps {
   setIsRemoving: (isRemoving: boolean) => void;
   setIsSigning: (isSigning: boolean) => void;
   setPendingTx: (tx: string) => void;
+  isSupplying?: boolean;
+  executionDepositAmount?: CurrencyAmount<XToken>;
+  isDisabled?: boolean;
 }
 
 export function SendRemoveXToken({
@@ -54,6 +57,9 @@ export function SendRemoveXToken({
   setIsSigning,
   pendingTx,
   setPendingTx,
+  isSupplying,
+  executionDepositAmount,
+  isDisabled = false,
 }: SendRemoveXTokenProps) {
   const { lpXChainId } = useDerivedMintInfo();
 
@@ -151,62 +157,90 @@ export function SendRemoveXToken({
 
   return (
     <Flex alignItems="center" mb={1} hidden={false}>
-      <Box width={1 / 2}>
-        <StyledDL>
-          <Box my={1}>
-            {!isDeposited ? (
-              <>
-                <Typography variant="p" fontWeight="bold" textAlign="center">
-                  {parsedAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
-                </Typography>
-
-                {!isSending && approvalState !== ApprovalState.APPROVED ? (
-                  <SupplyButton
-                    disabled={approvalState === ApprovalState.PENDING || isWrongChain}
-                    mt={2}
-                    onClick={approveCallback}
-                  >
-                    {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
-                  </SupplyButton>
-                ) : (
-                  <SupplyButton disabled={isSending || isWrongChain} mt={2} onClick={handleAdd}>
-                    {!isSending && 'Send'}
-                    {isSending && isSigning && 'Send'}
-                    {isSending && !isSigning && 'Sending'}
-                  </SupplyButton>
-                )}
-              </>
-            ) : (
-              <CheckIconWrapper>
-                <CheckIcon />
-              </CheckIconWrapper>
-            )}
+      {isSupplying ? (
+        <>
+          <Box width={1 / 2}>
+            <StyledDL>
+              <Box my={1}>
+                <CheckIconWrapper>
+                  <CheckIcon />
+                </CheckIconWrapper>
+              </Box>
+            </StyledDL>
           </Box>
-        </StyledDL>
-      </Box>
-      <Box width={1 / 2}>
-        <StyledDL>
-          <Box my={1}>
-            {!isDeposited ? (
-              <>
-                <StyledEmpty>-</StyledEmpty>
-              </>
-            ) : (
-              <>
+          <Box width={1 / 2}>
+            <StyledDL>
+              <Box my={1}>
                 <Typography variant="p" fontWeight="bold" textAlign="center">
-                  {depositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
+                  {executionDepositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                 </Typography>
-
-                <RemoveButton disabled={isRemoving || isWrongChain} mt={2} onClick={handleRemove}>
-                  {!isRemoving && 'Remove'}
-                  {isRemoving && isSigning && 'Remove'}
-                  {isRemoving && !isSigning && 'Removing'}
+                <RemoveButton disabled={true} mt={2}>
+                  Remove
                 </RemoveButton>
-              </>
-            )}
+              </Box>
+            </StyledDL>
           </Box>
-        </StyledDL>
-      </Box>
+        </>
+      ) : (
+        <>
+          <Box width={1 / 2}>
+            <StyledDL>
+              <Box my={1}>
+                {!isDeposited ? (
+                  <>
+                    <Typography variant="p" fontWeight="bold" textAlign="center">
+                      {parsedAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
+                    </Typography>
+
+                    {!isSending && approvalState !== ApprovalState.APPROVED ? (
+                      <SupplyButton
+                        disabled={approvalState === ApprovalState.PENDING || isWrongChain}
+                        mt={2}
+                        onClick={approveCallback}
+                      >
+                        {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
+                      </SupplyButton>
+                    ) : (
+                      <SupplyButton disabled={isSending || isWrongChain || isDisabled} mt={2} onClick={handleAdd}>
+                        {!isSending && 'Send'}
+                        {isSending && isSigning && 'Send'}
+                        {isSending && !isSigning && 'Sending'}
+                      </SupplyButton>
+                    )}
+                  </>
+                ) : (
+                  <CheckIconWrapper>
+                    <CheckIcon />
+                  </CheckIconWrapper>
+                )}
+              </Box>
+            </StyledDL>
+          </Box>
+          <Box width={1 / 2}>
+            <StyledDL>
+              <Box my={1}>
+                {!isDeposited ? (
+                  <>
+                    <StyledEmpty>-</StyledEmpty>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="p" fontWeight="bold" textAlign="center">
+                      {depositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
+                    </Typography>
+
+                    <RemoveButton disabled={isRemoving || isWrongChain || isDisabled} mt={2} onClick={handleRemove}>
+                      {!isRemoving && 'Remove'}
+                      {isRemoving && isSigning && 'Remove'}
+                      {isRemoving && !isSigning && 'Removing'}
+                    </RemoveButton>
+                  </>
+                )}
+              </Box>
+            </StyledDL>
+          </Box>
+        </>
+      )}
     </Flex>
   );
 }
@@ -231,6 +265,7 @@ const RemoveButton = styled(SupplyButton)`
 
   &:disabled {
     color: #fb6a6a;
+    opacity: 0.5;
     background-color: transparent;
   }
 `;

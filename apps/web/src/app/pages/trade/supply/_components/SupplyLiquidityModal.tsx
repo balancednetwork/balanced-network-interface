@@ -51,8 +51,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   // supply
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
+
+  const [executionDepositAmountA, setExecutionDepositAmountA] = React.useState<CurrencyAmount<XToken> | undefined>(
+    undefined,
+  );
+  const [executionDepositAmountB, setExecutionDepositAmountB] = React.useState<CurrencyAmount<XToken> | undefined>(
+    undefined,
+  );
 
   // tokenA
   const [isSendingTokenA, setIsSendingTokenA] = React.useState(false);
@@ -89,11 +97,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
     setTimeout(() => {
       queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
-      queryClient.invalidateQueries({ queryKey: ['pools'] });
 
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
       setHasErrorMessage(false);
+      setExecutionDepositAmountA(undefined);
+      setExecutionDepositAmountB(undefined);
 
       setIsSendingTokenA(false);
       setIsRemovingTokenA(false);
@@ -121,8 +131,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
+      queryClient.invalidateQueries({ queryKey: ['pools'] });
     }
-  }, [isExecuted, slowDismiss]);
+  }, [isExecuted, slowDismiss, queryClient]);
 
   const { data: depositAmountA } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_A]?.wrapped);
   const { data: depositAmountB } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_B]?.wrapped);
@@ -135,23 +146,42 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     try {
       if (depositAmountA && depositAmountB) {
         setIsPending(true);
+        setExecutionDepositAmountA(depositAmountA);
+        setExecutionDepositAmountB(depositAmountB);
 
+        setIsSigning(true);
         const txHash = await xAddLiquidity(account, depositAmountA, depositAmountB);
+        setIsSigning(false);
         if (txHash) setPendingTx(txHash);
         else setIsPending(false);
       }
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  const isEnabled = !!depositAmountA?.greaterThan(0) && !!depositAmountB?.greaterThan(0);
+  const isEnabled =
+    !!depositAmountA?.greaterThan(0) &&
+    !!depositAmountB?.greaterThan(0) &&
+    !isSendingTokenA &&
+    !isSendingTokenB &&
+    !isRemovingTokenA &&
+    !isRemovingTokenB;
 
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {
-    if (!depositAmountA?.greaterThan(0) && !depositAmountB?.greaterThan(0)) {
+    if (
+      isPending ||
+      (!depositAmountA?.greaterThan(0) &&
+        !depositAmountB?.greaterThan(0) &&
+        !isSendingTokenA &&
+        !isSendingTokenB &&
+        !isRemovingTokenA &&
+        !isRemovingTokenB)
+    ) {
       handleDismiss();
     } else {
       setHasErrorMessage(true);
@@ -235,6 +265,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setIsRemoving={setIsRemovingTokenA}
               setIsSigning={setIsSigningTokenA}
               setPendingTx={setPendingTxTokenA}
+              isSupplying={isPending}
+              executionDepositAmount={executionDepositAmountA}
+              isDisabled={isSendingTokenB || isRemovingTokenB}
             />
             <SendRemoveXToken
               field={Field.CURRENCY_B}
@@ -249,6 +282,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setIsRemoving={setIsRemovingTokenB}
               setIsSigning={setIsSigningTokenB}
               setPendingTx={setPendingTxTokenB}
+              isSupplying={isPending}
+              executionDepositAmount={executionDepositAmountB}
+              isDisabled={isSendingTokenA || isRemovingTokenA}
             />
           </div>
 
@@ -284,7 +320,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               >
                 <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                   <TextButton onClick={handleCancelSupply}>
-                    <Trans>Cancel</Trans>
+                    <Trans>{isPending && !!pendingTx && !isSigning ? 'Close' : 'Cancel'}</Trans>
                   </TextButton>
 
                   {isWrongChain ? (
@@ -298,7 +334,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                       onClick={handleSupplyConfirm}
                       $loading={isPending}
                     >
-                      {isPending ? (pair ? t`Supplying` : t`Creating pool`) : pair ? t`Supply` : t`Create pool`}
+                      {isPending && !isSigning
+                        ? pair
+                          ? t`Supplying`
+                          : t`Creating pool`
+                        : pair
+                          ? t`Supply`
+                          : t`Create pool`}
                     </StyledButton>
                   )}
                 </Flex>

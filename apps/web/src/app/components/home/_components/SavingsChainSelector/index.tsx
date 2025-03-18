@@ -1,11 +1,18 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
-import { useLPRewards } from '@/queries/reward';
-import { useSavingsActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
-import { XChain, xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { useAvailablePairs, usePools } from '@/hooks/useV2Pairs';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { calculateTotal, useLPRewards, useRatesWithOracle } from '@/queries/reward';
+import { useUnclaimedFees } from '@/store/fees/hooks';
+import { useSavingsActionHandlers, useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
+import { useTrackedTokenPairs } from '@/store/user/hooks';
+import { useCrossChainWalletBalances, useXTokenBalances } from '@/store/wallet/hooks';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken, useXLockedBnUSDAmounts, xChainMap, xChains, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import React, { useEffect, useMemo } from 'react';
+import BigNumber from 'bignumber.js';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -37,29 +44,69 @@ const SavingsChainSelector = ({
   const savingsXChainId = useSavingsXChainId();
   const { onSavingsXChainSelection } = useSavingsActionHandlers();
 
-  const { data: lpRewards } = useLPRewards();
+  const trackedTokenPairs = useTrackedTokenPairs();
+  const pairs = useAvailablePairs(trackedTokenPairs);
 
-  const sortedChains = useMemo(() => {
-    if (!lpRewards) return xChains;
+  const signedWallets = useSignedInWallets();
+  const accounts = useMemo(
+    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [signedWallets],
+  );
+  const pools = usePools(pairs, accounts);
 
-    return [...xChains].sort((a: XChain, b: XChain) => {
-      const aRewardAmount = parseFloat(lpRewards[a.xChainId]?.totalValueInUSD.toFixed() || '0');
-      const bRewardAmount = parseFloat(lpRewards[b.xChainId]?.totalValueInUSD.toFixed() || '0');
-
-      const aXChainName = xChainMap[a.xChainId].name;
-      const bXChainName = xChainMap[b.xChainId].name;
-      const aXChainNameAscii = aXChainName.charCodeAt(0);
-      const bXChainNameAscii = bXChainName.charCodeAt(0);
-
-      if (aRewardAmount > 0 || bRewardAmount > 0) {
-        if (aRewardAmount === bRewardAmount) return 0;
-        return bRewardAmount > aRewardAmount ? 1 : -1;
-      } else {
-        if (aXChainNameAscii === bXChainNameAscii) return 0;
-        return bXChainNameAscii > aXChainNameAscii ? -1 : 1;
+  const crossChainBalances = useCrossChainWalletBalances();
+  const isStaked = useCallback(
+    (xChainId: XChainId) => {
+      if (!pools) {
+        return false;
       }
-    });
-  }, [lpRewards]);
+      return pools.some(pool => pool.xChainId === xChainId && Number(pool.stakedLPBalance?.toFixed()) > 0);
+    },
+    [pools],
+  );
+
+  const { data: lockedAmounts } = useXLockedBnUSDAmounts(signedWallets);
+
+  const { data: lpRewards } = useLPRewards();
+  const rates = useRatesWithOracle();
+
+  const { data: savingsRewards } = useUnclaimedRewards();
+  const feesRewards = useUnclaimedFees();
+
+  const rows = useMemo(() => {
+    return xChains
+      .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
+      .map(({ xChainId }) => {
+        const lockedAmount = lockedAmounts?.[xChainId]
+          ? calculateTotal([lockedAmounts?.[xChainId]], rates)
+          : new BigNumber(0);
+        let total = new BigNumber(0);
+        if (lpRewards) {
+          total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
+        }
+        if (savingsRewards) {
+          total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
+        }
+        if (xChainId === '0x1.icon' && feesRewards) {
+          total = total.plus(calculateTotal(Object.values(feesRewards), rates) || 0);
+        }
+
+        // if (no staked lp tokens and no locked amount and less than 0.01, set -1)
+        if (!isStaked(xChainId) && !lockedAmount.gt(0) && total.lt(0.01)) {
+          total = new BigNumber(-1);
+        }
+
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
+        const bnUSDBalance: CurrencyAmount<XToken> | undefined = crossChainBalances[xChainId]?.[bnUSD.address];
+        return {
+          xChainId,
+          name: xChainMap[xChainId].name,
+          lockedAmount,
+          rewardAmount: total,
+          bnUSDBalance,
+        };
+      });
+  }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates, isStaked, crossChainBalances]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -117,13 +164,7 @@ const SavingsChainSelector = ({
             containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
             strategy="absolute"
           >
-            <ChainList
-              setChainId={setChainWrap}
-              chainId={savingsXChainId}
-              chains={sortedChains}
-              width={width}
-              lpRewards={lpRewards || {}}
-            />
+            <ChainList setChainId={setChainWrap} chainId={savingsXChainId} rows={rows} width={width} />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

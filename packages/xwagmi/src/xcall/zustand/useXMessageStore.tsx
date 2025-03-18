@@ -355,7 +355,7 @@ const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
-      setIsStale(now - createdAt >= 2 * 60 * 1000); // 2mins
+      setIsStale(now - createdAt >= 1 * 60 * 1000); // 1 min
     }, 1000);
 
     return () => clearInterval(interval);
@@ -421,7 +421,7 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
       const url = `https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
       const response = await axios.get(url);
 
-      console.log('xcallscanner response', response.data);
+      // console.log(`xcallscanner response for ${sourceTransactionHash}`, response.data);
 
       const messages = response.data?.data || [];
       return messages.find((m: any) => m.src_tx_hash === sourceTransactionHash) || null;

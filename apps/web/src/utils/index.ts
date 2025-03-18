@@ -389,34 +389,58 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
       break;
     }
 
-    // TODO:
-    // case XTransactionType.LP_CLAIM_REWARDS: {
-    //   break;
-    // }
+    case XTransactionType.LP_CLAIM_REWARDS: {
+      descriptionAction = `Claim liquidity rewards`;
+      descriptionAmount = ``;
+      break;
+    }
 
     case XTransactionType.LP_REMOVE_LIQUIDITY: {
-      const { tokenA, tokenB, withdrawAmountA, withdrawAmountB } = xTransactionInput;
+      const { withdrawAmountA, withdrawAmountB, tokenASymbol, tokenBSymbol } = xTransactionInput;
 
       const _formmatedAmountA = formatBigNumber(new BigNumber(withdrawAmountA?.toFixed() || 0), 'currency');
       const _formmatedAmountB = formatBigNumber(new BigNumber(withdrawAmountB?.toFixed() || 0), 'currency');
 
-      descriptionAction = `Withdraw ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} liquidity`;
-      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(tokenA?.symbol)} and ${_formmatedAmountB} ${tokenB?.symbol}`;
+      descriptionAction = `Withdraw ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} liquidity`;
+      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(tokenASymbol)} and ${_formmatedAmountB} ${tokenBSymbol}`;
       break;
     }
 
     case XTransactionType.LP_STAKE: {
-      const { tokenA, tokenB } = xTransactionInput;
-      descriptionAction = `Stake ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} LP tokens`;
+      const { tokenASymbol, tokenBSymbol } = xTransactionInput;
+      descriptionAction = `Stake ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} LP tokens`;
+      descriptionAmount = ``;
+      break;
+    }
+    case XTransactionType.LP_UNSTAKE: {
+      const { tokenASymbol, tokenBSymbol } = xTransactionInput;
+      descriptionAction = `Unstake ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} LP tokens`;
       descriptionAmount = ``;
 
       break;
     }
-    case XTransactionType.LP_UNSTAKE: {
-      const { tokenA, tokenB } = xTransactionInput;
-      descriptionAction = `Unstake ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} LP tokens`;
-      descriptionAmount = ``;
 
+    case XTransactionType.SAVINGS_LOCK_BNUSD: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Deposit bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
+    case XTransactionType.SAVINGS_UNLOCK_BNUSD: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Withdraw bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
+    case XTransactionType.SAVINGS_CLAIM_REWARDS: {
+      descriptionAction = `Claim Savings rewards`;
+      descriptionAmount = ``;
       break;
     }
 

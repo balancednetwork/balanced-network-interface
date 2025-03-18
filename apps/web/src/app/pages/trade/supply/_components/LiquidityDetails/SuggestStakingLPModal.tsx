@@ -9,11 +9,10 @@ import {
   useXCallFee,
   useXStakeLPToken,
   useXTransactionStore,
-  useXUnstakeLPToken,
 } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { Box, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
@@ -26,6 +25,7 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import XTransactionState from '@/app/components/XTransactionState';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { formatSymbol } from '@/utils/formatter';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function SuggestStakingLPModal({
@@ -45,6 +45,7 @@ export default function SuggestStakingLPModal({
   const xAccount = useXAccount(getXChainType(pool.xChainId));
 
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -59,6 +60,7 @@ export default function SuggestStakingLPModal({
     onClose();
     setTimeout(() => {
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
     }, 500);
   }, [onClose]);
@@ -75,14 +77,14 @@ export default function SuggestStakingLPModal({
     }
   }, [isExecuted, slowDismiss]);
 
-  const differenceAmount = new BigNumber(pool.balance.toFixed());
+  const differenceAmount = new BigNumber(pool?.balance?.toFixed() || 0);
 
   const handleConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     try {
       setIsPending(true);
-
+      setIsSigning(true);
       const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
 
       const txHash = await xStakeLPToken(
@@ -95,28 +97,30 @@ export default function SuggestStakingLPModal({
         pair.token1,
       );
 
+      setIsSigning(false);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onClose}>
+    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Flex flexDirection="column" justifyContent="center" alignItems="center" style={{ gap: 6 }}>
           <Typography textAlign="center" mb="5px">
             Stake LP tokens?
           </Typography>
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={16}>
-            {differenceAmount.abs().dp(2).toFormat()}
+            {differenceAmount.abs().dp(4).toFormat()}
           </Typography>
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={16}>
-            BALN / bnUSD
+            {formatSymbol(pair.token0.symbol)} / {formatSymbol(pair.token1.symbol)}
           </Typography>
 
           {pool.xChainId !== ICON_XCALL_NETWORK_ID && (
@@ -143,8 +147,8 @@ export default function SuggestStakingLPModal({
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={onClose} fontSize={14}>
-                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
+                <TextButton onClick={handleDismiss} fontSize={14}>
+                  <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>
@@ -157,14 +161,14 @@ export default function SuggestStakingLPModal({
                     disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                     $loading={isPending}
                   >
-                    {isPending ? t`Staking` : t`Stake LP tokens`}
+                    {isPending && !isSigning ? t`Staking` : t`Stake LP tokens`}
                   </StyledButton>
                 )}
               </Flex>
             </motion.div>
           )}
         </AnimatePresence>
-        {!gasChecker.hasEnoughGas && (
+        {!isPending && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

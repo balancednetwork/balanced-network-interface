@@ -13,6 +13,7 @@ import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import useIntentProvider from '@/hooks/useIntentProvider';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { intentService, intentServiceConfig } from '@/lib/intent';
@@ -24,8 +25,8 @@ import {
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { CreateIntentOrderPayload, EvmProvider, SolverApiService, SuiProvider } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -36,6 +37,7 @@ import {
   xChainMap,
 } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ChainName, CreateIntentOrderPayload, SolverApiService } from 'icon-intents-sdk';
 import { WriteContractErrorType } from 'viem';
 
 type MMSwapModalProps = {
@@ -70,6 +72,9 @@ const MMSwapModal = ({
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
 
+  const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
+  const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
+
   const currentMMTransaction = useMMTransactionStore(state => state.get(intentId));
 
   useEffect(() => {
@@ -103,59 +108,48 @@ const MMSwapModal = ({
     }
   }, [isFilled, slowDismiss]);
 
-  // arb part
-  const evmXService = useXService('EVM') as unknown as EvmXService;
-  // end arb part
+  const chainConfig = intentFromChainName ? intentService.getChainConfig(intentFromChainName) : undefined;
+  const intentContract = chainConfig && 'intentContract' in chainConfig ? chainConfig.intentContract : '0x';
 
-  // sui part
-  const suiClient = useSuiClient();
-  const { currentWallet: suiWallet } = useCurrentWallet();
-  const suiAccount = useCurrentAccount();
-  // end sui part
+  const { approvalState, approveCallback } = useApproveCallback(trade?.inputAmount, intentContract);
 
-  const { approvalState, approveCallback } = useApproveCallback(
-    trade?.inputAmount,
-    trade?.inputAmount.currency.xChainId === '0xa4b1.arbitrum'
-      ? intentService.getChainConfig('arb').intentContract
-      : // sui doesn't need approval. '0x' is a dummy address to pass the check
-        '0x',
-  );
+  const { data: intentProvider } = useIntentProvider(currencies[Field.INPUT]);
 
   const handleMMSwap = async () => {
-    if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
+    if (
+      !account ||
+      !recipient ||
+      !currencies[Field.INPUT] ||
+      !currencies[Field.OUTPUT] ||
+      !trade ||
+      !intentFromChainName ||
+      !intentToChainName
+    ) {
       return;
     }
-    setOrderStatus(IntentOrderStatus.SigningAndCreating);
 
-    const isFromArbitrum = currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum';
+    setOrderStatus(IntentOrderStatus.SigningAndCreating);
 
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
       fromAddress: account, // address we are sending funds from (fromChain)
       toAddress: recipient, // destination address where funds are transfered to (toChain)
-      // fromChain: currencies[Field.INPUT]?.xChainId, // ChainName
-      // toChain: currencies[Field.OUTPUT]?.xChainId, // ChainName
-      fromChain: isFromArbitrum ? 'arb' : 'sui',
-      toChain: currencies[Field.OUTPUT].xChainId === 'sui' ? 'sui' : 'arb',
-      token: currencies[Field.INPUT]?.address,
-      toToken: currencies[Field.OUTPUT]?.address,
+      fromChain: intentFromChainName,
+      toChain: intentToChainName,
+      token: currencies[Field.INPUT]?.wrapped.address,
+      toToken: currencies[Field.OUTPUT]?.wrapped.address,
       amount: trade.inputAmount.quotient,
       toAmount: trade.outputAmount.quotient,
     };
 
     try {
-      let provider;
-      if (isFromArbitrum) {
-        const evmWalletClient = await evmXService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
-        const evmPublicClient = evmXService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
-
-        // @ts-ignore
-        provider = new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });
-      } else {
-        // @ts-ignore
-        provider = new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
+      if (!intentProvider) {
+        setOrderStatus(IntentOrderStatus.None);
+        console.error('Invalid provider');
+        return;
       }
-      const intentHash = await intentService.createIntentOrder(order, provider);
+
+      const intentHash = await intentService.createIntentOrder(order, intentProvider);
 
       setOrderStatus(IntentOrderStatus.Executing);
 
@@ -172,10 +166,14 @@ const MMSwapModal = ({
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
-
-      const intentResult = await intentService.getOrder(intentHash.value, isFromArbitrum ? 'arb' : 'sui', provider);
-
-      if (!intentResult.ok) {
+      console.log('intent debug 1', intentHash);
+      const intentResult =
+        intentFromChainName && (await intentService.getOrder(intentHash.value, intentFromChainName, intentProvider));
+      console.log('intent debug 2', intentResult);
+      if (!intentResult?.ok) {
+        // @ts-ignore
+        setError(intentResult.error?.message);
+        setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
 
@@ -197,6 +195,8 @@ const MMSwapModal = ({
         },
         intentServiceConfig,
       );
+
+      console.log('intent debug 3', executionResult);
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
@@ -226,14 +226,14 @@ const MMSwapModal = ({
       <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
-            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            Swap {formatSymbol(currencies[Field.INPUT]?.symbol)} for {formatSymbol(currencies[Field.OUTPUT]?.symbol)}?
           </Trans>
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
           <Trans>
-            {`${trade?.executionPrice.toSignificant(6)} ${trade?.executionPrice.quoteCurrency.symbol} 
-              per ${trade?.executionPrice.baseCurrency.symbol}`}
+            {`${trade?.executionPrice.toSignificant(6)} ${formatSymbol(trade?.executionPrice.quoteCurrency.symbol)} 
+              per ${formatSymbol(trade?.executionPrice.baseCurrency.symbol)}`}
           </Trans>
         </Typography>
 
@@ -274,7 +274,8 @@ const MMSwapModal = ({
         <Typography textAlign="center">
           <Trans>Swap fee (included):</Trans>{' '}
           <strong>
-            {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')} {trade?.fee.currency.symbol}
+            {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')}{' '}
+            {formatSymbol(trade?.fee.currency.symbol)}
           </strong>
         </Typography>
 

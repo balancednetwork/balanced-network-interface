@@ -145,7 +145,7 @@ msgstr ""
 #~ msgid "Reverting..."
 #~ msgstr ""
 
-#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 msgid "Claim Savings Rate rewards?"
 msgstr ""
 
@@ -364,8 +364,8 @@ msgid "Collateral"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
-msgid "Claimed Savings Rate rewards."
-msgstr ""
+#~ msgid "Claimed Savings Rate rewards."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past week"
@@ -595,7 +595,7 @@ msgstr ""
 #~ msgid "Sending"
 #~ msgstr ""
 
-#: src/app/components/home/Savings/index.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Deposit bnUSD?"
 msgstr ""
 
@@ -672,6 +672,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
 #~ msgstr ""
+
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+msgid "Savings"
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Verify contract call"
@@ -869,6 +873,10 @@ msgstr ""
 msgid "Locked"
 msgstr ""
 
+#: src/app/components/home/Savings/index.tsx
+msgid "Sign in on {0}"
+msgstr ""
+
 #: src/app/components/Wallet/index.tsx
 msgid "Search assets and blockchains..."
 msgstr ""
@@ -908,8 +916,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Withdrew {0} bnUSD."
-msgstr ""
+#~ msgid "Withdrew {0} bnUSD."
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
 #~ msgid "Minimum to receive(Intent)"
@@ -980,7 +988,7 @@ msgstr ""
 #~ msgid "Execution failed"
 #~ msgstr ""
 
-#: src/app/components/home/Savings/index.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Withdraw bnUSD"
 msgstr ""
 
@@ -990,10 +998,13 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -1111,6 +1122,7 @@ msgid "Staking"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 msgid "Claiming"
 msgstr ""
 
@@ -1136,6 +1148,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid ", then lock up BALN to boost your rewards."
 msgstr ""
 
@@ -1152,8 +1165,8 @@ msgid "To deposit {0}"
 msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Withdrawing bnUSD..."
-msgstr ""
+#~ msgid "Withdrawing bnUSD..."
+#~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1199,8 +1212,8 @@ msgid "No results found."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/index.tsx
-msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
-msgstr ""
+#~ msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
@@ -1263,8 +1276,8 @@ msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Deposited {0} bnUSD."
-msgstr ""
+#~ msgid "Deposited {0} bnUSD."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
@@ -1335,8 +1348,8 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
-msgid "Not now"
-msgstr ""
+#~ msgid "Not now"
+#~ msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Unsupported network"
@@ -1363,8 +1376,8 @@ msgid "Unstake BALN"
 msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Depositing bnUSD..."
-msgstr ""
+#~ msgid "Depositing bnUSD..."
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
@@ -1374,6 +1387,10 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar account"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/index.tsx
+msgid "No rewards available on {0}."
 msgstr ""
 
 #: src/btp/src/connectors/helper.ts
@@ -1502,6 +1519,8 @@ msgid "Claimed {0} ICX."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
@@ -1510,7 +1529,7 @@ msgstr ""
 msgid "Transfer fee:"
 msgstr ""
 
-#: src/app/components/home/Savings/index.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Withdraw bnUSD?"
 msgstr ""
 
@@ -1587,6 +1606,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't withdraw {0} / {1} liquidity. Try again."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/index.tsx
+msgid "To earn rewards on {0}, supply liquidity or deposit bnUSD into the Savings Rate."
 msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1973,14 +1996,16 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr ""
@@ -2161,10 +2186,10 @@ msgid "Copy"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
-#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/pages/claim-legacy-fees/page.tsx
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
@@ -2274,12 +2299,16 @@ msgstr ""
 msgid "You"
 msgstr ""
 
-#: src/app/components/home/Savings/index.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 msgid "You can withdraw at any time."
 msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Switch to ICON"
 msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
@@ -2437,6 +2466,10 @@ msgstr ""
 msgid "Loan interest"
 msgstr ""
 
+#: src/app/components/home/RewardsPanel/index.tsx
+msgid "To earn rewards on ICON: supply liquidity, deposit bnUSD into the Savings Rate, or lock up BALN."
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 #~ msgstr ""
@@ -2557,6 +2590,10 @@ msgstr ""
 msgid "{0} BALN locked until {1}."
 msgstr ""
 
+#: src/app/components/home/Savings/SavingsModal.tsx
+msgid "Withdrawing bnUSD"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #~ msgid "{0} {1} added to your wallet"
 #~ msgstr ""
@@ -2574,8 +2611,8 @@ msgid "Repaid {0} bnUSD."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
-msgid "Claiming Savings Rate rewards..."
-msgstr ""
+#~ msgid "Claiming Savings Rate rewards..."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
@@ -2710,6 +2747,10 @@ msgstr ""
 msgid "Exchange rate"
 msgstr ""
 
+#: src/app/components/home/Savings/SavingsModal.tsx
+msgid "Depositing bnUSD"
+msgstr ""
+
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
@@ -2756,6 +2797,8 @@ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
@@ -2773,6 +2816,10 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
+msgstr ""
+
+#: src/app/components/home/Savings/SavingsModal.tsx
+msgid "Deposit bnUSD"
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
@@ -2943,7 +2990,6 @@ msgid "Swap and supply liquidity."
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/Savings/index.tsx
 msgid "Sign in on ICON"
 msgstr ""
 

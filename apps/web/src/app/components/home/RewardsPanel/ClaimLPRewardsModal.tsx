@@ -35,9 +35,10 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
   const savingsXChainId = useSavingsXChainId();
 
   const { data: lpRewards, refetch } = useLPRewards();
-  const rewards = useMemo(() => lpRewards?.[savingsXChainId]?.rewards, [lpRewards, savingsXChainId]);
+  const rewards = useMemo(() => lpRewards?.[savingsXChainId], [lpRewards, savingsXChainId]);
 
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -52,6 +53,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
     onClose();
     setTimeout(() => {
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
     }, 500);
   }, [onClose]);
@@ -76,12 +78,15 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     try {
       setIsPending(true);
+      setIsSigning(true);
       const txHash = await xClaimRewards(xAccount.address, savingsXChainId);
+      setIsSigning(false);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -91,7 +96,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(savingsXChainId);
   const gasChecker = useXCallGasChecker(savingsXChainId, undefined);
   return (
-    <Modal isOpen={isOpen} onDismiss={onClose}>
+    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb={1}>
           <Trans>Claim liquidity rewards?</Trans>
@@ -100,7 +105,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
         <Flex flexDirection="column" alignItems="center" mt={2}>
           {rewards?.map((reward, index) => (
             <Typography key={index} variant="p">
-              {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
+              {reward.toSignificant(2)} {/* {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '} */}
               <Typography as="span" color="text1">
                 {reward.currency.symbol}
               </Typography>
@@ -128,8 +133,8 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={onClose} fontSize={14}>
-                  <Trans>{isPending ? 'Close' : 'Not now'}</Trans>
+                <TextButton onClick={handleDismiss} fontSize={14}>
+                  <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>
@@ -142,7 +147,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
                     disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                     $loading={isPending}
                   >
-                    {isPending ? t`Claiming` : t`Claim`}
+                    {isPending && !isSigning ? t`Claiming` : t`Claim`}
                   </StyledButton>
                 )}
               </Flex>
@@ -150,7 +155,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
           )}
         </AnimatePresence>
 
-        {!gasChecker.hasEnoughGas && (
+        {!isPending && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

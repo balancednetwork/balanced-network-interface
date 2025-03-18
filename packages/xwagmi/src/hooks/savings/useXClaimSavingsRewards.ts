@@ -5,16 +5,16 @@ import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 
-export const useXClaimRewards = () => {
+export const useXClaimSavingsRewards = () => {
   const sendXTransaction = useSendXTransaction();
 
-  const xClaimRewards = useMemo(
+  const xClaimSavingsRewards = useMemo(
     () => async (account, xChainId: XChainId) => {
       const direction = { from: xChainId, to: ICON_XCALL_NETWORK_ID };
-      const bnUSD = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['bnUSD'];
-      const inputAmount = CurrencyAmount.fromRawAmount(bnUSD, '0');
+      const BALN = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['BALN'];
+      const inputAmount = CurrencyAmount.fromRawAmount(BALN, '0');
       const xTransactionInput: XTransactionInput = {
-        type: XTransactionType.LP_CLAIM_REWARDS,
+        type: XTransactionType.SAVINGS_CLAIM_REWARDS,
         account,
         inputAmount, // not used, just to make the type happy
         xCallFee: await getXCallFee(direction.from, direction.to),
@@ -26,5 +26,5 @@ export const useXClaimRewards = () => {
     [sendXTransaction],
   );
 
-  return xClaimRewards;
+  return xClaimSavingsRewards;
 };

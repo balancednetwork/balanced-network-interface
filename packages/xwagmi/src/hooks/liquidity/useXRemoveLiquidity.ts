@@ -23,9 +23,9 @@ export const useXRemoveLiquidity = () => {
         withdrawAmountA: CurrencyAmount<Token>,
         withdrawAmountB: CurrencyAmount<Token>,
       ) => {
-        const BALN = xTokenMapBySymbol[xChainId]['BALN'];
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD'];
         const inputAmount = CurrencyAmount.fromRawAmount(
-          BALN,
+          bnUSD,
           new BigNumber(withdrawAmount.toFixed())
             .times((10n ** BigInt(withdrawAmount.currency.decimals)).toString())
             .toFixed(0),
@@ -39,8 +39,8 @@ export const useXRemoveLiquidity = () => {
           poolId,
           xCallFee: await getXCallFee(direction.from, direction.to),
           direction,
-          tokenA,
-          tokenB,
+          tokenASymbol: tokenA.symbol,
+          tokenBSymbol: tokenB.symbol,
           withdrawAmountA: convertCurrencyAmount(direction.from, withdrawAmountA),
           withdrawAmountB: convertCurrencyAmount(direction.from, withdrawAmountB),
         };

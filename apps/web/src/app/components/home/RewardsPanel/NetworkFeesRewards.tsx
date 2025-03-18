@@ -152,14 +152,22 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           </UnderlineText>
         )}
       </Flex>
-      {savingsXChainId === '0x1.icon' && hasNetworkFees ? (
-        <RewardsGrid rewards={Object.values(rewards)} />
-      ) : (
+      {savingsXChainId === '0x1.icon' && (
+        <>
+          {hasNetworkFees ? (
+            <RewardsGrid rewards={Object.values(rewards)} />
+          ) : (
+            <Typography fontSize={14} opacity={0.75} mb={5}>
+              Lock up BALN to earn fees from Balanced transactions.
+            </Typography>
+          )}
+        </>
+      )}
+      {savingsXChainId !== '0x1.icon' && (
         <Typography fontSize={14} opacity={0.75} mb={5}>
-          Lock up BALN to earn fees from Balanced transactions.
+          Lock up BALN on ICON to earn fees from Balanced transactions.
         </Typography>
       )}
-
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
@@ -169,7 +177,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {Object.values(rewards).map((reward, index) => (
               <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
+                {`${reward.toSignificant(2, { groupSeparator: ',' })}`}{' '}
                 <Typography as="span" color="text1">
                   {reward.currency.symbol}
                 </Typography>
@@ -179,7 +187,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
+              <Trans>Cancel</Trans>
             </TextButton>
             <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
               <Trans>Claim</Trans>

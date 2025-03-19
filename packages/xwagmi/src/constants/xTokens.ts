@@ -368,7 +368,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
     new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
     new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
-    new XToken('solana', 'solana', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 9, 'USDC', 'USD Coin'),
+    new XToken('solana', 'solana', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 6, 'USDC', 'USD Coin'),
   ],
 };
 

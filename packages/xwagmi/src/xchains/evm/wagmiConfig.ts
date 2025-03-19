@@ -7,7 +7,7 @@ export const wagmiConfig = createConfig({
   transports: {
     [mainnet.id]: http(),
     [avalanche.id]: http(),
-    [bsc.id]: http(),
+    [bsc.id]: http('https://binance.llamarpc.com'),
     [avalancheFuji.id]: http(),
     [arbitrum.id]: http(),
     [optimism.id]: http(),

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { Field } from '@/store/swap/reducer';
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass/styled-components';
@@ -160,7 +161,17 @@ export default function CurrencyInputPanel({
   };
 
   const enforcer = (nextUserInput: string) => {
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+    if (nextUserInput === '') {
+      onUserInput('');
+      return;
+    }
+
+    if (nextUserInput === '.') {
+      onUserInput('0.');
+      return;
+    }
+
+    if (inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(nextUserInput);
     }
   };

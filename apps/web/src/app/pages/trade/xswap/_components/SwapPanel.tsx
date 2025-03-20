@@ -61,7 +61,7 @@ export default function SwapPanel() {
   const mmTrade = useDerivedMMTradeInfo(trade);
 
   const signedInWallets = useSignedInWallets();
-  const { recipient } = useSwapState();
+  const { recipient, independentField } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
@@ -145,6 +145,26 @@ export default function SwapPanel() {
 
   const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
 
+  const swapInputValue = useMemo(() => {
+    if (independentField === Field.INPUT) {
+      return formattedAmounts[Field.INPUT];
+    }
+    if (mmTrade.isMMBetter) {
+      return mmTrade.trade?.inputAmount.toSignificant();
+    }
+    return formattedAmounts[Field.INPUT];
+  }, [mmTrade.isMMBetter, mmTrade.trade?.inputAmount, formattedAmounts, independentField]);
+
+  const swapOutputValue = useMemo(() => {
+    if (independentField === Field.OUTPUT) {
+      return formattedAmounts[Field.OUTPUT];
+    }
+    if (mmTrade.isMMBetter) {
+      return mmTrade.trade?.outputAmount.toSignificant();
+    }
+    return formattedAmounts[Field.OUTPUT];
+  }, [mmTrade.isMMBetter, mmTrade.trade?.outputAmount, formattedAmounts, independentField]);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -166,9 +186,7 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
-              value={
-                mmTrade.isMMBetter ? mmTrade.trade?.inputAmount.toSignificant() ?? '' : formattedAmounts[Field.INPUT]
-              }
+              value={swapInputValue ?? ''}
               currency={currencies[Field.INPUT]}
               onUserInput={handleInputType}
               onCurrencySelect={handleInputSelect}
@@ -214,9 +232,7 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
-              value={
-                mmTrade.isMMBetter ? mmTrade.trade?.outputAmount.toSignificant() ?? '' : formattedAmounts[Field.OUTPUT]
-              }
+              value={swapOutputValue ?? ''}
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleOutputType}
               onCurrencySelect={handleOutputSelect}

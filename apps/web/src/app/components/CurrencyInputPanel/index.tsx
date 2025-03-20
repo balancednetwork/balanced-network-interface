@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { Field } from '@/store/swap/reducer';
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass/styled-components';

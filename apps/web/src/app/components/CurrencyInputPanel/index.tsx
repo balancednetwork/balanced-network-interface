@@ -160,7 +160,17 @@ export default function CurrencyInputPanel({
   };
 
   const enforcer = (nextUserInput: string) => {
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+    if (nextUserInput === '') {
+      onUserInput('');
+      return;
+    }
+
+    if (nextUserInput === '.') {
+      onUserInput('0.');
+      return;
+    }
+
+    if (inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(nextUserInput);
     }
   };

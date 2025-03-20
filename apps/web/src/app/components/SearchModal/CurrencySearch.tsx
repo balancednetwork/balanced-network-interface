@@ -307,7 +307,8 @@ export function CurrencySearch({
   const shouldShowXChainFilter = useMemo(() => {
     if (
       currencySelectionType === CurrencySelectionType.TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.TRADE_OUT
+      currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
     ) {
       return assetsTab === AssetsTab.ALL || wallets.length > 1;
     }

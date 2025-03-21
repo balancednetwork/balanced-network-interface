@@ -1,4 +1,6 @@
+import { STELLAR_TRUSTLINE_TOKEN_INFO } from '@/constants/xTokens';
 import { useXService } from '@/hooks';
+import { XToken } from '@/types/xToken';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import {
   Address,
@@ -133,3 +135,72 @@ export function useValidateStellarAccount(address?: string | null): UseQueryResu
     refetchInterval: 5000,
   });
 }
+
+export type StellarTrustlineValidation = { ok: true } | { ok: false; error: string };
+
+export function useValidateStellarTrustline(
+  address?: string | null,
+  token?: XToken,
+): UseQueryResult<StellarTrustlineValidation> {
+  const stellarService = useXService('STELLAR') as StellarXService;
+
+  const checkIfTrustlineExists = (balances, asset_code, asset_issuer) => {
+    return balances.some(
+      ({ asset_code: code, asset_issuer: issuer }) => code === asset_code && issuer === asset_issuer,
+    );
+  };
+
+  return useQuery({
+    queryKey: [`stellarTrustlineValidation`, stellarService, address, token],
+    queryFn: async () => {
+      if (!address || !token) {
+        return { ok: true };
+      }
+
+      const { balances } = await stellarService.server.accounts().accountId(address).call();
+
+      const trustlineInfo = STELLAR_TRUSTLINE_TOKEN_INFO.find(info => info.contract_id === token.address);
+
+      if (trustlineInfo && checkIfTrustlineExists(balances, trustlineInfo.asset_code, trustlineInfo.asset_issuer)) {
+        console.log(`Trustline already exists for ${token.symbol}`);
+        return { ok: true };
+      }
+
+      return { ok: false, error: `Trustline does not exist for ${token.symbol}` };
+    },
+  });
+}
+
+// Poll for transaction result
+export const getTransactionResult = async (hash: string, stellarXService: StellarXService): Promise<any> => {
+  try {
+    const result = await stellarXService.sorobanServer.getTransaction(hash);
+    return result;
+  } catch (error) {
+    console.error('Error getting transaction result:', error);
+    return null;
+  }
+};
+
+// Poll until we get a final status
+export const pollTransaction = async (hash: string, stellarXService: StellarXService): Promise<boolean> => {
+  const maxAttempts = 30; // 30 seconds timeout
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    const result = await getTransactionResult(hash, stellarXService);
+
+    if (result) {
+      if (result.status === 'SUCCESS') {
+        return true;
+      } else if (result.status === 'FAILED') {
+        return false;
+      }
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between polls
+    attempts++;
+  }
+
+  throw new Error('Transaction polling timed out');
+};

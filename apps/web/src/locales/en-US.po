@@ -827,6 +827,7 @@ msgid "Lock up BALN"
 msgstr "Lock up BALN"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate wallet"
 msgstr "Activate wallet"
 
@@ -1471,6 +1472,10 @@ msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart cont
 #~ msgid "Claim Balanced incentives?"
 #~ msgstr "Claim Balanced incentives?"
 
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar {0} account"
+msgstr "Validating Stellar {0} account"
+
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #~ msgid "Wallet: {0} {1}"
 #~ msgstr "Wallet: {0} {1}"
@@ -1709,6 +1714,7 @@ msgid "Borrow Balanced Dollars?"
 msgstr "Borrow Balanced Dollars?"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activating"
 msgstr "Activating"
 
@@ -2006,6 +2012,7 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
@@ -2463,6 +2470,7 @@ msgid "available on {0}."
 msgstr "available on {0}."
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate Stellar wallet?"
 msgstr "Activate Stellar wallet?"
 
@@ -2607,6 +2615,7 @@ msgstr "Withdrawing bnUSD"
 #~ msgstr "{0} {1} added to your wallet"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Sign a transaction to activate your wallet for free."
 msgstr "Sign a transaction to activate your wallet for free."
 
@@ -3071,6 +3080,7 @@ msgstr "Network fees"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr "Close"

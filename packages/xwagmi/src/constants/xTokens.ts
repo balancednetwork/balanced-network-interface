@@ -287,6 +287,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'BALN',
       'Balance Token',
     ),
+    new XToken('stellar', 'stellar', 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75', 7, 'USDC', 'USD Coin'),
   ],
   sui: [
     new XToken(
@@ -413,3 +414,11 @@ export const sARCHOnArchway = {
     'Staked Archway',
   ),
 };
+
+export const STELLAR_TRUSTLINE_TOKEN_INFO = [
+  {
+    asset_code: 'USDC',
+    contract_id: 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75',
+    asset_issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
+  },
+];

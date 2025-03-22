@@ -192,7 +192,7 @@ export const pollTransaction = async (
 
   while (attempts < maxAttempts) {
     const result = await getTransactionResult(hash, stellarXService);
-    console.log('stellar utils result', result);
+
     if (result && result.status !== 'PENDING' && result.status !== 'NOT_FOUND') {
       return result;
     }

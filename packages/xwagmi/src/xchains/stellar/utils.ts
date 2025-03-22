@@ -183,19 +183,18 @@ export const getTransactionResult = async (hash: string, stellarXService: Stella
 };
 
 // Poll until we get a final status
-export const pollTransaction = async (hash: string, stellarXService: StellarXService): Promise<boolean> => {
+export const pollTransaction = async (
+  hash: string,
+  stellarXService: StellarXService,
+): Promise<rpc.Api.GetTransactionResponse> => {
   const maxAttempts = 30; // 30 seconds timeout
   let attempts = 0;
 
   while (attempts < maxAttempts) {
     const result = await getTransactionResult(hash, stellarXService);
-
-    if (result) {
-      if (result.status === 'SUCCESS') {
-        return true;
-      } else if (result.status === 'FAILED') {
-        return false;
-      }
+    console.log('stellar utils result', result);
+    if (result && result.status !== 'PENDING' && result.status !== 'NOT_FOUND') {
+      return result;
     }
 
     await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between polls

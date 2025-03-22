@@ -33,6 +33,7 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
   const [isOpen, setOpen] = React.useState(false);
   const [initiated, setInitiated] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   const handleDismiss = () => {
     setOpen(false);
   };
@@ -73,27 +74,32 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       setInitiated(true);
 
       const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+
       const response = await stellarXService.sorobanServer.sendTransaction(
         TransactionBuilder.fromXDR(signedTx, Networks.PUBLIC),
       );
 
       if (response.hash) {
-        const success = await pollTransaction(response.hash, stellarXService);
-        if (success) {
+        const txResult = await pollTransaction(response.hash, stellarXService);
+        console.log('stellar txResult', txResult);
+        if (txResult.status === 'SUCCESS') {
           setSuccess(true);
           setTimeout(() => {
             handleDismiss();
           }, 2000);
         } else {
           setSuccess(false);
+          setError(`Transaction failed with status: ${txResult.status}`);
           setLoading(false);
         }
       }
     } catch (error) {
       console.error('Error fetching Stellar sponsor transaction:', error);
+      setError(`Transaction timed out.`);
       throw error;
     } finally {
       setLoading(false);
+      setInitiated(false);
     }
   };
 
@@ -111,6 +117,12 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
           <Typography pt={3} color={'text1'} textAlign="center">
             {t`Sign a transaction to activate your ${currency?.symbol} account.`}
           </Typography>
+
+          {error && (
+            <Typography pt={3} color={'alert'} textAlign="center">
+              {error}
+            </Typography>
+          )}
 
           <AnimatePresence>
             {initiated && (

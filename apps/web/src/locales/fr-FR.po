@@ -856,6 +856,7 @@ msgid "Lock up BALN"
 msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate wallet"
 msgstr ""
 
@@ -1510,6 +1511,10 @@ msgstr ""
 #~ msgid "Claim Balanced incentives?"
 #~ msgstr ""
 
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar {0} account"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #~ msgid "Wallet: {0} {1}"
 #~ msgstr "Portefeuille : {0} {1}"
@@ -1753,6 +1758,7 @@ msgid "Borrow Balanced Dollars?"
 msgstr "Emprunter Balanced Dollar ?"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activating"
 msgstr ""
 
@@ -2064,6 +2070,7 @@ msgstr ""
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
@@ -2523,6 +2530,7 @@ msgid "available on {0}."
 msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate Stellar wallet?"
 msgstr ""
 
@@ -2667,6 +2675,7 @@ msgstr ""
 #~ msgstr "{0} {1} ajouté à votre portefeuille"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Sign a transaction to activate your wallet for free."
 msgstr ""
 
@@ -3135,6 +3144,7 @@ msgstr "Frais de réseau"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""

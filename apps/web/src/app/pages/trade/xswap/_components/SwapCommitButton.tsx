@@ -6,7 +6,14 @@ import { useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { Currency, TradeType, XChainId } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { StellarAccountValidation, XToken, getXChainType, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import {
+  StellarAccountValidation,
+  StellarTrustlineValidation,
+  XToken,
+  getXChainType,
+  useXConnect,
+  useXConnectors,
+} from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import React, { memo, useCallback, useState } from 'react';
 import SwapModal from './SwapModal';
@@ -28,13 +35,30 @@ interface SwapCommitButtonProps {
   canBridge: boolean;
   hidden: boolean;
   stellarValidation?: StellarAccountValidation;
+  stellarTrustlineValidation?: StellarTrustlineValidation;
   canSwap: boolean;
 }
 
 const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
-  const { trade, currencies, error, account, direction, canBridge, recipient, hidden, stellarValidation, canSwap } =
-    props;
-  const isValid = !error && canBridge && canSwap && (stellarValidation ? stellarValidation?.ok : true);
+  const {
+    trade,
+    currencies,
+    error,
+    account,
+    direction,
+    canBridge,
+    recipient,
+    hidden,
+    stellarValidation,
+    stellarTrustlineValidation,
+    canSwap,
+  } = props;
+  const isValid =
+    !error &&
+    canBridge &&
+    canSwap &&
+    (stellarValidation ? stellarValidation?.ok : true) &&
+    (stellarTrustlineValidation ? stellarTrustlineValidation?.ok : true);
 
   const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 

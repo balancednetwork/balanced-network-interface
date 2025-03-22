@@ -530,9 +530,9 @@ export function useMMTrade(
       const isExactInput = quoteType === QuoteType.EXACT_INPUT;
 
       // For exact_output, increase the amount by 0.1% to account for intent contract fee
-      let amount = queriedCurrencyAmount;
+      let finalAmount = queriedCurrencyAmount;
       if (quoteType === QuoteType.EXACT_OUTPUT) {
-        amount = queriedCurrencyAmount.multiply(new Fraction(1001, 1000)) as CurrencyAmount<XToken>;
+        finalAmount = queriedCurrencyAmount.multiply(new Fraction(1001, 1000)) as CurrencyAmount<XToken>;
       }
 
       const res = await intentService.getQuote({
@@ -540,7 +540,7 @@ export function useMMTrade(
         token_src_blockchain_id: isExactInput ? queriedCurrencyAmount.currency.xChainId : otherCurrency.xChainId,
         token_dst: isExactInput ? otherCurrency.address : queriedCurrencyAmount.currency.address,
         token_dst_blockchain_id: isExactInput ? otherCurrency.xChainId : queriedCurrencyAmount.currency.xChainId,
-        amount: amount.quotient,
+        amount: finalAmount.quotient,
         quote_type: quoteType,
       });
 
@@ -549,8 +549,8 @@ export function useMMTrade(
 
         // For exact_input: queriedCurrencyAmount is input, quoteAmount is output
         // For exact_output: quoteAmount is input, queriedCurrencyAmount is output
-        const inputAmount = isExactInput ? queriedCurrencyAmount : quoteAmount;
-        const outputAmount = isExactInput ? quoteAmount : queriedCurrencyAmount;
+        const inputAmount = isExactInput ? finalAmount : quoteAmount;
+        const outputAmount = isExactInput ? quoteAmount : finalAmount;
 
         return {
           inputAmount,

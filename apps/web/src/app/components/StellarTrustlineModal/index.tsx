@@ -5,6 +5,7 @@ import {
   StellarXService,
   XToken,
   pollTransaction,
+  useXLMBalance,
   useXService,
 } from '@balancednetwork/xwagmi';
 import { Asset, BASE_FEE, Networks, Operation, TransactionBuilder } from '@balancednetwork/xwagmi';
@@ -26,6 +27,8 @@ type StellarTrustlineModalProps = {
   text: string;
 };
 
+const INSUFFICIENT_XLM_BALANCE = t`You need at least 1.5 XLM in the Stellar wallet.`;
+
 const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModalProps) => {
   const stellarXService = useXService('STELLAR') as unknown as StellarXService;
   const [isLoading, setLoading] = React.useState(false);
@@ -33,12 +36,25 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
   const [initiated, setInitiated] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const { data: xlmBalance } = useXLMBalance(address);
+  const [isEnoughXLM, setIsEnoughXLM] = React.useState(false);
+
+  React.useEffect(() => {
+    if (xlmBalance && xlmBalance >= 1.5) {
+      setIsEnoughXLM(true);
+      if (error && error === INSUFFICIENT_XLM_BALANCE) {
+        setError(null);
+      }
+    } else {
+      setIsEnoughXLM(false);
+      setError(INSUFFICIENT_XLM_BALANCE);
+    }
+  }, [xlmBalance, error]);
 
   const resetState = React.useCallback(() => {
     setLoading(false);
     setInitiated(false);
     setSuccess(false);
-    setError(null);
   }, []);
 
   const handleDismiss = React.useCallback(() => {
@@ -158,7 +174,7 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
                   <TextButton onClick={handleDismiss}>
                     {isLoading ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
                   </TextButton>
-                  <StyledButton disabled={isLoading} $loading={isLoading} onClick={requestTrustline}>
+                  <StyledButton disabled={isLoading || !isEnoughXLM} $loading={isLoading} onClick={requestTrustline}>
                     {isLoading ? <Trans>Activating</Trans> : <Trans>Activate</Trans>}
                   </StyledButton>
                 </Flex>

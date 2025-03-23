@@ -204,3 +204,45 @@ export const pollTransaction = async (
 
   throw new Error('Transaction timed out.');
 };
+
+/**
+ * Fetches the XLM balance of a Stellar account
+ * @param address The Stellar account address
+ * @returns A Promise that resolves to the XLM balance as a string, or undefined if there was an error
+ */
+export const getXLMBalance = async (address: string): Promise<string | undefined> => {
+  try {
+    const stellarService = StellarXService.getInstance();
+    const account = await stellarService.server.loadAccount(address);
+
+    // Find the native XLM balance in the account's balances
+    const xlmBalance = account.balances.find(balance => balance.asset_type === 'native');
+
+    if (xlmBalance) {
+      return xlmBalance.balance;
+    }
+
+    return undefined;
+  } catch (error) {
+    console.error('Error fetching XLM balance:', error);
+    return undefined;
+  }
+};
+
+/**
+ * React hook to fetch XLM balance
+ * @param address The Stellar account address
+ * @returns A query result containing the XLM balance as a number
+ */
+export function useXLMBalance(address: string | undefined): UseQueryResult<number | undefined> {
+  return useQuery({
+    queryKey: ['xlmBalance', address],
+    queryFn: async () => {
+      if (!address) return undefined;
+      const balance = await getXLMBalance(address);
+      return balance ? parseFloat(balance) : undefined;
+    },
+    enabled: !!address,
+    refetchInterval: 5000, // Refetch every 5 seconds
+  });
+}

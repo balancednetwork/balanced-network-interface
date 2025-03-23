@@ -168,6 +168,7 @@ export function useValidateStellarTrustline(
 
       return { ok: false, error: `Trustline does not exist for ${token.symbol}` };
     },
+    refetchInterval: 2000,
   });
 }
 

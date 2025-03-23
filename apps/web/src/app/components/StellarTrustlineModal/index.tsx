@@ -124,7 +124,6 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       setError(error instanceof Error ? error.message : t`Transaction failed. Please try again.`);
     } finally {
       setLoading(false);
-      setInitiated(false);
     }
   };
 

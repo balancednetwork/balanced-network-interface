@@ -12,7 +12,12 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
+import {
+  convertCurrency,
+  getXChainType,
+  useValidateStellarTrustline,
+  xTokenMapBySymbol,
+} from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { isDenomAsset } from '@balancednetwork/xwagmi';
@@ -134,9 +139,14 @@ export function useDerivedBridgeInfo() {
   const xAccount = useXAccount(getXChainType(bridgeDirection.from));
   const account = xAccount.address;
 
-  //temporary check for valid stellar account
   const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
+
+  const stellarTrustlineValidationQuery = useValidateStellarTrustline(
+    bridgeDirection.to === 'stellar' ? recipient : undefined,
+    xTokenMapBySymbol['stellar'][currencyToBridge?.symbol ?? ''],
+  );
+  const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
 
   const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge, recipient ?? '');
 
@@ -244,6 +254,7 @@ export function useDerivedBridgeInfo() {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    stellarTrustlineValidation,
     canTransfer,
     maximumTransferAmount,
   };

@@ -440,10 +440,6 @@ export function useDerivedSwapInfo(): {
     inputError = t`Validating Stellar account`;
   }
 
-  if (stellarTrustlineValidationQuery.isLoading) {
-    inputError = t`Validating Stellar ${currencies[Field.OUTPUT]?.symbol} account`;
-  }
-
   const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
   if (!isSolanaAccountActive) {
     inputError = t`Swap`;

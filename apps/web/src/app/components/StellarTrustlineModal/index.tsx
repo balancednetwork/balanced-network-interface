@@ -26,8 +26,6 @@ type StellarTrustlineModalProps = {
   text: string;
 };
 
-const TRANSACTION_TIMEOUT = 30000; // 30 sec in milliseconds
-
 const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModalProps) => {
   const stellarXService = useXService('STELLAR') as unknown as StellarXService;
   const [isLoading, setLoading] = React.useState(false);
@@ -35,16 +33,12 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
   const [initiated, setInitiated] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const timeoutRef = React.useRef<NodeJS.Timeout>();
 
   const resetState = React.useCallback(() => {
     setLoading(false);
     setInitiated(false);
     setSuccess(false);
     setError(null);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
   }, []);
 
   const handleDismiss = React.useCallback(() => {
@@ -99,11 +93,6 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
         throw new Error('Transaction hash not received');
       }
 
-      timeoutRef.current = setTimeout(() => {
-        setError(t`Transaction timed out. Please try again.`);
-        setLoading(false);
-      }, TRANSACTION_TIMEOUT);
-
       const txResult = await pollTransaction(response.hash, stellarXService);
 
       if (txResult.status === 'SUCCESS') {
@@ -122,14 +111,6 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       setInitiated(false);
     }
   };
-
-  React.useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   return (
     <>

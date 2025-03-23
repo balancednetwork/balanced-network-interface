@@ -202,5 +202,5 @@ export const pollTransaction = async (
     attempts++;
   }
 
-  throw new Error('Transaction polling timed out');
+  throw new Error('Transaction timed out.');
 };

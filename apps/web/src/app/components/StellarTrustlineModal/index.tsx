@@ -12,7 +12,6 @@ import { Trans, t } from '@lingui/macro';
 import { Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
-import { Currency } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TextButton } from '../Button';
 import { StyledButton } from '../Button/StyledButton';
@@ -27,6 +26,8 @@ type StellarTrustlineModalProps = {
   text: string;
 };
 
+const TRANSACTION_TIMEOUT = 30000; // 30 sec in milliseconds
+
 const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModalProps) => {
   const stellarXService = useXService('STELLAR') as unknown as StellarXService;
   const [isLoading, setLoading] = React.useState(false);
@@ -34,27 +35,42 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
   const [initiated, setInitiated] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const handleDismiss = () => {
-    setOpen(false);
-  };
+  const timeoutRef = React.useRef<NodeJS.Timeout>();
 
-  const handleToggle = () => {
+  const resetState = React.useCallback(() => {
+    setLoading(false);
+    setInitiated(false);
+    setSuccess(false);
+    setError(null);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, []);
+
+  const handleDismiss = React.useCallback(() => {
+    setOpen(false);
+    resetState();
+  }, [resetState]);
+
+  const handleToggle = React.useCallback(() => {
     setOpen(!isOpen);
-  };
+    if (!isOpen) {
+      resetState();
+    }
+  }, [isOpen, resetState]);
 
   const requestTrustline = async () => {
     if (!stellarXService || !currency) {
-      console.error('Stellar service not available');
+      setError(t`Stellar service not available`);
       return;
     }
+
     try {
       const sourceAccount = await stellarXService.server.loadAccount(address);
       const asset = STELLAR_TRUSTLINE_TOKEN_INFO.find(t => t.contract_id === currency.address);
 
       if (!asset) {
-        console.error(
-          `Stellar Asset (${currency.symbol}, ${currency.address}) not found, can not proceed with trustline.`,
-        );
+        setError(t`Asset ${currency.symbol} not found. Cannot proceed with trustline.`);
         return;
       }
 
@@ -79,29 +95,41 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
         TransactionBuilder.fromXDR(signedTx, Networks.PUBLIC),
       );
 
-      if (response.hash) {
-        const txResult = await pollTransaction(response.hash, stellarXService);
-        console.log('stellar txResult', txResult);
-        if (txResult.status === 'SUCCESS') {
-          setSuccess(true);
-          setTimeout(() => {
-            handleDismiss();
-          }, 2000);
-        } else {
-          setSuccess(false);
-          setError(`Transaction failed with status: ${txResult.status}`);
-          setLoading(false);
-        }
+      if (!response.hash) {
+        throw new Error('Transaction hash not received');
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setError(t`Transaction timed out. Please try again.`);
+        setLoading(false);
+      }, TRANSACTION_TIMEOUT);
+
+      const txResult = await pollTransaction(response.hash, stellarXService);
+
+      if (txResult.status === 'SUCCESS') {
+        setSuccess(true);
+        setTimeout(() => {
+          handleDismiss();
+        }, 2000);
+      } else {
+        setError(t`Transaction failed with status: ${txResult.status}`);
       }
     } catch (error) {
-      console.error('Error fetching Stellar sponsor transaction:', error);
-      setError(`Transaction timed out.`);
-      throw error;
+      console.error('Error in Stellar trustline transaction:', error);
+      setError(error instanceof Error ? error.message : t`Transaction failed. Please try again.`);
     } finally {
       setLoading(false);
       setInitiated(false);
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>

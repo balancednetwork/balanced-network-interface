@@ -157,9 +157,13 @@ export function useValidateStellarTrustline(
         return { ok: true };
       }
 
-      const { balances } = await stellarService.server.accounts().accountId(address).call();
-
       const trustlineInfo = STELLAR_TRUSTLINE_TOKEN_INFO.find(info => info.contract_id === token.address);
+
+      if (!trustlineInfo) {
+        return { ok: true };
+      }
+
+      const { balances } = await stellarService.server.accounts().accountId(address).call();
 
       if (trustlineInfo && checkIfTrustlineExists(balances, trustlineInfo.asset_code, trustlineInfo.asset_issuer)) {
         console.log(`Trustline already exists for ${token.symbol}`);

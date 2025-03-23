@@ -521,6 +521,10 @@ msgstr ""
 #~ msgid "Removing {0} from the bridge contract..."
 #~ msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Asset {0} not found. Cannot proceed with trustline."
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #~ msgid "Transfer fee(x3): {formattedXCallFee}"
 #~ msgstr ""
@@ -634,6 +638,10 @@ msgstr ""
 #~ msgid "Claiming rewards..."
 #~ msgstr "Odbieranie nagród..."
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate Stellar {0} account?"
+msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
 msgstr "Zagłosuj"
@@ -719,6 +727,10 @@ msgstr ""
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 #~ msgstr "Anuluj wszystkie oczekujące transakcje na swoim Ledgerze albo przyznaj Chrome uprawnienie do korzystania z niego."
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Transaction failed. Please try again."
+msgstr ""
 
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
@@ -856,7 +868,6 @@ msgid "Lock up BALN"
 msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
-#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate wallet"
 msgstr ""
 
@@ -885,6 +896,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {0} to the {1} pool..."
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate"
 msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
@@ -2465,6 +2480,10 @@ msgstr ""
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Stellar service not available"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "Tworzenie puli"
@@ -2532,7 +2551,6 @@ msgid "available on {0}."
 msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
-#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate Stellar wallet?"
 msgstr ""
 
@@ -2677,7 +2695,6 @@ msgstr ""
 #~ msgstr "Dodano {0} {1} do Twojego portfela"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
-#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Sign a transaction to activate your wallet for free."
 msgstr ""
 
@@ -2826,6 +2843,10 @@ msgstr "Zagłosowałeś przeciw"
 msgid "Exchange rate"
 msgstr "Kurs wymiany"
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Sign a transaction to activate your {0} account."
+msgstr ""
+
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Depositing bnUSD"
 msgstr ""
@@ -2919,6 +2940,10 @@ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Your earning potential depends on your bBALN holdings and position size compared to everyone else's."
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "You need at least 1.5 XLM in the Stellar wallet."
 msgstr ""
 
 #: src/app/components/home/_components/LoanChainSelector/index.tsx
@@ -3047,6 +3072,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "In"
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Transaction failed with status: {0}"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx

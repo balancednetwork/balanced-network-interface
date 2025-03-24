@@ -167,7 +167,7 @@ export function CurrencySearch({
 
   const handleTabClick = useCallback((tab: AssetsTab) => {
     setAssetsTab(tab);
-    setFilterState([]);
+    setFilterState(prev => prev.filter(chainId => xChainFilterItems.includes(chainId)));
   }, []);
 
   const bridgeDirection = useBridgeDirection();

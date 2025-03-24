@@ -263,9 +263,7 @@ export default function BBalnSlider({
       : t`Lock up BALN`
     : bBalnAmount?.isZero()
       ? t`Lock up BALN`
-      : balnBalanceAvailable.isLessThan(1)
-        ? t`Withdraw`
-        : t`Adjust`;
+      : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();

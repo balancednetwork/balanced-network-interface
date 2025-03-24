@@ -77,7 +77,7 @@ const RewardsPanel = () => {
             title={t`Earning potential`}
             titleVariant="h4"
             showMaxRewardsNotice
-            sliderMargin="15px 0 0"
+            sliderMargin="20px 0 0"
             simple
             showGlobalTooltip={showGlobalTooltip}
             setGlobalTooltip={handleSetGlobalTooltip}

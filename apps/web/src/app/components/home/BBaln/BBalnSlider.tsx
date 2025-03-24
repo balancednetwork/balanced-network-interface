@@ -481,9 +481,11 @@ export default function BBalnSlider({
               <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
                 {simple ? (
                   <>
-                    {earningPower && (numberOfPositions || dynamicBBalnAmount.isGreaterThan(0) || isAdjusting) && (
-                      <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>
-                    )}
+                    {earningPower &&
+                      balnTotal?.isGreaterThan(1) &&
+                      (numberOfPositions || dynamicBBalnAmount.isGreaterThan(0) || isAdjusting) && (
+                        <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>
+                      )}
                     <Tooltip
                       show={showGlobalTooltip || tooltipHovered}
                       offset={isSuperExtraSmallScreen ? [0, 66] : isSmallScreen ? [0, 40] : [0, 10]}
@@ -562,7 +564,7 @@ export default function BBalnSlider({
               </Typography>
             </Flex>
 
-            {stakedBalance?.isEqualTo(0) && (
+            {stakedBalance?.isEqualTo(0) && balnTotal?.isGreaterThan(1) && (
               <ButtonsWrap $verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
@@ -604,7 +606,7 @@ export default function BBalnSlider({
 
           {stakedBalance?.isGreaterThan(0) ? (
             <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
-          ) : (
+          ) : balnTotal?.isGreaterThan(1) ? (
             <>
               <SliderWrap sliderBg={sliderBg} $sliderMargin={sliderMargin}>
                 {lockupNotice && (
@@ -743,6 +745,10 @@ export default function BBalnSlider({
                 </Flex>
               </SliderWrap>
             </>
+          ) : (
+            <Typography fontSize={14} opacity={0.75} mt={6}>
+              <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
+            </Typography>
           )}
         </>
       ) : (

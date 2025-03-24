@@ -90,13 +90,25 @@ export default function useSortXChains(
           return aTotal.isGreaterThan(bTotal) ? -1 * direction : 1 * direction;
         });
       } else {
-        dataToSort.sort((a, b) => {
-          const aBalance =
-            getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
-          const bBalance =
-            getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
-          return aBalance.isGreaterThan(bBalance) ? -1 * direction : 1 * direction;
-        });
+        dataToSort
+          .sort((a, b) => {
+            const aBalance =
+              getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
+            const bBalance =
+              getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
+            return aBalance.isGreaterThan(bBalance) ? -1 * direction : 1 * direction;
+          })
+          .sort((a, b) => {
+            const aBalance =
+              getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
+            const bBalance =
+              getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
+
+            if (aBalance.isEqualTo(bBalance) || (aBalance.isLessThan(0.01) && bBalance.isLessThan(0.01))) {
+              return a.name.localeCompare(b.name);
+            }
+            return 0;
+          });
       }
     }
 

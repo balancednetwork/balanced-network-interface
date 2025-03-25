@@ -69,8 +69,11 @@ export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint
 
   if (iconToken.decimals === currencyAmount.currency.decimals) return xAmount;
 
-  const diff = BigInt(iconToken.decimals - currencyAmount.currency.decimals);
-  return xAmount * BigInt(10) ** diff;
+  const diff = iconToken.decimals - currencyAmount.currency.decimals;
+
+  // If ICON decimals are less, divide by 10^abs(diff)
+  // If ICON decimals are more, multiply by 10^diff
+  return diff < 0 ? xAmount / BigInt(10) ** BigInt(-diff) : xAmount * BigInt(10) ** BigInt(diff);
 };
 
 export const getSupportedXChainIdsForToken = (currency: Currency | XToken): XChainId[] => {

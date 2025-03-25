@@ -1488,8 +1488,8 @@ msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart cont
 #~ msgstr "Claim Balanced incentives?"
 
 #: src/store/swap/hooks.ts
-msgid "Validating Stellar {0} account"
-msgstr "Validating Stellar {0} account"
+#~ msgid "Validating Stellar {0} account"
+#~ msgstr "Validating Stellar {0} account"
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #~ msgid "Wallet: {0} {1}"

@@ -1484,8 +1484,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/store/swap/hooks.ts
-msgid "Validating Stellar {0} account"
-msgstr ""
+#~ msgid "Validating Stellar {0} account"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #~ msgid "Wallet: {0} {1}"

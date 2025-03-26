@@ -135,11 +135,11 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages>
           <Typography textAlign="center" color={'text'}>
-            {t`Activate Stellar ${currency?.symbol} account?`}
+            {t`Activate Stellar ${currency?.symbol}?`}
           </Typography>
 
           <Typography pt={3} color={'text1'} textAlign="center">
-            {t`Sign a transaction to activate your ${currency?.symbol} account.`}
+            {t`Sign a transaction to activate ${currency?.symbol} for your Stellar wallet.`}
           </Typography>
 
           {error && (

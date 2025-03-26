@@ -128,7 +128,7 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
         error instanceof Error
           ? !error.message.includes('Cannot read properties')
             ? error.message
-            : t`Transaction failed. Please try again.`
+            : null
           : t`Transaction failed. Please try again.`,
       );
     } finally {

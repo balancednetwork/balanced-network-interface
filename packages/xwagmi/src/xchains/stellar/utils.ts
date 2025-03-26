@@ -71,7 +71,7 @@ export const getTokenBalance = async (
 
   const result = await simulateTx(tx, server);
 
-  return scValToBigInt(xdr.ScVal.fromXDR(result.results[0].xdr, 'base64'));
+  return result.results ? scValToBigInt(xdr.ScVal.fromXDR(result.results[0].xdr, 'base64')) : 0n;
 };
 
 export async function sendTX(

@@ -32,7 +32,7 @@ import {
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
-import { intentService } from '@/lib/intent';
+import { ALLOWED_XCHAIN_IDS, intentService } from '@/lib/intent';
 import { useAllTokensByAddress } from '@/queries/backendv2';
 import { WithdrawalFloorDataType } from '@/types';
 import { CallData } from '@balancednetwork/balanced-js';
@@ -521,13 +521,19 @@ export function useMMTrade(
   quoteType: QuoteType,
 ) {
   return useQuery<MMTrade | undefined>({
-    queryKey: ['quote', queriedCurrencyAmount, otherCurrency],
+    queryKey: ['quote', `${quoteType}-${queriedCurrencyAmount?.currency.address}`, otherCurrency?.address],
     queryFn: async () => {
       if (!queriedCurrencyAmount || !otherCurrency) {
         return;
       }
 
       const isExactInput = quoteType === QuoteType.EXACT_INPUT;
+
+      //check for allowed intent xchain ids
+      const inputXChainId = isExactInput ? queriedCurrencyAmount.currency.xChainId : otherCurrency.xChainId;
+      if (!ALLOWED_XCHAIN_IDS.includes(inputXChainId)) {
+        return;
+      }
 
       // For exact_output, increase the amount by 0.1% to account for intent contract fee
       let finalAmount = queriedCurrencyAmount;
@@ -589,7 +595,6 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
   const tradeType = independentField === Field.INPUT ? QuoteType.EXACT_INPUT : QuoteType.EXACT_OUTPUT;
   const isExactInput = tradeType === QuoteType.EXACT_INPUT;
 
-  // assume independentField is Field.Input
   const mmTradeQuery = useMMTrade(
     tryParseAmount(typedValue, isExactInput ? inputCurrency?.wrapped : outputCurrency?.wrapped),
     isExactInput ? outputCurrency?.wrapped : inputCurrency?.wrapped,

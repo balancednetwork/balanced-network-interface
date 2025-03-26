@@ -96,10 +96,10 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
         .setTimeout(180)
         .build();
 
+      const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+
       setLoading(true);
       setInitiated(true);
-
-      const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
 
       const response = await stellarXService.sorobanServer.sendTransaction(
         TransactionBuilder.fromXDR(signedTx, Networks.PUBLIC),

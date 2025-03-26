@@ -2944,8 +2944,8 @@ msgid "Your earning potential depends on your bBALN holdings and position size c
 msgstr ""
 
 #: src/app/components/StellarTrustlineModal/index.tsx
-msgid "You need at least 1.5 XLM in the Stellar wallet."
-msgstr ""
+#~ msgid "You need at least 1.5 XLM in the Stellar wallet."
+#~ msgstr ""
 
 #: src/app/components/home/_components/LoanChainSelector/index.tsx
 msgid "Receive / repay on:"

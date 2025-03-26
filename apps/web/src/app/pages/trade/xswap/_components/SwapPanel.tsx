@@ -290,7 +290,7 @@ export default function SwapPanel() {
             <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <StellarTrustlineModal
                 currency={currencies[Field.OUTPUT]}
-                text={`Activate your Stellar ${currencies[Field.OUTPUT]?.symbol} account.`}
+                text={`Activate ${currencies[Field.OUTPUT]?.symbol} for your Stellar wallet.`}
                 address={recipient}
               />
             </Flex>

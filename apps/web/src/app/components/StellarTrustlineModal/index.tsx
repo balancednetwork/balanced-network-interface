@@ -98,8 +98,11 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
 
       const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
 
-      setLoading(true);
-      setInitiated(true);
+      if (signedTx) {
+        setLoading(true);
+        setInitiated(true);
+        setError(null);
+      }
 
       const response = await stellarXService.sorobanServer.sendTransaction(
         TransactionBuilder.fromXDR(signedTx, Networks.PUBLIC),
@@ -121,7 +124,13 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       }
     } catch (error) {
       console.error('Error in Stellar trustline transaction:', error);
-      setError(error instanceof Error ? error.message : t`Transaction failed. Please try again.`);
+      setError(
+        error instanceof Error
+          ? !error.message.includes('Cannot read properties')
+            ? error.message
+            : t`Transaction failed. Please try again.`
+          : t`Transaction failed. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }

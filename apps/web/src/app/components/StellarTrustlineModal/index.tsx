@@ -126,7 +126,7 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
       console.error('Error in Stellar trustline transaction:', error);
       setError(
         error instanceof Error
-          ? !error.message.includes('Cannot read properties')
+          ? !error.message.includes('undefined') && !error.message.includes('User declined')
             ? error.message
             : null
           : t`Transaction failed. Please try again.`,

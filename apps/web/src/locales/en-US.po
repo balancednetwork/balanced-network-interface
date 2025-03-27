@@ -618,8 +618,8 @@ msgstr "Receive sICX, which you can trade or unstake from the wallet section lat
 #~ msgstr "Send each asset to the contract"
 
 #: src/app/components/StellarTrustlineModal/index.tsx
-msgid "Activate Stellar {0} account?"
-msgstr "Activate Stellar {0} account?"
+#~ msgid "Activate Stellar {0} account?"
+#~ msgstr "Activate Stellar {0} account?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
@@ -732,6 +732,10 @@ msgstr "Go back"
 msgid "Average lock-up time"
 msgstr "Average lock-up time"
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Sign a transaction to activate {0} for your Stellar wallet."
+msgstr "Sign a transaction to activate {0} for your Stellar wallet."
+
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 msgid "Swap failed"
 msgstr "Swap failed"
@@ -783,6 +787,10 @@ msgstr "Vote for this pool to receive bribes."
 #: src/app/components/XTransactionState/index.tsx
 msgid "{description}"
 msgstr "{description}"
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate Stellar {0}?"
+msgstr "Activate Stellar {0}?"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
@@ -2782,8 +2790,8 @@ msgid "Exchange rate"
 msgstr "Exchange rate"
 
 #: src/app/components/StellarTrustlineModal/index.tsx
-msgid "Sign a transaction to activate your {0} account."
-msgstr "Sign a transaction to activate your {0} account."
+#~ msgid "Sign a transaction to activate your {0} account."
+#~ msgstr "Sign a transaction to activate your {0} account."
 
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Depositing bnUSD"

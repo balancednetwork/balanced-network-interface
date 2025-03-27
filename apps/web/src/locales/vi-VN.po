@@ -639,8 +639,8 @@ msgstr ""
 #~ msgstr "Đang nhận thưởng..."
 
 #: src/app/components/StellarTrustlineModal/index.tsx
-msgid "Activate Stellar {0} account?"
-msgstr ""
+#~ msgid "Activate Stellar {0} account?"
+#~ msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
@@ -761,6 +761,10 @@ msgstr "Quay lại"
 msgid "Average lock-up time"
 msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Sign a transaction to activate {0} for your Stellar wallet."
+msgstr ""
+
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 msgid "Swap failed"
 msgstr ""
@@ -811,6 +815,10 @@ msgstr ""
 
 #: src/app/components/XTransactionState/index.tsx
 msgid "{description}"
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate Stellar {0}?"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
@@ -2844,8 +2852,8 @@ msgid "Exchange rate"
 msgstr "Tỷ giá"
 
 #: src/app/components/StellarTrustlineModal/index.tsx
-msgid "Sign a transaction to activate your {0} account."
-msgstr ""
+#~ msgid "Sign a transaction to activate your {0} account."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Depositing bnUSD"

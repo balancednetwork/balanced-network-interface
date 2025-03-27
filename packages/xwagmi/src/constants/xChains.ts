@@ -445,7 +445,7 @@ export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 /** from other chain to icon sources */
 // destinations
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
-  '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
+  '0x2105.base': ['0x2f284b01F22369c82Cbd9804dC6Ea06afB55Be02'],
   '0xa4b1.arbitrum': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   '0xa.optimism': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   '0x38.bsc': ['0x20b056e975EEB8Ad4552FAD829F7990dE45d23D5'],
@@ -462,7 +462,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
 /** to other chain from icon sources */
 // sources
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
-  '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0x2105.base': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0xa4b1.arbitrum': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0xa.optimism': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0x38.bsc': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],

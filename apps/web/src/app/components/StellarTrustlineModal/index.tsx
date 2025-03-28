@@ -27,7 +27,7 @@ type StellarTrustlineModalProps = {
   text: string;
 };
 
-const INSUFFICIENT_XLM_BALANCE = `You need at least 1.5 XLM in the Stellar wallet.`;
+const INSUFFICIENT_XLM_BALANCE = `You need at least 1.5 XLM in your Stellar wallet.`;
 
 const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModalProps) => {
   const stellarXService = useXService('STELLAR') as unknown as StellarXService;

@@ -125,7 +125,14 @@ const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
         </Button>
       ) : (
         <Button
-          disabled={!account || !!error || !canBridge || !canSwap || stellarValidation?.ok === false}
+          disabled={
+            !account ||
+            !!error ||
+            !canBridge ||
+            !canSwap ||
+            stellarValidation?.ok === false ||
+            stellarTrustlineValidation?.ok === false
+          }
           color="primary"
           onClick={handleSwap}
           hidden={hidden}

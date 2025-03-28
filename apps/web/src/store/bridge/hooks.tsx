@@ -173,7 +173,7 @@ export function useDerivedBridgeInfo() {
         return t`Insufficient ${formatSymbol(currencyAmountToBridge.currency.symbol)}`;
       } else {
         if (stellarValidationQuery.isLoading) {
-          return t`Validating Stellar account`;
+          return t`Validating Stellar wallet`;
         }
         if (!isSolanaAccountActive) {
           return t`Transfer`;

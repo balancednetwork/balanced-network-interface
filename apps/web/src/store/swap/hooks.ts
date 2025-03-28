@@ -437,7 +437,7 @@ export function useDerivedSwapInfo(): {
   const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
 
   if (stellarValidationQuery.isLoading) {
-    inputError = t`Validating Stellar account`;
+    inputError = t`Validating Stellar wallet`;
   }
 
   const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');

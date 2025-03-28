@@ -41,7 +41,7 @@ const MMSwapInfo: React.FC<SwapInfoProps> = ({ trade }) => {
             onClick={ToggleDropdown}
             text={
               minimumToReceive
-                ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
+                ? `${minimumToReceive?.toFixed(4, { groupSeparator: ',' })} ${minimumToReceive?.currency.symbol}`
                 : `0 ${currencies[Field.OUTPUT]?.symbol}`
             }
             arrowRef={arrowRef}

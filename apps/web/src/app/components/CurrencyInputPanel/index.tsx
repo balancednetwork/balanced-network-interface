@@ -13,7 +13,11 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { DEFAULT_TOKEN_CHAIN, getSupportedXChainForSwapToken } from '@balancednetwork/xwagmi';
+import {
+  DEFAULT_TOKEN_CHAIN,
+  getSupportedXChainForSwapToken,
+  getSupportedXChainIdsForSwapToken,
+} from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
@@ -189,8 +193,10 @@ export default function CurrencyInputPanel({
       if (setDefaultChain && currency?.symbol) {
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId) {
+          const supportedChainIds = getSupportedXChainIdsForSwapToken(currency);
+          const chainCount = supportedChainIds.length;
           onChainSelect && onChainSelect(defaultXChainId);
-          setTimeout(() => setXChainOptionsOpen(true), 100);
+          chainCount > 2 && setTimeout(() => setXChainOptionsOpen(true), 100);
         }
       }
     },

@@ -781,6 +781,7 @@ msgstr "Address"
 #~ msgstr "Copy address"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your rewards."
 msgstr "Earn or buy BALN, then lock it up here to boost your rewards."
 
@@ -1318,7 +1319,6 @@ msgstr "Add <0>{0}</0> item"
 #~ msgstr "Cross-chain swap requested."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx

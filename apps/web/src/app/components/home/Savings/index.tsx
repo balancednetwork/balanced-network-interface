@@ -216,7 +216,7 @@ const Savings = () => {
         </Flex>
         {xAccount.address && bnUSDCombinedTotal > 0 ? (
           <>
-            <Box margin="25px 0 10px">
+            <Box margin="30px 0 10px">
               <Nouislider
                 disabled={!isAdjusting}
                 id="slider-savings"

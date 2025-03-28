@@ -1410,8 +1410,8 @@ msgstr ""
 
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
-msgid "Validating Stellar account"
-msgstr ""
+#~ msgid "Validating Stellar account"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "No rewards available on {0}."
@@ -2951,6 +2951,11 @@ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Remove community token list?"
+msgstr ""
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar wallet"
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx

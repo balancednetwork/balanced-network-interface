@@ -1414,8 +1414,8 @@ msgstr "less then a minute"
 
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
-msgid "Validating Stellar account"
-msgstr "Validating Stellar account"
+#~ msgid "Validating Stellar account"
+#~ msgstr "Validating Stellar account"
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "No rewards available on {0}."
@@ -2960,6 +2960,11 @@ msgstr "Claiming ICX..."
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Remove community token list?"
 msgstr "Remove community token list?"
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar wallet"
+msgstr "Validating Stellar wallet"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"

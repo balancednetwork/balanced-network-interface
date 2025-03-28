@@ -59,6 +59,28 @@ class CustomSorobanServer extends SorobanRpc.Server {
     }
     return response.json().then(json => json.result);
   }
+
+  async getTransaction(hash: string): Promise<SorobanRpc.Api.GetTransactionResponse> {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.customHeaders,
+      },
+      body: JSON.stringify({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'getTransaction',
+        params: { hash },
+      }),
+    };
+
+    const response = await fetch(`${this.serverURL}`, requestOptions);
+    if (!response.ok) {
+      throw new Error(`HTTP error getting TX! status: ${response.status}`);
+    }
+    return response.json().then(json => json.result);
+  }
 }
 
 export default CustomSorobanServer;

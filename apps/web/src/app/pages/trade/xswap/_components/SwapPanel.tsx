@@ -12,6 +12,7 @@ import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
+import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
@@ -54,6 +55,7 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
     stellarValidation,
+    stellarTrustlineValidation,
     canSwap,
     maximumOutputAmount,
     parsedAmounts,
@@ -261,6 +263,7 @@ export default function SwapPanel() {
               trade={mmTrade.trade}
               direction={direction}
               stellarValidation={stellarValidation}
+              stellarTrustlineValidation={stellarTrustlineValidation}
             />
             <SwapCommitButton
               hidden={!!mmTrade.isMMBetter}
@@ -272,6 +275,7 @@ export default function SwapPanel() {
               recipient={recipient}
               direction={direction}
               stellarValidation={stellarValidation}
+              stellarTrustlineValidation={stellarTrustlineValidation}
               canSwap={canSwap}
             />
           </Flex>
@@ -279,6 +283,16 @@ export default function SwapPanel() {
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (
             <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={recipient} />
+            </Flex>
+          )}
+
+          {stellarTrustlineValidation?.ok === false && stellarTrustlineValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
+              <StellarTrustlineModal
+                currency={currencies[Field.OUTPUT]}
+                text={`Activate ${currencies[Field.OUTPUT]?.symbol} for your Stellar wallet.`}
+                address={recipient}
+              />
             </Flex>
           )}
 

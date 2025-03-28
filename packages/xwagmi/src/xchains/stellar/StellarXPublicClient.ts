@@ -37,7 +37,7 @@ export class StellarXPublicClient extends XPublicClient {
 
         return CurrencyAmount.fromRawAmount(xToken, balance);
       } catch (e) {
-        throw new Error(`Error while fetching token on Stellar: ${xToken.symbol}, Error: ${e}`);
+        console.error(`Error while fetching token on Stellar: ${xToken.symbol}, Error: ${e}`);
       }
     }
 

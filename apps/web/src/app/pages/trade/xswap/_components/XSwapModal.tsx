@@ -126,10 +126,7 @@ const XSwapModal = ({
       inputAmount: _inputAmount,
       xCallFee,
       outputAmount: convertCurrencyAmount(direction.to, executionTrade.outputAmount),
-      minReceived: convertCurrencyAmount(
-        direction.to,
-        executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000)),
-      ),
+      minReceived: executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000)),
       path: executionTrade.route.routeActionPath,
     };
 

@@ -13,6 +13,7 @@ import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
+import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
@@ -30,7 +31,7 @@ import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { getXChainType, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { validateAddress } from '@balancednetwork/xwagmi';
@@ -92,6 +93,7 @@ export default function BridgeTransferForm({ openModal }) {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    stellarTrustlineValidation,
     canTransfer,
     maximumTransferAmount,
     currencyAmountToBridge,
@@ -217,7 +219,8 @@ export default function BridgeTransferForm({ openModal }) {
                   !isValid ||
                   !canBridge ||
                   !canTransfer ||
-                  (stellarValidation ? !stellarValidation?.ok : false)
+                  (stellarValidation ? !stellarValidation?.ok : false) ||
+                  (stellarTrustlineValidation ? !stellarTrustlineValidation?.ok : false)
                 }
               >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
@@ -230,6 +233,16 @@ export default function BridgeTransferForm({ openModal }) {
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (
             <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={recipient} />
+            </Flex>
+          )}
+
+          {stellarTrustlineValidation?.ok === false && stellarTrustlineValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
+              <StellarTrustlineModal
+                text={`Activate your Stellar ${currencyToBridge?.symbol} account.`}
+                address={recipient}
+                currency={xTokenMapBySymbol['stellar'][currencyToBridge?.symbol ?? '']}
+              />
             </Flex>
           )}
 

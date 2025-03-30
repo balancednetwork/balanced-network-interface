@@ -510,6 +510,10 @@ msgstr ""
 #~ msgid "Removing {0} from the bridge contract..."
 #~ msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Asset {0} not found. Cannot proceed with trustline."
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #~ msgid "Transfer fee(x3): {formattedXCallFee}"
 #~ msgstr ""
@@ -611,6 +615,10 @@ msgstr ""
 #~ msgid "Send each asset to the contract"
 #~ msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+#~ msgid "Activate Stellar {0} account?"
+#~ msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
 msgstr ""
@@ -689,6 +697,10 @@ msgstr ""
 #~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 #~ msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Transaction failed. Please try again."
+msgstr ""
+
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr ""
@@ -716,6 +728,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Sign a transaction to activate {0} for your Stellar wallet."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -768,6 +784,10 @@ msgstr ""
 
 #: src/app/components/XTransactionState/index.tsx
 msgid "{description}"
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate Stellar {0}?"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
@@ -853,6 +873,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {0} to the {1} pool..."
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Activate"
 msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
@@ -1386,8 +1410,8 @@ msgstr ""
 
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
-msgid "Validating Stellar account"
-msgstr ""
+#~ msgid "Validating Stellar account"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "No rewards available on {0}."
@@ -1465,6 +1489,10 @@ msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claim Balanced incentives?"
+#~ msgstr ""
+
+#: src/store/swap/hooks.ts
+#~ msgid "Validating Stellar {0} account"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
@@ -1705,6 +1733,7 @@ msgid "Borrow Balanced Dollars?"
 msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activating"
 msgstr ""
 
@@ -2000,6 +2029,7 @@ msgstr ""
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
@@ -2388,6 +2418,10 @@ msgstr ""
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Stellar service not available"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr ""
@@ -2747,6 +2781,10 @@ msgstr ""
 msgid "Exchange rate"
 msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+#~ msgid "Sign a transaction to activate your {0} account."
+#~ msgstr ""
+
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Depositing bnUSD"
 msgstr ""
@@ -2842,6 +2880,10 @@ msgstr ""
 msgid "Your earning potential depends on your bBALN holdings and position size compared to everyone else's."
 msgstr ""
 
+#: src/app/components/StellarTrustlineModal/index.tsx
+#~ msgid "You need at least 1.5 XLM in the Stellar wallet."
+#~ msgstr ""
+
 #: src/app/components/home/_components/LoanChainSelector/index.tsx
 msgid "Receive / repay on:"
 msgstr ""
@@ -2911,6 +2953,11 @@ msgstr ""
 msgid "Remove community token list?"
 msgstr ""
 
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar wallet"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"
 msgstr ""
@@ -2968,6 +3015,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "In"
+msgstr ""
+
+#: src/app/components/StellarTrustlineModal/index.tsx
+msgid "Transaction failed with status: {0}"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
@@ -3063,6 +3114,7 @@ msgstr ""
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
+#: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""

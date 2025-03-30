@@ -32,7 +32,7 @@ export class StellarXWalletClient extends XWalletClient {
 
     const params = [
       accountToScVal(account),
-      nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+      nativeToScVal(inputAmount.currency.address, { type: 'address' }),
       nativeToScVal(inputAmount.quotient, { type: 'u128' }),
       nativeToScVal(destination),
       nativeToScVal(data, { type: 'bytes' }),

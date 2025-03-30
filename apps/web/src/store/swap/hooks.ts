@@ -15,7 +15,13 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { bnJs, convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
+import {
+  StellarTrustlineValidation,
+  bnJs,
+  convertCurrency,
+  getXChainType,
+  useValidateStellarTrustline,
+} from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
@@ -246,6 +252,7 @@ export function useDerivedSwapInfo(): {
   canSwap: boolean;
   maximumOutputAmount: CurrencyAmount<Currency> | undefined;
   stellarValidation?: StellarAccountValidation;
+  stellarTrustlineValidation?: StellarTrustlineValidation;
 } {
   const {
     independentField,
@@ -423,8 +430,14 @@ export function useDerivedSwapInfo(): {
   const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
 
+  const stellarTrustlineValidationQuery = useValidateStellarTrustline(
+    direction.to === 'stellar' ? recipient : undefined,
+    currencies[Field.OUTPUT],
+  );
+  const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
+
   if (stellarValidationQuery.isLoading) {
-    inputError = t`Validating Stellar account`;
+    inputError = t`Validating Stellar wallet`;
   }
 
   const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
@@ -449,6 +462,7 @@ export function useDerivedSwapInfo(): {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    stellarTrustlineValidation,
     maximumOutputAmount,
     canSwap,
   };

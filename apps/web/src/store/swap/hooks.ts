@@ -548,8 +548,10 @@ export function useMMTrade(
       const isExactInput = quoteType === QuoteType.EXACT_INPUT;
 
       //check for allowed intent xchain ids
-      const inputXChainId = isExactInput ? queriedCurrencyAmount.currency.xChainId : otherCurrency.xChainId;
-      if (!ALLOWED_XCHAIN_IDS.includes(inputXChainId)) {
+      if (
+        !ALLOWED_XCHAIN_IDS.includes(queriedCurrencyAmount.currency.xChainId) ||
+        !ALLOWED_XCHAIN_IDS.includes(otherCurrency.xChainId)
+      ) {
         return;
       }
 

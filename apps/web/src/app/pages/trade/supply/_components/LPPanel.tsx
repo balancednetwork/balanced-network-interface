@@ -125,14 +125,25 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        // Calculate the maximum amount that can be added based on reserves
+        // Calculate the maximum amount that can be added based on reserves and decimals
         const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
         const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
 
+        // Compare the actual amounts considering decimals
+        const amountA = maxAmountA.toFixed();
+        const amountB = maxAmountB.toFixed();
+
         // Select the field that will result in the smaller amount to maintain the ratio
-        const field = maxAmountA.lessThan(maxAmountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
+        const field = new BigNumber(amountA).isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
         const amount = field === Field.CURRENCY_A ? balanceA : balanceB;
-        onSlide(field, percent !== 0 ? amount.multiply(p).toFixed() ?? '' : '');
+
+        // Ensure we don't exceed the available balance
+        const finalAmount = amount.multiply(p);
+        if (finalAmount.greaterThan(amount)) {
+          onSlide(field, amount.toFixed());
+        } else {
+          onSlide(field, finalAmount.toFixed());
+        }
       }
     }
   }, [percent, needUpdate, maxAmounts, onSlide, pair]);
@@ -159,7 +170,8 @@ export default function LPPanel() {
 
   const handleTypeAInput = React.useCallback(
     (typed: string) => {
-      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_A]?.toFixed() || 0) || typed === '') {
+      const maxAmount = maxAmounts[Field.CURRENCY_A]?.toFixed() || '0';
+      if (new BigNumber(typed).isLessThanOrEqualTo(maxAmount) || typed === '') {
         onFieldAInput(typed);
       }
     },
@@ -168,7 +180,8 @@ export default function LPPanel() {
 
   const handleTypeBInput = React.useCallback(
     (typed: string) => {
-      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
+      const maxAmount = maxAmounts[Field.CURRENCY_B]?.toFixed() || '0';
+      if (new BigNumber(typed).isLessThanOrEqualTo(maxAmount) || typed === '') {
         onFieldBInput(typed);
       }
     },

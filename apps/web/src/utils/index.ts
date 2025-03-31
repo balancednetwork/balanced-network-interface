@@ -92,6 +92,7 @@ export function maxAmountSpend<T extends Token>(currencyAmount?: CurrencyAmount<
   if (!currencyAmount) return undefined;
   const xChainId: XChainId = currencyAmount.currency instanceof XToken ? currencyAmount.currency.xChainId : '0x1.icon';
 
+  // Calculate minimum gas amount considering token decimals
   const minCurrencyGas = currencyAmount.currency.isNativeToken
     ? CurrencyAmount.fromRawAmount(
         currencyAmount.currency,
@@ -102,9 +103,16 @@ export function maxAmountSpend<T extends Token>(currencyAmount?: CurrencyAmount<
       )
     : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
 
-  return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
-    ? currencyAmount.subtract(minCurrencyGas)
-    : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
+  // Ensure we're comparing amounts with the same decimal precision
+  const availableAmount = currencyAmount.subtract(minCurrencyGas);
+
+  // Return 0 if the available amount is not positive
+  if (!availableAmount.greaterThan(0)) {
+    return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
+  }
+
+  // Ensure the returned amount doesn't exceed the original balance
+  return availableAmount.greaterThan(currencyAmount) ? currencyAmount : availableAmount;
 }
 
 export function formatPercent(percent: BigNumber | undefined) {

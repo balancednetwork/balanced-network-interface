@@ -137,10 +137,13 @@ export default function LPPanel() {
         const field = new BigNumber(amountA).isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
         const amount = field === Field.CURRENCY_A ? balanceA : balanceB;
 
-        // Ensure we don't exceed the available balance
+        // Calculate the final amount and ensure it doesn't exceed the balance
         const finalAmount = amount.multiply(p);
-        if (finalAmount.greaterThan(amount)) {
-          onSlide(field, amount.toFixed());
+        const maxBalance = field === Field.CURRENCY_A ? balanceA : balanceB;
+
+        // Ensure we don't exceed the available balance
+        if (finalAmount.greaterThan(maxBalance)) {
+          onSlide(field, maxBalance.toFixed());
         } else {
           onSlide(field, finalAmount.toFixed());
         }
@@ -170,8 +173,13 @@ export default function LPPanel() {
 
   const handleTypeAInput = React.useCallback(
     (typed: string) => {
-      const maxAmount = maxAmounts[Field.CURRENCY_A]?.toFixed() || '0';
-      if (new BigNumber(typed).isLessThanOrEqualTo(maxAmount) || typed === '') {
+      const maxAmount = maxAmounts[Field.CURRENCY_A];
+      if (!maxAmount) return;
+
+      const maxAmountFixed = maxAmount.toFixed();
+      const typedAmount = new BigNumber(typed);
+
+      if (typedAmount.isLessThanOrEqualTo(maxAmountFixed) || typed === '') {
         onFieldAInput(typed);
       }
     },
@@ -180,8 +188,13 @@ export default function LPPanel() {
 
   const handleTypeBInput = React.useCallback(
     (typed: string) => {
-      const maxAmount = maxAmounts[Field.CURRENCY_B]?.toFixed() || '0';
-      if (new BigNumber(typed).isLessThanOrEqualTo(maxAmount) || typed === '') {
+      const maxAmount = maxAmounts[Field.CURRENCY_B];
+      if (!maxAmount) return;
+
+      const maxAmountFixed = maxAmount.toFixed();
+      const typedAmount = new BigNumber(typed);
+
+      if (typedAmount.isLessThanOrEqualTo(maxAmountFixed) || typed === '') {
         onFieldBInput(typed);
       }
     },
@@ -190,25 +203,34 @@ export default function LPPanel() {
 
   const handlePercentSelect = (field: Field) => (percent: number) => {
     const p = new Percent(Math.floor(percent * 100), 10_000);
-
     const balanceA = maxAmounts[Field.CURRENCY_A];
     const balanceB = maxAmounts[Field.CURRENCY_B];
 
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      if (field === Field.CURRENCY_A) {
-        field = balanceA.multiply(pair?.reserve1).multiply(p).lessThan(balanceB.multiply(pair?.reserve0))
-          ? Field.CURRENCY_A
-          : Field.CURRENCY_B;
+      // Calculate the maximum amount that can be added based on reserves and decimals
+      const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
+      const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
+
+      // Compare the actual amounts considering decimals
+      const amountA = maxAmountA.toFixed();
+      const amountB = maxAmountB.toFixed();
+
+      // Select the field that will result in the smaller amount to maintain the ratio
+      const selectedField = new BigNumber(amountA).isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
+      const amount = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
+
+      // Calculate the final amount and ensure it doesn't exceed the balance
+      const finalAmount = amount.multiply(p);
+      const maxBalance = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
+
+      if (finalAmount.greaterThan(maxBalance)) {
+        selectedField === Field.CURRENCY_A ? onFieldAInput(maxBalance.toFixed()) : onFieldBInput(maxBalance.toFixed());
       } else {
-        field = balanceB.multiply(pair?.reserve0).multiply(p).lessThan(balanceA.multiply(pair?.reserve1))
-          ? Field.CURRENCY_B
-          : Field.CURRENCY_A;
+        selectedField === Field.CURRENCY_A
+          ? onFieldAInput(finalAmount.toFixed())
+          : onFieldBInput(finalAmount.toFixed());
       }
     }
-
-    field === Field.CURRENCY_A
-      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(p).toExact() ?? '')
-      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(p).toExact() ?? '');
   };
 
   const handleLPChainSelection = useCallback(

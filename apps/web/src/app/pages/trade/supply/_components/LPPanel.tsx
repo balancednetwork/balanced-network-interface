@@ -126,13 +126,17 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
+        // Get the decimals for both tokens
+        const decimalsA = currencies[Field.CURRENCY_A]?.decimals ?? 18;
+        const decimalsB = currencies[Field.CURRENCY_B]?.decimals ?? 18;
+
         // Calculate the maximum amount that can be added based on reserves and decimals
         const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
         const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
 
         // Compare the actual amounts using BigNumber for precise decimal handling
-        const amountA = new BigNumber(maxAmountA.toFixed());
-        const amountB = new BigNumber(maxAmountB.toFixed());
+        const amountA = new BigNumber(maxAmountA.toFixed()).times(new BigNumber(10).pow(decimalsA));
+        const amountB = new BigNumber(maxAmountB.toFixed()).times(new BigNumber(10).pow(decimalsB));
 
         // Select the field that will result in the smaller amount to maintain the ratio
         const field = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
@@ -153,7 +157,7 @@ export default function LPPanel() {
         }
       }
     }
-  }, [percent, needUpdate, maxAmounts, onSlide, pair]);
+  }, [percent, needUpdate, maxAmounts, onSlide, pair, currencies]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -211,13 +215,17 @@ export default function LPPanel() {
     const balanceB = maxAmounts[Field.CURRENCY_B];
 
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
+      // Get the decimals for both tokens
+      const decimalsA = currencies[Field.CURRENCY_A]?.decimals ?? 18;
+      const decimalsB = currencies[Field.CURRENCY_B]?.decimals ?? 18;
+
       // Calculate the maximum amount that can be added based on reserves and decimals
       const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
       const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
 
       // Compare the actual amounts using BigNumber for precise decimal handling
-      const amountA = new BigNumber(maxAmountA.toFixed());
-      const amountB = new BigNumber(maxAmountB.toFixed());
+      const amountA = new BigNumber(maxAmountA.toFixed()).times(new BigNumber(10).pow(decimalsA));
+      const amountB = new BigNumber(maxAmountB.toFixed()).times(new BigNumber(10).pow(decimalsB));
 
       // Select the field that will result in the smaller amount to maintain the ratio
       const selectedField = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;

@@ -129,20 +129,20 @@ export default function LPPanel() {
         const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
         const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
 
-        // Compare the actual amounts considering decimals
-        const amountA = maxAmountA.toFixed();
-        const amountB = maxAmountB.toFixed();
+        // Compare the actual amounts using BigNumber for precise decimal handling
+        const amountA = new BigNumber(maxAmountA.toFixed());
+        const amountB = new BigNumber(maxAmountB.toFixed());
 
         // Select the field that will result in the smaller amount to maintain the ratio
-        const field = new BigNumber(amountA).isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
+        const field = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
         const amount = field === Field.CURRENCY_A ? balanceA : balanceB;
 
         // Calculate the final amount and ensure it doesn't exceed the balance
         const finalAmount = amount.multiply(p);
         const maxBalance = field === Field.CURRENCY_A ? balanceA : balanceB;
 
-        // Ensure we don't exceed the available balance
-        if (finalAmount.greaterThan(maxBalance)) {
+        // Use BigNumber comparison for precise decimal handling
+        if (new BigNumber(finalAmount.toFixed()).isGreaterThan(new BigNumber(maxBalance.toFixed()))) {
           onSlide(field, maxBalance.toFixed());
         } else {
           onSlide(field, finalAmount.toFixed());
@@ -176,7 +176,7 @@ export default function LPPanel() {
       const maxAmount = maxAmounts[Field.CURRENCY_A];
       if (!maxAmount) return;
 
-      const maxAmountFixed = maxAmount.toFixed();
+      const maxAmountFixed = new BigNumber(maxAmount.toFixed());
       const typedAmount = new BigNumber(typed);
 
       if (typedAmount.isLessThanOrEqualTo(maxAmountFixed) || typed === '') {
@@ -191,7 +191,7 @@ export default function LPPanel() {
       const maxAmount = maxAmounts[Field.CURRENCY_B];
       if (!maxAmount) return;
 
-      const maxAmountFixed = maxAmount.toFixed();
+      const maxAmountFixed = new BigNumber(maxAmount.toFixed());
       const typedAmount = new BigNumber(typed);
 
       if (typedAmount.isLessThanOrEqualTo(maxAmountFixed) || typed === '') {
@@ -211,19 +211,20 @@ export default function LPPanel() {
       const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
       const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
 
-      // Compare the actual amounts considering decimals
-      const amountA = maxAmountA.toFixed();
-      const amountB = maxAmountB.toFixed();
+      // Compare the actual amounts using BigNumber for precise decimal handling
+      const amountA = new BigNumber(maxAmountA.toFixed());
+      const amountB = new BigNumber(maxAmountB.toFixed());
 
       // Select the field that will result in the smaller amount to maintain the ratio
-      const selectedField = new BigNumber(amountA).isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
+      const selectedField = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
       const amount = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
 
       // Calculate the final amount and ensure it doesn't exceed the balance
       const finalAmount = amount.multiply(p);
       const maxBalance = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
 
-      if (finalAmount.greaterThan(maxBalance)) {
+      // Use BigNumber comparison for precise decimal handling
+      if (new BigNumber(finalAmount.toFixed()).isGreaterThan(new BigNumber(maxBalance.toFixed()))) {
         selectedField === Field.CURRENCY_A ? onFieldAInput(maxBalance.toFixed()) : onFieldBInput(maxBalance.toFixed());
       } else {
         selectedField === Field.CURRENCY_A

@@ -97,7 +97,8 @@ export default function LPPanel() {
   }, [currencies, onSlide]);
 
   const handleSlider = (values: string[], handle: number) => {
-    setPercent({ percent: parseFloat(values[handle]), needUpdate: true });
+    const newPercent = parseFloat(values[handle]);
+    setPercent({ percent: newPercent, needUpdate: true });
   };
 
   const sliderValue =
@@ -142,7 +143,10 @@ export default function LPPanel() {
         const maxBalance = field === Field.CURRENCY_A ? balanceA : balanceB;
 
         // Use BigNumber comparison for precise decimal handling
-        if (new BigNumber(finalAmount.toFixed()).isGreaterThan(new BigNumber(maxBalance.toFixed()))) {
+        const finalAmountBN = new BigNumber(finalAmount.toFixed());
+        const maxBalanceBN = new BigNumber(maxBalance.toFixed());
+
+        if (finalAmountBN.isGreaterThan(maxBalanceBN)) {
           onSlide(field, maxBalance.toFixed());
         } else {
           onSlide(field, finalAmount.toFixed());
@@ -224,7 +228,10 @@ export default function LPPanel() {
       const maxBalance = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
 
       // Use BigNumber comparison for precise decimal handling
-      if (new BigNumber(finalAmount.toFixed()).isGreaterThan(new BigNumber(maxBalance.toFixed()))) {
+      const finalAmountBN = new BigNumber(finalAmount.toFixed());
+      const maxBalanceBN = new BigNumber(maxBalance.toFixed());
+
+      if (finalAmountBN.isGreaterThan(maxBalanceBN)) {
         selectedField === Field.CURRENCY_A ? onFieldAInput(maxBalance.toFixed()) : onFieldBInput(maxBalance.toFixed());
       } else {
         selectedField === Field.CURRENCY_A

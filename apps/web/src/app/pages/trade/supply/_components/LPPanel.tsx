@@ -125,10 +125,14 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
-          ? Field.CURRENCY_A
-          : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? maxAmounts[field]?.multiply(p).toFixed() ?? '' : '');
+        // Calculate the maximum amount that can be added based on reserves
+        const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
+        const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
+
+        // Select the field that will result in the smaller amount to maintain the ratio
+        const field = maxAmountA.lessThan(maxAmountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
+        const amount = field === Field.CURRENCY_A ? balanceA : balanceB;
+        onSlide(field, percent !== 0 ? amount.multiply(p).toFixed() ?? '' : '');
       }
     }
   }, [percent, needUpdate, maxAmounts, onSlide, pair]);

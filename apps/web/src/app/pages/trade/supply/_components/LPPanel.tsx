@@ -16,7 +16,6 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useTokenPrices } from '@/queries/backendv2';
-import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';

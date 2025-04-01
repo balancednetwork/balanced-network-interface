@@ -15,6 +15,8 @@ import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
+import { useTokenPrices } from '@/queries/backendv2';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
@@ -82,6 +84,7 @@ export default function LPPanel() {
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
     useMintActionHandlers(noLiquidity);
+  const { data: prices } = useTokenPrices();
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -123,41 +126,18 @@ export default function LPPanel() {
     if (needUpdate) {
       const balanceA = maxAmounts[Field.CURRENCY_A];
       const balanceB = maxAmounts[Field.CURRENCY_B];
-      if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
+      if (balanceA && balanceB && prices && currencies[Field.CURRENCY_B] && currencies[Field.CURRENCY_A]) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        // Get the decimals for both tokens
-        const decimalsA = currencies[Field.CURRENCY_A]?.decimals ?? 18;
-        const decimalsB = currencies[Field.CURRENCY_B]?.decimals ?? 18;
+        const valueA = new BigNumber(balanceA.toFixed()).times(prices[currencies[Field.CURRENCY_A].symbol]);
+        const valueB = new BigNumber(balanceB.toFixed()).times(prices[currencies[Field.CURRENCY_B].symbol]);
 
-        // Calculate the maximum amount that can be added based on reserves and decimals
-        const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
-        const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
+        const field = valueA.isLessThan(valueB) ? Field.CURRENCY_A : Field.CURRENCY_B;
 
-        // Compare the actual amounts using BigNumber for precise decimal handling
-        const amountA = new BigNumber(maxAmountA.toFixed()).times(new BigNumber(10).pow(decimalsA));
-        const amountB = new BigNumber(maxAmountB.toFixed()).times(new BigNumber(10).pow(decimalsB));
-
-        // Select the field that will result in the smaller amount to maintain the ratio
-        const field = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
-        const amount = field === Field.CURRENCY_A ? balanceA : balanceB;
-
-        // Calculate the final amount and ensure it doesn't exceed the balance
-        const finalAmount = amount.multiply(p);
-        const maxBalance = field === Field.CURRENCY_A ? balanceA : balanceB;
-
-        // Use BigNumber comparison for precise decimal handling
-        const finalAmountBN = new BigNumber(finalAmount.toFixed());
-        const maxBalanceBN = new BigNumber(maxBalance.toFixed());
-
-        if (finalAmountBN.isGreaterThan(maxBalanceBN)) {
-          onSlide(field, maxBalance.toFixed());
-        } else {
-          onSlide(field, finalAmount.toFixed());
-        }
+        onSlide(field, percent !== 0 ? maxAmounts[field]?.multiply(p).toFixed() ?? '' : '');
       }
     }
-  }, [percent, needUpdate, maxAmounts, onSlide, pair, currencies]);
+  }, [percent, needUpdate, maxAmounts, onSlide, currencies, prices]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -214,38 +194,17 @@ export default function LPPanel() {
     const balanceA = maxAmounts[Field.CURRENCY_A];
     const balanceB = maxAmounts[Field.CURRENCY_B];
 
-    if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      // Get the decimals for both tokens
-      const decimalsA = currencies[Field.CURRENCY_A]?.decimals ?? 18;
-      const decimalsB = currencies[Field.CURRENCY_B]?.decimals ?? 18;
+    if (balanceA && balanceB && prices && currencies[Field.CURRENCY_B] && currencies[Field.CURRENCY_A]) {
+      // Compare token values using prices
+      const valueA = new BigNumber(balanceA.toFixed()).times(prices[currencies[Field.CURRENCY_A].symbol]);
+      const valueB = new BigNumber(balanceB.toFixed()).times(prices[currencies[Field.CURRENCY_B].symbol]);
 
-      // Calculate the maximum amount that can be added based on reserves and decimals
-      const maxAmountA = balanceA.multiply(pair.reserve1).divide(pair.reserve0);
-      const maxAmountB = balanceB.multiply(pair.reserve0).divide(pair.reserve1);
+      // Select field based on which value is smaller
+      const selectedField = valueA.isLessThan(valueB) ? Field.CURRENCY_A : Field.CURRENCY_B;
 
-      // Compare the actual amounts using BigNumber for precise decimal handling
-      const amountA = new BigNumber(maxAmountA.toFixed()).times(new BigNumber(10).pow(decimalsA));
-      const amountB = new BigNumber(maxAmountB.toFixed()).times(new BigNumber(10).pow(decimalsB));
-
-      // Select the field that will result in the smaller amount to maintain the ratio
-      const selectedField = amountA.isLessThan(amountB) ? Field.CURRENCY_A : Field.CURRENCY_B;
-      const amount = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
-
-      // Calculate the final amount and ensure it doesn't exceed the balance
-      const finalAmount = amount.multiply(p);
-      const maxBalance = selectedField === Field.CURRENCY_A ? balanceA : balanceB;
-
-      // Use BigNumber comparison for precise decimal handling
-      const finalAmountBN = new BigNumber(finalAmount.toFixed());
-      const maxBalanceBN = new BigNumber(maxBalance.toFixed());
-
-      if (finalAmountBN.isGreaterThan(maxBalanceBN)) {
-        selectedField === Field.CURRENCY_A ? onFieldAInput(maxBalance.toFixed()) : onFieldBInput(maxBalance.toFixed());
-      } else {
-        selectedField === Field.CURRENCY_A
-          ? onFieldAInput(finalAmount.toFixed())
-          : onFieldBInput(finalAmount.toFixed());
-      }
+      selectedField === Field.CURRENCY_A
+        ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(p).toExact() ?? '')
+        : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(p).toExact() ?? '');
     }
   };
 

@@ -537,8 +537,8 @@ export function useMMTrade(
   return useQuery<MMTrade | undefined>({
     queryKey: [
       'quote',
-      `${quoteType}-${queriedCurrencyAmount?.currency.address}-${queriedCurrencyAmount?.toFixed()}`,
-      otherCurrency?.address,
+      `${quoteType}-${queriedCurrencyAmount?.currency.address}-${queriedCurrencyAmount?.currency.xChainId}-${queriedCurrencyAmount?.toFixed()}`,
+      `${otherCurrency?.address}-${otherCurrency?.xChainId}`,
     ],
     queryFn: async () => {
       if (!queriedCurrencyAmount || !otherCurrency) {

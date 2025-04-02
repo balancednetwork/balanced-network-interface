@@ -71,8 +71,10 @@ const SingleChainItemOverview = ({
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>
-          {collateral && collateral.greaterThan(0) && (
+          {collateral && collateral.greaterThan(0) ? (
             <DataText as="div">{price && formatValue(collateral?.multiply(price || 1).toFixed())}</DataText>
+          ) : (
+            <DataText as="div">-</DataText>
           )}
 
           {isNested ? (

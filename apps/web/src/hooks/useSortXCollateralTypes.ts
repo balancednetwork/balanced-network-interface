@@ -90,7 +90,9 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
 
     if (sortBy.key === 'name') {
       dataToSort.sort((a, b) => {
-        return a.baseToken.name!.toUpperCase() > b.baseToken.name!.toUpperCase() ? -1 * direction : 1 * direction;
+        const symbolA = a.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
+        const symbolB = b.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
+        return symbolA > symbolB ? -1 * direction : 1 * direction;
       });
     }
 

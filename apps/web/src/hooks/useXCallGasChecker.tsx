@@ -35,7 +35,7 @@ function useXCallGasChecker(
 
       const hasEnoughGas =
         balances[xChainId] &&
-        balances[xChainId]?.[nativeCurrency.address]?.greaterThan(
+        !balances[xChainId]?.[nativeCurrency.address]?.lessThan(
           Math.round(gasThreshold * 10 ** nativeCurrency.decimals),
         );
 

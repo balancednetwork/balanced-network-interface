@@ -287,8 +287,8 @@ export function useDerivedMintInfo(): {
 
   const maxAmounts = useMemo(
     () => ({
-      [Field.CURRENCY_A]: maxAmountSpend(currencyBalances[Field.CURRENCY_A]),
-      [Field.CURRENCY_B]: maxAmountSpend(currencyBalances[Field.CURRENCY_B]),
+      [Field.CURRENCY_A]: maxAmountSpend(currencyBalances[Field.CURRENCY_A], 3),
+      [Field.CURRENCY_B]: maxAmountSpend(currencyBalances[Field.CURRENCY_B], 3),
     }),
     [currencyBalances],
   );

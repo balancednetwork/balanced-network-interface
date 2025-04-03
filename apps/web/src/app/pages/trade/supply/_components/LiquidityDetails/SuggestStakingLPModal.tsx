@@ -110,7 +110,7 @@ export default function SuggestStakingLPModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
+    <Modal isOpen={isOpen && differenceAmount.gt(0)} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Flex flexDirection="column" justifyContent="center" alignItems="center" style={{ gap: 6 }}>
           <Typography textAlign="center" mb="5px">

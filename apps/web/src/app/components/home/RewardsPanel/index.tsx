@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Trans, t } from '@lingui/macro';
+import { useDispatch } from 'react-redux';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -9,9 +9,10 @@ import styled from 'styled-components';
 import Divider, { VerticalDivider } from '@/app/components/Divider';
 import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
-import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
-
+import { useSignedInWallets } from '@/hooks/useWallets';
 import useWidth from '@/hooks/useWidth';
+import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
+import { clearRewards } from '@/store/reward/reducer';
 import { useSavingsXChainId } from '@/store/savings/hooks';
 import { getNetworkDisplayName, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import BBalnSlider from '../BBaln/BBalnSlider';
@@ -40,11 +41,19 @@ const RewardsPanel = () => {
   const [showGlobalTooltip, setGlobalTooltip] = React.useState(false);
   const isMedium = useMedia('(max-width: 1050px)');
   const isSmall = useMedia('(max-width: 800px)');
+  const dispatch = useDispatch();
 
   const savingsXChainId = useSavingsXChainId();
-
   const account = useXAccount(getXChainType(savingsXChainId));
   const hasAnyKindOfRewards = useHasAnyKindOfRewards(savingsXChainId);
+  const signedInWallets = useSignedInWallets();
+
+  // Clear rewards when all wallets are disconnected
+  React.useEffect(() => {
+    if (signedInWallets.length === 0) {
+      dispatch(clearRewards());
+    }
+  }, [signedInWallets.length, dispatch]);
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
     setGlobalTooltip(shouldShow);

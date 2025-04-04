@@ -14,9 +14,12 @@ const rewardSlice = createSlice({
     setReward: create.reducer<{ poolId: string; reward: BigNumber }>((state, { payload: { poolId, reward } }) => {
       state[poolId] = reward;
     }),
+    clearRewards: create.reducer(state => {
+      return initialState;
+    }),
   }),
 });
 
-export const { setReward } = rewardSlice.actions;
+export const { setReward, clearRewards } = rewardSlice.actions;
 
 export default rewardSlice.reducer;

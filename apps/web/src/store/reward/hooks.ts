@@ -20,9 +20,9 @@ import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { bnJs, getXChainType, useXAccount, useXLockedBnUSDAmount } from '@balancednetwork/xwagmi';
 
+import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
 import { AppState } from '..';
 import { setReward } from './reducer';
-import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
 
 export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);
@@ -113,21 +113,15 @@ export const useCurrentCollateralRatio = (): BigNumber => {
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const hasUnclaimedFees = useHasUnclaimedFees();
-  const bbalnAmount = useBBalnAmount();
-  const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    const checkIfHasNetworkFees = async () => {
-      if (account && bbalnAmount) {
-        if (bbalnAmount.isGreaterThan(0) || hasUnclaimedFees) setHasNetworkFees(true);
-        else setHasNetworkFees(false);
-      }
-    };
-
-    checkIfHasNetworkFees();
-  }, [account, transactions, hasUnclaimedFees, bbalnAmount]);
+    if (account && hasUnclaimedFees) {
+      setHasNetworkFees(true);
+    } else {
+      setHasNetworkFees(false);
+    }
+  }, [account, hasUnclaimedFees]);
 
   return hasNetworkFees;
 };

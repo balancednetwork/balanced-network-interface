@@ -613,6 +613,15 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
                 } else if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
                   updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
                 }
+
+                // Check for ICX potential position when handling sICX
+                if (symbol === 'sICX' && (xChainId === '0x1.icon' || xChainId === '0x2.icon')) {
+                  const icxAmount = xWallet[xChainId]?.[NULL_CONTRACT_ADDRESS];
+                  const icxValue = prices?.['ICX']?.times(icxAmount?.toFixed() || 0);
+                  if (icxAmount && icxValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                    updateAccumulator(acc, 'ICX', xChainId as XChainId, icxAmount, new BigNumber(0), true);
+                  }
+                }
               } else {
                 const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
                 if (xChainId === ICON_XCALL_NETWORK_ID && token) {
@@ -624,17 +633,16 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
 
                   if (depositAmount.greaterThan(0)) {
                     updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
-                  } else {
-                    //if there is no sICX position and user holds ICX, show it as potential position
-                    if (symbol === 'sICX') {
-                      const icxAmount = xWallet[xChainId]?.[NULL_CONTRACT_ADDRESS];
-                      const icxValue = prices?.['ICX'].times(icxAmount?.toFixed() || 0);
-                      if (icxAmount && icxValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
-                        updateAccumulator(acc, 'ICX', xChainId, icxAmount, new BigNumber(0), true);
-                      }
-                    }
-                    if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
-                      updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
+                  } else if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                    updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
+                  }
+
+                  // Check for ICX potential position when handling sICX
+                  if (symbol === 'sICX') {
+                    const icxAmount = xWallet[xChainId]?.[NULL_CONTRACT_ADDRESS];
+                    const icxValue = prices?.['ICX']?.times(icxAmount?.toFixed() || 0);
+                    if (icxAmount && icxValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                      updateAccumulator(acc, 'ICX', xChainId, icxAmount, new BigNumber(0), true);
                     }
                   }
                 }
@@ -655,7 +663,6 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
         })
         .filter((item): item is XPositionsRecord => Boolean(item));
     },
-    // enabled: allWallets?.length > 0 && !!prices,
     enabled: allWallets?.length > 0,
     placeholderData: keepPreviousData,
     refetchInterval: 4000,

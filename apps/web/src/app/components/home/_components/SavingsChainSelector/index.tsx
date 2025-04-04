@@ -74,21 +74,40 @@ const SavingsChainSelector = ({
   const feesRewards = useUnclaimedFees();
 
   const rows = useMemo(() => {
+    // If there are no signed in wallets, return empty rewards
+    if (signedWallets.length === 0) {
+      return xChains
+        .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
+        .map(({ xChainId }) => ({
+          xChainId,
+          name: xChainMap[xChainId].name,
+          lockedAmount: new BigNumber(0),
+          rewardAmount: new BigNumber(-1), // Use -1 to indicate no rewards state
+          bnUSDBalance: undefined,
+        }));
+    }
+
     return xChains
       .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
       .map(({ xChainId }) => {
+        const isWalletConnected = signedWallets.some(wallet => wallet.xChainId === xChainId);
         const lockedAmount = lockedAmounts?.[xChainId]
           ? calculateTotal([lockedAmounts?.[xChainId]], rates)
           : new BigNumber(0);
         let total = new BigNumber(0);
-        if (lpRewards) {
-          total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
-        }
-        if (savingsRewards) {
-          total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
-        }
-        if (xChainId === '0x1.icon' && feesRewards) {
-          total = total.plus(calculateTotal(Object.values(feesRewards), rates) || 0);
+
+        if (isWalletConnected) {
+          if (lpRewards) {
+            total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
+          }
+          if (savingsRewards) {
+            total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
+          }
+          if (xChainId === '0x1.icon' && feesRewards) {
+            total = total.plus(calculateTotal(Object.values(feesRewards), rates) || 0);
+          }
+        } else {
+          total = new BigNumber(-1); // Use -1 to indicate no rewards state
         }
 
         // if (no staked lp tokens and no locked amount and less than 0.01, set -1)
@@ -106,7 +125,17 @@ const SavingsChainSelector = ({
           bnUSDBalance,
         };
       });
-  }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates, isStaked, crossChainBalances]);
+  }, [
+    lockedAmounts,
+    lpRewards,
+    savingsRewards,
+    feesRewards,
+    rates,
+    isStaked,
+    crossChainBalances,
+    signedWallets.length,
+    signedWallets,
+  ]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

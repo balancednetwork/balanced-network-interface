@@ -167,7 +167,7 @@ export function CurrencySearch({
 
   const handleTabClick = useCallback((tab: AssetsTab) => {
     setAssetsTab(tab);
-    setFilterState([]);
+    setFilterState(prev => prev.filter(chainId => xChainFilterItems.includes(chainId)));
   }, []);
 
   const bridgeDirection = useBridgeDirection();
@@ -307,7 +307,8 @@ export function CurrencySearch({
   const shouldShowXChainFilter = useMemo(() => {
     if (
       currencySelectionType === CurrencySelectionType.TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.TRADE_OUT
+      currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
     ) {
       return assetsTab === AssetsTab.ALL || wallets.length > 1;
     }

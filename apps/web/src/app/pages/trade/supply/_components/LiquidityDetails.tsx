@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
@@ -42,7 +42,7 @@ export default function LiquidityDetails() {
   const rewards = useRewards();
 
   // prevent accordion expanded on mounted
-  const [isHided, setIsHided] = useState(true);
+  const [isHidden, setIsHidden] = useState(true);
 
   const poolBalances = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
 
@@ -51,6 +51,12 @@ export default function LiquidityDetails() {
       Number(pool.balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
       Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
   );
+
+  // Reset accordion state when userPools changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setIsHidden(true);
+  }, [userPools.length]);
 
   const hasLiquidity = !!userPools.length;
   const isLiquidityInfoLoading = userPools.length === 0;
@@ -118,7 +124,7 @@ export default function LiquidityDetails() {
             {poolBalances &&
               userPools.map((pool, index) => (
                 <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>
-                  <StyledAccordionButton onClick={() => setIsHided(false)}>
+                  <StyledAccordionButton onClick={() => setIsHidden(false)}>
                     <PoolRecord
                       poolId={pool.poolId}
                       pool={pool}
@@ -137,7 +143,7 @@ export default function LiquidityDetails() {
                       apy={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].balnApy : 0}
                     />
                   </StyledAccordionButton>
-                  <StyledAccordionPanel hidden={isHided}>
+                  <StyledAccordionPanel hidden={isHidden}>
                     <StyledBoxPanel bg="bg3">
                       <StakeLPPanel pool={pool} />
                       <WithdrawPanel pool={pool} />

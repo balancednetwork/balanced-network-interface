@@ -90,7 +90,9 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
 
     if (sortBy.key === 'name') {
       dataToSort.sort((a, b) => {
-        return a.baseToken.name!.toUpperCase() > b.baseToken.name!.toUpperCase() ? -1 * direction : 1 * direction;
+        const symbolA = a.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
+        const symbolB = b.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
+        return symbolA > symbolB ? -1 * direction : 1 * direction;
       });
     }
 
@@ -103,19 +105,17 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
         const aPositionPotential = getPositionValue(a, tab, prices[a.baseToken.symbol], true);
         const bPositionPotential = getPositionValue(b, tab, prices[b.baseToken.symbol], true);
 
-        if (aPosition?.isGreaterThan(0) && bPosition?.isGreaterThan(0)) {
+        // First compare actual positions
+        if (aPosition?.isGreaterThan(0) || bPosition?.isGreaterThan(0)) {
+          if (!aPosition?.isGreaterThan(0)) return 1 * direction;
+          if (!bPosition?.isGreaterThan(0)) return -1 * direction;
           return aPosition.isGreaterThan(bPosition) ? -1 * direction : 1 * direction;
         }
 
-        if (aPosition?.isGreaterThan(0)) {
-          return -1 * direction;
-        }
-
-        if (bPosition?.isGreaterThan(0)) {
-          return 1 * direction;
-        }
-
-        if (aPositionPotential?.isGreaterThan(0) && bPositionPotential?.isGreaterThan(0)) {
+        // If no actual positions, compare potential positions
+        if (aPositionPotential?.isGreaterThan(0) || bPositionPotential?.isGreaterThan(0)) {
+          if (!aPositionPotential?.isGreaterThan(0)) return 1 * direction;
+          if (!bPositionPotential?.isGreaterThan(0)) return -1 * direction;
           return aPositionPotential.isGreaterThan(bPositionPotential) ? -1 * direction : 1 * direction;
         }
 

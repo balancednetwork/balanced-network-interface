@@ -108,10 +108,19 @@ const ButtonAll = styled(Button)<{ $isActive: boolean }>`
     `}
 `;
 
+const InvertibleChainLogo = styled(Box)<{ $isInverted: boolean }>`
+  ${({ $isInverted }) =>
+    $isInverted &&
+    css`
+      filter: brightness(0) invert(1);
+    `}
+`;
+
+const INVERTED_LOGOS_XCHAIN_IDS: XChainId[] = ['0x1.icon'];
+
 const XChainFilter: React.FC<XChainFilterProps> = props => {
   const { filterItems, filterState, onChainClick } = props;
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const theme = useTheme();
 
   const handleToggle = () => {
     setIsOpen(prev => !prev);
@@ -130,7 +139,11 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
     }
 
     if (filterState.length === 1) {
-      return <ChainLogo chain={xChainMap[filterState[0]]} size="20px" />;
+      return (
+        <InvertibleChainLogo $isInverted={INVERTED_LOGOS_XCHAIN_IDS.includes(filterState[0])}>
+          <ChainLogo chain={xChainMap[filterState[0]]} size="20px" />
+        </InvertibleChainLogo>
+      );
     }
 
     return '...';

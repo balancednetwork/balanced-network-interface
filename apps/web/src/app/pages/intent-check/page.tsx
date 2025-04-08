@@ -164,7 +164,6 @@ export function IntentCheckPage() {
   };
 
   const handleCancel = async () => {
-    console.log('intentOrder', intentOrder);
     if (!intentOrder.id || !intentProvider) {
       setError('No order found to cancel or wallet not connected');
       return;

@@ -18,6 +18,7 @@ const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
+import { IntentCheckPage } from './pages/intent-check/page';
 import { TestPage } from './pages/test/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { SupplyPage } from './pages/trade/supply/page';
@@ -54,6 +55,7 @@ const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
   ['/trade', defineMessage({ message: 'Trade' })],
   ['/legacy-bridge', defineMessage({ message: 'Legacy bridge' })],
+  ['/intent-check', defineMessage({ message: 'Intent orders' })],
   ['/', defineMessage({ message: 'Home' })],
 ];
 
@@ -113,6 +115,8 @@ export default function RootRoutes() {
           <Route path="new-proposal" element={<ProposalNewPage />} />
           <Route path="proposal/:id" element={<ProposalDetailsPage />} />
         </Route>
+
+        <Route path="intent-check" element={<IntentCheckPage />} />
 
         {process.env.NODE_ENV === 'development' && <Route path="test" element={<TestPage />} />}
 

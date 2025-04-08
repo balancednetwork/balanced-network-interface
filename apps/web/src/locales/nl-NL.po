@@ -203,6 +203,10 @@ msgstr ""
 msgid "Wallet:"
 msgstr "Wallet:"
 
+#: src/app/Routes.tsx
+msgid "Intent orders"
+msgstr ""
+
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "h"
@@ -2254,6 +2258,10 @@ msgstr "m"
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
 msgstr "Gebruik op eigen risico. Projectmedewerkers zijn niet aansprakelijk voor verloren of gestolen fondsen."
+
+#: src/app/Routes.tsx
+#~ msgid "Intent Check"
+#~ msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "View and manage your collateral as ICX or sICX (Staked ICX)."

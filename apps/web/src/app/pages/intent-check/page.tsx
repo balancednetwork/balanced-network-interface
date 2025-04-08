@@ -13,6 +13,8 @@ import { ALLOWED_XCHAIN_IDS } from '@/lib/intent';
 import { intentService } from '@/lib/intent';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import { Result } from 'icon-intents-sdk';
+import { SwapOrder } from 'icon-intents-sdk';
 import React, { useState, useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
@@ -147,11 +149,13 @@ export function IntentCheckPage() {
       setError(null);
       setIntentOrder(null);
 
-      const intentResult = await intentService.getOrder(
-        txHash,
-        xChainMap[selectedChain].intentChainId!,
-        intentProvider,
-      );
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out after 10 seconds')), 10000);
+      });
+
+      const checkPromise = intentService.getOrder(txHash, xChainMap[selectedChain].intentChainId!, intentProvider);
+
+      const intentResult = (await Promise.race([checkPromise, timeoutPromise])) as Result<SwapOrder>;
 
       if (!intentResult.ok) {
         setError((intentResult.error as any)?.message || 'Failed to fetch intent order');
@@ -160,7 +164,8 @@ export function IntentCheckPage() {
 
       setIntentOrder(intentResult.value);
     } catch (e) {
-      setError('Failed to fetch intent order');
+      const errorMessage = e instanceof Error ? e.message : 'Failed to fetch intent order';
+      setError(errorMessage);
       console.error('Error fetching intent order:', e);
     } finally {
       setIsChecking(false);

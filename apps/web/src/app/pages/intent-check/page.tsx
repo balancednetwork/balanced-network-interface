@@ -3,6 +3,8 @@ import { ChainLogo } from '@/app/components/ChainLogo';
 import { StyledArrowDownIcon, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { BoxPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
@@ -248,7 +250,15 @@ export function IntentCheckPage() {
         </Box>
 
         <Box mb={5}>
-          <SearchInput value={txHash} onChange={handleTxHashChange} placeholder="Enter transaction hash..." />
+          <SearchWrap>
+            <SearchInput
+              value={txHash}
+              onChange={handleTxHashChange}
+              placeholder="Enter transaction hash..."
+              style={{ paddingRight: '35px' }}
+            />
+            <CancelSearchButton isActive={txHash.length > 0} onClick={() => setTxHash('')} />
+          </SearchWrap>
         </Box>
 
         <Flex justifyContent="space-between">

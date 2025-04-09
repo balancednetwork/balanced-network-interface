@@ -35,7 +35,7 @@ const ChainItemWrap = styled(Flex)`
   padding: 10px;
   cursor: pointer;
   &:hover {
-    background: ${({ theme }) => theme.colors.bg2};
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 

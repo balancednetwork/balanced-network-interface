@@ -140,7 +140,7 @@ export function IntentCheckPage() {
 
   const handleCheck = async () => {
     if (!txHash || !intentProvider) {
-      setError('Please enter a transaction hash and ensure your wallet is connected');
+      setError(`Connect your ${xChainMap[selectedChain].name} wallet, then enter and check your transaction hash.`);
       return;
     }
 

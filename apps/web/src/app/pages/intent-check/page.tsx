@@ -190,7 +190,7 @@ export function IntentCheckPage() {
         setStatus(TransactionStatus.Success);
         setIntentOrder(null);
       } else {
-        setError((result.error as any)?.message || 'Failed to cancel order');
+        setError('Failed to cancel the order');
         setStatus(TransactionStatus.None);
       }
     } catch (e) {

@@ -141,6 +141,11 @@ const FooterSubNav = styled(Flex)`
   `}
 `;
 
+const Divider = styled.span`
+  margin: 0 8px;
+  color: ${({ theme }) => theme.text1};
+`;
+
 const Footer = () => {
   return (
     <>
@@ -196,11 +201,11 @@ const Footer = () => {
             <AnimatedLink style={{ marginLeft: 0, display: 'inline-block' }} as="a" href={LINKS.disclamer}>
               Disclaimer
             </AnimatedLink>
-            {' | '}
+            <Divider>|</Divider>
             <AnimatedLink style={{ marginLeft: 0, display: 'inline-block' }} as="a" href={LINKS.privacyPolicy}>
               Privacy policy
             </AnimatedLink>
-            {' | '}
+            <Divider>|</Divider>
             <AnimatedLink style={{ marginLeft: 0, display: 'inline-block' }} as="a" href={LINKS.brand}>
               Brand
             </AnimatedLink>

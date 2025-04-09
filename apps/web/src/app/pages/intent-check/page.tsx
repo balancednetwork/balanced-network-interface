@@ -214,7 +214,7 @@ export function IntentCheckPage() {
     <Flex flexDirection="column" width="100%" alignItems="center" mt={4}>
       <BoxPanel bg="bg3" width="100%" maxWidth="600px" p={4}>
         <Typography variant="h2" mb={3}>
-          Intent Order
+          Intent check
         </Typography>
 
         <Box mb={4}>

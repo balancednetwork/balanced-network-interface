@@ -35,7 +35,7 @@ const ChainItemWrap = styled(Flex)`
   padding: 10px;
   cursor: pointer;
   &:hover {
-    background: ${({ theme }) => theme.colors.bg2};
+    color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -140,7 +140,7 @@ export function IntentCheckPage() {
 
   const handleCheck = async () => {
     if (!txHash || !intentProvider) {
-      setError('Please enter a transaction hash and ensure your wallet is connected');
+      setError(`Connect your ${xChainMap[selectedChain].name} wallet, then enter and check your transaction hash.`);
       return;
     }
 
@@ -190,12 +190,12 @@ export function IntentCheckPage() {
         setStatus(TransactionStatus.Success);
         setIntentOrder(null);
       } else {
-        setError((result.error as any)?.message || 'Failed to cancel order');
+        setError('Failed to cancel the order');
         setStatus(TransactionStatus.None);
       }
     } catch (e) {
       console.error('Error canceling order:', e);
-      setError('Failed to cancel order');
+      setError('Failed to cancel the order');
       setStatus(TransactionStatus.None);
     }
   };
@@ -214,12 +214,12 @@ export function IntentCheckPage() {
     <Flex flexDirection="column" width="100%" alignItems="center" mt={4}>
       <BoxPanel bg="bg3" width="100%" maxWidth="600px" p={4}>
         <Typography variant="h2" mb={3}>
-          Intent Order
+          Intent check
         </Typography>
 
         <Box mb={4}>
           <Flex alignItems="center">
-            <Typography>Check for an order on</Typography>
+            <Typography>Check an intent order on</Typography>
             <ChainSelectorWrapper>
               <ClickAwayListener onClickAway={() => setOpen(false)}>
                 <div>
@@ -270,10 +270,10 @@ export function IntentCheckPage() {
 
         <Flex justifyContent="space-between">
           <Button onClick={handleCheck} disabled={isChecking}>
-            {isChecking ? 'Checking...' : 'Check Order'}
+            {isChecking ? 'Checking...' : 'Check order'}
           </Button>
           <Button variant="alert" onClick={handleCancel} disabled={isCancelDisabled} warning={true}>
-            {status === TransactionStatus.Signing ? 'Canceling...' : 'Cancel Order'}
+            {status === TransactionStatus.Signing ? 'Canceling...' : 'Cancel order'}
           </Button>
         </Flex>
 
@@ -292,7 +292,7 @@ export function IntentCheckPage() {
         {intentOrder && (
           <ResultBox mt={4}>
             <DetailHeader>
-              <Typography variant="h3">Intent Order Details</Typography>
+              <Typography variant="h3">Intent order details</Typography>
               <MouseoverTooltip text={isCopied ? 'Copied!' : 'Copy details'} placement="top" noArrowAndBorder>
                 <CopyButton onClick={handleCopyDetails}>
                   <img src={CopyIcon} alt="Copy" width="20" height="20" />

@@ -195,7 +195,7 @@ export function IntentCheckPage() {
       }
     } catch (e) {
       console.error('Error canceling order:', e);
-      setError('Failed to cancel order');
+      setError('Failed to cancel the order');
       setStatus(TransactionStatus.None);
     }
   };

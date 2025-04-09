@@ -197,6 +197,10 @@ const Footer = () => {
               Disclaimer
             </AnimatedLink>
             {' | '}
+            <AnimatedLink style={{ marginLeft: 0, display: 'inline-block' }} as="a" href={LINKS.privacyPolicy}>
+              Privacy policy
+            </AnimatedLink>
+            {' | '}
             <AnimatedLink style={{ marginLeft: 0, display: 'inline-block' }} as="a" href={LINKS.brand}>
               Brand
             </AnimatedLink>

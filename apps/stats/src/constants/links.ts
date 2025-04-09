@@ -27,4 +27,5 @@ export const LINKS = {
   coingecko: 'https://www.coingecko.com/en/exchanges/balanced_network',
   coinmarketcap: 'https://coinmarketcap.com/exchanges/balanced/',
   github: 'https://github.com/balancednetwork/',
+  privacyPolicy: 'https://balanced.network/privacy/',
 };

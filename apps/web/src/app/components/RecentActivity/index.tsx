@@ -2,6 +2,7 @@ import { Typography } from '@/app/theme';
 import { useCombinedTransactions } from '@/hooks/useCombinedTransactions';
 import React from 'react';
 import styled from 'styled-components';
+import HistoryItem from './HistoryItem';
 
 const Wrap = styled.div`
   padding: 25px 0;
@@ -23,6 +24,8 @@ const ListItem = styled.li`
 const RecentActivity: React.FC = () => {
   const { transactions, isMMTransaction } = useCombinedTransactions();
 
+  console.log(transactions);
+
   return (
     <Wrap>
       <Typography variant="h2" px="25px">
@@ -34,7 +37,7 @@ const RecentActivity: React.FC = () => {
         <ul>
           {transactions.map(transaction => (
             <ListItem key={transaction.id}>
-              {isMMTransaction(transaction) ? 'MM Transaction' : 'X Transaction'} - {transaction.id.slice(0, 6)}...
+              <HistoryItem transaction={transaction} isMMTransaction={isMMTransaction} />
             </ListItem>
           ))}
         </ul>

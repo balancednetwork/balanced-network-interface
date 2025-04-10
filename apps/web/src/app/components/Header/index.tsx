@@ -13,13 +13,13 @@ import { Button, IconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
+import RecentActivityIcon from '@/assets/icons/activity.svg';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
-import { useCombinedTransactions } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -259,7 +259,7 @@ export default function Header(props: { title?: string; className?: string }) {
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
                 <div>
                   <IconButton ref={recentActivityButtonRef} onClick={toggleRecentActivityMenu}>
-                    <div className="bg-blue-500 w-8 h-8 rounded-full"></div>
+                    <RecentActivityIcon width="26" height="26" />
                   </IconButton>
 
                   <DropdownPopper

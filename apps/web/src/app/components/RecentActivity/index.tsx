@@ -19,6 +19,15 @@ const Wrap = styled.div`
 `;
 
 const ListItem = styled.li`
+  padding: 20px 0;
+  display: block;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.divider};
+  
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
 `;
 
 const RecentActivity: React.FC = () => {

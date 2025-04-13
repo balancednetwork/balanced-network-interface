@@ -101,6 +101,7 @@ export type Transaction = {
   status: TransactionStatus;
   timestamp: number;
 
+  input?: XTransactionInput;
   pendingMessage?: string;
   successMessage?: string;
   errorMessage?: string;

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { NotificationError, NotificationPending } from '@/app/components/Notification/TransactionNotification';
 import { getTrackerLink } from '@/utils';
 
+import { XTransactionInput, transactionActions } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { ICONTxEventLog, addTransaction } from './actions';
 import { TransactionDetails } from './reducer';
@@ -26,6 +27,7 @@ export function useTransactionAdder(): (
     pending?: string;
     redirectOnSuccess?: string;
     isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
+    input?: XTransactionInput;
   },
 ) => void {
   const { account } = useIconReact();
@@ -41,11 +43,13 @@ export function useTransactionAdder(): (
         pending,
         redirectOnSuccess,
         isTxSuccessfulBasedOnEvents,
+        input,
       }: {
         summary?: string;
         pending?: string;
         redirectOnSuccess?: string;
         isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
+        input?: XTransactionInput;
       } = {},
     ) => {
       if (!account) return;
@@ -68,6 +72,15 @@ export function useTransactionAdder(): (
       toast(<NotificationPending summary={pending || t`Processing transaction...`} />, {
         ...toastProps,
         toastId: hash,
+      });
+
+      transactionActions.add('0x1.icon', {
+        hash,
+        pendingMessage: pending || t`Processing transaction...`,
+        successMessage: summary,
+        errorMessage: t`Transaction failed`,
+        onSuccess: redirectOnSuccess ? () => window.open(redirectOnSuccess, '_blank') : undefined,
+        input,
       });
 
       dispatch(

@@ -41,7 +41,7 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { XTransactionType, getXChainType } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -226,6 +226,8 @@ const CollateralPanel = () => {
             {
               pending: t`Depositing collateral...`,
               summary: t`Deposited ${collateralDifference.dp(2).toFormat()} ICX as collateral.`,
+              //todo
+              input: undefined,
             },
           );
         } else {

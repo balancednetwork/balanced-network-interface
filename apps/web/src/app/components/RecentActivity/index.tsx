@@ -41,7 +41,9 @@ const RecentActivity: React.FC = () => {
         Recent Activity
       </Typography>
       {transactions.length === 0 ? (
-        <div>No activity to display.</div>
+        <Typography px="25px" mt="15px">
+          No activity to display.
+        </Typography>
       ) : (
         <ul>
           {transactions.map(transaction => (

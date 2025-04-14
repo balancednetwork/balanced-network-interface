@@ -1907,6 +1907,7 @@ msgid "Approve"
 msgstr "Phê duyệt"
 
 #: src/store/transactions/hooks.tsx
+#: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Đang xử lý giao dịch..."
 
@@ -2920,6 +2921,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Switch to"
+msgstr ""
+
+#: src/store/transactions/hooks.tsx
+msgid "Transaction failed"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx

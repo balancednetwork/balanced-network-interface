@@ -1,25 +1,25 @@
 import { MMTransaction, useMMTransactionStore } from '@/store/transactions/useMMTransactionStore';
-import { XTransaction, useTransactionStore, useXTransactionStore } from '@balancednetwork/xwagmi';
+import { Transaction, XTransaction, useTransactionStore, useXTransactionStore } from '@balancednetwork/xwagmi';
 import { useMemo } from 'react';
 
 const isMMTransaction = (transaction: MMTransaction | XTransaction): transaction is MMTransaction => {
   return !!(transaction as MMTransaction).orderId;
 };
 
-const getTransactionTimestamp = (transaction: MMTransaction | XTransaction): number => {
-  if (isMMTransaction(transaction)) {
-    // For MM transactions, we'll use the current timestamp as a fallback
-    return Date.now();
+const getTransactionTimestamp = (transaction: MMTransaction | XTransaction | Transaction): number => {
+  if ('createdAt' in transaction) {
+    return transaction.createdAt ?? 0;
   }
-  return transaction.createdAt ?? 0;
+  if ('timestamp' in transaction) {
+    return transaction.timestamp ?? 0;
+  }
+  return Date.now();
 };
 
 export const useCombinedTransactions = () => {
   const xTransactions = useXTransactionStore(state => state.getTransactions());
   const mmTransactions = useMMTransactionStore(state => Object.values(state.transactions));
   const txses = useTransactionStore(state => state.transactions);
-
-  console.log('txses', txses);
 
   const sortedTransactions = useMemo(
     () => [...xTransactions, ...mmTransactions].sort((a, b) => getTransactionTimestamp(b) - getTransactionTimestamp(a)),

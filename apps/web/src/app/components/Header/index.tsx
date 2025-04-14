@@ -20,6 +20,7 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
+import { useIsAnyTxPending } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -65,6 +66,19 @@ const RecentActivityButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
     ${({ theme }) => `background-color: ${theme.colors.bg5}`};
   }
 `;
+
+const SpinningIcon = styled(RecentActivityIcon)`
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-720deg);
+    }
+  }
+  animation: spin 2s ease-in-out infinite;
+`;
+
 export const StyledAddress = styled(Typography)`
   &:hover {
     color: #2fccdc;
@@ -149,7 +163,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
-
+  const isAnyTxPending = useIsAnyTxPending();
   const walletButtonRef = React.useRef<HTMLElement>(null);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -259,7 +273,11 @@ export default function Header(props: { title?: string; className?: string }) {
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
                 <div>
                   <IconButton ref={recentActivityButtonRef} onClick={toggleRecentActivityMenu}>
-                    <RecentActivityIcon width="26" height="26" />
+                    {isAnyTxPending ? (
+                      <SpinningIcon width="26" height="26" />
+                    ) : (
+                      <RecentActivityIcon width="26" height="26" />
+                    )}
                   </IconButton>
 
                   <DropdownPopper

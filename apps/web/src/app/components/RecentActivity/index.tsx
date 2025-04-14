@@ -33,8 +33,6 @@ const ListItem = styled.li`
 const RecentActivity: React.FC = () => {
   const { transactions, isMMTransaction } = useCombinedTransactions();
 
-  console.log(transactions);
-
   return (
     <Wrap>
       <Typography variant="h2" px="25px">

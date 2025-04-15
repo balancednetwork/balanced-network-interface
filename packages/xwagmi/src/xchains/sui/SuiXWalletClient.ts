@@ -24,17 +24,17 @@ const addressesMainnet = {
 
 const TokenModuleMap = {
   bnUSD: {
-    packageId: '0x64f781b9718f889c62f66ea934050de4b785f200ae8ac44e85efdd990150afe1',
+    packageId: '0x8da1235b26117a06aeef07d97ee0e55ab2641c553d029edd3d11d85feed626d4',
     name: 'balanced_dollar_crosschain',
     storage: '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
   },
   sICX: {
-    packageId: '0x5f759a134845f23cf898ae9eaaa9a39b38384a95f96e11ebaf656aafdc946322',
+    packageId: '0xa0dfa49c7714fc5c0f09b76a46ebdcda86d95f68be5633d296ce87c0692bbdf2',
     name: 'sicx_crosschain',
     storage: '0x7dbf97c738741bc26fa62b1eb8fc18e5d39f551337261d45b7d75c21186fada1',
   },
   BALN: {
-    packageId: '0x5f759a134845f23cf898ae9eaaa9a39b38384a95f96e11ebaf656aafdc946322',
+    packageId: '0xa0dfa49c7714fc5c0f09b76a46ebdcda86d95f68be5633d296ce87c0692bbdf2',
     name: 'balanced_token_crosschain',
     storage: '0x1c2bdf16b54bf2f51b4861e3b987ed8d50b5321e775682ab001e7cb0a27e57ca',
   },

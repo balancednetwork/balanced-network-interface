@@ -1855,7 +1855,6 @@ msgid "Approve"
 msgstr "Approve"
 
 #: src/store/transactions/hooks.tsx
-#: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Processing transaction..."
 
@@ -2862,8 +2861,8 @@ msgid "Switch to"
 msgstr "Switch to"
 
 #: src/store/transactions/hooks.tsx
-msgid "Transaction failed"
-msgstr "Transaction failed"
+#~ msgid "Transaction failed"
+#~ msgstr "Transaction failed"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1W"

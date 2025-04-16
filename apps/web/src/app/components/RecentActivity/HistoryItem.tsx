@@ -14,20 +14,20 @@ interface HistoryItemProps {
 
 const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction }) => {
   const renderContent = () => {
-    console.log('olol', transaction.createdAt);
     if (isMMTransaction(transaction)) {
       return <MMSwapTransaction transaction={transaction} />;
     }
 
     switch (transaction.type) {
       case XTransactionType.SWAP:
+      case XTransactionType.SWAP_ON_ICON:
         return <SwapTransaction transaction={transaction} />;
       case XTransactionType.BRIDGE:
         return <BridgeTransaction transaction={transaction} />;
       case XTransactionType.DEPOSIT:
         return <DepositTransaction transaction={transaction} />;
       default:
-        return <div>Unknown Transaction Type - ID: {transaction.id}</div>;
+        return <div>Unknown Transaction Type - {transaction.type}</div>;
     }
   };
 

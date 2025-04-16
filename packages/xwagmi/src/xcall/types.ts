@@ -94,7 +94,7 @@ export type XTransactionInput = {
   withdrawAmountB?: CurrencyAmount<XToken>;
 };
 
-export type Transaction = {
+export interface Transaction {
   id: string;
   hash: string;
   xChainId: XChainId;
@@ -102,6 +102,7 @@ export type Transaction = {
   timestamp: number;
 
   input?: XTransactionInput;
+  type?: XTransactionType;
   pendingMessage?: string;
   successMessage?: string;
   errorMessage?: string;
@@ -109,7 +110,8 @@ export type Transaction = {
   onSuccess?: () => void; // Callback on success
 
   rawEventLogs?: any[];
-};
+  createdAt?: number;
+}
 
 export type XCallMessageEvent = {
   eventType: XCallEventType;

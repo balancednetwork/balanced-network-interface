@@ -10,7 +10,9 @@ import { toast } from 'react-toastify';
 import { NotificationError, NotificationPending } from '@/app/components/Notification/TransactionNotification';
 import { getTrackerLink } from '@/utils';
 
-import { XTransactionInput, transactionActions } from '@balancednetwork/xwagmi';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { XTransactionInput, XTransactionStatus, XTransactionType, xTransactionActions } from '@balancednetwork/xwagmi';
+import { wICX } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { ICONTxEventLog, addTransaction } from './actions';
 import { TransactionDetails } from './reducer';
@@ -28,29 +30,17 @@ export function useTransactionAdder(): (
     redirectOnSuccess?: string;
     isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
     input?: XTransactionInput;
+    type?: XTransactionType;
   },
 ) => void {
   const { account } = useIconReact();
   const networkId = useIconNetworkId();
-
   const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(
     (
       response: TransactionResponse,
-      {
-        summary,
-        pending,
-        redirectOnSuccess,
-        isTxSuccessfulBasedOnEvents,
-        input,
-      }: {
-        summary?: string;
-        pending?: string;
-        redirectOnSuccess?: string;
-        isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
-        input?: XTransactionInput;
-      } = {},
+      { summary, pending, redirectOnSuccess, isTxSuccessfulBasedOnEvents, input, type } = {},
     ) => {
       if (!account) return;
       if (!networkId) return;
@@ -74,17 +64,29 @@ export function useTransactionAdder(): (
         toastId: hash,
       });
 
-      transactionActions.add('0x1.icon', {
-        hash,
-        pendingMessage: pending || t`Processing transaction...`,
-        successMessage: summary,
-        errorMessage: t`Transaction failed`,
-        onSuccess: redirectOnSuccess ? () => window.open(redirectOnSuccess, '_blank') : undefined,
-        input,
-      });
+      if (type && input) {
+        xTransactionActions.add({
+          id: hash,
+          type,
+          status: XTransactionStatus.pending,
+          secondaryMessageRequired: false,
+          sourceChainId: '0x1.icon' as XChainId,
+          finalDestinationChainId: '0x1.icon' as XChainId,
+          finalDestinationChainInitialBlockHeight: BigInt(0),
+          createdAt: Date.now(),
+          input,
+        });
+      }
 
       dispatch(
-        addTransaction({ hash, from: account, networkId, summary, redirectOnSuccess, isTxSuccessfulBasedOnEvents }),
+        addTransaction({
+          hash,
+          from: account,
+          networkId,
+          summary,
+          redirectOnSuccess,
+          isTxSuccessfulBasedOnEvents,
+        }),
       );
     },
     [dispatch, networkId, account],

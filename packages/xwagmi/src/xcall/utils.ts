@@ -8,6 +8,7 @@ import { xTokenMap } from '@/constants/xTokens';
 import { XChain, XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { xChains } from '../constants/xChains';
+import { XTransactionInput, XTransactionType } from './types';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -111,4 +112,26 @@ export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | nu
   const xChainIds = getSupportedXChainIdsForSwapToken(currency) || [];
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
+};
+
+export const getICONXTransactionInput = (
+  account: string,
+  type: XTransactionType,
+  inputAmount: CurrencyAmount<XToken>,
+  outputAmount?: CurrencyAmount<XToken>,
+): XTransactionInput => {
+  return {
+    direction: {
+      from: '0x1.icon',
+      to: '0x1.icon',
+    },
+    type,
+    account,
+    inputAmount: inputAmount,
+    outputAmount: outputAmount,
+    xCallFee: {
+      noRollback: 0n,
+      rollback: 0n,
+    },
+  };
 };

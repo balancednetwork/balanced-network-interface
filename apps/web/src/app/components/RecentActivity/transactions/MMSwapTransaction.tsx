@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
-import TransactionStatus from './TransactionStatus';
+import TransactionStatusDisplay from './TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
 enum CancelStatus {
@@ -80,7 +80,7 @@ const MMSwapTransaction: React.FC<MMSwapTransactionProps> = ({ transaction }) =>
           </Amount>
         </Details>
         <Meta>
-          <TransactionStatus status={transaction.status} />
+          <TransactionStatusDisplay status={transaction.status} />
           <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
         </Meta>
       </Container>

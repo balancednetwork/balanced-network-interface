@@ -3,7 +3,7 @@ import { XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
 import { motion } from 'framer-motion';
 import React from 'react';
 import BridgeTransaction from './transactions/BridgeTransaction';
-import DepositTransaction from './transactions/DepositTransaction';
+import CollateralTransaction from './transactions/DepositTransaction';
 import MMSwapTransaction from './transactions/MMSwapTransaction';
 import SwapTransaction from './transactions/SwapTransaction';
 
@@ -25,7 +25,10 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
       case XTransactionType.BRIDGE:
         return <BridgeTransaction transaction={transaction} />;
       case XTransactionType.DEPOSIT:
-        return <DepositTransaction transaction={transaction} />;
+      case XTransactionType.WITHDRAW:
+      case XTransactionType.DEPOSIT_ON_ICON:
+      case XTransactionType.WITHDRAW_ON_ICON:
+        return <CollateralTransaction transaction={transaction} />;
       default:
         return <div>Unknown Transaction Type - {transaction.type}</div>;
     }

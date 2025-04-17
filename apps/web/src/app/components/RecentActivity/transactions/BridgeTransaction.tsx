@@ -2,13 +2,14 @@ import { useOraclePrices } from '@/store/oracle/hooks';
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
-import { XTransaction, xChainMap } from '@balancednetwork/xwagmi';
-import React from 'react';
+import { XTransaction, XTransactionStatus, xChainMap } from '@balancednetwork/xwagmi';
+import React, { useMemo } from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
+import TransactionStatusDisplay from './TransactionStatusDisplay';
 import { ElapsedTime } from './_styledComponents';
-import { Amount, Meta, Status } from './_styledComponents';
-import { Container, Details, Title } from './_styledComponents';
+import { Amount, Meta, Title } from './_styledComponents';
+import { Container, Details } from './_styledComponents';
 
 interface BridgeTransactionProps {
   transaction: XTransaction;
@@ -39,7 +40,7 @@ const BridgeTransaction: React.FC<BridgeTransactionProps> = ({ transaction }) =>
         </Amount>
       </Details>
       <Meta>
-        <Status>Completed</Status>
+        <TransactionStatusDisplay status={transaction.status} />
         <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
       </Meta>
     </Container>

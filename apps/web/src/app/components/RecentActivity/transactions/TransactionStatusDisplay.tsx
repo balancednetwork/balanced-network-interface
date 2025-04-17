@@ -15,7 +15,7 @@ const SpinnerWrap = styled.div`
   top: -4px;
 `;
 
-const TransactionStatus: React.FC<TransactionStatusProps> = ({ status }) => {
+const TransactionStatusDisplay: React.FC<TransactionStatusProps> = ({ status }) => {
   const getStatusText = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
@@ -28,6 +28,7 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({ status }) => {
           </Flex>
         );
       case 'completed':
+      case 'success':
         return 'Completed';
       case 'failed':
         return 'Failed';
@@ -41,4 +42,4 @@ const TransactionStatus: React.FC<TransactionStatusProps> = ({ status }) => {
   return <Status>{getStatusText(status)}</Status>;
 };
 
-export default TransactionStatus;
+export default TransactionStatusDisplay;

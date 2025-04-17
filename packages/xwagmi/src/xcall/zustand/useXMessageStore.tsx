@@ -177,8 +177,14 @@ export const useXMessageStore = create<XMessageStore>()(
         const xTransaction = xTransactionActions.get(xMessage.xTransactionId);
         if (!xTransaction) return;
 
-        // Skip XMessage handling for SWAP_ON_ICON transactions
-        if (xTransaction.type === XTransactionType.SWAP_ON_ICON) {
+        // Skip XMessage handling for ICON transactions
+        if (
+          xTransaction.type === XTransactionType.SWAP_ON_ICON ||
+          xTransaction.type === XTransactionType.DEPOSIT_ON_ICON ||
+          xTransaction.type === XTransactionType.WITHDRAW_ON_ICON ||
+          xTransaction.type === XTransactionType.BORROW_ON_ICON ||
+          xTransaction.type === XTransactionType.REPAY_ON_ICON
+        ) {
           return;
         }
 

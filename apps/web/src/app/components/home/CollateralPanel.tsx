@@ -23,6 +23,7 @@ import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
 import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
+import { SUPPORTED_TOKENS_LIST, wICX } from '@/constants/tokens';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useICXUnstakingTime } from '@/store/application/hooks';
@@ -41,7 +42,8 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { XTransactionType, getXChainType } from '@balancednetwork/xwagmi';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XTransactionType, getICONXTransactionInput, getXChainType } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -214,6 +216,10 @@ const CollateralPanel = () => {
     const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
     const decimals: string = await cx.decimals();
 
+    if (!account) {
+      return;
+    }
+
     if (shouldDeposit) {
       try {
         if (isHandlingICX) {
@@ -226,8 +232,12 @@ const CollateralPanel = () => {
             {
               pending: t`Depositing collateral...`,
               summary: t`Deposited ${collateralDifference.dp(2).toFormat()} ICX as collateral.`,
-              //todo
-              input: undefined,
+              type: XTransactionType.DEPOSIT_ON_ICON,
+              input: getICONXTransactionInput(
+                account,
+                XTransactionType.DEPOSIT_ON_ICON,
+                CurrencyAmount.fromRawAmount(wICX[1], collateralDifference.times(10 ** 18).toFixed(0)),
+              ),
             },
           );
         } else {
@@ -245,6 +255,15 @@ const CollateralPanel = () => {
               summary: t`Deposited ${collateralDifference.toFixed(
                 collateralDecimalPlaces,
               )} ${collateralType} as collateral.`,
+              type: XTransactionType.DEPOSIT_ON_ICON,
+              input: getICONXTransactionInput(
+                account,
+                XTransactionType.DEPOSIT_ON_ICON,
+                CurrencyAmount.fromRawAmount(
+                  SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType)!,
+                  collateralDifference.times(10 ** Number(decimals)).toFixed(0),
+                ),
+              ),
             },
           );
         }
@@ -275,6 +294,12 @@ const CollateralPanel = () => {
               {
                 pending: t`Withdrawing collateral...`,
                 summary: t`${collateralDifference.dp(2).toFormat()} ICX is unstaking.`,
+                type: XTransactionType.WITHDRAW_ON_ICON,
+                input: getICONXTransactionInput(
+                  account,
+                  XTransactionType.WITHDRAW_ON_ICON,
+                  CurrencyAmount.fromRawAmount(wICX[1], collateralDifference.times(10 ** 18).toFixed(0)),
+                ),
               },
             );
           } else {
@@ -292,6 +317,15 @@ const CollateralPanel = () => {
                 summary: t`${collateralDifferenceInSICX
                   .dp(collateralDecimalPlaces)
                   .toFormat()} ${formatSymbol(collateralType)} added to your wallet.`,
+                type: XTransactionType.WITHDRAW_ON_ICON,
+                input: getICONXTransactionInput(
+                  account,
+                  XTransactionType.WITHDRAW_ON_ICON,
+                  CurrencyAmount.fromRawAmount(
+                    SUPPORTED_TOKENS_LIST.find(token => token.symbol === 'sICX')!,
+                    collateralDifference.times(10 ** 18).toFixed(0),
+                  ),
+                ),
               },
             );
           }
@@ -310,6 +344,15 @@ const CollateralPanel = () => {
               summary: t`${collateralDifference
                 .dp(collateralDecimalPlaces)
                 .toFormat()} ${formatSymbol(collateralType)} added to your wallet.`,
+              type: XTransactionType.WITHDRAW_ON_ICON,
+              input: getICONXTransactionInput(
+                account,
+                XTransactionType.WITHDRAW_ON_ICON,
+                CurrencyAmount.fromRawAmount(
+                  SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType)!,
+                  collateralDifference.times(10 ** Number(decimals)).toFixed(0),
+                ),
+              ),
             },
           );
         }

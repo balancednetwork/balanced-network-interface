@@ -31,9 +31,15 @@ export default function Updater(): null {
 
   const transactions = useAllTransactions();
   const xTransactions = useXTransactionStore(state =>
-    Object.values(state.transactions).filter(tx => tx.type === XTransactionType.SWAP_ON_ICON),
+    Object.values(state.transactions).filter(
+      tx =>
+        tx.type === XTransactionType.SWAP_ON_ICON ||
+        tx.type === XTransactionType.DEPOSIT_ON_ICON ||
+        tx.type === XTransactionType.WITHDRAW_ON_ICON ||
+        tx.type === XTransactionType.BORROW_ON_ICON ||
+        tx.type === XTransactionType.REPAY_ON_ICON,
+    ),
   );
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!networkId || !iconService) return;

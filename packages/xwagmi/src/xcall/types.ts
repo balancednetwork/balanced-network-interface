@@ -37,9 +37,13 @@ export enum XTransactionType {
 
   // lend & borrow
   DEPOSIT = 'deposit',
+  DEPOSIT_ON_ICON = 'deposit_on_icon',
   WITHDRAW = 'withdraw',
+  WITHDRAW_ON_ICON = 'withdraw_on_icon',
   BORROW = 'borrow',
+  BORROW_ON_ICON = 'borrow_on_icon',
   REPAY = 'repay',
+  REPAY_ON_ICON = 'repay_on_icon',
 
   //liquidity
   LP_DEPOSIT_XTOKEN = 'lp_deposit_xtoken',

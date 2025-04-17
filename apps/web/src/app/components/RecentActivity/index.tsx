@@ -14,7 +14,7 @@ const Wrap = styled.div`
     overflow-y: auto;
     list-style: none;
     padding: 0 25px;
-    margin-bottom: 0;
+    margin: 0;
   }
 `;
 

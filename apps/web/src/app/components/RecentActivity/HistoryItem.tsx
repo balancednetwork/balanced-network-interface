@@ -3,7 +3,7 @@ import { XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
 import { motion } from 'framer-motion';
 import React from 'react';
 import BridgeTransaction from './transactions/BridgeTransaction';
-import CollateralTransaction from './transactions/DepositTransaction';
+import CollateralTransaction from './transactions/CollateralTransaction';
 import MMSwapTransaction from './transactions/MMSwapTransaction';
 import SwapTransaction from './transactions/SwapTransaction';
 

@@ -2,29 +2,24 @@ import { useOraclePrices } from '@/store/oracle/hooks';
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { Transaction, XTransaction } from '@balancednetwork/xwagmi';
-import React, { useMemo } from 'react';
+import { XTransaction } from '@balancednetwork/xwagmi';
+import React from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
 import TransactionStatusDisplay from './TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
 interface SwapTransactionProps {
-  transaction: XTransaction | Transaction;
+  transaction: XTransaction;
 }
 
 const SwapTransaction: React.FC<SwapTransactionProps> = ({ transaction }) => {
   const theme = useTheme();
-
-  // Add null checks for input and its properties
   const input = transaction?.input;
   const inputXToken = input?.inputAmount?.currency;
   const outputXToken = input?.outputAmount?.currency;
-
   const prices = useOraclePrices();
   // const primaryMessage = xMessageActions.getOf(transaction.id, true);
-
   const elapsedTime = useElapsedTime(transaction?.createdAt);
 
   // Guard against missing data

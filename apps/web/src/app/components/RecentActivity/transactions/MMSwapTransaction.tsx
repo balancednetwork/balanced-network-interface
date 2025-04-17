@@ -5,7 +5,6 @@ import { MMTransaction, MMTransactionActions, MMTransactionStatus } from '@/stor
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { XTransaction, xMessageActions } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import React, { useState } from 'react';
 import { Flex } from 'rebass';

@@ -2,7 +2,7 @@ import { useOraclePrices } from '@/store/oracle/hooks';
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { Transaction, XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
 import React from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
@@ -10,7 +10,7 @@ import TransactionStatusDisplay from './TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
 interface CollateralTransactionProps {
-  transaction: XTransaction | Transaction;
+  transaction: XTransaction;
 }
 
 const CollateralTransaction: React.FC<CollateralTransactionProps> = ({ transaction }) => {

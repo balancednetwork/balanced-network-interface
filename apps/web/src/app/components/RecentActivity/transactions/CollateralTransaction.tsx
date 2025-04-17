@@ -36,12 +36,13 @@ const CollateralTransaction: React.FC<CollateralTransactionProps> = ({ transacti
       />
       <Details>
         <Title>
-          {isDeposit ? 'Deposit' : 'Withdraw'} {formatSymbol(inputXToken.symbol)} collateral
+          {isDeposit ? 'Deposit' : inputXToken.symbol === 'wICX' ? 'Unstake' : 'Withdraw'}{' '}
+          {formatSymbol(inputXToken.symbol)} collateral
         </Title>
         <Amount>
           {inputAmount &&
             formatBalance(
-              inputAmount.multiply(isDeposit ? 1 : -1).toExact(),
+              inputAmount.multiply(inputAmount.lessThan(0) ? -1 : 1).toExact(),
               prices?.[inputXToken.symbol]?.toFixed() || 1,
             )}{' '}
           {formatSymbol(inputXToken.symbol)}

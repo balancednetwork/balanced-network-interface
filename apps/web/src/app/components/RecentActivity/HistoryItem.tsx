@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import React from 'react';
 import BridgeTransaction from './transactions/BridgeTransaction';
 import CollateralTransaction from './transactions/CollateralTransaction';
+import LoanTransaction from './transactions/LoanTransaction';
 import MMSwapTransaction from './transactions/MMSwapTransaction';
 import SwapTransaction from './transactions/SwapTransaction';
 
@@ -29,6 +30,11 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
       case XTransactionType.DEPOSIT_ON_ICON:
       case XTransactionType.WITHDRAW_ON_ICON:
         return <CollateralTransaction transaction={transaction} />;
+      case XTransactionType.BORROW:
+      case XTransactionType.REPAY:
+      case XTransactionType.BORROW_ON_ICON:
+      case XTransactionType.REPAY_ON_ICON:
+        return <LoanTransaction transaction={transaction} />;
       default:
         return <div>Unknown Transaction Type - {transaction.type}</div>;
     }

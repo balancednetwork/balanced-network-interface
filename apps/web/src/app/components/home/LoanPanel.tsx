@@ -30,13 +30,15 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { XTransactionType, bnJs, getICONXTransactionInput } from '@balancednetwork/xwagmi';
 
 import ModalContent from '@/app/components/ModalContent';
+import { bnUSD } from '@/constants/tokens';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
 import { useWrongSymbol } from '@/utils/formatter';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
@@ -152,6 +154,12 @@ const LoanPanel = () => {
             {
               pending: t`Borrowing bnUSD...`,
               summary: t`Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+              type: XTransactionType.BORROW_ON_ICON,
+              input: getICONXTransactionInput(
+                iconAccount,
+                XTransactionType.BORROW_ON_ICON,
+                CurrencyAmount.fromRawAmount(bnUSD[1], differenceAmount.times(10 ** 18).toFixed(0)),
+              ),
             },
           );
           // close modal
@@ -184,6 +192,12 @@ const LoanPanel = () => {
             {
               pending: t`Repaying bnUSD...`,
               summary: t`Repaid ${repayAmount.dp(2).toFormat()} bnUSD.`,
+              type: XTransactionType.REPAY_ON_ICON,
+              input: getICONXTransactionInput(
+                iconAccount,
+                XTransactionType.REPAY_ON_ICON,
+                CurrencyAmount.fromRawAmount(bnUSD[1], repayAmount.times(10 ** 18).toFixed(0)),
+              ),
             },
           );
           // close modal

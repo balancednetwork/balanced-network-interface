@@ -6,6 +6,7 @@ import { XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
 import React from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
+import PoolLogoWithNetwork from '../../PoolLogoWithNetwork';
 import TransactionStatusDisplay from './TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
@@ -14,53 +15,36 @@ interface LPTransactionProps {
 }
 
 const LPTransaction: React.FC<LPTransactionProps> = ({ transaction }) => {
-  const theme = useTheme();
   const input = transaction?.input;
-  const inputXToken = input?.inputAmount?.currency;
   const prices = useOraclePrices();
   // const primaryMessage = xMessageActions.getOf(transaction.id, true);
   const elapsedTime = useElapsedTime(transaction?.createdAt);
 
   const isWithdraw = transaction.type === XTransactionType.LP_REMOVE_LIQUIDITY;
 
-  const withdrawAmountA = input?.withdrawAmountA;
-  const withdrawAmountB = input?.withdrawAmountB;
-
-  const addAmountA = input?.inputAmount;
-  const addAmountB = input?.outputAmount;
+  const tokenAmountA = isWithdraw ? input?.withdrawAmountA : input?.inputAmount;
+  const tokenAmountB = isWithdraw ? input?.withdrawAmountB : input?.outputAmount;
 
   return (
     <Container>
-      <CurrencyLogoWithNetwork
-        currency={inputXToken}
-        chainId={inputXToken.xChainId}
-        bgColor={theme.colors.bg2}
-        size="26px"
-      />
+      {tokenAmountA && tokenAmountB ? (
+        <PoolLogoWithNetwork
+          compactVersion={true}
+          chainId={transaction.sourceChainId}
+          baseCurrency={tokenAmountA.currency}
+          quoteCurrency={tokenAmountB.currency}
+        />
+      ) : null}
       <Details>
-        {isWithdraw ? (
-          <Title>{`Withdraw ${formatSymbol(withdrawAmountA?.currency.symbol)} / ${formatSymbol(withdrawAmountB?.currency.symbol)}`}</Title>
-        ) : (
-          <Title>{`Supply ${formatSymbol(addAmountA?.currency.symbol)} / ${formatSymbol(addAmountB?.currency.symbol)}`}</Title>
-        )}
+        <Title>{`${isWithdraw ? 'Withdraw' : 'Supply'} ${formatSymbol(tokenAmountA?.currency.symbol)} / ${formatSymbol(tokenAmountB?.currency.symbol)}`}</Title>
 
-        {isWithdraw ? (
-          <Amount>
-            {formatBalance(withdrawAmountA?.toExact(), prices?.[withdrawAmountA?.currency.symbol]?.toFixed() || 1)}{' '}
-            {withdrawAmountA?.currency.symbol}
-            {' / '}
-            {formatBalance(withdrawAmountB?.toExact(), prices?.[withdrawAmountB?.currency.symbol]?.toFixed() || 1)}{' '}
-            {withdrawAmountB?.currency.symbol}
-          </Amount>
-        ) : (
-          <Amount>
-            {formatBalance(addAmountA?.toExact(), prices?.[addAmountA?.currency.symbol]?.toFixed() || 1)}{' '}
-            {addAmountA?.currency.symbol}
-            {' / '}
-            {formatBalance(addAmountB?.toExact(), prices?.[addAmountB?.currency.symbol]?.toFixed() || 1)}{' '}
-            {addAmountB?.currency.symbol}
-          </Amount>
-        )}
+        <Amount>
+          {formatBalance(tokenAmountA?.toExact(), prices?.[tokenAmountA?.currency.symbol]?.toFixed() || 1)}{' '}
+          {formatSymbol(tokenAmountA?.currency.symbol)}
+          {' / '}
+          {formatBalance(tokenAmountB?.toExact(), prices?.[tokenAmountB?.currency.symbol]?.toFixed() || 1)}{' '}
+          {formatSymbol(tokenAmountB?.currency.symbol)}
+        </Amount>
       </Details>
       <Meta>
         <TransactionStatusDisplay status={transaction.status} />

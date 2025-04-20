@@ -9,6 +9,10 @@ import LPStakeTransaction from './transactions/LPStakeTransaction';
 import LPTransaction from './transactions/LPTransaction';
 import LoanTransaction from './transactions/LoanTransaction';
 import MMSwapTransaction from './transactions/MMSwapTransaction';
+import RewardsFeesTransaction from './transactions/RewardsFeesTransaction';
+import RewardsLPTransaction from './transactions/RewardsLPTransaction';
+import RewardsSavingsTransaction from './transactions/RewardsSavingsTransaction';
+import SavingsTransaction from './transactions/SavingsTransaction';
 import SwapTransaction from './transactions/SwapTransaction';
 
 interface HistoryItemProps {
@@ -56,6 +60,19 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
       case XTransactionType.LP_UNSTAKE:
       case XTransactionType.LP_STAKE:
         return <LPStakeTransaction transaction={transaction} />;
+
+      //Savings
+      case XTransactionType.SAVINGS_LOCK_BNUSD:
+      case XTransactionType.SAVINGS_UNLOCK_BNUSD:
+        return <SavingsTransaction transaction={transaction} />;
+
+      //Rewards
+      case XTransactionType.LP_CLAIM_REWARDS:
+        return <RewardsLPTransaction transaction={transaction} />;
+      case XTransactionType.SAVINGS_CLAIM_REWARDS:
+        return <RewardsSavingsTransaction transaction={transaction} />;
+      case XTransactionType.CLAIM_NETWORK_FEES:
+        return <RewardsFeesTransaction transaction={transaction} />;
 
       default:
         return <div>Unknown Transaction Type - {transaction.type}</div>;

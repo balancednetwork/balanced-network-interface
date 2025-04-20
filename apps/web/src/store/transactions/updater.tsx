@@ -37,7 +37,8 @@ export default function Updater(): null {
         tx.type === XTransactionType.DEPOSIT_ON_ICON ||
         tx.type === XTransactionType.WITHDRAW_ON_ICON ||
         tx.type === XTransactionType.BORROW_ON_ICON ||
-        tx.type === XTransactionType.REPAY_ON_ICON,
+        tx.type === XTransactionType.REPAY_ON_ICON ||
+        tx.type === XTransactionType.CLAIM_NETWORK_FEES,
     ),
   );
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

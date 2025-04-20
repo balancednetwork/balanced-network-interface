@@ -58,6 +58,9 @@ export enum XTransactionType {
   SAVINGS_LOCK_BNUSD = 'savings_lock_bnusd',
   SAVINGS_UNLOCK_BNUSD = 'savings_unlock_bnusd',
   SAVINGS_CLAIM_REWARDS = 'savings_claim_rewards',
+
+  // network fees
+  CLAIM_NETWORK_FEES = 'claim_network_fees',
 }
 
 export enum XMessageStatus {

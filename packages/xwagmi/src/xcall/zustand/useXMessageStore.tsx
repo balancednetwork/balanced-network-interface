@@ -183,7 +183,8 @@ export const useXMessageStore = create<XMessageStore>()(
           xTransaction.type === XTransactionType.DEPOSIT_ON_ICON ||
           xTransaction.type === XTransactionType.WITHDRAW_ON_ICON ||
           xTransaction.type === XTransactionType.BORROW_ON_ICON ||
-          xTransaction.type === XTransactionType.REPAY_ON_ICON
+          xTransaction.type === XTransactionType.REPAY_ON_ICON ||
+          xTransaction.type === XTransactionType.CLAIM_NETWORK_FEES
         ) {
           return;
         }

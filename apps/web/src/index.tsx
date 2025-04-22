@@ -10,6 +10,7 @@ import { App } from '@/app';
 import store from '@/store';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
+import { PlausibleProvider } from './providers/PlausibleProvider';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
@@ -41,7 +42,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <QueryClientProvider client={queryClient}>
             <XWagmiProviders>
               <LanguageProvider>
-                <App />
+                <PlausibleProvider domain="app.balanced.network">
+                  <App />
+                </PlausibleProvider>
               </LanguageProvider>
             </XWagmiProviders>
           </QueryClientProvider>

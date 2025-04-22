@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
@@ -68,6 +69,7 @@ const MMSwapModal = ({
   recipient,
 }: MMSwapModalProps) => {
   const modalOpen = useModalOpen(modalId);
+  const { track } = useAnalytics();
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
@@ -197,6 +199,11 @@ const MMSwapModal = ({
       );
 
       console.log('intent debug 3', executionResult);
+
+      track('swap_intent', {
+        from: xChainMap[direction.from].name,
+        to: xChainMap[direction.to].name,
+      });
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);

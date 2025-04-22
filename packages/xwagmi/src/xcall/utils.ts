@@ -8,7 +8,7 @@ import { xTokenMap } from '@/constants/xTokens';
 import { XChain, XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { xChains } from '../constants/xChains';
-import { XTransactionInput, XTransactionType } from './types';
+import { XTransaction, XTransactionInput, XTransactionType } from './types';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -134,4 +134,12 @@ export const getICONXTransactionInput = (
       rollback: 0n,
     },
   };
+};
+
+export const getTxTrackerLink = (hash?: string, xChainId?: XChainId): string | undefined => {
+  if (hash && xChainId) {
+    return `${xChains.find(x => x.xChainId === xChainId)?.tracker.tx}/${hash}`;
+  }
+
+  return undefined;
 };

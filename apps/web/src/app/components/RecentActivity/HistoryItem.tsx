@@ -1,5 +1,5 @@
 import { MMTransaction } from '@/store/transactions/useMMTransactionStore';
-import { XTransaction, XTransactionType } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionType, getTxTrackerLink } from '@balancednetwork/xwagmi';
 import { motion } from 'framer-motion';
 import React from 'react';
 import BridgeTransaction from './transactions/BridgeTransaction';
@@ -21,6 +21,18 @@ interface HistoryItemProps {
 }
 
 const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction }) => {
+  const hash = transaction.id.split('/')[1] || transaction.id;
+  const xChainId = isMMTransaction(transaction) ? transaction.fromAmount.currency.xChainId : transaction.sourceChainId;
+  const trackerLink = getTxTrackerLink(hash, xChainId);
+
+  const handleClick = () => {
+    if (trackerLink) {
+      window.open(trackerLink, '_blank');
+    }
+  };
+
+  // console.log('kkk', trackerLink);
+
   const renderContent = () => {
     if (isMMTransaction(transaction)) {
       return <MMSwapTransaction transaction={transaction} />;
@@ -85,6 +97,8 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
       animate={{ opacity: 1, y: 0, height: 'auto' }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       key={transaction.id}
+      onClick={handleClick}
+      style={{ cursor: trackerLink ? 'pointer' : 'default' }}
     >
       {renderContent()}
     </motion.div>

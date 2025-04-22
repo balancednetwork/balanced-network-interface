@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from '@/app/components/Layout';
+import { PageViewTracker } from '@/app/components/PageViewTracker';
 
 import { lazyLoad } from '@/utils/loadable';
 
@@ -90,6 +91,7 @@ export default function RootRoutes() {
         path="*"
         element={
           <>
+            <PageViewTracker />
             <DefaultLayout title={title?.id}>
               <Helmet>
                 <title>{title?.message}</title>

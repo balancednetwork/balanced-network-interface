@@ -135,8 +135,8 @@ const XLoanModal = ({
     setCurrentId(xTransactionId || null);
 
     track(storedModalValues.action === XLoanAction.BORROW ? 'borrow' : 'repay', {
-      chain: sourceChain,
-      amount: `${_inputAmount?.toFixed(2)} ${_inputAmount?.currency.symbol}`,
+      from: xChainMap[sourceChain].name,
+      to: xChainMap[loanNetwork].name,
     });
   };
 

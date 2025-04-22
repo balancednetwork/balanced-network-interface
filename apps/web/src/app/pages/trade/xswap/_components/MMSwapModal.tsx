@@ -203,8 +203,6 @@ const MMSwapModal = ({
       track('swap_intent', {
         from: xChainMap[direction.from].name,
         to: xChainMap[direction.to].name,
-        input: `${trade.inputAmount.toFixed()} ${currencies[Field.INPUT]?.symbol}`,
-        output: `${trade.outputAmount.toFixed()} ${currencies[Field.OUTPUT]?.symbol}`,
       });
 
       if (executionResult.ok) {

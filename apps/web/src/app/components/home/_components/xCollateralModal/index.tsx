@@ -125,8 +125,7 @@ const XCollateralModal = ({
     setCurrentId(xTransactionId || null);
 
     track(storedModalValues.action === XCollateralAction.DEPOSIT ? 'collateral_deposit' : 'collateral_withdrawal', {
-      chain: sourceChain,
-      amount: `${_inputAmount?.toFixed(6)} ${_inputAmount?.currency.symbol}`,
+      from: xChainMap[sourceChain].name,
     });
   };
 

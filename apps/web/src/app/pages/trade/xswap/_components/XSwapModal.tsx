@@ -139,8 +139,6 @@ const XSwapModal = ({
     track('swap_standard', {
       from: xChainMap[direction.from].name,
       to: xChainMap[direction.to].name,
-      input: `${_inputAmount.toFixed()} ${currencies[Field.INPUT]?.symbol}`,
-      output: `${executionTrade.outputAmount.toFixed()} ${currencies[Field.OUTPUT]?.symbol}`,
     });
   };
 

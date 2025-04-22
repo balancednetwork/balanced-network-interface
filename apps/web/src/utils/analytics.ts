@@ -3,19 +3,23 @@ import Plausible from 'plausible-tracker';
 // Common event names
 export const AnalyticsEvents = {
   // Swap events
-  SWAP_INITIATED: 'swap_initiated',
-  SWAP_COMPLETED: 'swap_completed',
-  SWAP_FAILED: 'swap_failed',
+  SWAP: 'swap_standard',
+  SWAP_INTENT: 'swap_intent',
+  SWAP_FAILED: 'swap_standard_failed',
+  SWAP_INTENT_FAILED: 'swap_intent_failed',
 
-  // Button clicks
-  BUTTON_CLICK: 'button_click',
+  //Bridge events
+  BRIDGE_INITIATED: 'bridge',
+  BRIDGE_FAILED: 'bridge_failed',
 
-  // Navigation
-  PAGE_VIEW: 'page_view',
+  //Loan events
+  BORROW: 'borrow',
+  REPAY: 'repay',
+  COLLATERAL_DEPOSIT: 'collateral_deposit',
+  COLLATERAL_WITHDRAWAL: 'collateral_withdrawal',
 
-  // Wallet events
+  //Wallet events
   WALLET_CONNECTED: 'wallet_connected',
-  WALLET_DISCONNECTED: 'wallet_disconnected',
 
   // Other events
   ERROR_OCCURRED: 'error_occurred',

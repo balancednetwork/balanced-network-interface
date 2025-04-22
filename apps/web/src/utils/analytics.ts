@@ -17,6 +17,5 @@ export type PlausibleInstance = ReturnType<typeof Plausible>;
 export const createPlausibleInstance = (domain: string) => {
   return Plausible({
     domain,
-    apiHost: 'https://plausible.io',
   });
 };

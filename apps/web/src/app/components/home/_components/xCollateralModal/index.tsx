@@ -10,6 +10,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -50,7 +51,7 @@ const XCollateralModal = ({
   storedModalValues,
 }: XCollateralModalProps) => {
   const modalOpen = useModalOpen(modalId);
-
+  const { track } = useAnalytics();
   const { collateralType } = useDerivedCollateralInfo();
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -122,6 +123,11 @@ const XCollateralModal = ({
     const xTransactionId = await sendXTransaction(xTransactionInput);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
+
+    track(storedModalValues.action === XCollateralAction.DEPOSIT ? 'collateral_deposit' : 'collateral_withdrawal', {
+      chain: sourceChain,
+      amount: `${_inputAmount?.toFixed(6)} ${_inputAmount?.currency.symbol}`,
+    });
   };
 
   const gasChecker = useXCallGasChecker(

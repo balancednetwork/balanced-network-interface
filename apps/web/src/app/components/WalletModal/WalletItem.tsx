@@ -5,6 +5,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@balancednetwork/xwagmi';
 import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@balancednetwork/xwagmi';
@@ -53,6 +54,7 @@ export const handleConnectWallet = (
 
 const WalletItem = ({ name, xChainType, logo, description, border, xChains, switchChain }: WalletItemProps) => {
   const { address } = useXAccount(xChainType);
+  const { track } = useAnalytics();
 
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
@@ -64,6 +66,9 @@ const WalletItem = ({ name, xChainType, logo, description, border, xChains, swit
 
   const handleConnect = () => {
     handleConnectWallet(xChainType, xConnectors, xConnect);
+    track('wallet_connected', {
+      network: name,
+    });
   };
   const handleDisconnect = () => {
     xDisconnect(xChainType);

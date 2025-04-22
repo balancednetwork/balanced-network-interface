@@ -136,7 +136,7 @@ const XLoanModal = ({
 
     track(storedModalValues.action === XLoanAction.BORROW ? 'borrow' : 'repay', {
       chain: sourceChain,
-      amount: `${_inputAmount?.toFixed(6)} ${_inputAmount?.currency.symbol}`,
+      amount: `${_inputAmount?.toFixed(2)} ${_inputAmount?.currency.symbol}`,
     });
   };
 

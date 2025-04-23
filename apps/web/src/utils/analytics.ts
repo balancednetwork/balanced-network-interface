@@ -18,7 +18,7 @@ export type PlausibleInstance = ReturnType<typeof Plausible>;
 export const createPlausibleInstance = (domain: string) => {
   return Plausible({
     domain,
-    apiHost: '/api/event',
+    apiHost: '', // Use relative path, the script will handle the full URL
     trackLocalhost: true,
   });
 };

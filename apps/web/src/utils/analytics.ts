@@ -1,6 +1,7 @@
 import Plausible from 'plausible-tracker';
 
 export type AnalyticsEventName =
+  | 'testevent'
   | 'swap_standard'
   | 'swap_intent'
   | 'bridge'

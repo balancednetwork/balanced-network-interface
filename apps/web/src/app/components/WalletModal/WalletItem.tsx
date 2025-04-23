@@ -66,6 +66,7 @@ const WalletItem = ({ name, xChainType, logo, description, border, xChains, swit
 
   const handleConnect = () => {
     handleConnectWallet(xChainType, xConnectors, xConnect);
+    track('testevent');
     track('wallet_connected', {
       from: name,
     });

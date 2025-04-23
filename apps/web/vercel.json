@@ -26,7 +26,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type"
+          "value": "Content-Type,User-Agent,X-Forwarded-For"
         }
       ]
     }
@@ -34,11 +34,25 @@
   "rewrites": [
     {
       "source": "/js/script.pageview-props.tagged-events.js",
-      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
+      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept",
+          "value": ".*javascript.*"
+        }
+      ]
     },
     {
       "source": "/api/event",
-      "destination": "https://plausible.io/api/event"
+      "destination": "https://plausible.io/api/event",
+      "has": [
+        {
+          "type": "header",
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

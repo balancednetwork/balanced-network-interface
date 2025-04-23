@@ -42,7 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <QueryClientProvider client={queryClient}>
             <XWagmiProviders>
               <LanguageProvider>
-                <PlausibleProvider domain="app.balanced.network,rollup.balanced.overview">
+                <PlausibleProvider domain="app.balanced.network">
                   <App />
                 </PlausibleProvider>
               </LanguageProvider>

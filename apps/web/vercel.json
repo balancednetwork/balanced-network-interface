@@ -2,7 +2,6 @@
   "headers": [
     {
       "source": "/(.*)",
-
       "headers": [
         {
           "key": "X-Content-Type-Options",
@@ -13,7 +12,34 @@
           "value": "1; mode=block"
         }
       ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type,User-Agent,X-Forwarded-For"
+        }
+      ]
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/js/script.pageview-props.tagged-events.js",
+      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://plausible.io/api/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

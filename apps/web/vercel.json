@@ -2,7 +2,6 @@
   "headers": [
     {
       "source": "/(.*)",
-
       "headers": [
         {
           "key": "X-Content-Type-Options",
@@ -15,5 +14,15 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/js/script.pageview-props.tagged-events.js",
+      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
+    },
+    {
+      "source": "/api/event",
+      "destination": "https://plausible.io/api/event"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

@@ -27,10 +27,12 @@
     />
     <meta property="og:url" content="https://app.balanced.network" />
     <meta property="og:image" content="https://app.balanced.network/img-preview/home.png" />
+    <!-- Plausible Analytics with proxy configuration -->
     <script 
       defer 
-      data-domain="app.balanced.network" 
-      src="https://plausible.io/js/script.pageview-props.tagged-events.js"
+      data-domain="app.balanced.network"
+      data-api="/api/event"
+      src="/js/script.pageview-props.tagged-events.js"
     ></script>
 
     <!--

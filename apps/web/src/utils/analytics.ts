@@ -1,7 +1,6 @@
 import Plausible from 'plausible-tracker';
 
 export type AnalyticsEventName =
-  | 'testevent'
   | 'swap_standard'
   | 'swap_intent'
   | 'bridge'
@@ -9,6 +8,10 @@ export type AnalyticsEventName =
   | 'repay'
   | 'collateral_deposit'
   | 'collateral_withdrawal'
+  | 'savings_deposit'
+  | 'savings_withdrawal'
+  | 'liquidity_deposit'
+  | 'liquidity_withdrawal'
   | 'wallet_connected';
 
 // Type for Plausible instance
@@ -19,6 +22,5 @@ export const createPlausibleInstance = (domain: string) => {
   return Plausible({
     domain,
     apiHost: '', // Use relative path, the script will handle the full URL
-    trackLocalhost: true,
   });
 };

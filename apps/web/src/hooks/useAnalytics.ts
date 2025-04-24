@@ -7,7 +7,6 @@ export const useAnalytics = () => {
 
   const track = useCallback(
     (eventName: AnalyticsEventName, props?: Record<string, any>) => {
-      console.log('TE log:', { eventName, props }); // Debug log
       plausible.trackEvent(eventName, { props });
     },
     [plausible],

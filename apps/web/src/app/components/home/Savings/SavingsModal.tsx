@@ -8,6 +8,7 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSavingsXChainId } from '@/store/savings/hooks';
@@ -24,6 +25,7 @@ import {
   useXLockBnUSD,
   useXTransactionStore,
   useXUnlockBnUSD,
+  xChainMap,
   xTokenMapBySymbol,
 } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -45,6 +47,7 @@ const SavingsModal = ({
 }) => {
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
+  const { track } = useAnalytics();
 
   const [isPending, setIsPending] = React.useState(false);
   const [isSigning, setIsSigning] = React.useState(false);
@@ -98,6 +101,7 @@ const SavingsModal = ({
             xAccount.address,
             CurrencyAmount.fromRawAmount<XToken>(bnUSD, BigInt(bnUSDDiff.multipliedBy(10 ** bnUSD.decimals).toFixed())),
           );
+          track('savings_deposit', { from: xChainMap[savingsXChainId].name });
         } else {
           txHash = await xUnlockBnUSD(
             xAccount.address,
@@ -111,6 +115,7 @@ const SavingsModal = ({
               ),
             ),
           );
+          track('savings_withdrawal', { from: xChainMap[savingsXChainId].name });
         }
         setIsSigning(false);
         if (txHash) setPendingTx(txHash);

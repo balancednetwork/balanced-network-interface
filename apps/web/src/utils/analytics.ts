@@ -8,6 +8,10 @@ export type AnalyticsEventName =
   | 'repay'
   | 'collateral_deposit'
   | 'collateral_withdrawal'
+  | 'savings_deposit'
+  | 'savings_withdrawal'
+  | 'liquidity_deposit'
+  | 'liquidity_withdrawal'
   | 'wallet_connected';
 
 // Type for Plausible instance

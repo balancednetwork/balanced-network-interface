@@ -12,6 +12,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useIncentivisedPairs } from '@/queries/reward';
@@ -33,7 +34,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SendRemoveXToken } from './SendRemoveXToken';
-
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,6 +46,7 @@ interface ModalProps {
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies, onSuccess }: ModalProps) {
   const queryClient = useQueryClient();
   const { account, pair, lpXChainId } = useDerivedMintInfo();
+  const { track } = useAnalytics();
 
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
@@ -152,8 +153,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         setIsSigning(true);
         const txHash = await xAddLiquidity(account, depositAmountA, depositAmountB);
         setIsSigning(false);
-        if (txHash) setPendingTx(txHash);
-        else setIsPending(false);
+        if (txHash) {
+          setPendingTx(txHash);
+          track('liquidity_deposit', { from: xChainMap[lpXChainId].name });
+        } else {
+          setIsPending(false);
+        }
       }
     } catch (error) {
       console.error('error', error);

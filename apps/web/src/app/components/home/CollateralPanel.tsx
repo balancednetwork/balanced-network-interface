@@ -210,7 +210,8 @@ const CollateralPanel = () => {
 
   const handleCollateralConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
+    const collateralTokenAddress =
+      supportedCollateralTokens && supportedCollateralTokens[useWrongSymbol(collateralType)];
     const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
     const decimals: string = await cx.decimals();
 

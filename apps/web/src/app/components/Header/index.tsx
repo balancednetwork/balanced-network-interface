@@ -13,17 +13,20 @@ import { Button, IconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
+import RecentActivityIcon from '@/assets/icons/activity.svg';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
+import { useIsAnyTxPending } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import RecentActivity from '../RecentActivity';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
@@ -51,6 +54,29 @@ const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
     top: 13px;
     ${({ theme }) => `background-color: ${theme.colors.bg5}`};
   }
+`;
+
+const RecentActivityButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
+  position: relative;
+  margin-left: 15px;
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
+  &::before, &::after {
+    left: 7px;
+    top: 13px;
+    ${({ theme }) => `background-color: ${theme.colors.bg5}`};
+  }
+`;
+
+const SpinningIcon = styled(RecentActivityIcon)`
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-720deg);
+    }
+  }
+  animation: spin 2s ease-in-out infinite;
 `;
 
 export const StyledAddress = styled(Typography)`
@@ -137,10 +163,12 @@ export default function Header(props: { title?: string; className?: string }) {
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
-
+  const isAnyTxPending = useIsAnyTxPending();
+  const walletButtonRef = React.useRef<HTMLElement>(null);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
-  const walletButtonRef = React.useRef<HTMLElement>(null);
+  const recentActivityButtonRef = React.useRef<HTMLElement>(null);
+  const [recentActivityAnchor, setRecentActivityAnchor] = React.useState<HTMLElement | null>(null);
 
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
@@ -154,6 +182,11 @@ export default function Header(props: { title?: string; className?: string }) {
       setAnchor(null);
     }
   };
+
+  const toggleRecentActivityMenu = () => {
+    setRecentActivityAnchor(recentActivityAnchor ? null : recentActivityButtonRef.current);
+  };
+  const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
 
   return (
     <header className={className}>
@@ -235,6 +268,30 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </WalletButtonWrapper>
+
+            <RecentActivityButtonWrapper>
+              <ClickAwayListener onClickAway={closeRecentActivityMenu}>
+                <div>
+                  <IconButton ref={recentActivityButtonRef} onClick={toggleRecentActivityMenu}>
+                    {isAnyTxPending ? (
+                      <SpinningIcon width="26" height="26" />
+                    ) : (
+                      <RecentActivityIcon width="26" height="26" />
+                    )}
+                  </IconButton>
+
+                  <DropdownPopper
+                    show={Boolean(recentActivityAnchor)}
+                    anchorEl={recentActivityAnchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={5050}
+                  >
+                    <RecentActivity />
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
+            </RecentActivityButtonWrapper>
           </Flex>
         )}
       </Flex>

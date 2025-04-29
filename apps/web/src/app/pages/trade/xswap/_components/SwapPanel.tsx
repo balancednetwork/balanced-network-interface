@@ -33,7 +33,6 @@ import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import MMPendingIntents from './MMPendingIntents';
 import MMSwapCommitButton from './MMSwapCommitButton';
 import MMSwapInfo from './MMSwapInfo';
 import PriceImpact from './PriceImpact';
@@ -315,8 +314,6 @@ export default function SwapPanel() {
               handleOutputType('0.002');
             }}
           />
-
-          <MMPendingIntents />
         </AutoColumn>
       </BrightPanel>
     </>

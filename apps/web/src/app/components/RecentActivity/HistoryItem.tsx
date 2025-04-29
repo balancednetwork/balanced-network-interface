@@ -31,8 +31,6 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
     }
   };
 
-  // console.log('kkk', trackerLink);
-
   const renderContent = () => {
     if (isMMTransaction(transaction)) {
       return <MMSwapTransaction transaction={transaction} />;
@@ -98,7 +96,7 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ transaction, isMMTransaction 
       transition={{ duration: 0.3, ease: 'easeOut' }}
       key={transaction.id}
       onClick={handleClick}
-      style={{ cursor: trackerLink ? 'pointer' : 'default' }}
+      style={{ cursor: trackerLink ? 'pointer' : 'default', pointerEvents: trackerLink ? 'auto' : 'none' }}
     >
       {renderContent()}
     </motion.div>

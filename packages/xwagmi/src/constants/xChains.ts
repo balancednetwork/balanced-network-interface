@@ -345,7 +345,7 @@ export const sui: XChain = {
   name: 'Sui',
   xChainId: 'sui',
   xChainType: 'SUI',
-  tracker: { tx: 'https://suiscan.xyz/mainnet/tx' },
+  tracker: { tx: 'https://suivision.xyz/txblock' },
   nativeCurrency: {
     decimals: 9,
     name: 'SUI',

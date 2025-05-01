@@ -533,8 +533,8 @@ importers:
         specifier: 2.11.0
         version: 2.11.0
       icon-intents-sdk:
-        specifier: 1.0.0
-        version: 1.0.0(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8)
+        specifier: 1.1.0-rc1
+        version: 1.1.0-rc1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8)
       icon-sdk-js:
         specifier: 1.5.3
         version: 1.5.3
@@ -8681,6 +8681,9 @@ packages:
 
   icon-intents-sdk@1.0.0:
     resolution: {integrity: sha512-SvXA2nhWp28ddFEVUP2nj141GoRzAwgvk8OenutN48CaT2MxGcR65kusElNhrcUN6XDtoftvLOzB/Tx4bfXXwQ==}
+
+  icon-intents-sdk@1.1.0-rc1:
+    resolution: {integrity: sha512-8FZ1GXrwIUxWVeU6YRSEd7i4DYCwxWwZM5yQdypvDMXp/c+zDQxVDwsjx8XNDY7yabSPxgXT3v1hi8Yo61UM4g==}
 
   icon-sdk-js@1.5.3:
     resolution: {integrity: sha512-ghs/jwsFfitOuK4yiEpF87mdLrhMyWv61CzDIb0mEAr4Yaw8VrVVrjTIxriWL8RzRHzluIhkU+1PApa2iodu5A==}
@@ -26203,10 +26206,11 @@ snapshots:
       - utf-8-validate
       - zod
 
-  icon-intents-sdk@1.0.0(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8):
+  icon-intents-sdk@1.1.0-rc1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8):
     dependencies:
       '@mysten/sui': 1.18.0(typescript@5.5.4)
       '@mysten/wallet-standard': 0.13.20(typescript@5.5.4)
+      '@stellar/stellar-sdk': 12.3.0
       bignumber.js: 9.0.1
       icon-sdk-js: 1.5.3
       rlp: 3.0.0
@@ -26216,6 +26220,7 @@ snapshots:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
       - bufferutil
+      - debug
       - typescript
       - utf-8-validate
       - zod

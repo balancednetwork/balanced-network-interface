@@ -336,6 +336,7 @@ export const stellar: XChain = {
   autoExecution: true,
   gasThreshold: 1.5, // xCall fee: 0.1 XLM, threshold is higher because of the asset trustline
   testnet: false,
+  intentChainId: 'stellar',
   useXCallScanner: true,
 };
 

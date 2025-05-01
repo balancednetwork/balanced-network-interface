@@ -8,6 +8,8 @@ import nodePolyfills from 'vite-plugin-node-stdlib-browser';
 import svgr from 'vite-plugin-svgr';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+
 export default defineConfig(({ command, mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), '');
 
@@ -29,6 +31,11 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
       }),
       nodePolyfills(),
       lingui(),
+      sentryVitePlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: 'sudoblock',
+        project: 'balanced-web',
+      }),
     ],
     resolve: {
       alias: {
@@ -47,6 +54,9 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     define: {
       'process.env': env,
       'process.version': JSON.stringify(''),
+    },
+    build: {
+      sourcemap: true,
     },
   };
 });

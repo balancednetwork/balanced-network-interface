@@ -5,12 +5,15 @@ import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 
 import { App } from '@/app';
 import store from '@/store';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
+
+import { SENTRY_DSN } from './constants/config';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
@@ -33,6 +36,10 @@ BigInt.prototype['toJSON'] = function () {
 };
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

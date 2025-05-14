@@ -100,14 +100,17 @@ export function useSwapActionHandlers() {
     [dispatch],
   );
 
-  return {
-    onSwitchTokens,
-    onCurrencySelection,
-    onUserInput,
-    onChangeRecipient,
-    onPercentSelection,
-    onChainSelection,
-  };
+  return useMemo(
+    () => ({
+      onSwitchTokens,
+      onCurrencySelection,
+      onUserInput,
+      onChangeRecipient,
+      onPercentSelection,
+      onChainSelection,
+    }),
+    [onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient, onPercentSelection, onChainSelection],
+  );
 }
 
 // try to parse a user entered amount for a given token
@@ -445,27 +448,59 @@ export function useDerivedSwapInfo(): {
     inputError = t`Swap`;
   }
 
-  return {
-    account,
-    trade,
-    currencies,
-    _currencies,
-    currencyBalances,
-    parsedAmount,
-    inputError,
-    percents,
-    price,
-    direction,
-    dependentField,
-    parsedAmounts,
-    formattedAmounts,
-    canBridge,
-    maximumBridgeAmount,
-    stellarValidation,
-    stellarTrustlineValidation,
-    maximumOutputAmount,
-    canSwap,
-  };
+  // Memoize the direction object
+  const memoizedDirection = useMemo(
+    () => ({
+      from: currencies[Field.INPUT]?.xChainId || '0x1.icon',
+      to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
+    }),
+    [currencies[Field.INPUT]?.xChainId, currencies[Field.OUTPUT]?.xChainId],
+  );
+
+  return useMemo(
+    () => ({
+      account,
+      trade,
+      currencies,
+      _currencies,
+      currencyBalances,
+      parsedAmount,
+      inputError,
+      percents,
+      price,
+      direction: memoizedDirection,
+      dependentField,
+      parsedAmounts,
+      formattedAmounts,
+      canBridge,
+      maximumBridgeAmount,
+      stellarValidation,
+      stellarTrustlineValidation,
+      maximumOutputAmount,
+      canSwap,
+    }),
+    [
+      account,
+      trade,
+      currencies,
+      _currencies,
+      currencyBalances,
+      parsedAmount,
+      inputError,
+      percents,
+      price,
+      memoizedDirection,
+      dependentField,
+      parsedAmounts,
+      formattedAmounts,
+      canBridge,
+      maximumBridgeAmount,
+      stellarValidation,
+      stellarTrustlineValidation,
+      maximumOutputAmount,
+      canSwap,
+    ],
+  );
 }
 
 export function useInitialSwapLoad(): void {
@@ -624,13 +659,23 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
   // compare mmTradeQuery result and trade
   const mmTrade = mmTradeQuery.data;
 
-  const swapOutput = convert(outputCurrency?.wrapped, trade?.outputAmount);
-  const swapInput = convert(inputCurrency?.wrapped, trade?.inputAmount);
+  const swapOutput = useMemo(
+    () => convert(outputCurrency?.wrapped, trade?.outputAmount),
+    [outputCurrency, trade?.outputAmount],
+  );
+  const swapInput = useMemo(
+    () => convert(inputCurrency?.wrapped, trade?.inputAmount),
+    [inputCurrency, trade?.inputAmount],
+  );
 
-  return {
-    isMMBetter: isExactInput
+  return useMemo(() => {
+    const isMMBetter = isExactInput
       ? mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true)
-      : mmTrade?.inputAmount && (swapInput ? mmTrade.inputAmount.lessThan(swapInput) : true),
-    trade: mmTrade,
-  };
+      : mmTrade?.inputAmount && (swapInput ? mmTrade.inputAmount.lessThan(swapInput) : true);
+
+    return {
+      isMMBetter,
+      trade: mmTrade,
+    };
+  }, [isExactInput, mmTrade, swapOutput, swapInput]);
 }

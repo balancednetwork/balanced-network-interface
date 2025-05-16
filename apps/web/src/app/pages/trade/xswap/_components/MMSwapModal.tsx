@@ -28,15 +28,7 @@ import {
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import {
-  EvmXService,
-  XToken,
-  useCurrentAccount,
-  useCurrentWallet,
-  useSuiClient,
-  useXService,
-  xChainMap,
-} from '@balancednetwork/xwagmi';
+import { XToken, xChainMap } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChainName, CreateIntentOrderPayload, SolverApiService } from 'icon-intents-sdk';
 import { WriteContractErrorType } from 'viem';

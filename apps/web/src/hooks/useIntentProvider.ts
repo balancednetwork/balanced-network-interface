@@ -3,6 +3,8 @@ import { useIconReact } from '@/packages/icon-react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import {
   EvmXService,
+  Networks,
+  StellarXService,
   XToken,
   useCurrentAccount,
   useCurrentWallet,
@@ -11,15 +13,21 @@ import {
 } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { EvmProvider, IconProvider, SuiProvider } from 'icon-intents-sdk';
+import { EvmProvider, IconProvider, StellarProvider, SuiProvider } from 'icon-intents-sdk';
 import IconService, { HttpProvider } from 'icon-sdk-js';
+import { useSignedInWallets } from './useWallets';
 
-const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiProvider | IconProvider | null> => {
+const useIntentProvider = (
+  currency?: XToken,
+): UseQueryResult<EvmProvider | SuiProvider | IconProvider | StellarProvider | null> => {
   const evmXService = useXService('EVM') as unknown as EvmXService;
+  const stellarService = useXService('STELLAR') as unknown as StellarXService;
   const suiClient = useSuiClient();
   const { currentWallet: suiWallet } = useCurrentWallet();
   const suiAccount = useCurrentAccount();
   const { account: iconAccount } = useIconReact();
+  const signedInWallets = useSignedInWallets();
+  const stellarAccount = signedInWallets.find(wallet => wallet.xChainId === 'stellar')?.address;
 
   async function getProvider() {
     if (!currency) return null;
@@ -42,6 +50,15 @@ const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiP
         iconDebugRpcUrl: CHAIN_INFO[NETWORK_ID].debugAPIEndpoint as `http${string}`,
         http: new HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint),
         wallet: iconAccount as `hx${string}`,
+      });
+    } else if (chain.xChainType === 'STELLAR' && stellarAccount) {
+      return new StellarProvider({
+        sorobanUrl: 'https://stellar-soroban-public.nodies.app',
+        networkPassphrase: Networks.PUBLIC,
+        wallet: {
+          address: stellarAccount,
+        },
+        provider: (window as any).stellar || window.hanaWallet?.stellar,
       });
     }
 

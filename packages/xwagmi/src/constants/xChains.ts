@@ -334,7 +334,7 @@ export const stellar: XChain = {
     bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
   },
   autoExecution: true,
-  gasThreshold: 1.5, // xCall fee: 0.1 XLM, threshold is higher because of the asset trustline
+  gasThreshold: 3, // xCall fee: 0.1 XLM, threshold is higher because of the asset trustline and priority fees
   testnet: false,
   intentChainId: 'stellar',
   useXCallScanner: true,

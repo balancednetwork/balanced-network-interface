@@ -226,7 +226,18 @@ export default function BridgeTransferForm({ openModal }) {
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
-              <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={
+                  !isValid ||
+                  !canBridge ||
+                  !canTransfer ||
+                  (stellarValidation ? !stellarValidation?.ok : false) ||
+                  (stellarTrustlineValidation ? !stellarTrustlineValidation?.ok : false)
+                }
+              >
+                {<Trans>Transfer</Trans>}
+              </Button>
             )}
           </Flex>
 

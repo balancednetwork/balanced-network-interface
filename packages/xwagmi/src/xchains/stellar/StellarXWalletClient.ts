@@ -7,7 +7,6 @@ import {
   STELLAR_RLP_DATA_TYPE,
   STELLAR_RLP_ENVELOPE_TYPE,
   STELLAR_RLP_MSG_TYPE,
-  XLM_CONTRACT_ADDRESS,
   accountToScVal,
   sendTX,
 } from './utils';
@@ -22,13 +21,7 @@ export class StellarXWalletClient extends XWalletClient {
   }
 
   async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
-    const stellarAccount = await this.getXService().server.loadAccount(account);
-    const server = this.getXService().sorobanServer;
-    const kit = this.getXService().walletsKit;
-    const txBuilder = new TransactionBuilder(stellarAccount, {
-      fee: BASE_FEE,
-      networkPassphrase: Networks.PUBLIC,
-    });
+    const xService = this.getXService();
 
     const params = [
       accountToScVal(account),
@@ -38,18 +31,12 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(data, { type: 'bytes' }),
     ];
 
-    const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
+    const hash = await sendTX(xService, account, stellar.contracts.assetManager, 'deposit', params);
     return hash;
   }
 
   async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
-    const stellarAccount = await this.getXService().server.loadAccount(account);
-    const server = this.getXService().sorobanServer;
-    const kit = this.getXService().walletsKit;
-    const txBuilder = new TransactionBuilder(stellarAccount, {
-      fee: BASE_FEE,
-      networkPassphrase: Networks.PUBLIC,
-    });
+    const xService = this.getXService();
 
     const params = [
       accountToScVal(account),
@@ -58,18 +45,12 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(data, { type: 'bytes' }),
     ];
 
-    const hash = await sendTX(inputAmount.currency.wrapped.address, 'cross_transfer', params, txBuilder, server, kit);
+    const hash = await sendTX(xService, account, inputAmount.currency.wrapped.address, 'cross_transfer', params);
     return hash;
   }
 
   async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
-    const stellarAccount = await this.getXService().server.loadAccount(account);
-    const server = this.getXService().sorobanServer;
-    const kit = this.getXService().walletsKit;
-    const txBuilder = new TransactionBuilder(stellarAccount, {
-      fee: BASE_FEE,
-      networkPassphrase: Networks.PUBLIC,
-    });
+    const xService = this.getXService();
 
     const envelope = {
       destinations: TO_SOURCES[sourceChainId],
@@ -85,7 +66,7 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(destination),
     ];
 
-    const hash = await sendTX(stellar.contracts.xCall, 'send_call', params, txBuilder, server, kit);
+    const hash = await sendTX(xService, account, stellar.contracts.xCall, 'send_call', params);
     return hash;
   }
 }

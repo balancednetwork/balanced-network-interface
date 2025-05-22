@@ -3,7 +3,9 @@ import { useXService } from '@/hooks';
 import { XToken } from '@/types/xToken';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import {
+  Account,
   Address,
+  BASE_FEE,
   Contract,
   Memo,
   MemoType,
@@ -75,26 +77,52 @@ export const getTokenBalance = async (
 };
 
 export async function sendTX(
+  xService: StellarXService,
+  accountId: string,
   contractAddress: string,
   contractMethod: string,
   params: xdr.ScVal[],
-  txBuilder: TransactionBuilder,
-  server: CustomSorobanServer,
-  kit: StellarWalletsKit,
 ): Promise<string> {
   const contract = new Contract(contractAddress);
-  const simulateTx = txBuilder
+  // fetch account for simulation
+  const sourceAccountForSim = await xService.server.loadAccount(accountId);
+
+  const simulateTx = new TransactionBuilder(sourceAccountForSim, {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.PUBLIC,
+  })
     .addOperation(contract.call(contractMethod, ...params))
     .setTimeout(30)
     .build();
 
-  const simResult = await server.simulateTransaction(simulateTx);
-  const tx = rpc.assembleTransaction(simulateTx, simResult).build();
+  const simResult = await xService.sorobanServer.simulateTransaction(simulateTx);
+
+  // Calculate total fee including priority fee
+  const priorityFee = '200000'; // 0.2 XLM in stroops
+  // minResourceFee is present at runtime per Soroban docs, but not in the SDK type
+  const minResourceFee = (simResult as any).minResourceFee || BASE_FEE.toString();
+  const totalFee = (BigInt(priorityFee) + BigInt(minResourceFee)).toString();
+
+  // fetch account for actual tx, needed because of request account sequencing
+  const sourceAccount = await xService.server.loadAccount(accountId);
+
+  // Rebuild transaction with the higher fee
+  const priorityTx = new TransactionBuilder(sourceAccount, {
+    fee: totalFee,
+    networkPassphrase: Networks.PUBLIC,
+  })
+    .addOperation(contract.call(contractMethod, ...params))
+    .setTimeout(30)
+    .build();
+
+  const prioritySimResult = await xService.sorobanServer.simulateTransaction(priorityTx);
+
+  const tx = rpc.assembleTransaction(priorityTx, prioritySimResult).build();
 
   if (tx) {
-    const { signedTxXdr } = await kit.signTransaction(tx.toXDR());
+    const { signedTxXdr } = await xService.walletsKit.signTransaction(tx.toXDR());
     const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
-    const { hash } = await server.sendTransaction(txToSubmit);
+    const { hash } = await xService.sorobanServer.sendTransaction(txToSubmit);
     return hash;
   } else {
     throw new Error('Failed to send stellar transaction');

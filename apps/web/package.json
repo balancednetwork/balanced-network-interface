@@ -40,7 +40,7 @@
     "i18next": "19.7.0",
     "i18next-browser-languagedetector": "6.0.1",
     "i18next-scanner": "2.11.0",
-    "icon-intents-sdk": "1.1.2",
+    "icon-intents-sdk": "1.1.3",
     "icon-sdk-js": "1.5.3",
     "immer": "10.1.1",
     "jotai": "2.8.0",

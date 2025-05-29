@@ -32,6 +32,7 @@ import { XToken, xChainMap } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChainName, CreateIntentOrderPayload, SolverApiService } from 'icon-intents-sdk';
 import { WriteContractErrorType } from 'viem';
+import { retryGetOrder } from '../utils';
 
 type MMSwapModalProps = {
   modalId?: MODAL_ID;
@@ -126,8 +127,8 @@ const MMSwapModal = ({
 
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
-      fromAddress: account, // address we are sending funds from (fromChain)
-      toAddress: recipient, // destination address where funds are transfered to (toChain)
+      fromAddress: account,
+      toAddress: recipient,
       fromChain: intentFromChainName,
       toChain: intentToChainName,
       token: currencies[Field.INPUT]?.wrapped.address,
@@ -145,8 +146,6 @@ const MMSwapModal = ({
 
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
 
-      setOrderStatus(IntentOrderStatus.Executing);
-
       if (!intentHash.ok) {
         const e = intentHash.error as WriteContractErrorType;
 
@@ -161,12 +160,14 @@ const MMSwapModal = ({
         return;
       }
       console.log('intent debug 1', intentHash);
-      const intentResult =
-        intentFromChainName && (await intentService.getOrder(intentHash.value, intentFromChainName, intentProvider));
+      setOrderStatus(IntentOrderStatus.Executing);
+
+      // Retry getOrder until successful or max attempts reached
+      const intentResult = await retryGetOrder(intentHash.value, intentFromChainName, intentProvider);
       console.log('intent debug 2', intentResult);
+
       if (!intentResult?.ok) {
-        // @ts-ignore
-        setError(intentResult.error?.message);
+        setError(intentResult.error?.message || 'Failed to get order details after multiple attempts');
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
@@ -191,22 +192,21 @@ const MMSwapModal = ({
       );
 
       console.log('intent debug 3', executionResult);
-
-      track('swap_intent', {
-        from: xChainMap[direction.from].name,
-        to: xChainMap[direction.to].name,
-      });
-
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
+        track('swap_intent', {
+          from: xChainMap[direction.from].name,
+          to: xChainMap[direction.to].name,
+        });
       } else {
-        setError(executionResult.error?.detail?.message);
+        setError(executionResult.error?.detail?.message || 'Failed to execute intent order');
         console.error('IntentService.executeIntentOrder error', executionResult.error);
         setOrderStatus(IntentOrderStatus.Failure);
       }
     } catch (e) {
-      setOrderStatus(IntentOrderStatus.None);
       console.error('SwapMMCommitButton error', e);
+      setError(e instanceof Error ? e.message : 'An unexpected error occurred');
+      setOrderStatus(IntentOrderStatus.None);
     }
   };
 

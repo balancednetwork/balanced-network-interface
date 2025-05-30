@@ -81,7 +81,7 @@ export const icon: XChain = {
   autoExecution: true,
   gasThreshold: 2.5,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const lisbon: XChain = {
@@ -133,7 +133,7 @@ export const avalanche: XChain = {
   autoExecution: true,
   gasThreshold: 0.05,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const fuji: XChain = {
@@ -209,7 +209,7 @@ export const bsc: XChain = {
   autoExecution: true,
   gasThreshold: 0.005,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const polygon: XChain = {
@@ -234,7 +234,7 @@ export const polygon: XChain = {
   autoExecution: true,
   gasThreshold: 0.5,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
   intentChainId: 'pol',
 };
 
@@ -260,7 +260,7 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
   intentChainId: 'arb',
 };
 
@@ -286,7 +286,7 @@ export const base: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const injective: XChain = {
@@ -416,7 +416,7 @@ export const optimism: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 // the order is important, using manual order to display in the UI

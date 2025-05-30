@@ -18,6 +18,7 @@ export * from './hooks';
 export * from './useXWagmiStore';
 export * from './XWagmiProviders';
 export * from './xcall';
+export * from './xcall/zustand/useTransactionStore';
 
 export * from './types';
 export type * from './types';

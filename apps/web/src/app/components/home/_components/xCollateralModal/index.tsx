@@ -53,6 +53,7 @@ const XCollateralModal = ({
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
   const { collateralType } = useDerivedCollateralInfo();
+  const [walletPrompting, setWalletPrompting] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
@@ -120,7 +121,9 @@ const XCollateralModal = ({
       usedCollateral: useWrongSymbol(collateralType),
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    setWalletPrompting(false);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
 
@@ -220,7 +223,10 @@ const XCollateralModal = ({
                             )}
                           </Button>
                         ) : (
-                          <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
+                          <StyledButton
+                            onClick={handleXCollateralAction}
+                            disabled={!gasChecker.hasEnoughGas || walletPrompting}
+                          >
                             {storedModalValues.action === XCollateralAction.DEPOSIT ? (
                               <Trans>Deposit</Trans>
                             ) : (

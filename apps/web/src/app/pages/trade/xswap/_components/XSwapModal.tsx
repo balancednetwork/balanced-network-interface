@@ -55,6 +55,7 @@ const XSwapModal = ({
 }: XSwapModalProps) => {
   const { track } = useAnalytics();
   const modalOpen = useModalOpen(modalId);
+  const [walletPrompting, setWalletPrompting] = useState(false);
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -132,9 +133,11 @@ const XSwapModal = ({
       path: executionTrade.route.routeActionPath,
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
-    cleanupSwap();
+    setWalletPrompting(false);
     setCurrentId(xTransactionId || null);
+    cleanupSwap();
 
     track('swap_standard', {
       from: xChainMap[direction.from].name,
@@ -247,7 +250,7 @@ const XSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </Button>
                       ) : (
-                        <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                        <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas || walletPrompting}>
                           <Trans>Swap</Trans>
                         </StyledButton>
                       )}

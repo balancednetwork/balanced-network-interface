@@ -40,7 +40,7 @@ const StyledXCallButton = styled(StyledButton)`
 function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
-
+  const [walletPrompting, setWalletPrompting] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
@@ -93,7 +93,10 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
         xCallFee,
         isLiquidFinanceEnabled,
       };
+
+      setWalletPrompting(true);
       const xTransactionId = await sendXTransaction(bridgeInfo);
+      setWalletPrompting(false);
       setCurrentId(xTransactionId || null);
 
       track('bridge', {
@@ -193,7 +196,10 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </Button>
                       ) : (
-                        <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
+                        <StyledXCallButton
+                          onClick={handleTransfer}
+                          disabled={!gasChecker.hasEnoughGas || walletPrompting}
+                        >
                           <Trans>Transfer</Trans>
                         </StyledXCallButton>
                       )}

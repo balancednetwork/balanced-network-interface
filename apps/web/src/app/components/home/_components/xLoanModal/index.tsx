@@ -57,6 +57,7 @@ const XLoanModal = ({
 }: XLoanModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
+  const [walletPrompting, setWalletPrompting] = useState(false);
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -130,7 +131,9 @@ const XLoanModal = ({
       xCallFee,
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    setWalletPrompting(false);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
 
@@ -241,7 +244,7 @@ const XLoanModal = ({
                         </StyledButton>
                       </>
                     ) : (
-                      <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
+                      <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas || walletPrompting}>
                         {storedModalValues.action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
                       </StyledButton>
                     )}

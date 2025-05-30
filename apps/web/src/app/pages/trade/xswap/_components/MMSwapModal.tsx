@@ -66,6 +66,7 @@ const MMSwapModal = ({
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
+  const [walletPrompting, setWalletPrompting] = useState(false);
 
   const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
   const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
@@ -144,7 +145,9 @@ const MMSwapModal = ({
         return;
       }
 
+      setWalletPrompting(true);
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
+      setWalletPrompting(false);
 
       if (!intentHash.ok) {
         const e = intentHash.error as WriteContractErrorType;
@@ -333,7 +336,7 @@ const MMSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </StyledButton>
                       ) : (
-                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas || walletPrompting}>
                           <Trans>Swap</Trans>
                         </StyledButton>
                       )}

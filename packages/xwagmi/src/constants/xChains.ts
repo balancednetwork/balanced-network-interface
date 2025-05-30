@@ -184,7 +184,7 @@ export const havah: XChain = {
   autoExecution: true,
   gasThreshold: 0.2,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const bsc: XChain = {
@@ -311,7 +311,7 @@ export const injective: XChain = {
   autoExecution: true,
   gasThreshold: 0.01,
   testnet: false,
-  useXCallScanner: false,
+  useXCallScanner: true,
 };
 
 export const stellar: XChain = {

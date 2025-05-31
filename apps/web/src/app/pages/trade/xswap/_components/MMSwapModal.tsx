@@ -16,6 +16,7 @@ import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { intentService, intentServiceConfig } from '@/lib/intent';
 import { MMTrade } from '@/store/swap/hooks';
@@ -66,6 +67,7 @@ const MMSwapModal = ({
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
   const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
@@ -83,12 +85,13 @@ const MMSwapModal = ({
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setIntentId(null);
       setOrderStatus(IntentOrderStatus.None);
       setError(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -144,6 +147,7 @@ const MMSwapModal = ({
         return;
       }
 
+      setWalletPrompting(true);
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
 
       if (!intentHash.ok) {
@@ -333,8 +337,8 @@ const MMSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </StyledButton>
                       ) : (
-                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                          <Trans>Swap</Trans>
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas || isWalletPrompting}>
+                          <Trans>{isWalletPrompting ? 'Waiting for wallet...' : 'Swap'}</Trans>
                         </StyledButton>
                       )}
                     </>

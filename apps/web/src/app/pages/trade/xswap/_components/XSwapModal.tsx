@@ -17,6 +17,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -55,6 +56,7 @@ const XSwapModal = ({
 }: XSwapModalProps) => {
   const { track } = useAnalytics();
   const modalOpen = useModalOpen(modalId);
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -90,10 +92,11 @@ const XSwapModal = ({
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setCurrentId(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -132,9 +135,10 @@ const XSwapModal = ({
       path: executionTrade.route.routeActionPath,
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
-    cleanupSwap();
     setCurrentId(xTransactionId || null);
+    cleanupSwap();
 
     track('swap_standard', {
       from: xChainMap[direction.from].name,
@@ -247,8 +251,11 @@ const XSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </Button>
                       ) : (
-                        <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
-                          <Trans>Swap</Trans>
+                        <StyledButton
+                          onClick={handleXCallSwap}
+                          disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
+                        >
+                          <Trans>{isWalletPrompting ? 'Waiting for wallet...' : 'Swap'}</Trans>
                         </StyledButton>
                       )}
                     </>

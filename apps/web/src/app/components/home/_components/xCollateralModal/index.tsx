@@ -14,6 +14,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
@@ -53,6 +54,7 @@ const XCollateralModal = ({
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
   const { collateralType } = useDerivedCollateralInfo();
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
@@ -75,10 +77,11 @@ const XCollateralModal = ({
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setCurrentId(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -120,6 +123,7 @@ const XCollateralModal = ({
       usedCollateral: useWrongSymbol(collateralType),
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
@@ -220,8 +224,13 @@ const XCollateralModal = ({
                             )}
                           </Button>
                         ) : (
-                          <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
-                            {storedModalValues.action === XCollateralAction.DEPOSIT ? (
+                          <StyledButton
+                            onClick={handleXCollateralAction}
+                            disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
+                          >
+                            {isWalletPrompting ? (
+                              <Trans>Waiting for wallet...</Trans>
+                            ) : storedModalValues.action === XCollateralAction.DEPOSIT ? (
                               <Trans>Deposit</Trans>
                             ) : (
                               <Trans>Withdraw</Trans>

@@ -31,8 +31,8 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(data, { type: 'bytes' }),
     ];
 
-    const hash = await sendTX(xService, account, stellar.contracts.assetManager, 'deposit', params);
-    return hash;
+    const result = await sendTX(xService, account, stellar.contracts.assetManager, 'deposit', params);
+    return result.hash;
   }
 
   async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
@@ -45,8 +45,8 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(data, { type: 'bytes' }),
     ];
 
-    const hash = await sendTX(xService, account, inputAmount.currency.wrapped.address, 'cross_transfer', params);
-    return hash;
+    const result = await sendTX(xService, account, inputAmount.currency.wrapped.address, 'cross_transfer', params);
+    return result.hash;
   }
 
   async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
@@ -66,7 +66,7 @@ export class StellarXWalletClient extends XWalletClient {
       nativeToScVal(destination),
     ];
 
-    const hash = await sendTX(xService, account, stellar.contracts.xCall, 'send_call', params);
-    return hash;
+    const result = await sendTX(xService, account, stellar.contracts.xCall, 'send_call', params);
+    return result.hash;
   }
 }

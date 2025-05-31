@@ -198,7 +198,7 @@ const SavingsModal = ({
                   ) : (
                     <StyledButton
                       onClick={handleConfirm}
-                      disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
+                      disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain || isSigning}
                       $loading={isPending}
                     >
                       {isPending && !isSigning

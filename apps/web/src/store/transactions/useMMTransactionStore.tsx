@@ -35,6 +35,7 @@ type MMTransactionStore = {
   fail: (id: string) => void;
   cancel: (id: string) => void;
   setTaskId: (id: string, taskId: string) => void;
+  setOrderId: (id: string, orderId: bigint) => void;
   getPendingTransactions: () => MMTransaction[];
   remove: (id: string) => void;
 };
@@ -75,6 +76,12 @@ export const useMMTransactionStore = create<MMTransactionStore>()(
       setTaskId: (id: string, taskId: string) => {
         set(state => {
           state.transactions[id].taskId = taskId;
+        });
+      },
+
+      setOrderId: (id: string, orderId: bigint) => {
+        set(state => {
+          state.transactions[id].orderId = orderId;
         });
       },
 
@@ -134,6 +141,10 @@ export const MMTransactionActions = {
 
   setTaskId: (id: string, taskId: string) => {
     useMMTransactionStore.getState().setTaskId(id, taskId);
+  },
+
+  setOrderId: (id: string, orderId: bigint) => {
+    useMMTransactionStore.getState().setOrderId(id, orderId);
   },
 
   remove: (id: string) => {

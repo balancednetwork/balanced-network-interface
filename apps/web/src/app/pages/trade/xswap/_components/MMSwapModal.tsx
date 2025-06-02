@@ -187,7 +187,6 @@ const MMSwapModal = ({
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
-        MMTransactionActions.success(intentHash.value);
         track('swap_intent', {
           from: xChainMap[direction.from].name,
           to: xChainMap[direction.to].name,

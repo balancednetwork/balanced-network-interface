@@ -8,7 +8,7 @@ export const useWalletPrompting = () => {
     if (value) {
       setTimeout(() => {
         setIsWalletPrompting(false);
-      }, 10000);
+      }, 30000);
     }
   }, []);
 

@@ -98,7 +98,7 @@ export async function sendTX(
   const simResult = await xService.sorobanServer.simulateTransaction(simulateTx);
 
   // Calculate total fee including priority fee
-  const priorityFee = '400000';
+  const priorityFee = '600000';
   // minResourceFee is present at runtime per Soroban docs, but not in the SDK type
   const minResourceFee = (simResult as any).minResourceFee || BASE_FEE.toString();
   const totalFee = (BigInt(priorityFee) + BigInt(minResourceFee)).toString();

@@ -129,7 +129,6 @@ const MMSwapModal = ({
     }
 
     setOrderStatus(IntentOrderStatus.SigningAndCreating);
-    clearInputs();
 
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
@@ -168,6 +167,7 @@ const MMSwapModal = ({
       }
       console.log('intent debug creation', intentHash);
       setOrderStatus(IntentOrderStatus.Executing);
+      clearInputs();
 
       MMTransactionActions.add({
         id: intentHash.value,

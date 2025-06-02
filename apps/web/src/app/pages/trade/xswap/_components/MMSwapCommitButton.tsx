@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { t } from '@lingui/macro';
 
@@ -6,7 +6,7 @@ import { Button } from '@/app/components/Button';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { MMTrade, tryParseAmount, useDerivedSwapInfo } from '@/store/swap/hooks';
+import { MMTrade, tryParseAmount, useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { StellarAccountValidation, StellarTrustlineValidation, getXChainType } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
@@ -72,6 +72,7 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = useState<MMTrade | undefined>(undefined);
+  const { onUserInput } = useSwapActionHandlers();
 
   const xChainType = getXChainType(direction.from);
   const xConnectors = useXConnectors(xChainType);
@@ -88,6 +89,11 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
     }
   };
 
+  const clearSwapInputOutput = useCallback((): void => {
+    onUserInput(Field.INPUT, '');
+    onUserInput(Field.OUTPUT, '');
+  }, [onUserInput]);
+
   return (
     <>
       <Button
@@ -99,7 +105,13 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
         {error || t`Swap`}
       </Button>
 
-      <MMSwapModal currencies={currencies} account={account} recipient={recipient} trade={executionTrade} />
+      <MMSwapModal
+        currencies={currencies}
+        account={account}
+        recipient={recipient}
+        trade={executionTrade}
+        clearInputs={clearSwapInputOutput}
+      />
     </>
   );
 };

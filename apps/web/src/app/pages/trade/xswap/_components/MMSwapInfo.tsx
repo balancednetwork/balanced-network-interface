@@ -3,6 +3,7 @@ import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
 import { MMTrade, useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { formatSymbol } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import React, { memo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -41,7 +42,7 @@ const MMSwapInfo: React.FC<SwapInfoProps> = ({ trade }) => {
             onClick={ToggleDropdown}
             text={
               minimumToReceive
-                ? `${minimumToReceive?.toFixed(4, { groupSeparator: ',' })} ${minimumToReceive?.currency.symbol}`
+                ? `${minimumToReceive?.toFixed(4, { groupSeparator: ',' })} ${formatSymbol(minimumToReceive?.currency.symbol)}`
                 : `0 ${currencies[Field.OUTPUT]?.symbol}`
             }
             arrowRef={arrowRef}

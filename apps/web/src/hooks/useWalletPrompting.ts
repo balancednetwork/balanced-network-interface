@@ -17,7 +17,7 @@ export const useWalletPrompting = () => {
       timeoutRef.current = setTimeout(() => {
         setIsWalletPrompting(false);
         timeoutRef.current = undefined;
-      }, 30000);
+      }, 120000);
     }
   }, []);
 

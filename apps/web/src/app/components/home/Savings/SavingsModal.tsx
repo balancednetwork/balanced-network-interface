@@ -10,6 +10,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSavingsXChainId } from '@/store/savings/hooks';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -48,9 +49,9 @@ const SavingsModal = ({
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const { track } = useAnalytics();
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const [isPending, setIsPending] = React.useState(false);
-  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -64,12 +65,12 @@ const SavingsModal = ({
   const handleDismiss = useCallback(async () => {
     await onSuccess?.();
     onClose();
+    setWalletPrompting(false);
     setTimeout(() => {
       setIsPending(false);
-      setIsSigning(false);
       setPendingTx('');
     }, 500);
-  }, [onClose, onSuccess]);
+  }, [onClose, onSuccess, setWalletPrompting]);
 
   const slowDismiss = useCallback(() => {
     setTimeout(() => {
@@ -91,8 +92,7 @@ const SavingsModal = ({
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     if (xAccount.address) {
       try {
-        setIsPending(true);
-        setIsSigning(true);
+        setWalletPrompting(true);
         const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
 
         let txHash;
@@ -117,12 +117,12 @@ const SavingsModal = ({
           );
           track('savings_withdrawal', { from: xChainMap[savingsXChainId].name });
         }
-        setIsSigning(false);
+        setWalletPrompting(false);
+        setIsPending(true);
         if (txHash) setPendingTx(txHash);
         else setIsPending(false);
       } catch (error) {
         setIsPending(false);
-        setIsSigning(false);
         console.error('staking/unlocking bnUSD error: ', error);
       } finally {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -187,7 +187,7 @@ const SavingsModal = ({
               >
                 <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
                   <TextButton onClick={handleDismiss} fontSize={14}>
-                    <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
+                    <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                   </TextButton>
 
                   {isWrongChain ? (
@@ -198,16 +198,22 @@ const SavingsModal = ({
                   ) : (
                     <StyledButton
                       onClick={handleConfirm}
-                      disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
+                      disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain || isWalletPrompting}
                       $loading={isPending}
                     >
-                      {isPending && !isSigning
-                        ? shouldDeposit
-                          ? t`Depositing bnUSD`
-                          : t`Withdrawing bnUSD`
-                        : shouldDeposit
-                          ? t`Deposit bnUSD`
-                          : t`Withdraw bnUSD`}
+                      {isWalletPrompting ? (
+                        <Trans>Waiting for wallet...</Trans>
+                      ) : isPending ? (
+                        shouldDeposit ? (
+                          t`Depositing bnUSD`
+                        ) : (
+                          t`Withdrawing bnUSD`
+                        )
+                      ) : shouldDeposit ? (
+                        t`Deposit bnUSD`
+                      ) : (
+                        t`Withdraw bnUSD`
+                      )}
                     </StyledButton>
                   )}
                 </Flex>

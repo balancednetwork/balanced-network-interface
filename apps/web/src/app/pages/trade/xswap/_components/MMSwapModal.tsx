@@ -16,6 +16,7 @@ import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { intentService, intentServiceConfig } from '@/lib/intent';
 import { MMTrade } from '@/store/swap/hooks';
@@ -40,6 +41,7 @@ type MMSwapModalProps = {
   currencies: { [field in Field]?: XToken | undefined };
   trade?: MMTrade;
   recipient?: string | null;
+  clearInputs: () => void;
 };
 
 enum IntentOrderStatus {
@@ -60,12 +62,14 @@ const MMSwapModal = ({
   currencies,
   trade,
   recipient,
+  clearInputs,
 }: MMSwapModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
   const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
@@ -83,12 +87,13 @@ const MMSwapModal = ({
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setIntentId(null);
       setOrderStatus(IntentOrderStatus.None);
       setError(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -144,6 +149,7 @@ const MMSwapModal = ({
         return;
       }
 
+      setWalletPrompting(true);
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
 
       if (!intentHash.ok) {
@@ -159,18 +165,9 @@ const MMSwapModal = ({
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
-      console.log('intent debug 1', intentHash);
+      console.log('intent debug creation', intentHash);
       setOrderStatus(IntentOrderStatus.Executing);
-
-      // Retry getOrder until successful or max attempts reached
-      const intentResult = await retryGetOrder(intentHash.value, intentFromChainName, intentProvider);
-      console.log('intent debug 2', intentResult);
-
-      if (!intentResult?.ok) {
-        setError(intentResult.error?.message || 'Failed to get order details after multiple attempts');
-        setOrderStatus(IntentOrderStatus.Failure);
-        return;
-      }
+      clearInputs();
 
       MMTransactionActions.add({
         id: intentHash.value,
@@ -178,7 +175,7 @@ const MMSwapModal = ({
         status: MMTransactionStatus.pending,
         fromAmount: trade.inputAmount,
         toAmount: trade.outputAmount,
-        orderId: BigInt(intentResult.value.id),
+        orderId: BigInt(0), // will be set later
         taskId: '',
       });
       setIntentId(intentHash.value);
@@ -190,8 +187,8 @@ const MMSwapModal = ({
         },
         intentServiceConfig,
       );
+      console.log('intent debug execution', executionResult);
 
-      console.log('intent debug 3', executionResult);
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
         track('swap_intent', {
@@ -203,6 +200,16 @@ const MMSwapModal = ({
         console.error('IntentService.executeIntentOrder error', executionResult.error);
         setOrderStatus(IntentOrderStatus.Failure);
       }
+
+      // Retry getOrder until successful or max attempts reached
+      const intentResult = await retryGetOrder(intentHash.value, intentFromChainName, intentProvider);
+      console.log('intent debug order info', intentResult);
+
+      if (!intentResult?.ok) {
+        setError(intentResult.error?.message || 'Failed to get order details after multiple attempts');
+        setOrderStatus(IntentOrderStatus.None);
+      }
+      MMTransactionActions.setOrderId(intentHash.value, BigInt(intentResult?.value?.id || ''));
     } catch (e) {
       console.error('SwapMMCommitButton error', e);
       setError(e instanceof Error ? e.message : 'An unexpected error occurred');
@@ -333,8 +340,8 @@ const MMSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </StyledButton>
                       ) : (
-                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                          <Trans>Swap</Trans>
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas || isWalletPrompting}>
+                          <Trans>{isWalletPrompting ? 'Waiting for wallet...' : 'Swap'}</Trans>
                         </StyledButton>
                       )}
                     </>

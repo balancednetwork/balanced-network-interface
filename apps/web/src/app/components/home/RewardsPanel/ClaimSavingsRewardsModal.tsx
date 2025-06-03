@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSavingsXChainId } from '@/store/savings/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
@@ -35,9 +36,9 @@ interface ModalProps {
 
 export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onSuccess }: ModalProps) {
   const savingsXChainId = useSavingsXChainId();
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const [isPending, setIsPending] = React.useState(false);
-  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -50,12 +51,12 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
 
   const handleDismiss = useCallback(() => {
     onClose();
+    setWalletPrompting(false);
     setTimeout(() => {
       setIsPending(false);
-      setIsSigning(false);
       setPendingTx('');
     }, 500);
-  }, [onClose]);
+  }, [onClose, setWalletPrompting]);
 
   const slowDismiss = useCallback(() => {
     setTimeout(() => {
@@ -76,16 +77,19 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
   const handleClaim = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     try {
-      setIsPending(true);
-      setIsSigning(true);
+      setWalletPrompting(true);
       const txHash = await xClaimSavingsRewards(xAccount.address, savingsXChainId);
-      setIsSigning(false);
-      if (txHash) setPendingTx(txHash);
-      else setIsPending(false);
+      setWalletPrompting(false);
+      if (txHash) {
+        setIsPending(true);
+        setPendingTx(txHash);
+      } else {
+        setIsPending(false);
+      }
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
-      setIsSigning(false);
+      setWalletPrompting(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -133,7 +137,7 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={handleDismiss} fontSize={14}>
-                  <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
+                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>
@@ -143,10 +147,10 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
                 ) : (
                   <StyledButton
                     onClick={handleClaim}
-                    disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
+                    disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain || isWalletPrompting}
                     $loading={isPending}
                   >
-                    {isPending && !isSigning ? t`Claiming` : t`Claim`}
+                    {isWalletPrompting ? <Trans>Waiting for wallet...</Trans> : isPending ? t`Claiming` : t`Claim`}
                   </StyledButton>
                 )}
               </Flex>

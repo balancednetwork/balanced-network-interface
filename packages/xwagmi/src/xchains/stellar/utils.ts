@@ -82,7 +82,7 @@ export async function sendTX(
   contractAddress: string,
   contractMethod: string,
   params: xdr.ScVal[],
-): Promise<string> {
+): Promise<{ hash: string; status: string }> {
   const contract = new Contract(contractAddress);
   // fetch account for simulation
   const sourceAccountForSim = await xService.server.loadAccount(accountId);
@@ -98,7 +98,7 @@ export async function sendTX(
   const simResult = await xService.sorobanServer.simulateTransaction(simulateTx);
 
   // Calculate total fee including priority fee
-  const priorityFee = '400000';
+  const priorityFee = '600000';
   // minResourceFee is present at runtime per Soroban docs, but not in the SDK type
   const minResourceFee = (simResult as any).minResourceFee || BASE_FEE.toString();
   const totalFee = (BigInt(priorityFee) + BigInt(minResourceFee)).toString();
@@ -123,7 +123,14 @@ export async function sendTX(
     const { signedTxXdr } = await xService.walletsKit.signTransaction(tx.toXDR());
     const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
     const { hash } = await xService.sorobanServer.sendTransaction(txToSubmit);
-    return hash;
+
+    // Poll for transaction status
+    const result = await pollTransaction(hash, xService);
+    if (result.status === 'SUCCESS') {
+      return { hash, status: 'SUCCESS' };
+    } else {
+      return { hash: '', status: 'FAILED' };
+    }
   } else {
     throw new Error('Failed to send stellar transaction');
   }

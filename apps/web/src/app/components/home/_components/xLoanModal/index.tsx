@@ -14,6 +14,7 @@ import { Typography } from '@/app/theme';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
@@ -57,6 +58,7 @@ const XLoanModal = ({
 }: XLoanModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -89,10 +91,11 @@ const XLoanModal = ({
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setCurrentId(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -130,6 +133,7 @@ const XLoanModal = ({
       xCallFee,
     };
 
+    setWalletPrompting(true);
     const xTransactionId = await sendXTransaction(xTransactionInput);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
@@ -241,8 +245,17 @@ const XLoanModal = ({
                         </StyledButton>
                       </>
                     ) : (
-                      <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
-                        {storedModalValues.action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
+                      <StyledButton
+                        onClick={handleXLoanAction}
+                        disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
+                      >
+                        {isWalletPrompting ? (
+                          <Trans>Waiting for wallet...</Trans>
+                        ) : storedModalValues.action === XLoanAction.BORROW ? (
+                          <Trans>Borrow</Trans>
+                        ) : (
+                          <Trans>Repay</Trans>
+                        )}
                       </StyledButton>
                     )}
                   </>

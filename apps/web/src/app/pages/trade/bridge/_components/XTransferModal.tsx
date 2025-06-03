@@ -15,6 +15,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
@@ -40,7 +41,7 @@ const StyledXCallButton = styled(StyledButton)`
 function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
   const modalOpen = useModalOpen(modalId);
   const { track } = useAnalytics();
-
+  const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
@@ -59,10 +60,11 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
+    setWalletPrompting(false);
     setTimeout(() => {
       setCurrentId(null);
     }, 500);
-  }, [modalId]);
+  }, [modalId, setWalletPrompting]);
 
   //to show success or fail message in the modal
   const slowDismiss = useCallback(() => {
@@ -93,6 +95,8 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
         xCallFee,
         isLiquidFinanceEnabled,
       };
+
+      setWalletPrompting(true);
       const xTransactionId = await sendXTransaction(bridgeInfo);
       setCurrentId(xTransactionId || null);
 
@@ -193,8 +197,11 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </Button>
                       ) : (
-                        <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
-                          <Trans>Transfer</Trans>
+                        <StyledXCallButton
+                          onClick={handleTransfer}
+                          disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
+                        >
+                          <Trans>{isWalletPrompting ? 'Waiting for wallet...' : 'Transfer'}</Trans>
                         </StyledXCallButton>
                       )}
                     </>

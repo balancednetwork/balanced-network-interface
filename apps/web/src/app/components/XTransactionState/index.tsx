@@ -132,8 +132,11 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
       >
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-            <Typography mb={4}>
+            <Typography mb={1}>
               <Trans>{description}</Trans>
+            </Typography>
+            <Typography mb={3}>
+              <Trans>This will take about a minute.</Trans>
             </Typography>
             <Spinner success={xTransaction.status === XTransactionStatus.success} />
           </Flex>

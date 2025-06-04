@@ -12,7 +12,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useSavingsXChainId } from '@/store/savings/hooks';
+import { useSavingsSliderActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   ICON_XCALL_NETWORK_ID,
@@ -50,6 +50,7 @@ const SavingsModal = ({
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const { track } = useAnalytics();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
+  const { onAdjust: adjust } = useSavingsSliderActionHandlers();
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -125,6 +126,7 @@ const SavingsModal = ({
         setIsPending(false);
         console.error('staking/unlocking bnUSD error: ', error);
       } finally {
+        adjust(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }

@@ -279,10 +279,8 @@ const Savings = () => {
         lockedAmount={executionLockedAmount}
         onSuccess={async () => {
           await refetchLockedAmount();
-          // queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
           queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmounts'] });
           queryClient.invalidateQueries({ queryKey: ['xBalances', savingsXChainId] });
-          adjust(false);
         }}
       />
     </>

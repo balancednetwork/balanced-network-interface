@@ -11,10 +11,11 @@ type SpinnerProps = {
   className?: string;
   $centered?: boolean;
   success?: boolean;
+  style?: React.CSSProperties;
 };
 
-const Spinner: FC<SpinnerProps> = ({ size = 20, className, $centered = false, success = false, ...rest }) => (
-  <Container className={className} $centered={$centered} {...rest}>
+const Spinner: FC<SpinnerProps> = ({ size = 20, className, $centered = false, success = false, style, ...rest }) => (
+  <Container className={className} $centered={$centered} {...rest} style={style}>
     <AnimatePresence>
       {!success ? (
         <motion.div

@@ -156,7 +156,7 @@ const MMSwapModal = ({
       intentFromChainName === 'icon' && logMessage('Order creation result', intentHash);
 
       if (!intentHash.ok) {
-        intentFromChainName === 'icon' && logError(new Error('Order creation failed'), intentHash);
+        logError(new Error('Order creation failed'), intentHash);
         const e = intentHash.error as WriteContractErrorType;
 
         if (e.name === 'ContractFunctionExecutionError' && e.details === 'User rejected the request.') {
@@ -205,7 +205,7 @@ const MMSwapModal = ({
           to: xChainMap[direction.to].name,
         });
       } else {
-        intentFromChainName === 'icon' && logError(new Error('Execution failed'), executionResult);
+        logError(new Error('Execution failed'), executionResult);
         setError(executionResult.error?.detail?.message || 'Failed to execute intent order');
         console.error('IntentService.executeIntentOrder error', executionResult.error);
         setOrderStatus(IntentOrderStatus.Failure);
@@ -215,13 +215,13 @@ const MMSwapModal = ({
       const intentResult = await retryGetOrder(intentHash.value, intentFromChainName, intentProvider);
 
       if (!intentResult?.ok) {
-        intentFromChainName === 'icon' && logError(new Error('Failed to get order details'), intentResult);
+        logError(new Error('Failed to get order details'), intentResult);
         setError(intentResult.error?.message || 'Failed to get order details after multiple attempts');
         setOrderStatus(IntentOrderStatus.None);
       }
       MMTransactionActions.setOrderId(intentHash.value, BigInt(intentResult?.value?.id || ''));
     } catch (e) {
-      intentFromChainName === 'icon' && logError(new Error('Caught intent error'), { error: e });
+      logError(new Error('Caught intent error'), { error: e });
       console.error('SwapMMCommitButton error', e);
       setError(e instanceof Error ? e.message : 'An unexpected error occurred');
       setOrderStatus(IntentOrderStatus.None);

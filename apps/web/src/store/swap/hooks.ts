@@ -628,10 +628,9 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
   const swapInput = convert(inputCurrency?.wrapped, trade?.inputAmount);
 
   return {
-    // isMMBetter: isExactInput
-    //   ? mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true)
-    //   : mmTrade?.inputAmount && (swapInput ? mmTrade.inputAmount.lessThan(swapInput) : true),
-    isMMBetter: true,
+    isMMBetter: isExactInput
+      ? mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true)
+      : mmTrade?.inputAmount && (swapInput ? mmTrade.inputAmount.lessThan(swapInput) : true),
     trade: mmTrade,
   };
 }

@@ -1073,6 +1073,7 @@ msgstr "Balance Tokens vergrendelen?"
 #: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 #: src/app/components/home/Savings/SavingsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
@@ -1082,8 +1083,10 @@ msgstr "Balance Tokens vergrendelen?"
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1926,6 +1929,14 @@ msgstr ""
 #: src/app/pages/home/LoanPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 #~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
+#: src/app/components/home/Savings/SavingsModal.tsx
+msgid "Waiting for wallet..."
+msgstr ""
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -2998,12 +3009,10 @@ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
-#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Verwissel"
@@ -3217,7 +3226,6 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/store/bridge/hooks.tsx
 msgid "Transfer"
 msgstr ""

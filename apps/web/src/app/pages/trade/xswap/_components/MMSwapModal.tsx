@@ -34,6 +34,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChainName, CreateIntentOrderPayload, SolverApiService } from 'icon-intents-sdk';
 import { WriteContractErrorType } from 'viem';
 import { retryGetOrder } from '../utils';
+import { logError, logMessage } from '@/sentry';
 
 type MMSwapModalProps = {
   modalId?: MODAL_ID;
@@ -150,9 +151,12 @@ const MMSwapModal = ({
       }
 
       setWalletPrompting(true);
+      intentFromChainName === 'icon' && logMessage('Creating order', order);
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
+      intentFromChainName === 'icon' && logMessage('Order creation result', intentHash);
 
       if (!intentHash.ok) {
+        logError(new Error('Order creation failed'), intentHash);
         const e = intentHash.error as WriteContractErrorType;
 
         if (e.name === 'ContractFunctionExecutionError' && e.details === 'User rejected the request.') {
@@ -165,7 +169,7 @@ const MMSwapModal = ({
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
-      console.log('intent debug creation', intentHash);
+
       setOrderStatus(IntentOrderStatus.Executing);
       clearInputs();
 
@@ -180,6 +184,11 @@ const MMSwapModal = ({
       });
       setIntentId(intentHash.value);
 
+      intentFromChainName === 'icon' &&
+        logMessage('Executing order', {
+          intent_tx_hash: intentHash.value,
+          quote_uuid: trade.uuid,
+        });
       const executionResult = await SolverApiService.postExecution(
         {
           intent_tx_hash: intentHash.value,
@@ -187,15 +196,16 @@ const MMSwapModal = ({
         },
         intentServiceConfig,
       );
-      console.log('intent debug execution', executionResult);
 
       if (executionResult.ok) {
+        intentFromChainName === 'icon' && logMessage('Execution result', executionResult);
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
         track('swap_intent', {
           from: xChainMap[direction.from].name,
           to: xChainMap[direction.to].name,
         });
       } else {
+        logError(new Error('Execution failed'), executionResult);
         setError(executionResult.error?.detail?.message || 'Failed to execute intent order');
         console.error('IntentService.executeIntentOrder error', executionResult.error);
         setOrderStatus(IntentOrderStatus.Failure);
@@ -203,14 +213,15 @@ const MMSwapModal = ({
 
       // Retry getOrder until successful or max attempts reached
       const intentResult = await retryGetOrder(intentHash.value, intentFromChainName, intentProvider);
-      console.log('intent debug order info', intentResult);
 
       if (!intentResult?.ok) {
+        logError(new Error('Failed to get order details'), intentResult);
         setError(intentResult.error?.message || 'Failed to get order details after multiple attempts');
         setOrderStatus(IntentOrderStatus.None);
       }
       MMTransactionActions.setOrderId(intentHash.value, BigInt(intentResult?.value?.id || ''));
     } catch (e) {
+      logError(new Error('Caught intent error'), { error: e });
       console.error('SwapMMCommitButton error', e);
       setError(e instanceof Error ? e.message : 'An unexpected error occurred');
       setOrderStatus(IntentOrderStatus.None);

@@ -25,6 +25,7 @@ export type MMTransaction = {
   status: MMTransactionStatus;
   fromAmount: CurrencyAmount<XToken>;
   toAmount: CurrencyAmount<XToken>;
+  createdAt: number;
 };
 
 type MMTransactionStore = {
@@ -38,6 +39,7 @@ type MMTransactionStore = {
   setOrderId: (id: string, orderId: bigint) => void;
   getPendingTransactions: () => MMTransaction[];
   remove: (id: string) => void;
+  getTransactions: () => MMTransaction[];
 };
 
 export const useMMTransactionStore = create<MMTransactionStore>()(
@@ -51,7 +53,10 @@ export const useMMTransactionStore = create<MMTransactionStore>()(
 
       add: (transaction: MMTransaction) => {
         set(state => {
-          state.transactions[transaction.id] = transaction;
+          state.transactions[transaction.id] = {
+            ...transaction,
+            createdAt: transaction.createdAt || Date.now(),
+          };
         });
       },
 
@@ -86,21 +91,19 @@ export const useMMTransactionStore = create<MMTransactionStore>()(
       },
 
       getPendingTransactions: () => {
-        return Object.values(get().transactions).filter((transaction: MMTransaction) => {
-          return (
-            transaction.status !== MMTransactionStatus.success
-            // signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
-          );
-        });
-        // .sort((a: MMTransaction, b: MMTransaction) => {
-        //   const aPrimaryMessage = xMessageActions.getOf(a.id, true);
-        //   const bPrimaryMessage = xMessageActions.getOf(b.id, true);
-        //   if (aPrimaryMessage && bPrimaryMessage) {
-        //     return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
-        //   }
-        //   return 0;
-        // });
+        return Object.values(get().transactions)
+          .filter((transaction: MMTransaction) => {
+            return transaction.status !== MMTransactionStatus.success;
+          })
+          .sort((a: MMTransaction, b: MMTransaction) => b.createdAt - a.createdAt);
       },
+
+      getTransactions: () => {
+        return Object.values(get().transactions).sort(
+          (a: MMTransaction, b: MMTransaction) => b.createdAt - a.createdAt,
+        );
+      },
+
       remove: (id: string) => {
         set(state => {
           delete state.transactions[id];

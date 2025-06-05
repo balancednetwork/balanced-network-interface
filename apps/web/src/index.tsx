@@ -11,6 +11,10 @@ import store from '@/store';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
+import { initSentry, logError, logMessage } from './sentry';
+
+// Initialize Sentry
+initSentry();
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
@@ -32,7 +36,6 @@ BigInt.prototype['toJSON'] = function () {
   return 'BIGINT::' + this.toString();
 };
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
-BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

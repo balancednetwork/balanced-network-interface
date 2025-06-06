@@ -132,10 +132,21 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
       >
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-            <Typography mb={4}>
+            <Typography mb={1}>
               <Trans>{description}</Trans>
             </Typography>
-            <Spinner success={xTransaction.status === XTransactionStatus.success} />
+            <motion.div
+              animate={{
+                opacity: xTransaction.status === XTransactionStatus.success ? 0 : 1,
+                height: xTransaction.status === XTransactionStatus.success ? 0 : 'auto',
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <Typography>
+                <Trans>This will take about a minute.</Trans>
+              </Typography>
+            </motion.div>
+            <Spinner style={{ marginTop: '15px' }} success={xTransaction.status === XTransactionStatus.success} />
           </Flex>
         </Box>
       </motion.div>

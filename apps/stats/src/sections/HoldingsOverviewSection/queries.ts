@@ -162,7 +162,7 @@ export function useReserveFundHoldingsPieData() {
                 const token = holdingsData[contract].currency.wrapped;
                 const curAmount = new BigNumber(holdingsData[contract].toFixed());
                 if (tokenPrices[token.symbol!]) {
-                  return curAmount.times(tokenPrices[token.symbol!]).toNumber() > 500;
+                  return curAmount.times(tokenPrices[token.symbol!]).toNumber() > 50;
                 } else {
                   return false;
                 }
@@ -253,7 +253,6 @@ export function useHoldingsBreakdownPieData() {
   const { data: tokenPrices, isSuccess: isTokenPricesSuccess } = useTokenPrices();
   const { data: POLData, isSuccess: isPOLDataSuccess } = usePOLData(now);
   const { data: holdings, isSuccess: isHoldingsSuccess } = useHoldings(now, daoFundAddress);
-  const { data: reserve, isSuccess: isReserveSuccess } = useHoldings(now, reserveFundAddress);
 
   return useQuery({
     queryKey: [
@@ -278,18 +277,6 @@ export function useHoldingsBreakdownPieData() {
           }, 0)
         : 0;
 
-      const totalReserve = reserve
-        ? Object.keys(reserve).reduce((total, contract) => {
-            const token = reserve[contract].currency.wrapped;
-            const curAmount = new BigNumber(reserve[contract].toFixed());
-            if (tokenPrices[token.symbol!]) {
-              return total + curAmount.times(tokenPrices[token.symbol!]).toNumber();
-            } else {
-              return total;
-            }
-          }, 0)
-        : 0;
-
       const data = [
         {
           name: 'Liquidity',
@@ -301,16 +288,11 @@ export function useHoldingsBreakdownPieData() {
           value: totalHoldings,
           fill: CHART_COLORS[1] || CHART_COLORS[CHART_COLORS.length - 1],
         },
-        {
-          name: 'Reserve Fund',
-          value: totalReserve,
-          fill: CHART_COLORS[2] || CHART_COLORS[CHART_COLORS.length - 1],
-        },
       ];
 
       return data;
     },
     placeholderData: keepPreviousData,
-    enabled: isPOLDataSuccess && isHoldingsSuccess && isReserveSuccess && isTokenPricesSuccess,
+    enabled: isPOLDataSuccess && isHoldingsSuccess && isTokenPricesSuccess,
   });
 }

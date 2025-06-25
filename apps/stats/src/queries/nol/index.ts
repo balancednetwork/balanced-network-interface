@@ -15,6 +15,8 @@ export const EXTENDED_CHART_COLORS = {
   SUI: '#4DA2FF',
   ETH: '#627EEA',
   BTC: '#f7931a',
+  SOL: '#9945FF',
+  wICX: '#46bfd1',
   default: '#136aa1',
 };
 
@@ -84,7 +86,7 @@ export function useNetworkOwnedLiquidityData(): UseQueryResult<
       return {
         chartData: nolData
           .map(data => ({
-            name: data.pair?.name || 'Unknown',
+            name: (data.pair?.name || 'Unknown').replace('wICX', 'ICX'),
             value: data.liquidity.toNumber(),
             fill: data.pair?.baseSymbol
               ? EXTENDED_CHART_COLORS[data.pair?.baseSymbol] || EXTENDED_CHART_COLORS['default']

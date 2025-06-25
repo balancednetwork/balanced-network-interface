@@ -2328,6 +2328,10 @@ msgstr "Unlocked {0} BALN."
 #~ msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
 #~ msgstr "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "This will take about a minute."
+msgstr "This will take about a minute."
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
 msgstr "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."

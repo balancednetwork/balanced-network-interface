@@ -19,6 +19,11 @@
     "lint": "turbo run lint",
     "prepare": "husky"
   },
+  "pnpm": {
+    "overrides": {
+      "@sodax/dapp-kit": "0.0.1-rc.5"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

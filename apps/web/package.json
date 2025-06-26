@@ -85,7 +85,7 @@
     "serve": "11.3.2",
     "styled-components": "6.1.8",
     "tiny-invariant": "1.1.0",
-    "viem": "^2.21.35",
+    "viem": "^2.31.4",
     "zustand": "4.5.2"
   },
   "scripts": {

@@ -12,6 +12,8 @@ import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
+import sodaxConfig from './lib/sodax';
+import { SodaxProvider } from '@sodax/dapp-kit';
 
 // Initialize Sentry
 initSentry();
@@ -42,15 +44,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <BrowserRouter>
         <HelmetProvider>
-          <QueryClientProvider client={queryClient}>
-            <XWagmiProviders>
-              <LanguageProvider>
-                <PlausibleProvider domain="app.balanced.network">
-                  <App />
-                </PlausibleProvider>
-              </LanguageProvider>
-            </XWagmiProviders>
-          </QueryClientProvider>
+          <SodaxProvider testnet={false} config={sodaxConfig}>
+            <QueryClientProvider client={queryClient}>
+              <XWagmiProviders>
+                <LanguageProvider>
+                  <PlausibleProvider domain="app.balanced.network">
+                    <App />
+                  </PlausibleProvider>
+                </LanguageProvider>
+              </XWagmiProviders>
+            </QueryClientProvider>
+          </SodaxProvider>
         </HelmetProvider>
       </BrowserRouter>
     </Provider>

@@ -64,7 +64,9 @@ export default function CurrencyList({
   const hasSignedIn = useHasSignedIn();
   const isSwapSelector =
     currencySelectionType === CurrencySelectionType.TRADE_IN ||
-    currencySelectionType === CurrencySelectionType.TRADE_OUT;
+    currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT;
 
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {

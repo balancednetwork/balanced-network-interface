@@ -30,6 +30,7 @@ import SearchInput from './SearchInput';
 import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { shouldHideBecauseOfLowValue } from './utils';
+import { SODAX_TOKEN_SYMBOLS } from '@/lib/sodax/tokens';
 
 export enum CurrencySelectionType {
   TRADE_IN,
@@ -38,6 +39,8 @@ export enum CurrencySelectionType {
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
   BRIDGE,
+  SODAX_TRADE_IN,
+  SODAX_TRADE_OUT,
 }
 
 export enum AssetsTab {
@@ -82,6 +85,15 @@ const removeStableTokens = (tokens: { [address: string]: Token }) => {
 function filterUntradeableTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
   return Object.values(tokens)
     .filter(token => !UNTRADEABLE_TOKENS.includes(token.symbol))
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
+}
+
+function filterSodaxTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
+  return Object.values(tokens)
+    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;
@@ -159,6 +171,7 @@ export function CurrencySearch({
     if (
       hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
         currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE)
     ) {
       setAssetsTab(AssetsTab.YOUR);
@@ -179,6 +192,9 @@ export function CurrencySearch({
         return filterUntradeableTokens(tokens);
       case CurrencySelectionType.TRADE_OUT:
         return filterUntradeableTokens(tokens);
+      case CurrencySelectionType.SODAX_TRADE_IN:
+      case CurrencySelectionType.SODAX_TRADE_OUT:
+        return filterSodaxTokens(tokens);
       case CurrencySelectionType.TRADE_MINT_BASE:
         return removeStableTokens(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
@@ -284,6 +300,8 @@ export function CurrencySearch({
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.TRADE_IN ||
       currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
       ? undefined
       : xChainId;
@@ -308,6 +326,8 @@ export function CurrencySearch({
     if (
       currencySelectionType === CurrencySelectionType.TRADE_IN ||
       currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
     ) {
       return assetsTab === AssetsTab.ALL || wallets.length > 1;
@@ -343,6 +363,8 @@ export function CurrencySearch({
       {hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
         currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+        currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
         currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>

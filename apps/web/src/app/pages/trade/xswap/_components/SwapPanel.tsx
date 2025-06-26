@@ -179,7 +179,7 @@ export default function SwapPanel() {
               xChainId={direction.from}
               onChainSelect={handleInputChainSelection}
               showCrossChainOptions={true}
-              currencySelectionType={CurrencySelectionType.TRADE_IN}
+              currencySelectionType={CurrencySelectionType.SODAX_TRADE_IN}
             />
           </Flex>
 
@@ -226,7 +226,7 @@ export default function SwapPanel() {
               addressEditable
               setManualAddress={setManualAddress}
               showWarning={false}
-              currencySelectionType={CurrencySelectionType.TRADE_OUT}
+              currencySelectionType={CurrencySelectionType.SODAX_TRADE_OUT}
             />
           </Flex>
         </AutoColumn>

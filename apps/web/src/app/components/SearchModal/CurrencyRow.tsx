@@ -61,7 +61,9 @@ export default function CurrencyRow({
   const xWallet = useCrossChainWalletBalances();
   const isSwapSelector =
     currencySelectionType === CurrencySelectionType.TRADE_IN ||
-    currencySelectionType === CurrencySelectionType.TRADE_OUT;
+    currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT;
   const prices = useRatesWithOracle();
 
   const sortedXChains = useMemo(() => {

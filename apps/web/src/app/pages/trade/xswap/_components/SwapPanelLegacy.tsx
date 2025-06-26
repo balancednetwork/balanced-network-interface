@@ -53,10 +53,14 @@ export default function SwapPanel() {
     direction,
     formattedAmounts,
     maximumBridgeAmount,
+    canBridge,
     stellarValidation,
     stellarTrustlineValidation,
+    canSwap,
+    maximumOutputAmount,
     parsedAmounts,
   } = useDerivedSwapInfo();
+  const mmTrade = useDerivedMMTradeInfo(trade);
 
   const signedInWallets = useSignedInWallets();
   const { recipient, independentField } = useSwapState();
@@ -141,13 +145,27 @@ export default function SwapPanel() {
 
   const rates = useRatesWithOracle();
 
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
+
   const swapInputValue = useMemo(() => {
+    if (independentField === Field.INPUT) {
+      return formattedAmounts[Field.INPUT];
+    }
+    if (mmTrade.isMMBetter) {
+      return mmTrade.trade?.inputAmount.toSignificant();
+    }
     return formattedAmounts[Field.INPUT];
-  }, [formattedAmounts]);
+  }, [mmTrade.isMMBetter, mmTrade.trade?.inputAmount, formattedAmounts, independentField]);
 
   const swapOutputValue = useMemo(() => {
+    if (independentField === Field.OUTPUT) {
+      return formattedAmounts[Field.OUTPUT];
+    }
+    if (mmTrade.isMMBetter) {
+      return mmTrade.trade?.outputAmount.toSignificant();
+    }
     return formattedAmounts[Field.OUTPUT];
-  }, [formattedAmounts]);
+  }, [mmTrade.isMMBetter, mmTrade.trade?.outputAmount, formattedAmounts, independentField]);
 
   return (
     <>
@@ -225,30 +243,40 @@ export default function SwapPanel() {
               showCrossChainOptions={true}
               addressEditable
               setManualAddress={setManualAddress}
-              showWarning={false}
+              showWarning={mmTrade.isMMBetter ? false : showWarning}
               currencySelectionType={CurrencySelectionType.TRADE_OUT}
             />
           </Flex>
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <PriceImpact trade={undefined} />
+          <PriceImpact trade={mmTrade?.isMMBetter ? undefined : trade} />
 
-          <SwapInfo trade={trade} />
+          {mmTrade.isMMBetter ? <MMSwapInfo trade={mmTrade.trade} /> : <SwapInfo trade={trade} />}
 
           <Flex justifyContent="center" mt={4}>
+            <MMSwapCommitButton
+              hidden={!mmTrade.isMMBetter}
+              currencies={currencies}
+              account={account}
+              recipient={recipient}
+              trade={mmTrade.trade}
+              direction={direction}
+              stellarValidation={stellarValidation}
+              stellarTrustlineValidation={stellarTrustlineValidation}
+            />
             <SwapCommitButton
-              hidden={false}
+              hidden={!!mmTrade.isMMBetter}
               trade={trade}
               error={inputError}
               currencies={currencies}
-              canBridge={true}
+              canBridge={canBridge}
               account={account}
               recipient={recipient}
               direction={direction}
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
-              canSwap={true}
+              canSwap={canSwap}
             />
           </Flex>
 
@@ -266,6 +294,17 @@ export default function SwapPanel() {
                 address={recipient}
               />
             </Flex>
+          )}
+
+          {!canBridge && maximumBridgeAmount && trade && (
+            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
+          )}
+
+          {!canSwap && maximumOutputAmount && (
+            <WithdrawalLimitWarning
+              limitAmount={maximumOutputAmount}
+              onLimitAmountClick={handleMaxWithdrawAmountClick}
+            />
           )}
 
           <SolanaAccountExistenceWarning

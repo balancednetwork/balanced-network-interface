@@ -37,9 +37,13 @@ export enum XTransactionType {
 
   // lend & borrow
   DEPOSIT = 'deposit',
+  DEPOSIT_ON_ICON = 'deposit_on_icon',
   WITHDRAW = 'withdraw',
+  WITHDRAW_ON_ICON = 'withdraw_on_icon',
   BORROW = 'borrow',
+  BORROW_ON_ICON = 'borrow_on_icon',
   REPAY = 'repay',
+  REPAY_ON_ICON = 'repay_on_icon',
 
   //liquidity
   LP_DEPOSIT_XTOKEN = 'lp_deposit_xtoken',
@@ -54,6 +58,9 @@ export enum XTransactionType {
   SAVINGS_LOCK_BNUSD = 'savings_lock_bnusd',
   SAVINGS_UNLOCK_BNUSD = 'savings_unlock_bnusd',
   SAVINGS_CLAIM_REWARDS = 'savings_claim_rewards',
+
+  // network fees
+  CLAIM_NETWORK_FEES = 'claim_network_fees',
 }
 
 export enum XMessageStatus {
@@ -94,13 +101,15 @@ export type XTransactionInput = {
   withdrawAmountB?: CurrencyAmount<XToken>;
 };
 
-export type Transaction = {
+export interface Transaction {
   id: string;
   hash: string;
   xChainId: XChainId;
   status: TransactionStatus;
   timestamp: number;
 
+  input?: XTransactionInput;
+  type?: XTransactionType;
   pendingMessage?: string;
   successMessage?: string;
   errorMessage?: string;
@@ -108,7 +117,8 @@ export type Transaction = {
   onSuccess?: () => void; // Callback on success
 
   rawEventLogs?: any[];
-};
+  createdAt?: number;
+}
 
 export type XCallMessageEvent = {
   eventType: XCallEventType;

@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
@@ -13,32 +12,26 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
-import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useRatesWithOracle } from '@/queries/reward';
-import {
-  useDerivedMMTradeInfo,
-  useDerivedSwapInfo,
-  useInitialSwapLoad,
-  useSwapActionHandlers,
-  useSwapState,
-} from '@/store/swap/hooks';
+import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { XToken, getXChainType } from '@balancednetwork/xwagmi';
-import { useXAccount } from '@balancednetwork/xwagmi';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount, type XToken } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/sdk-core';
+import { useCreateIntentOrder, useQuote, useSpokeProvider } from '@sodax/dapp-kit';
+import { CreateIntentParams, Hex, Intent, IntentQuoteRequest, PacketData, SpokeChainId } from '@sodax/sdk';
+import { BigNumber } from 'bignumber.js';
 import MMPendingIntents from './MMPendingIntents';
-import MMSwapCommitButton from './MMSwapCommitButton';
-import MMSwapInfo from './MMSwapInfo';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
+import { useWalletProvider } from '@/hooks/useWalletProvider';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -57,6 +50,24 @@ export default function SwapPanel() {
     stellarTrustlineValidation,
     parsedAmounts,
   } = useDerivedSwapInfo();
+
+  // !! SODAX start
+  const [slippage, setSlippage] = useState<string>('0.5');
+  const [intentOrderPayload, setIntentOrderPayload] = useState<CreateIntentParams | undefined>(undefined);
+  const sourceToken = currencies[Field.INPUT];
+  const destToken = currencies[Field.OUTPUT];
+  const sourceChain = direction.from as SpokeChainId;
+  const destChain = direction.to as SpokeChainId;
+  const sourceAmount = formattedAmounts[Field.INPUT];
+
+  const walletProvider = useWalletProvider(sourceChain);
+  console.log('walletProvider debug kk', walletProvider);
+  const spokeProvider = useSpokeProvider(sourceChain, walletProvider);
+  console.log('spokeProvider debug kk', spokeProvider);
+
+  // const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
+  const [orders, setOrders] = useState<{ intentHash: Hex; intent: Intent; packet: PacketData }[]>([]);
+  // !! SODAX end
 
   const signedInWallets = useSignedInWallets();
   const { recipient, independentField } = useSwapState();
@@ -148,6 +159,67 @@ export default function SwapPanel() {
   const swapOutputValue = useMemo(() => {
     return formattedAmounts[Field.OUTPUT];
   }, [formattedAmounts]);
+
+  // !! SODAX start
+  const payload = useMemo(() => {
+    if (!sourceToken || !destToken) {
+      return undefined;
+    }
+
+    if (Number(sourceAmount) <= 0) {
+      return undefined;
+    }
+
+    return {
+      token_src: sourceToken.address,
+      token_src_blockchain_id: sourceChain,
+      token_dst: destToken.address,
+      token_dst_blockchain_id: destChain,
+      amount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
+      quote_type: 'exact_input',
+    } satisfies IntentQuoteRequest;
+  }, [sourceToken, destToken, sourceChain, destChain, sourceAmount]);
+
+  const quoteQuery = useQuote(payload);
+
+  const quote = useMemo(() => {
+    if (quoteQuery.data?.ok) {
+      return quoteQuery.data.value;
+    }
+
+    return undefined;
+  }, [quoteQuery]);
+
+  const exchangeRate = useMemo(() => {
+    return calculateExchangeRate(
+      new BigNumber(sourceAmount),
+      new BigNumber(normaliseTokenAmount(quote?.quoted_amount ?? 0n, destToken?.decimals ?? 0)),
+    );
+  }, [quote, sourceAmount, destToken]);
+
+  const minOutputAmount = useMemo(() => {
+    return quote?.quoted_amount
+      ? new BigNumber(quote.quoted_amount.toString())
+          .multipliedBy(new BigNumber(100).minus(new BigNumber(slippage)))
+          .div(100)
+      : undefined;
+  }, [quote, slippage]);
+
+  console.log('quote olol', quote);
+
+  //!! SODAX Execute
+  const handleSwap = async (intentOrderPayload: CreateIntentParams) => {
+    // setOpen(false);
+    // const result = await createIntentOrder(intentOrderPayload);
+    //
+    // if (result.ok) {
+    //   const [response, intent, packet] = result.value;
+    //
+    //   setOrders(prev => [...prev, { intentHash: response.intent_hash, intent, packet }]);
+    // } else {
+    //   console.error('Error creating and submitting intent:', result.error);
+    // }
+  };
 
   return (
     <>

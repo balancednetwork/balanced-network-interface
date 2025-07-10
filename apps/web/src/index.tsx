@@ -8,20 +8,20 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '@/app';
 import store from '@/store';
-import { wagmiConfig } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
 import sodaxConfig from './lib/sodax';
 import { SodaxProvider } from '@sodax/dapp-kit';
+// import { wagmiConfig } from '@balancednetwork/xwagmi';
+// import { XWagmiProviders } from '@sodax/wallet-sdk';
+import { XWagmiProviders } from '@balancednetwork/xwagmi';
 
 // Initialize Sentry
 initSentry();
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
-// import { XWagmiProviders } from '@sodax/wallet-sdk';
-import { XWagmiProviders } from '@balancednetwork/xwagmi';
 
 const queryClient = new QueryClient();
 // Set the global formatting options

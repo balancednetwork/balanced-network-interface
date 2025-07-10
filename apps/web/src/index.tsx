@@ -8,7 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '@/app';
 import store from '@/store';
-import { XWagmiProviders } from '@balancednetwork/xwagmi';
+import { wagmiConfig } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
@@ -20,6 +20,7 @@ initSentry();
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
+import { XWagmiProviders } from '@sodax/wallet-sdk';
 
 const queryClient = new QueryClient();
 // Set the global formatting options
@@ -46,7 +47,23 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HelmetProvider>
           <SodaxProvider testnet={false} config={sodaxConfig}>
             <QueryClientProvider client={queryClient}>
-              <XWagmiProviders>
+              <XWagmiProviders
+                config={{
+                  EVM: {
+                    wagmiConfig: wagmiConfig,
+                  },
+                  SUI: {
+                    isMainnet: true,
+                  },
+                  SOLANA: {
+                    endpoint: 'https://solana-mainnet.g.alchemy.com/v2/your-api-key',
+                  },
+                  ICON: {},
+                  HAVAH: {},
+                  INJECTIVE: {},
+                  STELLAR: {},
+                }}
+              >
                 <LanguageProvider>
                   <PlausibleProvider domain="app.balanced.network">
                     <App />

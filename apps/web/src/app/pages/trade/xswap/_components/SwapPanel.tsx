@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import { Box, Flex } from 'rebass/styled-components';
+import { Box, Button, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { AutoColumn } from '@/app/components/Column';
@@ -24,14 +24,22 @@ import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getXChainType, useXAccount, type XToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/sdk-core';
-import { useCreateIntentOrder, useQuote, useSpokeProvider } from '@sodax/dapp-kit';
-import { CreateIntentParams, Hex, Intent, IntentQuoteRequest, PacketData, SpokeChainId } from '@sodax/sdk';
+import { useCreateIntentOrder, useQuote } from '@sodax/dapp-kit';
+import {
+  CreateIntentParams,
+  encodeAddress,
+  Hex,
+  Intent,
+  IntentQuoteRequest,
+  PacketData,
+  SpokeChainId,
+} from '@sodax/sdk';
 import { BigNumber } from 'bignumber.js';
 import MMPendingIntents from './MMPendingIntents';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
-import { useWalletProvider } from '@/hooks/useWalletProvider';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -60,12 +68,10 @@ export default function SwapPanel() {
   const destChain = direction.to as SpokeChainId;
   const sourceAmount = formattedAmounts[Field.INPUT];
 
-  const walletProvider = useWalletProvider(sourceChain);
-  console.log('walletProvider debug kk', walletProvider);
-  const spokeProvider = useSpokeProvider(sourceChain, walletProvider);
-  console.log('spokeProvider debug kk', spokeProvider);
+  const spokeProvider = useSpokeProvider(sourceChain);
+  // console.log('spokeProvider debug kk', spokeProvider);
 
-  // const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
+  const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
   const [orders, setOrders] = useState<{ intentHash: Hex; intent: Intent; packet: PacketData }[]>([]);
   // !! SODAX end
 
@@ -205,20 +211,74 @@ export default function SwapPanel() {
       : undefined;
   }, [quote, slippage]);
 
-  console.log('quote olol', quote);
+  // console.log('quote olol', quote);
 
   //!! SODAX Execute
+  const createIntentOrderPayload = async () => {
+    if (!quote) {
+      console.error('Quote undefined');
+      return;
+    }
+
+    if (!sourceToken || !destToken) {
+      console.error('sourceToken or destToken undefined');
+      return;
+    }
+
+    if (!minOutputAmount) {
+      console.error('minOutputAmount undefined');
+      return;
+    }
+
+    if (!account) {
+      console.error('sourceAccount.address undefined');
+      return;
+    }
+
+    if (!recipient) {
+      console.error('destAccount.address undefined');
+      return;
+    }
+
+    if (!spokeProvider) {
+      console.error('sourceProvider or destProvider undefined');
+      return;
+    }
+
+    const createIntentParams = {
+      inputToken: sourceToken.address, // The address of the input token on hub chain
+      outputToken: destToken.address, // The address of the output token on hub chain
+      inputAmount: scaleTokenAmount(sourceAmount, sourceToken.decimals), // The amount of input tokens
+      minOutputAmount: BigInt(minOutputAmount.toFixed(0)), // The minimum amount of output tokens to accept
+      deadline: BigInt(0), // Optional timestamp after which intent expires (0 = no deadline)
+      allowPartialFill: false, // Whether the intent can be partially filled
+      srcChain: sourceChain, // Chain ID where input tokens originate
+      dstChain: destChain, // Chain ID where output tokens should be delivered
+      srcAddress: encodeAddress(sourceChain, account), // Source address in bytes (original address on spoke chain)
+      dstAddress: encodeAddress(destChain, recipient), // Destination address in bytes (original address on spoke chain)
+      solver: '0x0000000000000000000000000000000000000000', // Optional specific solver address (address(0) = any solver)
+      data: '0x', // Additional arbitrary data
+    } satisfies CreateIntentParams;
+
+    setIntentOrderPayload(createIntentParams);
+  };
+
   const handleSwap = async (intentOrderPayload: CreateIntentParams) => {
     // setOpen(false);
-    // const result = await createIntentOrder(intentOrderPayload);
-    //
-    // if (result.ok) {
-    //   const [response, intent, packet] = result.value;
-    //
-    //   setOrders(prev => [...prev, { intentHash: response.intent_hash, intent, packet }]);
-    // } else {
-    //   console.error('Error creating and submitting intent:', result.error);
-    // }
+    const result = await createIntentOrder(intentOrderPayload);
+
+    if (result.ok) {
+      const [response, intent, packet] = result.value;
+
+      setOrders(prev => [...prev, { intentHash: response.intent_hash, intent, packet }]);
+    } else {
+      console.error('Error creating and submitting intent:', result.error);
+    }
+  };
+
+  const handleIntent = async () => {
+    await createIntentOrderPayload();
+    intentOrderPayload && (await handleSwap(intentOrderPayload));
   };
 
   return (
@@ -309,7 +369,8 @@ export default function SwapPanel() {
           <SwapInfo trade={trade} />
 
           <Flex justifyContent="center" mt={4}>
-            <SwapCommitButton
+            <Button onClick={() => handleIntent()}>Create Intent Order</Button>
+            {/* <SwapCommitButton
               hidden={false}
               trade={trade}
               error={inputError}
@@ -321,7 +382,7 @@ export default function SwapPanel() {
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
               canSwap={true}
-            />
+            /> */}
           </Flex>
 
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (

@@ -47,8 +47,6 @@
     "@solana/wallet-adapter-react": "0.15.35",
     "@solana/wallet-adapter-wallets": "0.19.32",
     "@solana/web3.js": "1.95.4",
-    "@sodax/types": "0.0.1-rc.3",
-    "@sodax/wallet-sdk": "0.0.1-rc.4",
     "@stellar/stellar-sdk": "12.3.0",
     "@tanstack/react-query": "5.29.2",
     "axios": "0.21.3",

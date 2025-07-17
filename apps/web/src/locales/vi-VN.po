@@ -1107,6 +1107,7 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Nhập vào số lượng"
 
@@ -1619,6 +1620,7 @@ msgid "Couldn't send {0} to the {1} pool. Try again."
 msgstr ""
 
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Select a token"
 msgstr "Chọn 1 đồng tiền"
 
@@ -1980,6 +1982,7 @@ msgid "Send your liquidity to Balanced, then click Supply."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr ""
@@ -3050,6 +3053,7 @@ msgid "Remove community token list?"
 msgstr ""
 
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar wallet"
 msgstr ""

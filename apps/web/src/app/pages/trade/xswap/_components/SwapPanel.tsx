@@ -18,7 +18,13 @@ import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useRatesWithOracle } from '@/queries/reward';
-import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import {
+  useDerivedSwapInfo,
+  useDerivedTradeInfo,
+  useInitialSwapLoad,
+  useSwapActionHandlers,
+  useSwapState,
+} from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
@@ -45,19 +51,20 @@ export default function SwapPanel() {
   useInitialSwapLoad();
 
   const {
-    trade,
     currencyBalances,
     currencies,
     inputError,
     percents,
-    account,
+    sourceAddress,
     direction,
     formattedAmounts,
-    maximumBridgeAmount,
     stellarValidation,
     stellarTrustlineValidation,
     parsedAmounts,
-  } = useDerivedSwapInfo();
+    quote,
+    exchangeRate,
+    minOutputAmount,
+  } = useDerivedTradeInfo();
 
   // !! SODAX start
   const [slippage, setSlippage] = useState<string>('0.5');
@@ -148,14 +155,6 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const handleMaxBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
-
-  const handleMaxWithdrawAmountClick = (amount: CurrencyAmount<Currency>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
-
   const rates = useRatesWithOracle();
 
   const swapInputValue = useMemo(() => {
@@ -167,51 +166,8 @@ export default function SwapPanel() {
   }, [formattedAmounts]);
 
   // !! SODAX start
-  const payload = useMemo(() => {
-    if (!sourceToken || !destToken) {
-      return undefined;
-    }
 
-    if (Number(sourceAmount) <= 0) {
-      return undefined;
-    }
-
-    return {
-      token_src: sourceToken.address,
-      token_src_blockchain_id: sourceChain,
-      token_dst: destToken.address,
-      token_dst_blockchain_id: destChain,
-      amount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
-      quote_type: 'exact_input',
-    } satisfies IntentQuoteRequest;
-  }, [sourceToken, destToken, sourceChain, destChain, sourceAmount]);
-
-  const quoteQuery = useQuote(payload);
-
-  const quote = useMemo(() => {
-    if (quoteQuery.data?.ok) {
-      return quoteQuery.data.value;
-    }
-
-    return undefined;
-  }, [quoteQuery]);
-
-  const exchangeRate = useMemo(() => {
-    return calculateExchangeRate(
-      new BigNumber(sourceAmount),
-      new BigNumber(normaliseTokenAmount(quote?.quoted_amount ?? 0n, destToken?.decimals ?? 0)),
-    );
-  }, [quote, sourceAmount, destToken]);
-
-  const minOutputAmount = useMemo(() => {
-    return quote?.quoted_amount
-      ? new BigNumber(quote.quoted_amount.toString())
-          .multipliedBy(new BigNumber(100).minus(new BigNumber(slippage)))
-          .div(100)
-      : undefined;
-  }, [quote, slippage]);
-
-  // console.log('quote olol', quote);
+  console.log('quote ololol', quote);
 
   //!! SODAX Execute
   const createIntentOrderPayload = async () => {
@@ -230,7 +186,7 @@ export default function SwapPanel() {
       return;
     }
 
-    if (!account) {
+    if (!sourceAddress) {
       console.error('sourceAccount.address undefined');
       return;
     }
@@ -254,7 +210,7 @@ export default function SwapPanel() {
       allowPartialFill: false, // Whether the intent can be partially filled
       srcChain: sourceChain, // Chain ID where input tokens originate
       dstChain: destChain, // Chain ID where output tokens should be delivered
-      srcAddress: encodeAddress(sourceChain, account), // Source address in bytes (original address on spoke chain)
+      srcAddress: encodeAddress(sourceChain, sourceAddress), // Source address in bytes (original address on spoke chain)
       dstAddress: encodeAddress(destChain, recipient), // Destination address in bytes (original address on spoke chain)
       solver: '0x0000000000000000000000000000000000000000', // Optional specific solver address (address(0) = any solver)
       data: '0x', // Additional arbitrary data
@@ -289,8 +245,8 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            {account && currencyBalances[Field.INPUT] && (
-              <Typography as="div" hidden={!account}>
+            {sourceAddress && currencyBalances[Field.INPUT] && (
+              <Typography as="div" hidden={!sourceAddress}>
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   currencyBalances[Field.INPUT]?.toFixed(),
@@ -365,9 +321,7 @@ export default function SwapPanel() {
 
         <AutoColumn gap="5px" mt={5}>
           <PriceImpact trade={undefined} />
-
-          <SwapInfo trade={trade} />
-
+          {/* <SwapInfo trade={trade} /> TODO: refactor for intent trade */}
           <Flex justifyContent="center" mt={4}>
             <Button onClick={() => handleIntent()}>Create Intent Order</Button>
             {/* <SwapCommitButton

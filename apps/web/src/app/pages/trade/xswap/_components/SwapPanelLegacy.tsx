@@ -41,7 +41,7 @@ import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
 
 export default function SwapPanel() {
-  useInitialSwapLoad();
+  //useInitialSwapLoad();
 
   const {
     trade,

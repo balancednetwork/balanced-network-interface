@@ -7,15 +7,18 @@ export function scaleTokenAmount(amount: number | string, decimals: number): big
   );
 }
 
-export function normaliseTokenAmount(amount: number | string | bigint, decimals: number): string {
-  return new BigNumber(amount.toString())
-    .dividedBy(new BigNumber(10).pow(decimals))
-    .toFixed(decimals, BigNumber.ROUND_DOWN);
-}
+export const slippage = 1; // 1%
 
-export function calculateExchangeRate(amount: BigNumber, toAmount: BigNumber): BigNumber {
-  return new BigNumber(1).dividedBy(amount).multipliedBy(toAmount);
-}
+export const normaliseTokenAmount = (amount: bigint | number, decimals: number): string => {
+  return new BigNumber(amount.toString()).div(10 ** decimals).toFixed();
+};
+
+export const calculateExchangeRate = (amount1: BigNumber, amount2: BigNumber): BigNumber => {
+  if (amount1.isZero() || amount2.isZero()) {
+    return new BigNumber(0);
+  }
+  return amount2.div(amount1);
+};
 
 export function statusCodeToMessage(status: IntentStatusCode): string {
   switch (status) {

@@ -43,6 +43,9 @@ import { useAllTokensByAddress } from '@/queries/backendv2';
 import { WithdrawalFloorDataType } from '@/types';
 import { CallData } from '@balancednetwork/balanced-js';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
+import { IntentQuoteRequest, SpokeChainId } from '@sodax/sdk';
+import { useQuote } from '@sodax/dapp-kit';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -465,6 +468,247 @@ export function useDerivedSwapInfo(): {
     stellarTrustlineValidation,
     maximumOutputAmount,
     canSwap,
+  };
+}
+
+export function useDerivedTradeInfo(): {
+  sourceAddress: string | undefined;
+  currencies: { [field in Field]?: XToken };
+  percents: { [field in Field]?: number };
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  parsedAmount: CurrencyAmount<XToken> | undefined;
+  inputError?: string;
+  // price: Price<Token, Token> | undefined;
+  direction: { from: XChainId; to: XChainId };
+  dependentField: Field;
+  parsedAmounts: {
+    [field in Field]: CurrencyAmount<XToken> | undefined;
+  };
+  formattedAmounts: {
+    [field in Field]: string;
+  };
+  stellarValidation?: StellarAccountValidation;
+  stellarTrustlineValidation?: StellarTrustlineValidation;
+  quote: any | undefined;
+  exchangeRate: BigNumber;
+  minOutputAmount: BigNumber | undefined;
+} {
+  const {
+    independentField,
+    typedValue,
+    recipient,
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
+    [Field.OUTPUT]: { currency: outputCurrency },
+  } = useSwapState();
+
+  const sourceAddress = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
+  const crossChainWallet = useCrossChainWalletBalances();
+  const isExactIn: boolean = independentField === Field.INPUT;
+  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
+
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
+    return {
+      [Field.INPUT]: inputCurrency ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency.address] : undefined,
+    };
+  }, [crossChainWallet, inputCurrency, outputCurrency]);
+
+  const currencies: { [field in Field]?: XToken } = useMemo(() => {
+    return {
+      [Field.INPUT]: inputCurrency ?? undefined,
+      [Field.OUTPUT]: outputCurrency ?? undefined,
+    };
+  }, [inputCurrency, outputCurrency]);
+
+  //!! SODAX start
+  const sourceToken = currencies[Field.INPUT];
+  const destToken = currencies[Field.OUTPUT];
+  const sourceChain = sourceToken?.xChainId;
+  const destChain = destToken?.xChainId;
+  const sourceAmount = parsedAmount?.toFixed();
+
+  const payload = useMemo(() => {
+    if (!sourceToken || !destToken) {
+      return undefined;
+    }
+
+    if (!sourceAmount || Number(sourceAmount) <= 0) {
+      return undefined;
+    }
+
+    if (!sourceChain || !destChain) {
+      return undefined;
+    }
+
+    return {
+      token_src: sourceToken.address,
+      token_src_blockchain_id: sourceChain as SpokeChainId,
+      token_dst: destToken.address,
+      token_dst_blockchain_id: destChain as SpokeChainId,
+      amount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
+      quote_type: independentField === Field.INPUT ? 'exact_input' : 'exact_output',
+    } satisfies IntentQuoteRequest;
+  }, [sourceToken, destToken, sourceChain, destChain, sourceAmount, independentField]);
+
+  const quoteQuery = useQuote(payload);
+
+  const quote = useMemo(() => {
+    if (quoteQuery.data?.ok) {
+      return quoteQuery.data.value;
+    }
+
+    return undefined;
+  }, [quoteQuery]);
+
+  // console.log('quoteQuery ololol', quote);
+
+  const exchangeRate = useMemo(() => {
+    return calculateExchangeRate(
+      new BigNumber(sourceAmount ?? 0),
+      new BigNumber(normaliseTokenAmount(quote?.quoted_amount ?? 0n, destToken?.decimals ?? 0)),
+    );
+  }, [quote, sourceAmount, destToken]);
+
+  const minOutputAmount = useMemo(() => {
+    return quote?.quoted_amount
+      ? new BigNumber(quote.quoted_amount.toString())
+          .multipliedBy(new BigNumber(100).minus(new BigNumber(0.05))) //TODO: slippage
+          .div(100)
+      : undefined;
+  }, [quote]);
+  //!! SODAX end
+
+  const percents: { [field in Field]?: number } = React.useMemo(
+    () => ({
+      [Field.INPUT]: inputPercent,
+    }),
+    [inputPercent],
+  );
+
+  const _currencies: { [field in Field]?: Currency } = useMemo(() => {
+    return {
+      [Field.INPUT]:
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : convertCurrency('0x1.icon', inputCurrency),
+      [Field.OUTPUT]:
+        outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
+    };
+  }, [inputCurrency, outputCurrency]);
+
+  const _parsedAmount = useMemo(
+    () => tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined),
+    [typedValue, isExactIn, _currencies],
+  );
+
+  let inputError: string | undefined;
+
+  if (sourceAddress && !recipient) {
+    inputError = t`Choose address`;
+  }
+
+  if (sourceAddress && !parsedAmount) {
+    inputError = t`Enter amount`;
+  }
+
+  if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
+    inputError = inputError ?? t`Select a token`;
+  }
+
+  //todo maybe fetch quote here and check for the balance >= quote amount
+  // decimal scales are different for different chains for the same token
+  // if (
+
+  // ) {
+  //   inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+  // }
+
+  //
+  // const userHasSpecifiedInputOutput = Boolean(
+  //   currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+  // );
+
+  // if (userHasSpecifiedInputOutput && !trade) inputError = t`Swap not supported`;
+
+  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
+  const _parsedAmounts = React.useMemo(
+    () =>
+      destToken &&
+      sourceToken && {
+        [Field.INPUT]:
+          independentField === Field.INPUT
+            ? _parsedAmount
+            : CurrencyAmount.fromRawAmount(sourceToken, quote?.quoted_amount || 0n),
+        [Field.OUTPUT]:
+          independentField === Field.OUTPUT
+            ? _parsedAmount
+            : CurrencyAmount.fromRawAmount(destToken, quote?.quoted_amount || 0n),
+      },
+    [independentField, _parsedAmount, quote, sourceToken, destToken],
+  );
+
+  const formattedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: _parsedAmounts?.[dependentField]?.toSignificant(6) ?? '',
+    } as { [field in Field]: string };
+  }, [dependentField, independentField, _parsedAmounts, typedValue]);
+
+  const parsedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: parsedAmount,
+      [dependentField]:
+        currencies[dependentField] && formattedAmounts[dependentField]
+          ? CurrencyAmount.fromRawAmount(
+              currencies[dependentField]!,
+              new BigNumber(formattedAmounts[dependentField])
+                .times(10 ** currencies[dependentField]!.wrapped.decimals)
+                .toFixed(0),
+            )
+          : undefined,
+    } as { [field in Field]: CurrencyAmount<XToken> | undefined };
+  }, [parsedAmount, currencies, dependentField, formattedAmounts, independentField]);
+
+  const direction = {
+    from: currencies[Field.INPUT]?.xChainId || '0x1.icon', //TODO: remove hardcoded ICON
+    to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
+  };
+
+  const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
+  const stellarTrustlineValidationQuery = useValidateStellarTrustline(
+    direction.to === 'stellar' ? recipient : undefined,
+    currencies[Field.OUTPUT],
+  );
+  const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
+
+  if (stellarValidationQuery.isLoading) {
+    inputError = t`Validating Stellar wallet`;
+  }
+
+  //TODO: solana check
+  // const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
+  // if (!isSolanaAccountActive) {
+  //   inputError = t`Swap`;
+  // }
+
+  return {
+    sourceAddress,
+    currencies,
+    currencyBalances,
+    parsedAmount,
+    inputError,
+    percents,
+    // price,
+    direction,
+    dependentField,
+    parsedAmounts,
+    formattedAmounts,
+    stellarValidation,
+    stellarTrustlineValidation,
+    quote,
+    exchangeRate,
+    minOutputAmount,
   };
 }
 

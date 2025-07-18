@@ -478,7 +478,6 @@ export function useDerivedTradeInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
   parsedAmount: CurrencyAmount<XToken> | undefined;
   inputError?: string;
-  // price: Price<Token, Token> | undefined;
   direction: { from: XChainId; to: XChainId };
   dependentField: Field;
   parsedAmounts: {
@@ -613,7 +612,11 @@ export function useDerivedTradeInfo(): {
     inputError = inputError ?? t`Select a token`;
   }
 
-  //todo maybe fetch quote here and check for the balance >= quote amount
+  //check sufficient balance
+  if (quote && currencyBalances[Field.INPUT] && parsedAmount?.greaterThan(currencyBalances[Field.INPUT])) {
+    inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+  }
+
   // decimal scales are different for different chains for the same token
   // if (
 
@@ -621,12 +624,11 @@ export function useDerivedTradeInfo(): {
   //   inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
   // }
 
-  //
-  // const userHasSpecifiedInputOutput = Boolean(
-  //   currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
-  // );
+  const userHasSpecifiedInputOutput = Boolean(
+    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+  );
 
-  // if (userHasSpecifiedInputOutput && !trade) inputError = t`Swap not supported`;
+  if (userHasSpecifiedInputOutput && !quote) inputError = t`Swap not supported`;
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 

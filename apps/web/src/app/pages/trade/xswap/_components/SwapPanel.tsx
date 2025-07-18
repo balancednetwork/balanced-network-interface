@@ -76,7 +76,6 @@ export default function SwapPanel() {
   const sourceAmount = formattedAmounts[Field.INPUT];
 
   const spokeProvider = useSpokeProvider(sourceChain);
-  // console.log('spokeProvider debug kk', spokeProvider);
 
   const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
   const [orders, setOrders] = useState<{ intentHash: Hex; intent: Intent; packet: PacketData }[]>([]);
@@ -166,9 +165,6 @@ export default function SwapPanel() {
   }, [formattedAmounts]);
 
   // !! SODAX start
-
-  console.log('quote ololol', quote);
-
   //!! SODAX Execute
   const createIntentOrderPayload = async () => {
     if (!quote) {
@@ -323,7 +319,12 @@ export default function SwapPanel() {
           <PriceImpact trade={undefined} />
           {/* <SwapInfo trade={trade} /> TODO: refactor for intent trade */}
           <Flex justifyContent="center" mt={4}>
-            <Button onClick={() => handleIntent()}>Create Intent Order</Button>
+            {inputError ? (
+              <Typography color="red">{inputError}</Typography>
+            ) : (
+              <Button onClick={() => handleIntent()}>Create Intent Order</Button>
+            )}
+
             {/* <SwapCommitButton
               hidden={false}
               trade={trade}

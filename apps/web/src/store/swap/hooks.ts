@@ -571,7 +571,7 @@ export function useDerivedTradeInfo(): {
   const minOutputAmount = useMemo(() => {
     return quote?.quoted_amount
       ? new BigNumber(quote.quoted_amount.toString())
-          .multipliedBy(new BigNumber(100).minus(new BigNumber(0.05))) //TODO: slippage
+          .multipliedBy(new BigNumber(100).minus(new BigNumber(1))) //TODO: slippage, currently 1%
           .div(100)
       : undefined;
   }, [quote]);

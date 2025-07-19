@@ -46,6 +46,7 @@ import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
+import OrderCommitButton from './OrderCommitButton';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -53,7 +54,6 @@ export default function SwapPanel() {
   const {
     currencyBalances,
     currencies,
-    inputError,
     percents,
     sourceAddress,
     direction,
@@ -68,16 +68,8 @@ export default function SwapPanel() {
 
   // !! SODAX start
   const [slippage, setSlippage] = useState<string>('0.5');
-  const [intentOrderPayload, setIntentOrderPayload] = useState<CreateIntentParams | undefined>(undefined);
-  const sourceToken = currencies[Field.INPUT];
-  const destToken = currencies[Field.OUTPUT];
-  const sourceChain = direction.from as SpokeChainId;
-  const destChain = direction.to as SpokeChainId;
-  const sourceAmount = formattedAmounts[Field.INPUT];
 
-  const spokeProvider = useSpokeProvider(sourceChain);
-
-  const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
+  //todo: order state handling
   const [orders, setOrders] = useState<{ intentHash: Hex; intent: Intent; packet: PacketData }[]>([]);
   // !! SODAX end
 
@@ -163,75 +155,6 @@ export default function SwapPanel() {
   const swapOutputValue = useMemo(() => {
     return formattedAmounts[Field.OUTPUT];
   }, [formattedAmounts]);
-
-  // !! SODAX start
-  //!! SODAX Execute
-  const createIntentOrderPayload = async () => {
-    if (!quote) {
-      console.error('Quote undefined');
-      return;
-    }
-
-    if (!sourceToken || !destToken) {
-      console.error('sourceToken or destToken undefined');
-      return;
-    }
-
-    if (!minOutputAmount) {
-      console.error('minOutputAmount undefined');
-      return;
-    }
-
-    if (!sourceAddress) {
-      console.error('sourceAccount.address undefined');
-      return;
-    }
-
-    if (!recipient) {
-      console.error('destAccount.address undefined');
-      return;
-    }
-
-    if (!spokeProvider) {
-      console.error('sourceProvider or destProvider undefined');
-      return;
-    }
-
-    const createIntentParams = {
-      inputToken: sourceToken.address, // The address of the input token on hub chain
-      outputToken: destToken.address, // The address of the output token on hub chain
-      inputAmount: scaleTokenAmount(sourceAmount, sourceToken.decimals), // The amount of input tokens
-      minOutputAmount: BigInt(minOutputAmount.toFixed(0)), // The minimum amount of output tokens to accept
-      deadline: BigInt(0), // Optional timestamp after which intent expires (0 = no deadline)
-      allowPartialFill: false, // Whether the intent can be partially filled
-      srcChain: sourceChain, // Chain ID where input tokens originate
-      dstChain: destChain, // Chain ID where output tokens should be delivered
-      srcAddress: encodeAddress(sourceChain, sourceAddress), // Source address in bytes (original address on spoke chain)
-      dstAddress: encodeAddress(destChain, recipient), // Destination address in bytes (original address on spoke chain)
-      solver: '0x0000000000000000000000000000000000000000', // Optional specific solver address (address(0) = any solver)
-      data: '0x', // Additional arbitrary data
-    } satisfies CreateIntentParams;
-
-    setIntentOrderPayload(createIntentParams);
-  };
-
-  const handleSwap = async (intentOrderPayload: CreateIntentParams) => {
-    // setOpen(false);
-    const result = await createIntentOrder(intentOrderPayload);
-
-    if (result.ok) {
-      const [response, intent, packet] = result.value;
-
-      setOrders(prev => [...prev, { intentHash: response.intent_hash, intent, packet }]);
-    } else {
-      console.error('Error creating and submitting intent:', result.error);
-    }
-  };
-
-  const handleIntent = async () => {
-    await createIntentOrderPayload();
-    intentOrderPayload && (await handleSwap(intentOrderPayload));
-  };
 
   return (
     <>
@@ -319,25 +242,13 @@ export default function SwapPanel() {
           <PriceImpact trade={undefined} />
           {/* <SwapInfo trade={trade} /> TODO: refactor for intent trade */}
           <Flex justifyContent="center" mt={4}>
-            {inputError ? (
-              <Typography color="red">{inputError}</Typography>
-            ) : (
-              <Button onClick={() => handleIntent()}>Create Intent Order</Button>
-            )}
-
-            {/* <SwapCommitButton
-              hidden={false}
-              trade={trade}
-              error={inputError}
-              currencies={currencies}
-              canBridge={true}
-              account={account}
+            <OrderCommitButton
               recipient={recipient}
-              direction={direction}
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
-              canSwap={true}
-            /> */}
+              //todo: handle order state
+              setOrders={setOrders}
+            />
           </Flex>
 
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (

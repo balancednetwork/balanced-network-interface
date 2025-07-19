@@ -128,6 +128,7 @@ msgstr "15m"
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
@@ -290,6 +291,7 @@ msgid "Rewards"
 msgstr "Récompenses"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -773,6 +775,7 @@ msgid "Sign a transaction to activate {0} for your Stellar wallet."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Swap failed"
 msgstr ""
 
@@ -954,6 +957,7 @@ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr ""
 
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Swap not supported"
 msgstr ""
 
@@ -1087,6 +1091,12 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1131,6 +1141,7 @@ msgstr "Échanger"
 #~ msgstr "Valider la transaction sur votre Ledger."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr ""
@@ -1265,6 +1276,7 @@ msgid "Title"
 msgstr "Titre"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
@@ -1672,6 +1684,7 @@ msgid "There's no ICX unstaking."
 msgstr "Il n'y a pas de déstaking d'ICX."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1723,6 +1736,7 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Insuffisant {0}"
@@ -2323,6 +2337,7 @@ msgid "Home"
 msgstr "Accueil"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap fee (included):"
 msgstr ""
@@ -2464,6 +2479,7 @@ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -2755,6 +2771,7 @@ msgid "Voting ends in {endTimeStr}"
 msgstr "Le vote se termine dans {endTimeStr}"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Completed"
 msgstr ""
 
@@ -3017,6 +3034,7 @@ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/OrderCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx

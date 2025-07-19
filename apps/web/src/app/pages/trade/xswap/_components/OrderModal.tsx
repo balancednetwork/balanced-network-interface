@@ -38,11 +38,11 @@ import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { scaleTokenAmount } from '@/lib/sodax/utils';
 import { useMemo } from 'react';
 import { ApprovalState } from '@/hooks/useApproveCallback';
+import { useOrderStore } from '@/store/order/useOrderStore';
 
 type OrderModalProps = {
   modalId?: MODAL_ID;
   recipient?: string | null;
-  setOrders: (orders: any) => void;
 };
 
 enum IntentOrderStatus {
@@ -57,7 +57,7 @@ enum IntentOrderStatus {
   Failure,
 }
 
-const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, setOrders }: OrderModalProps) => {
+const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: OrderModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const { quote, formattedAmounts, minOutputAmount, sourceAddress, direction, currencies, inputError, exchangeRate } =
     useDerivedTradeInfo();
@@ -67,6 +67,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, setOrde
   const [error, setError] = useState<string | null>(null);
   const { onUserInput } = useSwapActionHandlers();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
+  const addOrder = useOrderStore(state => state.addOrder);
 
   const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
   const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
@@ -247,8 +248,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, setOrde
         if (result.ok) {
           const [response, intent, packet] = result.value;
           setOrderStatus(IntentOrderStatus.Filled);
-
-          setOrders(prev => [...prev, { intentHash: response.intent_hash, intent, packet }]);
+          addOrder({ intentHash: response.intent_hash, intent, packet });
         } else {
           console.error('Error creating and submitting intent:', result.error);
           setOrderStatus(IntentOrderStatus.Failure);

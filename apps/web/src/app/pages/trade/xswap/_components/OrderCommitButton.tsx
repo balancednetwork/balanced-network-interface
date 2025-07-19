@@ -7,7 +7,6 @@ import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { MMTrade, useDerivedTradeInfo, useSwapActionHandlers } from '@/store/swap/hooks';
-import { Field } from '@/store/swap/reducer';
 import { StellarAccountValidation, StellarTrustlineValidation, getXChainType } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import OrderModal from './OrderModal';
@@ -16,11 +15,10 @@ interface OrderCommitButtonProps {
   recipient: string | undefined | null;
   stellarValidation?: StellarAccountValidation;
   stellarTrustlineValidation?: StellarTrustlineValidation;
-  setOrders: (orders: any) => void;
 }
 
 const OrderCommitButton: React.FC<OrderCommitButtonProps> = props => {
-  const { recipient, stellarValidation, stellarTrustlineValidation, setOrders } = props;
+  const { recipient, stellarValidation, stellarTrustlineValidation } = props;
   const { sourceAddress, direction, currencies, inputError } = useDerivedTradeInfo();
 
   const toggleWalletModal = useWalletModalToggle();
@@ -53,7 +51,7 @@ const OrderCommitButton: React.FC<OrderCommitButtonProps> = props => {
         {inputError || t`Swap`}
       </Button>
 
-      <OrderModal recipient={recipient} setOrders={setOrders} />
+      <OrderModal recipient={recipient} />
     </>
   );
 };

@@ -41,12 +41,13 @@ import {
   SpokeChainId,
 } from '@sodax/sdk';
 import { BigNumber } from 'bignumber.js';
-import MMPendingIntents from './MMPendingIntents';
+import PendingOrders from './PendingOrders';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import OrderCommitButton from './OrderCommitButton';
+import { useOrderStore } from '@/store/order/useOrderStore';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -69,8 +70,7 @@ export default function SwapPanel() {
   // !! SODAX start
   const [slippage, setSlippage] = useState<string>('0.5');
 
-  //todo: order state handling
-  const [orders, setOrders] = useState<{ intentHash: Hex; intent: Intent; packet: PacketData }[]>([]);
+  const { orders } = useOrderStore();
   // !! SODAX end
 
   const signedInWallets = useSignedInWallets();
@@ -246,8 +246,6 @@ export default function SwapPanel() {
               recipient={recipient}
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
-              //todo: handle order state
-              setOrders={setOrders}
             />
           </Flex>
 
@@ -275,8 +273,6 @@ export default function SwapPanel() {
               handleOutputType('0.002');
             }}
           />
-
-          <MMPendingIntents />
         </AutoColumn>
       </BrightPanel>
     </>

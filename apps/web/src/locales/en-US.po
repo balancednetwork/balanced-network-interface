@@ -180,6 +180,10 @@ msgstr "Unstaking"
 msgid "Change vote"
 msgstr "Change vote"
 
+#: src/app/pages/trade/xswap/_components/PendingOrders.tsx
+msgid "Orders"
+msgstr "Orders"
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -934,6 +938,7 @@ msgstr "Swap not supported"
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
@@ -1786,6 +1791,7 @@ msgstr "Contract doesn't exist on this network."
 #~ msgstr "Future incentives"
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+#: src/app/pages/trade/xswap/_components/OrderInfo.tsx
 #: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Minimum to receive"
@@ -2127,6 +2133,7 @@ msgstr "available"
 msgid "Unlock Balance Tokens?"
 msgstr "Unlock Balance Tokens?"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "If the price slips by more than this amount, your swap will fail."
@@ -2831,6 +2838,7 @@ msgstr "You rejected"
 #~ msgid "for"
 #~ msgstr "for"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Exchange rate"

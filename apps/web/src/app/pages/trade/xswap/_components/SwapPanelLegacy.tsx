@@ -315,8 +315,6 @@ export default function SwapPanel() {
               handleOutputType('0.002');
             }}
           />
-
-          <PendingOrders />
         </AutoColumn>
       </BrightPanel>
     </>

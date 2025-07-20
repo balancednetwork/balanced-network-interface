@@ -41,13 +41,13 @@ import {
   SpokeChainId,
 } from '@sodax/sdk';
 import { BigNumber } from 'bignumber.js';
-import PendingOrders from './PendingOrders';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import OrderCommitButton from './OrderCommitButton';
 import { useOrderStore } from '@/store/order/useOrderStore';
+import OrderInfo from './OrderInfo';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -240,7 +240,7 @@ export default function SwapPanel() {
 
         <AutoColumn gap="5px" mt={5}>
           <PriceImpact trade={undefined} />
-          {/* <SwapInfo trade={trade} /> TODO: refactor for intent trade */}
+          <OrderInfo />
           <Flex justifyContent="center" mt={4}>
             <OrderCommitButton
               recipient={recipient}

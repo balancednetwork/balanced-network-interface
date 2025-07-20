@@ -46,6 +46,7 @@ import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-quer
 import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { IntentQuoteRequest, SpokeChainId } from '@sodax/sdk';
 import { useQuote } from '@sodax/dapp-kit';
+import { useSwapSlippageTolerance } from '../application/hooks';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -559,8 +560,6 @@ export function useDerivedTradeInfo(): {
     return undefined;
   }, [quoteQuery]);
 
-  // console.log('quoteQuery ololol', quote);
-
   const exchangeRate = useMemo(() => {
     return calculateExchangeRate(
       new BigNumber(sourceAmount ?? 0),
@@ -568,13 +567,15 @@ export function useDerivedTradeInfo(): {
     );
   }, [quote, sourceAmount, destToken]);
 
+  const slippageTolerance = useSwapSlippageTolerance();
+
   const minOutputAmount = useMemo(() => {
     return quote?.quoted_amount
       ? new BigNumber(quote.quoted_amount.toString())
-          .multipliedBy(new BigNumber(100).minus(new BigNumber(1))) //TODO: slippage, currently 1%
+          .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
           .div(100)
       : undefined;
-  }, [quote]);
+  }, [quote, slippageTolerance]);
   //!! SODAX end
 
   const percents: { [field in Field]?: number } = React.useMemo(

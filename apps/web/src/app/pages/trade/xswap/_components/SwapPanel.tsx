@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { Currency, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import { Box, Button, Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { AutoColumn } from '@/app/components/Column';
@@ -16,35 +16,14 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useRatesWithOracle } from '@/queries/reward';
-import {
-  useDerivedSwapInfo,
-  useDerivedTradeInfo,
-  useInitialSwapLoad,
-  useSwapActionHandlers,
-  useSwapState,
-} from '@/store/swap/hooks';
+import { useDerivedTradeInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getXChainType, useXAccount, type XToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/sdk-core';
-import { useCreateIntentOrder, useQuote } from '@sodax/dapp-kit';
-import {
-  CreateIntentParams,
-  encodeAddress,
-  Hex,
-  Intent,
-  IntentQuoteRequest,
-  PacketData,
-  SpokeChainId,
-} from '@sodax/sdk';
-import { BigNumber } from 'bignumber.js';
 import PriceImpact from './PriceImpact';
-import SwapCommitButton from './SwapCommitButton';
-import SwapInfo from './SwapInfo';
-import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import OrderCommitButton from './OrderCommitButton';
 import { useOrderStore } from '@/store/order/useOrderStore';
 import OrderInfo from './OrderInfo';
@@ -62,19 +41,10 @@ export default function SwapPanel() {
     stellarValidation,
     stellarTrustlineValidation,
     parsedAmounts,
-    quote,
-    exchangeRate,
-    minOutputAmount,
   } = useDerivedTradeInfo();
 
-  // !! SODAX start
-  const [slippage, setSlippage] = useState<string>('0.5');
-
-  const { orders } = useOrderStore();
-  // !! SODAX end
-
   const signedInWallets = useSignedInWallets();
-  const { recipient, independentField } = useSwapState();
+  const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =

@@ -161,6 +161,10 @@ msgstr ""
 msgid "Loan"
 msgstr "Lening"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+msgid "Sodax intent"
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
 msgstr ""
@@ -2686,6 +2690,7 @@ msgstr ""
 msgid "Enter address"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap time"
 msgstr ""
@@ -2829,6 +2834,7 @@ msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
 msgid "APY"
 msgstr "APY"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"

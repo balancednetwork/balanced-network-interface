@@ -161,6 +161,10 @@ msgstr ""
 msgid "Loan"
 msgstr "대출"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+msgid "Sodax intent"
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
 msgstr ""
@@ -2685,6 +2689,7 @@ msgstr ""
 msgid "Enter address"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap time"
 msgstr ""
@@ -2828,6 +2833,7 @@ msgstr "이 거래의 가격 차트는 준비되지 않았습니다."
 msgid "APY"
 msgstr "APY"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"

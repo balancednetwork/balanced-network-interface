@@ -1,5 +1,14 @@
 import BigNumber from 'bignumber.js';
-import { IntentStatusCode } from '@sodax/sdk';
+import {
+  getSupportedSolverTokens,
+  supportedSpokeChains,
+  IntentStatusCode,
+  SpokeChainId,
+  Token as SodaxToken,
+} from '@sodax/sdk';
+import { Currency, XChainId } from '@balancednetwork/sdk-core';
+import { convertCurrency, XChain, xChains, XToken } from '@balancednetwork/xwagmi';
+import { SODAX_CHAINS } from './chains';
 
 export function scaleTokenAmount(amount: number | string, decimals: number): bigint {
   return BigInt(
@@ -36,3 +45,51 @@ export function statusCodeToMessage(status: IntentStatusCode): string {
       return 'UNKNOWN';
   }
 }
+
+export const getSupportedXChainForIntentToken = (currency?: Currency | XToken | null): XChain[] => {
+  if (!currency) return [];
+
+  const xChainIds = [] as XChainId[];
+
+  [...SODAX_CHAINS].forEach(chain => {
+    const chainTokens = getSupportedSolverTokens(chain as SpokeChainId);
+    if (chainTokens.some(token => token.symbol === currency.symbol)) {
+      xChainIds.push(chain as XChainId);
+    }
+  });
+
+  return xChains.filter(xChain => xChainIds.includes(xChain.xChainId));
+};
+
+export const getSupportedXChainIdsForIntentToken = (currency?: Currency | XToken | null): XChainId[] => {
+  if (!currency) return [];
+
+  const xChainIds = [] as XChainId[];
+
+  [...SODAX_CHAINS].forEach(chain => {
+    const chainTokens = getSupportedSolverTokens(chain as SpokeChainId);
+    if (chainTokens.some(token => token.symbol === currency.symbol)) {
+      xChainIds.push(chain as XChainId);
+    }
+  });
+
+  return xChainIds;
+};
+
+export const convertCurrencyWithSodax = (
+  xChainId: XChainId,
+  currency: Currency | XToken | undefined,
+): XToken | undefined => {
+  if (!currency) return undefined;
+
+  const convertedXCurrency = convertCurrency(xChainId, currency);
+
+  if (convertedXCurrency) return convertedXCurrency;
+
+  const sodaxTokens = getSupportedSolverTokens(xChainId as SpokeChainId);
+  const sodaxToken = sodaxTokens.find(t => t.symbol === currency.symbol);
+  if (sodaxToken)
+    return new XToken(xChainId, xChainId, sodaxToken.address, sodaxToken.decimals, sodaxToken.symbol, sodaxToken.name);
+
+  return undefined;
+};

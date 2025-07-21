@@ -25,6 +25,7 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
+import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -184,7 +185,17 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
-  const xChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
+  const oldWorldChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
+  const sodaxChains = useMemo(() => getSupportedXChainForIntentToken(currency), [currency]);
+  const xChains = useMemo(() => {
+    if (
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
+    ) {
+      return sodaxChains;
+    }
+    return oldWorldChains;
+  }, [currencySelectionType, oldWorldChains, sodaxChains]);
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency, setDefaultChain = true) => {

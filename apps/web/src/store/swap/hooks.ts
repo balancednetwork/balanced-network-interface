@@ -39,13 +39,13 @@ import {
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
 import { ALLOWED_XCHAIN_IDS, intentService } from '@/lib/intent';
+import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useAllTokensByAddress } from '@/queries/backendv2';
 import { WithdrawalFloorDataType } from '@/types';
 import { CallData } from '@balancednetwork/balanced-js';
-import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
-import { IntentQuoteRequest, SpokeChainId } from '@sodax/sdk';
 import { useQuote } from '@sodax/dapp-kit';
+import { SolverIntentQuoteRequest, SpokeChainId } from '@sodax/sdk';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useSwapSlippageTolerance } from '../application/hooks';
 
 export function useSwapState(): AppState['swap'] {
@@ -547,7 +547,7 @@ export function useDerivedTradeInfo(): {
       token_dst_blockchain_id: destChain as SpokeChainId,
       amount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
       quote_type: independentField === Field.INPUT ? 'exact_input' : 'exact_output',
-    } satisfies IntentQuoteRequest;
+    } satisfies SolverIntentQuoteRequest;
   }, [sourceToken, destToken, sourceChain, destChain, sourceAmount, independentField]);
 
   const quoteQuery = useQuote(payload);

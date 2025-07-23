@@ -1,13 +1,13 @@
-import BigNumber from 'bignumber.js';
+import { Currency, XChainId } from '@balancednetwork/sdk-core';
+import { XChain, XToken, convertCurrency, xChains } from '@balancednetwork/xwagmi';
 import {
+  Token as SodaxToken,
+  SolverIntentStatusCode,
+  SpokeChainId,
   getSupportedSolverTokens,
   supportedSpokeChains,
-  IntentStatusCode,
-  SpokeChainId,
-  Token as SodaxToken,
 } from '@sodax/sdk';
-import { Currency, XChainId } from '@balancednetwork/sdk-core';
-import { convertCurrency, XChain, xChains, XToken } from '@balancednetwork/xwagmi';
+import BigNumber from 'bignumber.js';
 import { SODAX_CHAINS } from './chains';
 
 export function scaleTokenAmount(amount: number | string, decimals: number): bigint {
@@ -29,17 +29,17 @@ export const calculateExchangeRate = (amount1: BigNumber, amount2: BigNumber): B
   return amount2.div(amount1);
 };
 
-export function statusCodeToMessage(status: IntentStatusCode): string {
+export function statusCodeToMessage(status: SolverIntentStatusCode): string {
   switch (status) {
-    case IntentStatusCode.NOT_FOUND:
+    case SolverIntentStatusCode.NOT_FOUND:
       return 'NOT_FOUND';
-    case IntentStatusCode.NOT_STARTED_YET:
+    case SolverIntentStatusCode.NOT_STARTED_YET:
       return 'NOT_STARTED_YET';
-    case IntentStatusCode.SOLVED:
+    case SolverIntentStatusCode.SOLVED:
       return 'SOLVED';
-    case IntentStatusCode.STARTED_NOT_FINISHED:
+    case SolverIntentStatusCode.STARTED_NOT_FINISHED:
       return 'STARTED_NOT_FINISHED';
-    case IntentStatusCode.FAILED:
+    case SolverIntentStatusCode.FAILED:
       return 'FAILED';
     default:
       return 'UNKNOWN';

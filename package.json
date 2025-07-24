@@ -21,10 +21,10 @@
   },
   "pnpm": {
     "overrides": {
-      "@sodax/sdk": "0.0.1-rc.12",
-      "@sodax/dapp-kit": "0.0.1-rc.9",
-      "@sodax/wallet-sdk": "0.0.1-rc.8",
-      "@sodax/types": "0.0.1-rc.7",
+      "@sodax/sdk": "0.0.1-rc.13",
+      "@sodax/dapp-kit": "0.0.1-rc.10",
+      "@sodax/wallet-sdk": "0.0.1-rc.10",
+      "@sodax/types": "0.0.1-rc.8",
       "wagmi": "2.14.12",
       "viem": "2.29.2"
     }

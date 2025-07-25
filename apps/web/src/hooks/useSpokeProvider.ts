@@ -1,14 +1,25 @@
 import {
+  type EvmSpokeChainConfig,
   EvmSpokeProvider,
   IconSpokeChainConfig,
   IconSpokeProvider,
-  spokeChainConfig,
+  SolanaChainConfig,
+  SolanaSpokeProvider,
   SpokeProvider,
-  SuiSpokeProvider,
+  StellarSpokeChainConfig,
+  StellarSpokeProvider,
   SuiSpokeChainConfig,
-  type EvmSpokeChainConfig,
+  SuiSpokeProvider,
+  spokeChainConfig,
 } from '@sodax/sdk';
-import type { IEvmWalletProvider, IIconWalletProvider, ISuiWalletProvider, SpokeChainId } from '@sodax/types';
+import type {
+  IEvmWalletProvider,
+  IIconWalletProvider,
+  ISolanaWalletProvider,
+  IStellarWalletProvider,
+  ISuiWalletProvider,
+  SpokeChainId,
+} from '@sodax/types';
 import { getXChainType } from '@sodax/wallet-sdk';
 import { useMemo } from 'react';
 
@@ -40,6 +51,21 @@ export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeP
       return new SuiSpokeProvider(
         spokeChainConfig[spokeChainId] as SuiSpokeChainConfig,
         walletProvider as ISuiWalletProvider,
+      );
+    }
+
+    if (xChainType === 'STELLAR') {
+      const stellarConfig = spokeChainConfig[spokeChainId] as StellarSpokeChainConfig;
+      return new StellarSpokeProvider(walletProvider as IStellarWalletProvider, stellarConfig, {
+        horizonRpcUrl: stellarConfig.horizonRpcUrl,
+        sorobanRpcUrl: stellarConfig.sorobanRpcUrl,
+      });
+    }
+
+    if (xChainType === 'SOLANA') {
+      return new SolanaSpokeProvider(
+        walletProvider as ISolanaWalletProvider,
+        spokeChainConfig[spokeChainId] as SolanaChainConfig,
       );
     }
 

@@ -1,6 +1,6 @@
 import { CHAIN_INFO, SupportedChainId } from '@balancednetwork/balanced-js';
 import { useXAccount, useXService } from '@balancednetwork/xwagmi';
-import type { EvmXService, SuiXService, XChainId } from '@balancednetwork/xwagmi';
+import type { EvmXService, SolanaXService, StellarXService, SuiXService, XChainId } from '@balancednetwork/xwagmi';
 import type { ChainId } from '@sodax/types';
 import { getXChainType } from '@sodax/wallet-sdk';
 import { getWagmiChainId } from '@sodax/wallet-sdk';
@@ -9,7 +9,14 @@ import { useEffect, useState } from 'react';
 export type EVMWalletProviderOptions = { walletClient: any; publicClient: any };
 export type ICONWalletProviderOptions = { walletAddress: string; rpcUrl: string };
 export type SuiWalletProviderOptions = { client: any; wallet: any; account: any };
-export type WalletProviderOptions = EVMWalletProviderOptions | ICONWalletProviderOptions | SuiWalletProviderOptions;
+export type StellarWalletProviderOptions = { walletsKit: any; network: any; service: StellarXService };
+export type SolanaWalletProviderOptions = { service: SolanaXService };
+export type WalletProviderOptions =
+  | EVMWalletProviderOptions
+  | ICONWalletProviderOptions
+  | SuiWalletProviderOptions
+  | StellarWalletProviderOptions
+  | SolanaWalletProviderOptions;
 
 export function useWalletProviderOptions(xChainId: ChainId | undefined): WalletProviderOptions | undefined {
   const xChainType = getXChainType(xChainId);
@@ -49,6 +56,21 @@ export function useWalletProviderOptions(xChainId: ChainId | undefined): WalletP
           });
           break;
         }
+
+        case 'STELLAR': {
+          if (!xService) return;
+          const stellarXService = xService as unknown as StellarXService;
+          setOptions({ walletsKit: stellarXService.walletsKit, network: 'PUBLIC', service: stellarXService });
+          break;
+        }
+
+        case 'SOLANA': {
+          if (!xService) return;
+          const solanaXService = xService as unknown as SolanaXService;
+          setOptions({ service: solanaXService });
+          break;
+        }
+
         default:
           setOptions(undefined);
       }

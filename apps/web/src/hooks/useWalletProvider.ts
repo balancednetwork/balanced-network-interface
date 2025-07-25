@@ -1,8 +1,19 @@
+import { SolanaXService, StellarXService } from '@balancednetwork/xwagmi';
 import { ChainId, IconEoaAddress } from '@sodax/types';
-import { EvmWalletProvider, getXChainType, IconWalletProvider, SuiWalletProvider } from '@sodax/wallet-sdk';
+import {
+  EvmWalletProvider,
+  IconWalletProvider,
+  SolanaWalletProvider,
+  StellarWalletConfig,
+  StellarWalletProvider,
+  SuiWalletProvider,
+  getXChainType,
+} from '@sodax/wallet-sdk';
 import { useMemo } from 'react';
 import {
   ICONWalletProviderOptions,
+  SolanaWalletProviderOptions,
+  StellarWalletProviderOptions,
   SuiWalletProviderOptions,
   useWalletProviderOptions,
 } from './useWalletProviderOptions';
@@ -34,6 +45,45 @@ export function useWalletProvider(spokeChainId: ChainId | undefined) {
         return new IconWalletProvider({
           walletAddress: walletAddress as IconEoaAddress | undefined,
           rpcUrl: rpcUrl as `http${string}`,
+        });
+      }
+
+      case 'STELLAR': {
+        const { walletsKit, network } = walletProviderOptions as StellarWalletProviderOptions;
+
+        if (!walletsKit) {
+          console.error('StellarWalletsKit is not initialized');
+          return undefined;
+        }
+
+        if (!network) {
+          console.error('StellarNetwork is not initialized');
+          return undefined;
+        }
+
+        return new StellarWalletProvider({
+          type: 'BROWSER_EXTENSION',
+          walletsKit,
+          network,
+        });
+      }
+
+      case 'SOLANA': {
+        const { service } = walletProviderOptions as SolanaWalletProviderOptions;
+
+        if (!service || !service.wallet) {
+          console.error('SolanaWallet is not initialized');
+          return undefined;
+        }
+
+        if (!service.connection) {
+          console.error('SolanaConnection is not initialized');
+          return undefined;
+        }
+
+        return new SolanaWalletProvider({
+          wallet: service.wallet,
+          connection: service.connection,
         });
       }
 

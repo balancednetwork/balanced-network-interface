@@ -21,7 +21,7 @@ const suiNetworks = {
 
 export const XWagmiProviders = ({ children }) => {
   // const endpoint = useMemo(() => clusterApiUrl(solanaNetwork), []);
-  const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM';
+  const solanaEndpoint = 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM';
   const wallets = useMemo(
     () => [
       /**
@@ -45,7 +45,7 @@ export const XWagmiProviders = ({ children }) => {
     <WagmiProvider config={wagmiConfig}>
       <SuiClientProvider networks={suiNetworks} defaultNetwork="mainnet">
         <SuiWalletProvider autoConnect={true}>
-          <SolanaConnectionProvider endpoint={endpoint}>
+          <SolanaConnectionProvider endpoint={solanaEndpoint}>
             <SolanaWalletProvider wallets={wallets} autoConnect>
               {children}
             </SolanaWalletProvider>

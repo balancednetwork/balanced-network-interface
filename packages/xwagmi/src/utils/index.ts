@@ -144,7 +144,7 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
     if (xChainId === ICON_XCALL_NETWORK_ID) {
       return XToken.getXToken(xChainId, currency);
     }
-    console.error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
+    // console.error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
     // throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 

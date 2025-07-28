@@ -62,11 +62,13 @@ export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeP
       });
     }
 
+    const solanaConfig = spokeChainConfig[spokeChainId] as SolanaChainConfig;
+
     if (xChainType === 'SOLANA') {
-      return new SolanaSpokeProvider(
-        walletProvider as ISolanaWalletProvider,
-        spokeChainConfig[spokeChainId] as SolanaChainConfig,
-      );
+      return new SolanaSpokeProvider(walletProvider as ISolanaWalletProvider, {
+        ...solanaConfig,
+        rpcUrl: 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM',
+      });
     }
 
     return undefined;

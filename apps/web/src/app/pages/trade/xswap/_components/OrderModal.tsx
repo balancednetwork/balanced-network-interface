@@ -12,12 +12,17 @@ import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { intentService, intentServiceConfig } from '@/lib/intent';
+import { scaleTokenAmount } from '@/lib/sodax/utils';
+import { logError, logMessage } from '@/sentry';
+import { useOrderStore } from '@/store/order/useOrderStore';
 import { MMTrade, tryParseAmount, useDerivedTradeInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import {
@@ -29,16 +34,11 @@ import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { XToken, xChainMap } from '@balancednetwork/xwagmi';
+import { useCreateIntentOrder, useSwapAllowance, useSwapApprove } from '@sodax/dapp-kit';
+import { CreateIntentParams, SpokeChainId, Token, encodeAddress } from '@sodax/sdk';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChainName } from 'icon-intents-sdk';
-import { logError, logMessage } from '@/sentry';
-import { CreateIntentParams, encodeAddress, SpokeChainId, Token } from '@sodax/sdk';
-import { useCreateIntentOrder, useSwapAllowance, useSwapApprove } from '@sodax/dapp-kit';
-import { useSpokeProvider } from '@/hooks/useSpokeProvider';
-import { scaleTokenAmount } from '@/lib/sodax/utils';
 import { useMemo } from 'react';
-import { ApprovalState } from '@/hooks/useApproveCallback';
-import { useOrderStore } from '@/store/order/useOrderStore';
 
 type OrderModalProps = {
   modalId?: MODAL_ID;
@@ -68,9 +68,6 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
   const { onUserInput } = useSwapActionHandlers();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
   const addOrder = useOrderStore(state => state.addOrder);
-
-  const intentFromChainName: ChainName | undefined = xChainMap[currencies[Field.INPUT]?.xChainId || '']?.intentChainId;
-  const intentToChainName: ChainName | undefined = xChainMap[currencies[Field.OUTPUT]?.xChainId || '']?.intentChainId;
 
   const currentMMTransaction = useMMTransactionStore(state => state.get(intentId));
 
@@ -218,14 +215,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
   };
 
   const handleOrder = async () => {
-    if (
-      !sourceAddress ||
-      !recipient ||
-      !currencies[Field.INPUT] ||
-      !currencies[Field.OUTPUT] ||
-      !intentFromChainName ||
-      !intentToChainName
-    ) {
+    if (!sourceAddress || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
       return;
     }
 

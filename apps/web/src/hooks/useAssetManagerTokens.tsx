@@ -27,11 +27,7 @@ const getXChainDecimalDifference = (xToken: XToken) => {
 
 const fixDecimalDifference = (amount: string, decimalsDifference: number) => {
   const amountBN = new BigNumber(amount);
-  if (decimalsDifference > 0) {
-    return amountBN.dividedBy(10 ** decimalsDifference).toFixed(0);
-  } else {
-    return amountBN.multipliedBy(10 ** decimalsDifference).toFixed(0);
-  }
+  return amountBN.dividedBy(10 ** decimalsDifference).toFixed(0);
 };
 
 export function useAssetManagerTokens(): UseQueryResult<ResultMap> {

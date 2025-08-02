@@ -13,6 +13,7 @@ import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState } from '@/hooks/useApproveCallback';
+import { UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -238,7 +239,11 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
         if (result.ok) {
           const [response, intent, packet] = result.value;
           setOrderStatus(IntentOrderStatus.Filled);
-          addOrder({ intentHash: response.intent_hash, intent, packet });
+          addOrder({
+            intentHash: response.intent_hash,
+            intent,
+            packet,
+          });
         } else {
           console.error('Error creating and submitting intent:', result.error);
           setOrderStatus(IntentOrderStatus.Failure);

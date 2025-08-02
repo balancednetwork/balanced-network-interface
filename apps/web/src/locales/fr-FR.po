@@ -128,6 +128,7 @@ msgstr "15m"
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
@@ -160,6 +161,10 @@ msgstr ""
 msgid "Loan"
 msgstr "Emprunt"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+msgid "Sodax intent"
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
 msgstr ""
@@ -179,6 +184,10 @@ msgstr "Déstaking"
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Change vote"
 msgstr "Modifer le vote"
+
+#: src/app/pages/trade/xswap/_components/PendingOrders.tsx
+msgid "Orders"
+msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -200,6 +209,8 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "Wallet:"
 msgstr "Portefeuille :"
 
@@ -288,6 +299,7 @@ msgid "Rewards"
 msgstr "Récompenses"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -550,6 +562,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "Custom"
 msgstr ""
 
@@ -770,6 +783,7 @@ msgid "Sign a transaction to activate {0} for your Stellar wallet."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Swap failed"
 msgstr ""
 
@@ -951,6 +965,7 @@ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr ""
 
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Swap not supported"
 msgstr ""
 
@@ -958,6 +973,7 @@ msgstr ""
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Tolérance de \"glissement\""
@@ -1084,6 +1100,12 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1103,6 +1125,7 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Entrer le montant"
@@ -1127,6 +1150,7 @@ msgstr "Échanger"
 #~ msgstr "Valider la transaction sur votre Ledger."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr ""
@@ -1261,6 +1285,7 @@ msgid "Title"
 msgstr "Titre"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
@@ -1616,6 +1641,7 @@ msgid "Couldn't send {0} to the {1} pool. Try again."
 msgstr ""
 
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Select a token"
 msgstr "Sélectionner un jeton"
 
@@ -1667,6 +1693,7 @@ msgid "There's no ICX unstaking."
 msgstr "Il n'y a pas de déstaking d'ICX."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1718,6 +1745,7 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Insuffisant {0}"
@@ -1811,6 +1839,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+#: src/app/pages/trade/xswap/_components/OrderInfo.tsx
 #: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Minimum à recevoir"
@@ -1877,6 +1906,7 @@ msgstr "Retrait de sICX..."
 #~ msgstr "{currency} envoyé au pool {pair}."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "For"
 msgstr "Contre"
 
@@ -1976,6 +2006,7 @@ msgid "Send your liquidity to Balanced, then click Supply."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr ""
@@ -2164,6 +2195,7 @@ msgstr ""
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Si le prix baisse plus que ce montant, votre échange échouera."
@@ -2316,6 +2348,7 @@ msgid "Home"
 msgstr "Accueil"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap fee (included):"
 msgstr ""
@@ -2457,6 +2490,7 @@ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -2653,6 +2687,7 @@ msgstr ""
 msgid "Enter address"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap time"
 msgstr ""
@@ -2748,6 +2783,7 @@ msgid "Voting ends in {endTimeStr}"
 msgstr "Le vote se termine dans {endTimeStr}"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Completed"
 msgstr ""
 
@@ -2795,6 +2831,7 @@ msgstr "Aucun graphique de prix n'est disponible pour cette paire."
 msgid "APY"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"
@@ -2867,6 +2904,7 @@ msgstr "Vous avez rejeté"
 #~ msgid "for"
 #~ msgstr "pour"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Exchange rate"
@@ -3010,10 +3048,12 @@ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/OrderCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 #: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Échanger"
@@ -3043,6 +3083,7 @@ msgid "Remove community token list?"
 msgstr ""
 
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar wallet"
 msgstr ""

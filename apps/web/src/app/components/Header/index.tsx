@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 
+import RecentActivityIcon from '@/assets/icons/activity.svg';
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
@@ -24,6 +25,7 @@ import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import RecentActivity from '../RecentActivity';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
@@ -73,6 +75,29 @@ const ConnectionStatus = styled(Flex)`
   span {
     margin-left: 7px;
   }
+`;
+
+const RecentActivityButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
+  position: relative;
+  margin-left: 15px;
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
+  &::before, &::after {
+    left: 7px;
+    top: 13px;
+    ${({ theme }) => `background-color: ${theme.colors.bg5}`};
+  }
+`;
+
+const SpinningIcon = styled(RecentActivityIcon)`
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-720deg);
+    }
+  }
+  animation: spin 2s ease-in-out infinite;
 `;
 
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
@@ -138,9 +163,15 @@ export default function Header(props: { title?: string; className?: string }) {
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
 
+  const isAnyTxPending = true;
+  // const isAnyTxPending = useIsAnyTxPending();
+
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const walletButtonRef = React.useRef<HTMLElement>(null);
+
+  const recentActivityButtonRef = React.useRef<HTMLElement>(null);
+  const [recentActivityAnchor, setRecentActivityAnchor] = React.useState<HTMLElement | null>(null);
 
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
@@ -154,6 +185,11 @@ export default function Header(props: { title?: string; className?: string }) {
       setAnchor(null);
     }
   };
+
+  const toggleRecentActivityMenu = () => {
+    setRecentActivityAnchor(recentActivityAnchor ? null : recentActivityButtonRef.current);
+  };
+  const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
 
   return (
     <header className={className}>
@@ -215,6 +251,30 @@ export default function Header(props: { title?: string; className?: string }) {
                 </>
               )}
             </WalletInfo>
+
+            <RecentActivityButtonWrapper>
+              <ClickAwayListener onClickAway={closeRecentActivityMenu}>
+                <div>
+                  <IconButton ref={recentActivityButtonRef} onClick={toggleRecentActivityMenu}>
+                    {isAnyTxPending ? (
+                      <SpinningIcon width="26" height="26" />
+                    ) : (
+                      <RecentActivityIcon width="26" height="26" />
+                    )}
+                  </IconButton>
+
+                  <DropdownPopper
+                    show={Boolean(recentActivityAnchor)}
+                    anchorEl={recentActivityAnchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={5050}
+                  >
+                    <RecentActivity />
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
+            </RecentActivityButtonWrapper>
 
             <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>

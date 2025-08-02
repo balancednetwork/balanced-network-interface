@@ -24,6 +24,7 @@ import { TestPage } from './pages/test/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { TradePage } from './pages/trade/xswap/page';
+import { TradePageLegacy } from './pages/trade/xswap/page-legacy';
 
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
@@ -106,6 +107,14 @@ export default function RootRoutes() {
         <Route path="trade" element={<TradePageLayout />}>
           <Route index element={<TradePage />} />
           <Route path=":pair" element={<TradePage />} />
+          <Route path="supply" element={<SupplyPage />} />
+          <Route path="supply/:pair" element={<SupplyPage />} />
+          <Route path="bridge/" element={<BridgePage />} />
+        </Route>
+
+        <Route path="trade-legacy" element={<TradePageLayout />}>
+          <Route index element={<TradePageLegacy />} />
+          <Route path=":pair" element={<TradePageLegacy />} />
           <Route path="supply" element={<SupplyPage />} />
           <Route path="supply/:pair" element={<SupplyPage />} />
           <Route path="bridge/" element={<BridgePage />} />

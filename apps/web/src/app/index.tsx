@@ -7,6 +7,7 @@ import NotificationContainer from '@/app/components/Notification/NotificationCon
 import WalletModal from '@/app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme';
 import ApplicationUpdater from '@/store/application/updater';
+import OrderUpdater from '@/store/order/orderUpdater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { Updater as MMUpdater } from '@/store/transactions/useMMTransactionStore';
@@ -26,6 +27,7 @@ function Updaters() {
       <MMUpdater />
       <TransactionUpdater />
       <ApplicationUpdater />
+      <OrderUpdater />
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
       <AllXChainHeightsUpdater xChains={xChains} />

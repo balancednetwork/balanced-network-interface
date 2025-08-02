@@ -17,7 +17,7 @@ export const UnifiedTransactionStatus = {
 type UnifiedTransactionType = keyof typeof UnifiedTransactionType;
 export type UnifiedTransactionStatus = keyof typeof UnifiedTransactionStatus;
 
-type UnifiedTransaction = {
+export type UnifiedTransaction = {
   hash: string;
   timestamp: number;
   status: UnifiedTransactionStatus;

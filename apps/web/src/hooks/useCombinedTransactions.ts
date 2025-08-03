@@ -29,8 +29,8 @@ export type UnifiedTransaction = {
 export const useCombinedTransactions = (): UnifiedTransaction[] => {
   const { orders } = useOrderStore();
 
-  const orderTransactions = useMemo(() => {
-    return orders.map(order => {
+  return useMemo(() => {
+    const orderTransactions = orders.map(order => {
       return {
         hash: order.intentHash,
         timestamp: order.timestamp,
@@ -39,27 +39,15 @@ export const useCombinedTransactions = (): UnifiedTransaction[] => {
         data: order,
       } as UnifiedTransaction;
     });
+
+    return orderTransactions.sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0));
   }, [orders]);
-
-  const sortedTransactions = useMemo(
-    () => [...orderTransactions].sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0)),
-    [orderTransactions],
-  );
-
-  return sortedTransactions;
 };
 
 export const useIsAnyTxPending = (): boolean => {
-  const transactions = useCombinedTransactions();
-  const oneHourAgo = Date.now() - 60 * 60 * 1000; // 1 hour in milliseconds
+  const { orders } = useOrderStore();
 
-  return transactions.some(tx => {
-    return true;
-
-    // if (isMMTransaction(tx)) {
-    //   return tx.status === MMTransactionStatus.pending;
-    // } else {
-    //   return tx.status === XTransactionStatus.pending;
-    // }
-  });
+  return useMemo(() => {
+    return orders.some(order => order.status === UnifiedTransactionStatus.pending);
+  }, [orders]);
 };

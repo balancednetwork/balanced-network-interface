@@ -28,7 +28,7 @@ const ListItem = styled.li`
   }
 `;
 
-const RecentActivity: React.FC = () => {
+const RecentActivity: React.FC = React.memo(() => {
   const transactions = useCombinedTransactions();
 
   return (
@@ -51,6 +51,6 @@ const RecentActivity: React.FC = () => {
       )}
     </Wrap>
   );
-};
+});
 
 export default RecentActivity;

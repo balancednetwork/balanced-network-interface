@@ -20,6 +20,7 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
+import { useIsAnyTxPending } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -163,8 +164,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
 
-  const isAnyTxPending = true;
-  // const isAnyTxPending = useIsAnyTxPending();
+  const isAnyTxPending = useIsAnyTxPending();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -263,15 +263,17 @@ export default function Header(props: { title?: string; className?: string }) {
                     )}
                   </IconButton>
 
-                  <DropdownPopper
-                    show={Boolean(recentActivityAnchor)}
-                    anchorEl={recentActivityAnchor}
-                    placement="bottom-end"
-                    offset={[0, 15]}
-                    zIndex={5050}
-                  >
-                    <RecentActivity />
-                  </DropdownPopper>
+                  {recentActivityAnchor && (
+                    <DropdownPopper
+                      show={Boolean(recentActivityAnchor)}
+                      anchorEl={recentActivityAnchor}
+                      placement="bottom-end"
+                      offset={[0, 15]}
+                      zIndex={5050}
+                    >
+                      <RecentActivity />
+                    </DropdownPopper>
+                  )}
                 </div>
               </ClickAwayListener>
             </RecentActivityButtonWrapper>

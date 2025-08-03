@@ -1,5 +1,25 @@
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { UnifiedTransaction } from '@/hooks/useCombinedTransactions';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { useElapsedTime } from '@/store/user/hooks';
+import { formatRelativeTime } from '@/utils';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import {
+  Intent,
+  IntentRelayChainId,
+  Token,
+  getSpokeChainIdFromIntentRelayChainId,
+  getSupportedSolverTokens,
+  intentRelayChainIdToSpokeChainIdMap,
+  isValidIntentRelayChainId,
+  spokeChainConfig,
+  supportedTokensPerChain,
+} from '@sodax/sdk';
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
+import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
+import TransactionStatusDisplay from '../TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
 enum CancelStatus {
@@ -10,19 +30,74 @@ enum CancelStatus {
   Failed,
 }
 
-interface MMSwapTransactionProps {
-  tx: any;
+interface SwapIntentProps {
+  tx: UnifiedTransaction;
 }
 
-const MMSwapTransaction: React.FC<MMSwapTransactionProps> = ({ tx }) => {
-  const theme = useTheme();
-  // const { fromAmount, toAmount } = transaction;
-  // const prices = useOraclePrices();
-  // const [status, setStatus] = useState<CancelStatus>(CancelStatus.None);
-  // const { data: intentProvider } = useIntentProvider(transaction.fromAmount.currency.wrapped);
-  // const primaryMessage = xMessageActions.getOf(transaction.id, true);
+function parseBigIntString(bigIntString: string): bigint {
+  if (bigIntString.startsWith('BIGINT::')) {
+    return BigInt(bigIntString.substring(8));
+  }
+  throw new Error('Invalid BIGINT string format');
+}
 
-  // const elapsedTime = useElapsedTime(transaction.createdAt);
+const getTokenDataFromIntent = (
+  intentData: Intent,
+): { srcToken: Token | undefined; dstToken: Token | undefined } | undefined => {
+  try {
+    console.log('WTFFF', intentData);
+    // Convert intent relay chain ID to spoke chain ID
+    const srcChainId = getSpokeChainIdFromIntentRelayChainId(
+      parseBigIntString(intentData.srcChain.toString()) as IntentRelayChainId,
+    );
+    const dstChainId = getSpokeChainIdFromIntentRelayChainId(
+      parseBigIntString(intentData.dstChain.toString()) as IntentRelayChainId,
+    );
+
+    // Get all supported tokens for this chain
+    const srcSupportedTokens = getSupportedSolverTokens(srcChainId);
+    const dstSupportedTokens = getSupportedSolverTokens(dstChainId);
+
+    // Find the specific token by address
+    const srcToken = srcSupportedTokens.find(
+      token => token.address.toLowerCase() === intentData.inputToken.toLowerCase(),
+    );
+    const dstToken = dstSupportedTokens.find(
+      token => token.address.toLowerCase() === intentData.outputToken.toLowerCase(),
+    );
+
+    return { srcToken, dstToken };
+  } catch (error) {
+    console.error('Error getting token data:', error);
+    return undefined;
+  }
+};
+
+const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
+  const theme = useTheme();
+  const { inputAmount } = tx.data.intent;
+  const intentData = tx.data.intent;
+  const tokens = getTokenDataFromIntent(intentData);
+  const prices = useOraclePrices();
+  const [status, setStatus] = useState<CancelStatus>(CancelStatus.None);
+
+  const currencies = {
+    srcToken: SUPPORTED_TOKENS_LIST.find(
+      token => token.symbol.toLowerCase() === tokens?.srcToken?.symbol.toLowerCase(),
+    ),
+    dstToken: SUPPORTED_TOKENS_LIST.find(
+      token => token.symbol.toLowerCase() === tokens?.dstToken?.symbol.toLowerCase(),
+    ),
+  };
+
+  const srcChainId = isValidIntentRelayChainId(intentData.srcChain)
+    ? (intentRelayChainIdToSpokeChainIdMap[intentData.srcChain as unknown as string] as XChainId)
+    : undefined;
+  const dstChainId = isValidIntentRelayChainId(intentData.dstChain)
+    ? (intentRelayChainIdToSpokeChainIdMap[intentData.dstChain as unknown as string] as XChainId)
+    : undefined;
+
+  const elapsedTime = useElapsedTime(tx.timestamp);
 
   const handleCancel = async () => {
     alert('cancel');
@@ -48,31 +123,48 @@ const MMSwapTransaction: React.FC<MMSwapTransactionProps> = ({ tx }) => {
     // }
   };
 
+  if (!srcChainId) {
+    return <Container>Order tx - Unknown source chain</Container>;
+  }
+
+  if (!dstChainId) {
+    return <Container>Order tx - Unknown destination chain</Container>;
+  }
+
+  if (!currencies.srcToken) {
+    return <Container>Order tx - Unknown source token</Container>;
+  }
+
+  if (!currencies.dstToken) {
+    return <Container>Order tx - Unknown destination token</Container>;
+  }
+
+  const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, inputAmount);
+
   return (
     <>
       <Container>
-        tx info
-        {/* <CurrencyLogoWithNetwork
-          currency={tx.fromAmount.currency}
-          chainId={tx.fromAmount.currency.xChainId}
+        <CurrencyLogoWithNetwork
+          currency={currencies.srcToken}
+          chainId={srcChainId as XChainId}
           bgColor={theme.colors.bg2}
           size="26px"
         />
         <Details>
           <Title>
-            Swap {formatSymbol(fromAmount.currency.symbol)} for {formatSymbol(toAmount.currency.symbol)}
+            Swap {formatSymbol(currencies.srcToken.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
           </Title>
           <Amount>
-            {formatBalance(fromAmount.toFixed(), prices?.[fromAmount.currency.symbol]?.toFixed() || 1)}{' '}
-            {formatSymbol(fromAmount.currency.symbol)} for{' '}
-            {formatBalance(toAmount.toFixed(), prices[toAmount.currency.address]?.toFixed() || 1)}{' '}
-            {formatSymbol(toAmount.currency.symbol)}
+            {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+            {formatSymbol(amount.currency.symbol)} for{' '}
+            {/* {formatBalance(toAmount.toFixed(), prices[toAmount.currency.address]?.toFixed() || 1)}{' '} */}
+            {formatSymbol(currencies.dstToken.symbol)}
           </Amount>
         </Details>
         <Meta>
-          <TransactionStatusDisplay status={transaction.status} />
+          <TransactionStatusDisplay status={tx.status} />
           <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
-        </Meta> */}
+        </Meta>
       </Container>
       {/* {transaction.status === MMTransactionStatus.pending ? (
         <Flex paddingLeft="38px" marginBottom="-10px" width="100%" justifyContent="flex-end" alignItems="center">
@@ -95,4 +187,4 @@ const CancelButton = styled.button`
   padding: 0;
 `;
 
-export default MMSwapTransaction;
+export default SwapIntent;

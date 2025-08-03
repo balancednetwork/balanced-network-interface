@@ -39,6 +39,7 @@ import {
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
 import { ALLOWED_XCHAIN_IDS, intentService } from '@/lib/intent';
+import { PARTNER_FEE_PERCENTAGE } from '@/lib/sodax';
 import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useAllTokensByAddress } from '@/queries/backendv2';
 import { WithdrawalFloorDataType } from '@/types';
@@ -492,6 +493,7 @@ export function useDerivedTradeInfo(): {
   quote: any | undefined;
   exchangeRate: BigNumber;
   minOutputAmount: BigNumber | undefined;
+  formattedFee: string;
 } {
   const {
     independentField,
@@ -576,6 +578,39 @@ export function useDerivedTradeInfo(): {
           .div(100)
       : undefined;
   }, [quote, slippageTolerance]);
+
+  const partnerFee = useMemo(() => {
+    if (!quote) {
+      return BigInt(0);
+    }
+
+    const fee = (quote.quoted_amount * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
+
+    return fee;
+  }, [quote]);
+
+  const sodaxFee = useMemo(() => {
+    if (!quote) {
+      return BigInt(0);
+    }
+
+    const quotedAmount = quote.quoted_amount;
+    const originalAmount = (quotedAmount * BigInt(1000)) / BigInt(999);
+    const fee = originalAmount - quotedAmount;
+
+    return fee;
+  }, [quote]);
+
+  const formattedFee = useMemo(() => {
+    if (!destToken || !partnerFee || !sodaxFee) {
+      return '';
+    }
+
+    const bnPartnerFee = new BigNumber(partnerFee.toString()).div(10 ** destToken.decimals);
+    const bnSodaxFee = new BigNumber(sodaxFee.toString()).div(10 ** destToken.decimals);
+
+    return `${bnPartnerFee.plus(bnSodaxFee).toPrecision(3)} ${destToken.symbol}`;
+  }, [destToken, partnerFee, sodaxFee]);
   //!! SODAX end
 
   const percents: { [field in Field]?: number } = React.useMemo(
@@ -702,7 +737,6 @@ export function useDerivedTradeInfo(): {
     parsedAmount,
     inputError,
     percents,
-    // price,
     direction,
     dependentField,
     parsedAmounts,
@@ -712,6 +746,7 @@ export function useDerivedTradeInfo(): {
     quote,
     exchangeRate,
     minOutputAmount,
+    formattedFee,
   };
 }
 

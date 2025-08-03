@@ -1,6 +1,9 @@
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 
-import { getHubChainConfig, getMoneyMarketConfig, HttpUrl } from '@sodax/sdk';
+import { HttpUrl, getHubChainConfig, getMoneyMarketConfig } from '@sodax/sdk';
+
+export const PARTNER_FEE_ADDRESS = '0x75F6D018319Dd5Dc2Cb1c3f2FA4Ad161765a9b5A' as `0x${string}`;
+export const PARTNER_FEE_PERCENTAGE = 10; // 0.1%
 
 // Configure Sodax
 const sodaxConfig = {
@@ -13,8 +16,8 @@ const sodaxConfig = {
     intentsContract: '0x6382D6ccD780758C5e8A6123c33ee8F4472F96ef' as `0x${string}`,
     solverApiEndpoint: 'https://staging-new-world.iconblockchain.xyz' as HttpUrl,
     partnerFee: {
-      address: '0x75F6D018319Dd5Dc2Cb1c3f2FA4Ad161765a9b5A' as `0x${string}`,
-      percentage: 10, // .1%
+      address: PARTNER_FEE_ADDRESS,
+      percentage: PARTNER_FEE_PERCENTAGE,
     },
   },
   relayerApiEndpoint: 'https://xcall-relay.nw.iconblockchain.xyz' as HttpUrl,

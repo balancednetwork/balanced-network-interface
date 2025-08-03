@@ -60,8 +60,17 @@ enum IntentOrderStatus {
 
 const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: OrderModalProps) => {
   const modalOpen = useModalOpen(modalId);
-  const { quote, formattedAmounts, minOutputAmount, sourceAddress, direction, currencies, inputError, exchangeRate } =
-    useDerivedTradeInfo();
+  const {
+    quote,
+    formattedAmounts,
+    minOutputAmount,
+    sourceAddress,
+    direction,
+    currencies,
+    inputError,
+    exchangeRate,
+    formattedFee,
+  } = useDerivedTradeInfo();
   const { track } = useAnalytics();
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
@@ -170,10 +179,6 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
     }
   }, [modalOpen, createIntentOrderPayload]);
 
-  const handleIntent = async () => {};
-  //!! SODAX end
-
-  //todo: transaction status
   useEffect(() => {
     if (currentMMTransaction) {
       currentMMTransaction.status === MMTransactionStatus.success && setOrderStatus(IntentOrderStatus.Filled);
@@ -307,13 +312,11 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
           </Box>
         </Flex>
 
-        <Typography textAlign="center">
-          <Trans>Swap fee (included):</Trans>{' '}
-          {/* <strong>
-            {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')}{' '}
-            {formatSymbol(trade?.fee.currency.symbol)}
-          </strong> */}
-        </Typography>
+        {formattedFee && (
+          <Typography textAlign="center">
+            <Trans>Swap fee (included):</Trans> {formattedFee}
+          </Typography>
+        )}
 
         <AnimatePresence>
           {orderStatus === IntentOrderStatus.Failure && (

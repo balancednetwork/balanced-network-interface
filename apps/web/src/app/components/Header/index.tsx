@@ -252,6 +252,26 @@ export default function Header(props: { title?: string; className?: string }) {
               )}
             </WalletInfo>
 
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
+              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
+                <div>
+                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
+                    <WalletIcon />
+                  </IconButton>
+
+                  <DropdownPopper
+                    show={Boolean(anchor)}
+                    anchorEl={anchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={5050}
+                  >
+                    <Wallet close={closeWalletMenu} />
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
+            </WalletButtonWrapper>
+
             <RecentActivityButtonWrapper>
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
                 <div>
@@ -277,26 +297,6 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </RecentActivityButtonWrapper>
-
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
-              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
-                <div>
-                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
-                    <WalletIcon />
-                  </IconButton>
-
-                  <DropdownPopper
-                    show={Boolean(anchor)}
-                    anchorEl={anchor}
-                    placement="bottom-end"
-                    offset={[0, 15]}
-                    zIndex={5050}
-                  >
-                    <Wallet close={closeWalletMenu} />
-                  </DropdownPopper>
-                </div>
-              </ClickAwayListener>
-            </WalletButtonWrapper>
           </Flex>
         )}
       </Flex>

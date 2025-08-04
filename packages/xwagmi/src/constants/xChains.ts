@@ -371,7 +371,7 @@ export const sui: XChain = {
 export const solana: XChain = {
   id: 'solana',
   name: 'Solana',
-  xChainId: 'solana',
+  xChainId: '0x1.icon',
   xChainType: 'SOLANA',
   tracker: { tx: 'https://solscan.io/tx' },
   nativeCurrency: {
@@ -420,6 +420,7 @@ export const optimism: XChain = {
 };
 
 // the order is important, using manual order to display in the UI
+// @ts-ignore
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
   '0x2.icon': lisbon,
@@ -436,7 +437,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   'injective-1': injective,
   stellar: stellar,
   sui: sui,
-  solana: solana,
+  // solana: solana,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -455,7 +456,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   'injective-1': ['inj1s5kcc96d5yahlngr9tjcvdtwlyen4675u7arka'],
   stellar: ['CCKGRRTF33TWSYKGX4SDQ2BLPSPRQ3WVXBQS3YEEXQJP52OAUQAWN3ML'],
   sui: ['cluster-conn'],
-  solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
+  //solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
   '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   'archway-1': [],
 };
@@ -472,7 +473,7 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   'injective-1': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   stellar: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   sui: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
-  solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  //solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   'archway-1': [],
 };

@@ -2212,7 +2212,6 @@ msgstr "Đã từ chối"
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
 msgid "Borrow. Swap. Supply. Earn."
 msgstr ""
 

@@ -20,7 +20,7 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getRlpEncodedSwapData } from '@balancednetwork/xwagmi';
+import { XTransactionType, getICONXTransactionInput, getRlpEncodedSwapData } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 type SwapModalProps = {
   isOpen: boolean;
@@ -71,6 +71,13 @@ const SwapModal = (props: SwapModalProps) => {
               {
                 pending: message.pendingMessage,
                 summary: message.successMessage,
+                type: XTransactionType.SWAP_ON_ICON,
+                input: getICONXTransactionInput(
+                  account,
+                  XTransactionType.SWAP_ON_ICON,
+                  executionTrade.inputAmount,
+                  executionTrade.outputAmount,
+                ),
               },
             );
             track('swap_standard', { from: 'ICON', to: 'ICON' });
@@ -99,6 +106,13 @@ const SwapModal = (props: SwapModalProps) => {
               {
                 pending: message.pendingMessage,
                 summary: message.successMessage,
+                type: XTransactionType.SWAP_ON_ICON,
+                input: getICONXTransactionInput(
+                  account,
+                  XTransactionType.SWAP_ON_ICON,
+                  executionTrade.inputAmount,
+                  executionTrade.outputAmount,
+                ),
               },
             );
             track('swap_standard', { from: 'ICON', to: 'ICON' });
@@ -131,6 +145,13 @@ const SwapModal = (props: SwapModalProps) => {
             {
               pending: message.pendingMessage,
               summary: message.successMessage,
+              type: XTransactionType.SWAP_ON_ICON,
+              input: getICONXTransactionInput(
+                account,
+                XTransactionType.SWAP_ON_ICON,
+                executionTrade.inputAmount,
+                executionTrade.outputAmount,
+              ),
             },
           );
           track('swap_standard', { from: 'ICON', to: 'ICON' });

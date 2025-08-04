@@ -39,6 +39,7 @@ export const xChainHeightActions = {
   },
 };
 
+// @ts-ignore
 const xChainIdMap: Record<XChainId, string> = {
   'archway-1': 'ibc_archway',
   archway: 'ibc_archway',
@@ -54,7 +55,7 @@ const xChainIdMap: Record<XChainId, string> = {
   'injective-1': 'ibc_injective',
   sui: 'sui',
   stellar: 'stellar',
-  solana: 'solana',
+  // solana: 'solana',
   '0x89.polygon': 'polygon',
 };
 

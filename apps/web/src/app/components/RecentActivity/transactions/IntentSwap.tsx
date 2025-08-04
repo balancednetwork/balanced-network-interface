@@ -11,10 +11,8 @@ import {
   Token,
   getSpokeChainIdFromIntentRelayChainId,
   getSupportedSolverTokens,
-  intentRelayChainIdToSpokeChainIdMap,
+  hubAssetToOriginalAssetMap,
   isValidIntentRelayChainId,
-  spokeChainConfig,
-  supportedTokensPerChain,
 } from '@sodax/sdk';
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
@@ -43,9 +41,10 @@ function parseBigIntString(bigIntString: string): bigint {
 
 const getTokenDataFromIntent = (
   intentData: Intent,
-): { srcToken: Token | undefined; dstToken: Token | undefined } | undefined => {
+):
+  | { srcToken: Token | undefined; dstToken: Token | undefined; srcChainId: XChainId; dstChainId: XChainId }
+  | undefined => {
   try {
-    console.log('WTFFF', intentData);
     // Convert intent relay chain ID to spoke chain ID
     const srcChainId = getSpokeChainIdFromIntentRelayChainId(
       parseBigIntString(intentData.srcChain.toString()) as IntentRelayChainId,
@@ -54,19 +53,32 @@ const getTokenDataFromIntent = (
       parseBigIntString(intentData.dstChain.toString()) as IntentRelayChainId,
     );
 
+    const srcHubAssetMap = Array.from(hubAssetToOriginalAssetMap.entries()).find(
+      ([key, value]) => key === srcChainId,
+    )?.[1];
+    const dstHubAssetMap = Array.from(hubAssetToOriginalAssetMap.entries()).find(
+      ([key, value]) => key === dstChainId,
+    )?.[1];
+
+    if (!srcHubAssetMap || !dstHubAssetMap) {
+      return undefined;
+    }
+
     // Get all supported tokens for this chain
     const srcSupportedTokens = getSupportedSolverTokens(srcChainId);
     const dstSupportedTokens = getSupportedSolverTokens(dstChainId);
 
-    // Find the specific token by address
-    const srcToken = srcSupportedTokens.find(
-      token => token.address.toLowerCase() === intentData.inputToken.toLowerCase(),
-    );
-    const dstToken = dstSupportedTokens.find(
-      token => token.address.toLowerCase() === intentData.outputToken.toLowerCase(),
-    );
+    const mappedSrcToken = Array.from(srcHubAssetMap.entries()).find(
+      ([key]) => key.toLowerCase() === intentData.inputToken.toLowerCase(),
+    )?.[1];
+    const mappedDstToken = Array.from(dstHubAssetMap.entries()).find(
+      ([key]) => key.toLowerCase() === intentData.outputToken.toLowerCase(),
+    )?.[1];
 
-    return { srcToken, dstToken };
+    const srcToken = srcSupportedTokens.find(token => token.address.toLowerCase() === mappedSrcToken?.toLowerCase());
+    const dstToken = dstSupportedTokens.find(token => token.address.toLowerCase() === mappedDstToken?.toLowerCase());
+
+    return { srcToken, dstToken, srcChainId: srcChainId as XChainId, dstChainId: dstChainId as XChainId };
   } catch (error) {
     console.error('Error getting token data:', error);
     return undefined;
@@ -77,25 +89,18 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const theme = useTheme();
   const { inputAmount } = tx.data.intent;
   const intentData = tx.data.intent;
-  const tokens = getTokenDataFromIntent(intentData);
+  const tokensData = getTokenDataFromIntent(intentData);
   const prices = useOraclePrices();
   const [status, setStatus] = useState<CancelStatus>(CancelStatus.None);
 
   const currencies = {
     srcToken: SUPPORTED_TOKENS_LIST.find(
-      token => token.symbol.toLowerCase() === tokens?.srcToken?.symbol.toLowerCase(),
+      token => token.symbol.toLowerCase() === tokensData?.srcToken?.symbol.toLowerCase(),
     ),
     dstToken: SUPPORTED_TOKENS_LIST.find(
-      token => token.symbol.toLowerCase() === tokens?.dstToken?.symbol.toLowerCase(),
+      token => token.symbol.toLowerCase() === tokensData?.dstToken?.symbol.toLowerCase(),
     ),
   };
-
-  const srcChainId = isValidIntentRelayChainId(intentData.srcChain)
-    ? (intentRelayChainIdToSpokeChainIdMap[intentData.srcChain as unknown as string] as XChainId)
-    : undefined;
-  const dstChainId = isValidIntentRelayChainId(intentData.dstChain)
-    ? (intentRelayChainIdToSpokeChainIdMap[intentData.dstChain as unknown as string] as XChainId)
-    : undefined;
 
   const elapsedTime = useElapsedTime(tx.timestamp);
 
@@ -123,11 +128,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
     // }
   };
 
-  if (!srcChainId) {
+  if (!tokensData?.srcChainId) {
     return <Container>Order tx - Unknown source chain</Container>;
   }
 
-  if (!dstChainId) {
+  if (!tokensData?.dstChainId) {
     return <Container>Order tx - Unknown destination chain</Container>;
   }
 
@@ -139,14 +144,14 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
     return <Container>Order tx - Unknown destination token</Container>;
   }
 
-  const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, inputAmount);
+  const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, parseBigIntString(inputAmount.toString()));
 
   return (
     <>
       <Container>
         <CurrencyLogoWithNetwork
           currency={currencies.srcToken}
-          chainId={srcChainId as XChainId}
+          chainId={tokensData?.srcChainId}
           bgColor={theme.colors.bg2}
           size="26px"
         />

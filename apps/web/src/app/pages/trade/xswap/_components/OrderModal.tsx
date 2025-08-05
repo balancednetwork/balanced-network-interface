@@ -24,7 +24,7 @@ import { intentService, intentServiceConfig } from '@/lib/intent';
 import { scaleTokenAmount } from '@/lib/sodax/utils';
 import { logError, logMessage } from '@/sentry';
 import { useOrderStore } from '@/store/order/useOrderStore';
-import { MMTrade, tryParseAmount, useDerivedTradeInfo, useSwapActionHandlers } from '@/store/swap/hooks';
+import { tryParseAmount, useDerivedTradeInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import {
   MMTransactionActions,

@@ -52,17 +52,11 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {true && (
-          <Banner messageID="test2">
+          <Banner messageID="solana-outage">
             <Typography as="span">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
-              <Typography as="span" fontWeight="bold" color="white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
-              </Typography>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
+              Solana activities are temporarily unavailable. Functionality will be restored after an issue has been
+              resolved.
             </Typography>
-            <Link href="https://docs.balanced.network/" noBorder>
-              Learn more in the docs.
-            </Link>
           </Banner>
         )}
 

@@ -529,12 +529,31 @@ export function useDerivedTradeInfo(): {
   const destChain = destToken?.xChainId;
   const sourceAmount = parsedAmount?.toFixed();
 
+  // Calculate the adjusted amount for quote request to account for partner fee
+  const adjustedAmountForQuote = useMemo(() => {
+    if (!sourceAmount || Number(sourceAmount) <= 0 || !sourceToken) {
+      return undefined;
+    }
+
+    if (isExactIn) {
+      return scaleTokenAmount(sourceAmount, sourceToken.decimals);
+    } else {
+      // For exact_output: request quote with amount that will result in sourceAmount after partner fee deduction
+      // If user wants output Y, we need to request quote for Y / (1 - partner_fee_percentage)
+      const adjustedAmount = new BigNumber(sourceAmount)
+        .div(new BigNumber(10000).minus(PARTNER_FEE_PERCENTAGE))
+        .times(10000);
+
+      return scaleTokenAmount(adjustedAmount.toFixed(), destToken?.decimals || 0);
+    }
+  }, [sourceAmount, sourceToken, destToken, isExactIn]);
+
   const payload = useMemo(() => {
     if (!sourceToken || !destToken) {
       return undefined;
     }
 
-    if (!sourceAmount || Number(sourceAmount) <= 0) {
+    if (!adjustedAmountForQuote) {
       return undefined;
     }
 
@@ -547,20 +566,26 @@ export function useDerivedTradeInfo(): {
       token_src_blockchain_id: sourceChain as SpokeChainId,
       token_dst: destToken.address,
       token_dst_blockchain_id: destChain as SpokeChainId,
-      amount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
-      quote_type: independentField === Field.INPUT ? 'exact_input' : 'exact_output',
+      amount: adjustedAmountForQuote,
+      quote_type: isExactIn ? 'exact_input' : 'exact_output',
     } satisfies SolverIntentQuoteRequest;
-  }, [sourceToken, destToken, sourceChain, destChain, sourceAmount, independentField]);
+  }, [sourceToken, destToken, sourceChain, destChain, adjustedAmountForQuote, isExactIn]);
 
   const quoteQuery = useQuote(payload);
 
   const quote = useMemo(() => {
     if (quoteQuery.data?.ok) {
-      return quoteQuery.data.value;
+      if (isExactIn) {
+        return {
+          ...quoteQuery.data.value,
+          quoted_amount: (quoteQuery.data.value.quoted_amount * BigInt(10000 - PARTNER_FEE_PERCENTAGE)) / BigInt(10000),
+        };
+      } else {
+        return quoteQuery.data.value;
+      }
     }
-
     return undefined;
-  }, [quoteQuery]);
+  }, [quoteQuery, isExactIn]);
 
   const exchangeRate = useMemo(() => {
     return calculateExchangeRate(
@@ -584,7 +609,13 @@ export function useDerivedTradeInfo(): {
       return BigInt(0);
     }
 
-    const fee = (quote.quoted_amount * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
+    // Step 1: Reconstruct amount before partner fee
+    // quoted_amount = (amount_before_partner_fee) * (1 - PARTNER_FEE_PERCENTAGE/10000)
+    // amount_before_partner_fee = quoted_amount / (1 - PARTNER_FEE_PERCENTAGE/10000)
+    const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+
+    // Step 2: Calculate partner fee
+    const fee = amountBeforePartnerFee - quote.quoted_amount;
 
     return fee;
   }, [quote]);
@@ -594,9 +625,16 @@ export function useDerivedTradeInfo(): {
       return BigInt(0);
     }
 
-    const quotedAmount = quote.quoted_amount;
-    const originalAmount = (quotedAmount * BigInt(1000)) / BigInt(999);
-    const fee = originalAmount - quotedAmount;
+    const SODAX_FEE_BASIS_POINTS = 10; // 0.1%
+
+    // Step 1: Reconstruct amount before partner fee (same as above)
+    const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+
+    // Step 2: Reconstruct initial amount before sodax fee
+    const initialAmount = (amountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+
+    // Step 3: Calculate sodax fee
+    const fee = initialAmount - amountBeforePartnerFee;
 
     return fee;
   }, [quote]);

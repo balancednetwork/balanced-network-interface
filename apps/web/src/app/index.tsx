@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import NotificationContainer from '@/app/components/Notification/NotificationContainer';
 import WalletModal from '@/app/components/WalletModal';
-import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme';
+import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle, Typography } from '@/app/theme';
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
@@ -19,6 +19,8 @@ import {
   xChains,
 } from '@balancednetwork/xwagmi';
 import RootRoutes from './Routes';
+import { Banner } from './components/Banner';
+import { Link } from './components/Link';
 
 function Updaters() {
   return (
@@ -49,7 +51,20 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        {/* Add message for community */}
+        {true && (
+          <Banner messageID="test2">
+            <Typography as="span">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
+              <Typography as="span" fontWeight="bold" color="white">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
+              </Typography>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.{' '}
+            </Typography>
+            <Link href="https://docs.balanced.network/" noBorder>
+              Learn more in the docs.
+            </Link>
+          </Banner>
+        )}
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
         <RootRoutes />

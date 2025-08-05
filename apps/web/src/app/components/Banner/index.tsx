@@ -20,7 +20,7 @@ const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
   `}
   ${({ theme }) => theme.mediaWidth.upLarge`
    margin: 25px auto 0;
-   max-width: 1280px;
+   max-width: 850px;
    padding: 0 40px;
   `}
 
@@ -30,7 +30,7 @@ const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
       margin: 15px 0;
       ${({ theme }) => theme.mediaWidth.upLarge`
         margin: 15px auto;
-        max-width: 1280px;
+        max-width: 850px;
         padding: 0;
       `}
     `};

@@ -597,12 +597,23 @@ export function useDerivedTradeInfo(): {
   const slippageTolerance = useSwapSlippageTolerance();
 
   const minOutputAmount = useMemo(() => {
-    return quote?.quoted_amount
-      ? new BigNumber(quote.quoted_amount.toString())
-          .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
-          .div(100)
-      : undefined;
-  }, [quote, slippageTolerance]);
+    if (!quote?.quoted_amount) {
+      return undefined;
+    }
+
+    if (isExactIn) {
+      // For exact input: min output is the quoted amount minus slippage
+      return new BigNumber(quote.quoted_amount.toString())
+        .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
+        .div(100);
+    } else {
+      // For exact output: min output is the user's typed amount minus slippage
+      return new BigNumber(typedValue ?? 0)
+        .multipliedBy(10 ** (currencies[Field.OUTPUT]?.decimals ?? 18))
+        .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
+        .div(100);
+    }
+  }, [quote, slippageTolerance, isExactIn, typedValue, currencies[Field.OUTPUT]?.decimals]);
 
   const partnerFee = useMemo(() => {
     if (!quote) {
@@ -687,8 +698,19 @@ export function useDerivedTradeInfo(): {
   }
 
   //check sufficient balance
-  if (quote && currencyBalances[Field.INPUT] && parsedAmount?.greaterThan(currencyBalances[Field.INPUT])) {
-    inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+  if (quote && currencyBalances[Field.INPUT]) {
+    if (isExactIn) {
+      // For exact input: check if user has enough input currency for the amount they typed
+      if (parsedAmount?.greaterThan(currencyBalances[Field.INPUT])) {
+        inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+      }
+    } else {
+      // For exact output: check if user has enough input currency for the required input amount from quote
+      const requiredInputAmount = CurrencyAmount.fromRawAmount(currencies[Field.INPUT]!, quote.quoted_amount);
+      if (requiredInputAmount.greaterThan(currencyBalances[Field.INPUT])) {
+        inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+      }
+    }
   }
 
   // decimal scales are different for different chains for the same token

@@ -705,8 +705,28 @@ export function useDerivedTradeInfo(): {
     // For both exact input and exact output: fees are in output token terms
     const bnPartnerFee = new BigNumber(partnerFee.toString()).div(10 ** destToken.decimals);
     const bnSodaxFee = new BigNumber(sodaxFee.toString()).div(10 ** destToken.decimals);
+    const totalFee = bnPartnerFee.plus(bnSodaxFee);
 
-    return `${bnPartnerFee.plus(bnSodaxFee).toPrecision(3)} ${destToken.symbol}`;
+    // Format the fee to avoid scientific notation and show proper decimal places
+    let formattedAmount: string;
+    if (totalFee.isLessThan(0.000001) && totalFee.isGreaterThan(0)) {
+      // For very small amounts, show more decimal places
+      formattedAmount = totalFee.toFixed(10);
+    } else if (totalFee.isLessThan(0.001) && totalFee.isGreaterThan(0)) {
+      // For very small amounts, show more decimal places
+      formattedAmount = totalFee.toFixed(6);
+    } else if (totalFee.isLessThan(1)) {
+      // For amounts less than 1, show up to 4 decimal places
+      formattedAmount = totalFee.toPrecision(3);
+    } else {
+      // For amounts 1 or greater, show up to 2 decimal places
+      formattedAmount = totalFee.toFormat(2, { groupSeparator: ',' });
+    }
+
+    // Remove trailing zeros after decimal point
+    formattedAmount = formattedAmount.replace(/\.?0+$/, '');
+
+    return `${formattedAmount} ${destToken.symbol}`;
   }, [destToken, partnerFee, sodaxFee]);
   //!! SODAX end
 

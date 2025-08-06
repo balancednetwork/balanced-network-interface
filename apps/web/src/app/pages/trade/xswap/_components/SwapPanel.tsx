@@ -135,13 +135,19 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const handleMaxBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
+  const handleMaxBridgeAmountClick = useCallback(
+    (amount: CurrencyAmount<XToken>) => {
+      onUserInput(Field.OUTPUT, amount?.toFixed(4));
+    },
+    [onUserInput],
+  );
 
-  const handleMaxWithdrawAmountClick = (amount: CurrencyAmount<Currency>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
+  const handleMaxWithdrawAmountClick = useCallback(
+    (amount: CurrencyAmount<Currency>) => {
+      onUserInput(Field.OUTPUT, amount?.toFixed(4));
+    },
+    [onUserInput],
+  );
 
   const rates = useRatesWithOracle();
 
@@ -166,6 +172,10 @@ export default function SwapPanel() {
     }
     return formattedAmounts[Field.OUTPUT];
   }, [mmTrade.isMMBetter, mmTrade.trade?.outputAmount, formattedAmounts, independentField]);
+
+  const handleActivateSolanaAccount = useCallback(() => {
+    handleOutputType('0.002');
+  }, [handleOutputType]);
 
   return (
     <>
@@ -311,9 +321,7 @@ export default function SwapPanel() {
             destinationChainId={direction.to}
             currencyAmount={parsedAmounts[Field.OUTPUT]}
             recipient={recipient ?? ''}
-            onActivate={() => {
-              handleOutputType('0.002');
-            }}
+            onActivate={handleActivateSolanaAccount}
           />
 
           <MMPendingIntents />

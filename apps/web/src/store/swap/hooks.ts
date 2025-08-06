@@ -588,11 +588,25 @@ export function useDerivedTradeInfo(): {
   }, [quoteQuery, isExactIn]);
 
   const exchangeRate = useMemo(() => {
-    return calculateExchangeRate(
-      new BigNumber(sourceAmount ?? 0),
-      new BigNumber(normaliseTokenAmount(quote?.quoted_amount ?? 0n, destToken?.decimals ?? 0)),
-    );
-  }, [quote, sourceAmount, destToken]);
+    if (!quote?.quoted_amount || !sourceAmount) {
+      return new BigNumber(0);
+    }
+
+    if (isExactIn) {
+      // For exact input: exchange rate = output / input
+      return calculateExchangeRate(
+        new BigNumber(sourceAmount),
+        new BigNumber(normaliseTokenAmount(quote.quoted_amount, destToken?.decimals ?? 0)),
+      );
+    } else {
+      // For exact output: exchange rate = output / input (but we need to invert the calculation)
+      // quoted_amount is the input amount needed, sourceAmount is the output amount desired
+      return calculateExchangeRate(
+        new BigNumber(normaliseTokenAmount(quote.quoted_amount, sourceToken?.decimals ?? 0)),
+        new BigNumber(sourceAmount),
+      );
+    }
+  }, [quote, sourceAmount, destToken, sourceToken, isExactIn]);
 
   const slippageTolerance = useSwapSlippageTolerance();
 

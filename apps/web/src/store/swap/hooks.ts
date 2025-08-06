@@ -634,16 +634,32 @@ export function useDerivedTradeInfo(): {
       return BigInt(0);
     }
 
-    // Step 1: Reconstruct amount before partner fee
-    // quoted_amount = (amount_before_partner_fee) * (1 - PARTNER_FEE_PERCENTAGE/10000)
-    // amount_before_partner_fee = quoted_amount / (1 - PARTNER_FEE_PERCENTAGE/10000)
-    const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+    if (isExactIn) {
+      // For exact input: quoted_amount is the output amount (after partner fee removed, sodax fee included)
+      // We need to reconstruct the original output amount to calculate the partner fee
+      const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+      const fee = amountBeforePartnerFee - quote.quoted_amount;
+      return fee;
+    } else {
+      // For exact output: quoted_amount is the input amount needed (including both partner and sodax fees)
+      // We need to calculate what the output amount would be, then calculate fees from that output amount
+      // This is the same approach as exact input, but we need to work backwards from input to output
 
-    // Step 2: Calculate partner fee
-    const fee = amountBeforePartnerFee - quote.quoted_amount;
+      // The user wants to receive a specific output amount (sourceAmount)
+      // The quoted_amount is what they need to pay (input amount)
+      // We need to calculate what the actual output amount would be after fees
 
-    return fee;
-  }, [quote]);
+      // For exact output, the output amount is what the user typed (sourceAmount)
+      // But we need to calculate what the output amount would be after removing partner fee
+      const outputAmountAfterPartnerFee = new BigNumber(sourceAmount ?? 0).multipliedBy(
+        10 ** (destToken?.decimals ?? 18),
+      );
+
+      // Calculate the partner fee from the output amount (same as exact input)
+      const fee = (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
+      return fee;
+    }
+  }, [quote, isExactIn, sourceAmount, destToken?.decimals]);
 
   const sodaxFee = useMemo(() => {
     if (!quote) {
@@ -652,23 +668,41 @@ export function useDerivedTradeInfo(): {
 
     const SODAX_FEE_BASIS_POINTS = 10; // 0.1%
 
-    // Step 1: Reconstruct amount before partner fee (same as above)
-    const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+    if (isExactIn) {
+      // For exact input: quoted_amount is the output amount (after partner fee removed, sodax fee included)
+      // We need to reconstruct the original output amount to calculate the sodax fee
+      const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+      const initialAmount = (amountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+      const fee = initialAmount - amountBeforePartnerFee;
+      return fee;
+    } else {
+      // For exact output: calculate sodax fee from the output amount (same as exact input)
+      // The user wants to receive a specific output amount (sourceAmount)
+      // We need to calculate what the output amount would be after removing both fees
+      const outputAmountAfterPartnerFee = new BigNumber(sourceAmount ?? 0).multipliedBy(
+        10 ** (destToken?.decimals ?? 18),
+      );
 
-    // Step 2: Reconstruct initial amount before sodax fee
-    const initialAmount = (amountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+      // Calculate what the output amount would be before partner fee
+      const outputAmountBeforePartnerFee =
+        (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
 
-    // Step 3: Calculate sodax fee
-    const fee = initialAmount - amountBeforePartnerFee;
+      // Calculate what the output amount would be before sodax fee
+      const outputAmountBeforeSodaxFee =
+        (outputAmountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
 
-    return fee;
-  }, [quote]);
+      // Calculate sodax fee as the difference
+      const fee = outputAmountBeforeSodaxFee - outputAmountBeforePartnerFee;
+      return fee;
+    }
+  }, [quote, isExactIn, sourceAmount, destToken?.decimals]);
 
   const formattedFee = useMemo(() => {
-    if (!destToken || !partnerFee || !sodaxFee) {
+    if (!partnerFee || !sodaxFee || !destToken) {
       return '';
     }
 
+    // For both exact input and exact output: fees are in output token terms
     const bnPartnerFee = new BigNumber(partnerFee.toString()).div(10 ** destToken.decimals);
     const bnSodaxFee = new BigNumber(sodaxFee.toString()).div(10 ** destToken.decimals);
 

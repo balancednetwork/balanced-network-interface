@@ -8,10 +8,14 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '@/app';
 import store from '@/store';
-import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
 import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
+import sodaxConfig from './lib/sodax';
+import { SodaxProvider } from '@sodax/dapp-kit';
+// import { wagmiConfig } from '@balancednetwork/xwagmi';
+// import { XWagmiProviders } from '@sodax/wallet-sdk';
+import { XWagmiProviders } from '@balancednetwork/xwagmi';
 
 // Initialize Sentry
 initSentry();
@@ -42,15 +46,33 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <BrowserRouter>
         <HelmetProvider>
-          <QueryClientProvider client={queryClient}>
-            <XWagmiProviders>
-              <LanguageProvider>
-                <PlausibleProvider domain="app.balanced.network">
-                  <App />
-                </PlausibleProvider>
-              </LanguageProvider>
-            </XWagmiProviders>
-          </QueryClientProvider>
+          <SodaxProvider testnet={false} config={sodaxConfig}>
+            <QueryClientProvider client={queryClient}>
+              <XWagmiProviders
+              // config={{
+              //   EVM: {
+              //     wagmiConfig: wagmiConfig,
+              //   },
+              //   SUI: {
+              //     isMainnet: true,
+              //   },
+              //   SOLANA: {
+              //     endpoint: 'https://solana-mainnet.g.alchemy.com/v2/your-api-key',
+              //   },
+              //   ICON: {},
+              //   HAVAH: {},
+              //   INJECTIVE: {},
+              //   STELLAR: {},
+              // }}
+              >
+                <LanguageProvider>
+                  <PlausibleProvider domain="app.balanced.network">
+                    <App />
+                  </PlausibleProvider>
+                </LanguageProvider>
+              </XWagmiProviders>
+            </QueryClientProvider>
+          </SodaxProvider>
         </HelmetProvider>
       </BrowserRouter>
     </Provider>

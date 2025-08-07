@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { Currency, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
@@ -13,57 +12,39 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
-import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
-import {
-  useDerivedMMTradeInfo,
-  useDerivedSwapInfo,
-  useInitialSwapLoad,
-  useSwapActionHandlers,
-  useSwapState,
-} from '@/store/swap/hooks';
+import { useDerivedTradeInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { XToken, getXChainType } from '@balancednetwork/xwagmi';
-import { useXAccount } from '@balancednetwork/xwagmi';
-import { XChainId } from '@balancednetwork/xwagmi';
-import MMPendingIntents from './MMPendingIntents';
-import MMSwapCommitButton from './MMSwapCommitButton';
-import MMSwapInfo from './MMSwapInfo';
+import { getXChainType, useXAccount, type XToken } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/sdk-core';
 import PriceImpact from './PriceImpact';
-import SwapCommitButton from './SwapCommitButton';
-import SwapInfo from './SwapInfo';
+import OrderCommitButton from './OrderCommitButton';
+import { useOrderStore } from '@/store/order/useOrderStore';
+import OrderInfo from './OrderInfo';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
 
   const {
-    trade,
     currencyBalances,
     currencies,
-    inputError,
     percents,
-    account,
+    sourceAddress,
     direction,
     formattedAmounts,
-    maximumBridgeAmount,
-    canBridge,
     stellarValidation,
     stellarTrustlineValidation,
-    canSwap,
-    maximumOutputAmount,
     parsedAmounts,
-  } = useDerivedSwapInfo();
-  const mmTrade = useDerivedMMTradeInfo(trade);
+  } = useDerivedTradeInfo();
 
   const signedInWallets = useSignedInWallets();
-  const { recipient, independentField } = useSwapState();
+  const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
@@ -135,37 +116,15 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const handleMaxBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
-
-  const handleMaxWithdrawAmountClick = (amount: CurrencyAmount<Currency>) => {
-    onUserInput(Field.OUTPUT, amount?.toFixed(4));
-  };
-
   const rates = useRatesWithOracle();
 
-  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
-
   const swapInputValue = useMemo(() => {
-    if (independentField === Field.INPUT) {
-      return formattedAmounts[Field.INPUT];
-    }
-    if (mmTrade.isMMBetter) {
-      return mmTrade.trade?.inputAmount.toSignificant();
-    }
     return formattedAmounts[Field.INPUT];
-  }, [mmTrade.isMMBetter, mmTrade.trade?.inputAmount, formattedAmounts, independentField]);
+  }, [formattedAmounts]);
 
   const swapOutputValue = useMemo(() => {
-    if (independentField === Field.OUTPUT) {
-      return formattedAmounts[Field.OUTPUT];
-    }
-    if (mmTrade.isMMBetter) {
-      return mmTrade.trade?.outputAmount.toSignificant();
-    }
     return formattedAmounts[Field.OUTPUT];
-  }, [mmTrade.isMMBetter, mmTrade.trade?.outputAmount, formattedAmounts, independentField]);
+  }, [formattedAmounts]);
 
   return (
     <>
@@ -175,8 +134,8 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            {account && currencyBalances[Field.INPUT] && (
-              <Typography as="div" hidden={!account}>
+            {sourceAddress && currencyBalances[Field.INPUT] && (
+              <Typography as="div" hidden={!sourceAddress}>
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   currencyBalances[Field.INPUT]?.toFixed(),
@@ -197,7 +156,7 @@ export default function SwapPanel() {
               xChainId={direction.from}
               onChainSelect={handleInputChainSelection}
               showCrossChainOptions={true}
-              currencySelectionType={CurrencySelectionType.TRADE_IN}
+              currencySelectionType={CurrencySelectionType.SODAX_TRADE_IN}
             />
           </Flex>
 
@@ -243,40 +202,20 @@ export default function SwapPanel() {
               showCrossChainOptions={true}
               addressEditable
               setManualAddress={setManualAddress}
-              showWarning={mmTrade.isMMBetter ? false : showWarning}
-              currencySelectionType={CurrencySelectionType.TRADE_OUT}
+              showWarning={false}
+              currencySelectionType={CurrencySelectionType.SODAX_TRADE_OUT}
             />
           </Flex>
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <PriceImpact trade={mmTrade?.isMMBetter ? undefined : trade} />
-
-          {mmTrade.isMMBetter ? <MMSwapInfo trade={mmTrade.trade} /> : <SwapInfo trade={trade} />}
-
+          <PriceImpact trade={undefined} />
+          <OrderInfo />
           <Flex justifyContent="center" mt={4}>
-            <MMSwapCommitButton
-              hidden={!mmTrade.isMMBetter}
-              currencies={currencies}
-              account={account}
+            <OrderCommitButton
               recipient={recipient}
-              trade={mmTrade.trade}
-              direction={direction}
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
-            />
-            <SwapCommitButton
-              hidden={!!mmTrade.isMMBetter}
-              trade={trade}
-              error={inputError}
-              currencies={currencies}
-              canBridge={canBridge}
-              account={account}
-              recipient={recipient}
-              direction={direction}
-              stellarValidation={stellarValidation}
-              stellarTrustlineValidation={stellarTrustlineValidation}
-              canSwap={canSwap}
             />
           </Flex>
 
@@ -296,17 +235,6 @@ export default function SwapPanel() {
             </Flex>
           )}
 
-          {!canBridge && maximumBridgeAmount && trade && (
-            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
-          )}
-
-          {!canSwap && maximumOutputAmount && (
-            <WithdrawalLimitWarning
-              limitAmount={maximumOutputAmount}
-              onLimitAmountClick={handleMaxWithdrawAmountClick}
-            />
-          )}
-
           <SolanaAccountExistenceWarning
             destinationChainId={direction.to}
             currencyAmount={parsedAmounts[Field.OUTPUT]}
@@ -315,8 +243,6 @@ export default function SwapPanel() {
               handleOutputType('0.002');
             }}
           />
-
-          <MMPendingIntents />
         </AutoColumn>
       </BrightPanel>
     </>

@@ -52,9 +52,9 @@ export function TradePageLayout() {
             <Tab>
               <Trans>Supply</Trans>
             </Tab>
-            <Tab>
+            {/* <Tab>
               <Trans>Bridge</Trans>
-            </Tab>
+            </Tab> */}
           </Tabs>
         </Flex>
 

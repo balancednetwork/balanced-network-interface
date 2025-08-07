@@ -1747,6 +1747,7 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Không đủ {0}"
 

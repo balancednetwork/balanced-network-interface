@@ -1703,6 +1703,7 @@ msgstr "Transfer {inputCurrency} to {network}..."
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Insufficient {0}"
 

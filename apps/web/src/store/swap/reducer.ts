@@ -1,3 +1,4 @@
+import { getSupportedXChainIdsForIntentToken } from '@/lib/sodax/utils';
 import { XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
@@ -49,17 +50,29 @@ const swapSlice = createSlice({
     selectCurrency: create.reducer<{ currency: XToken | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-        // the case where we have to swap the order
+
+        // Check if the selected currency is the same as the other field
         if (currency?.symbol === state[otherField].currency?.symbol) {
-          // the case where we have to swap the order
-          return {
-            ...state,
-            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-            [field]: state[otherField],
-            [otherField]: state[field],
-          };
+          // Check if the currency is supported on multiple xChains using SODAX configuration
+          const supportedChainIds = getSupportedXChainIdsForIntentToken(currency);
+
+          if (supportedChainIds.length > 1) {
+            // Allow same currency selection if supported on multiple chains
+            return {
+              ...state,
+              [field]: { ...state[field], currency, percent: 0 },
+            };
+          } else {
+            // Fall back to original behavior - switch currencies
+            return {
+              ...state,
+              independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
+              [field]: state[otherField],
+              [otherField]: state[field],
+            };
+          }
         } else {
-          // the normal case
+          // Normal case - different currency
           return {
             ...state,
             [field]: { ...state[field], currency, percent: 0 },
@@ -89,6 +102,23 @@ const swapSlice = createSlice({
       };
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
+      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
+      // Check if both currencies are the same and user is trying to select the same chain
+      if (
+        state[field].currency?.symbol === state[otherField].currency?.symbol &&
+        state[otherField].currency?.xChainId === xChainId
+      ) {
+        // Switch the chains instead
+        const otherChainId = state[field].currency?.xChainId;
+        if (otherChainId) {
+          const updatedOtherCurrency = convertCurrency(otherChainId, state[otherField].currency);
+          if (updatedOtherCurrency) {
+            state[otherField].currency = updatedOtherCurrency;
+          }
+        }
+      }
+
       const updatedCurrency = convertCurrency(xChainId, state[field].currency);
       if (updatedCurrency) {
         state[field].currency = updatedCurrency;

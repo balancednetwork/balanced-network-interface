@@ -46,6 +46,8 @@ type OrderModalProps = {
   recipient?: string | null;
 };
 
+type DerivedTradeInfo = ReturnType<typeof useDerivedTradeInfo>;
+
 enum IntentOrderStatus {
   None,
   // Intent order is signed and broadcasted to the source chain
@@ -60,6 +62,17 @@ enum IntentOrderStatus {
 
 const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: OrderModalProps) => {
   const modalOpen = useModalOpen(modalId);
+  const derivedTradeInfo = useDerivedTradeInfo();
+  const [cachedTradeInfo, setCachedTradeInfo] = useState<DerivedTradeInfo | null>(null);
+
+  useEffect(() => {
+    if (modalOpen && !cachedTradeInfo) {
+      setCachedTradeInfo(derivedTradeInfo);
+    } else if (!modalOpen) {
+      setCachedTradeInfo(null);
+    }
+  }, [modalOpen, derivedTradeInfo, cachedTradeInfo]);
+
   const {
     quote,
     formattedAmounts,
@@ -70,7 +83,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
     inputError,
     exchangeRate,
     formattedFee,
-  } = useDerivedTradeInfo();
+  } = cachedTradeInfo || derivedTradeInfo;
   const { track } = useAnalytics();
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
@@ -186,7 +199,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
     }
   }, [currentMMTransaction]);
 
-  const isFilled = orderStatus === IntentOrderStatus.Filled;
+  const isCreated = orderStatus === IntentOrderStatus.Filled;
 
   const clearInputs = useCallback((): void => {
     onUserInput(Field.INPUT, '');
@@ -211,10 +224,11 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
   }, [handleDismiss]);
 
   useEffect(() => {
-    if (isFilled) {
+    if (isCreated) {
+      clearInputs();
       slowDismiss();
     }
-  }, [isFilled, slowDismiss]);
+  }, [isCreated, slowDismiss, clearInputs]);
 
   const handleApprove = async () => {
     await approve({ amount: sourceAmount });
@@ -237,7 +251,6 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
       if (intentOrderPayload) {
         setWalletPrompting(true);
         setOrderStatus(IntentOrderStatus.Executing);
-        clearInputs();
         const result = await createIntentOrder(intentOrderPayload);
         console.log('result gogo', result);
 

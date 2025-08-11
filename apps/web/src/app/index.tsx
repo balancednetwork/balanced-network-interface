@@ -51,7 +51,7 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        {true && (
+        {false && (
           <Banner messageID="solana-outage">
             <Typography as="span">
               Solana activities are temporarily unavailable. Functionality will be restored after an issue has been

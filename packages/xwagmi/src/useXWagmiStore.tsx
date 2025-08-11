@@ -56,10 +56,9 @@ stellarXService.setXConnectors([]);
 const suiXService = SuiXService.getInstance();
 suiXService.setXConnectors([]);
 
-// const solanaXService = SolanaXService.getInstance();
-// solanaXService.setXConnectors([]);
+const solanaXService = SolanaXService.getInstance();
+solanaXService.setXConnectors([]);
 
-// @ts-ignore
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
@@ -68,7 +67,7 @@ export const xServices: Record<XChainType, XService> = {
   INJECTIVE: injectiveXService,
   STELLAR: stellarXService,
   SUI: suiXService,
-  // SOLANA: solanaXService,
+  SOLANA: solanaXService,
 };
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
@@ -147,8 +146,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new StellarXPublicClient(xChainId);
     case 'SUI':
       return new SuiXPublicClient(xChainId);
-    // case 'SOLANA':
-    //   return new SolanaXPublicClient(xChainId);
+    case 'SOLANA':
+      return new SolanaXPublicClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -171,8 +170,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new StellarXWalletClient(xChainId);
     case 'SUI':
       return new SuiXWalletClient(xChainId);
-    // case 'SOLANA':
-    //   return new SolanaXWalletClient(xChainId);
+    case 'SOLANA':
+      return new SolanaXWalletClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -206,24 +205,24 @@ export const useInitXWagmiStore = () => {
     }
   }, [suiClient]);
 
-  // const { connection: solanaConnection } = useConnection();
-  // const solanaWallet = useWallet();
-  // const solanaProvider = useAnchorProvider();
-  // useEffect(() => {
-  //   if (solanaConnection) {
-  //     solanaXService.connection = solanaConnection;
-  //   }
-  // }, [solanaConnection]);
-  // useEffect(() => {
-  //   if (solanaWallet) {
-  //     solanaXService.wallet = solanaWallet;
-  //   }
-  // }, [solanaWallet]);
-  // useEffect(() => {
-  //   if (solanaProvider) {
-  //     solanaXService.provider = solanaProvider;
-  //   }
-  // }, [solanaProvider]);
+  const { connection: solanaConnection } = useConnection();
+  const solanaWallet = useWallet();
+  const solanaProvider = useAnchorProvider();
+  useEffect(() => {
+    if (solanaConnection) {
+      solanaXService.connection = solanaConnection;
+    }
+  }, [solanaConnection]);
+  useEffect(() => {
+    if (solanaWallet) {
+      solanaXService.wallet = solanaWallet;
+    }
+  }, [solanaWallet]);
+  useEffect(() => {
+    if (solanaProvider) {
+      solanaXService.provider = solanaProvider;
+    }
+  }, [solanaProvider]);
 
   const { currentWallet: suiWallet } = useCurrentWallet();
   useEffect(() => {

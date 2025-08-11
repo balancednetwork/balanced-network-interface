@@ -377,7 +377,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
                     </StyledButton>
                   ) : isProcessing ? (
                     <StyledButton disabled $loading>
-                      <Trans>Swapping</Trans>
+                      <Trans>Creating order...</Trans>
                     </StyledButton>
                   ) : (
                     <>
@@ -407,7 +407,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
               <Box pt={3}>
                 <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
                   <Typography mb={4}>
-                    <Trans>Completed</Trans>
+                    <Trans>Order created</Trans>
                   </Typography>
                   <TickIcon width={20} height={20} />
                 </Flex>

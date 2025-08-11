@@ -1118,8 +1118,8 @@ msgid "{0}"
 msgstr "{0}"
 
 #: src/app/pages/trade/layout.tsx
-msgid "Bridge"
-msgstr ""
+#~ msgid "Bridge"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx

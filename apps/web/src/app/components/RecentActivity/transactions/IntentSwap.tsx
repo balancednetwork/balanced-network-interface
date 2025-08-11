@@ -40,7 +40,7 @@ function parseBigIntString(bigIntString: string): bigint {
   throw new Error('Invalid BIGINT string format');
 }
 
-const getTokenDataFromIntent = (
+export const getTokenDataFromIntent = (
   intentData: Intent,
 ):
   | { srcToken: Token | undefined; dstToken: Token | undefined; srcChainId: XChainId; dstChainId: XChainId }

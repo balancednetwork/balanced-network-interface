@@ -112,3 +112,11 @@ export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | nu
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
 };
+
+export const getTxTrackerLink = (hash?: string, xChainId?: XChainId): string | undefined => {
+  if (hash && xChainId) {
+    return `${xChains.find(x => x.xChainId === xChainId)?.tracker.tx}/${hash}`;
+  }
+
+  return undefined;
+};

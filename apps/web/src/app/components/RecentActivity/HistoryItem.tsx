@@ -1,18 +1,20 @@
+import { UnifiedTransaction } from '@/hooks/useCombinedTransactions';
+import { getTxTrackerLink } from '@balancednetwork/xwagmi';
 import { motion } from 'framer-motion';
 import React from 'react';
-import IntentSwap from './transactions/IntentSwap';
+import IntentSwap, { getTokenDataFromIntent } from './transactions/IntentSwap';
 
 interface HistoryItemProps {
-  tx: any;
+  tx: UnifiedTransaction;
 }
 
 const HistoryItem: React.FC<HistoryItemProps> = ({ tx }) => {
-  // const hash = transaction.id.split('/')[1] || transaction.id;
-  // const xChainId = isMMTransaction(transaction) ? transaction.fromAmount.currency.xChainId : transaction.sourceChainId;
-  // const trackerLink = getTxTrackerLink(hash, xChainId);
+  const hash = tx.hash;
+  const tokenData = getTokenDataFromIntent(tx.data.intent);
+  const trackerLink = getTxTrackerLink(tx.data.packet.src_tx_hash, tokenData?.srcChainId);
 
   const handleClick = () => {
-    alert('click');
+    trackerLink && window.open(trackerLink, '_blank');
   };
 
   const renderContent = () => {
@@ -24,7 +26,7 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ tx }) => {
       initial={{ opacity: 0, y: -20, height: 0 }}
       animate={{ opacity: 1, y: 0, height: 'auto' }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      key={tx.id}
+      key={hash}
       onClick={handleClick}
       style={{ cursor: 'pointer', pointerEvents: 'auto' }}
     >

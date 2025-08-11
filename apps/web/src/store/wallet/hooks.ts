@@ -210,16 +210,16 @@ export function useWalletFetchBalances() {
   }, [suiBalances, dispatch]);
 
   // fetch balances on solana
-  // const { address: accountSolana } = useXAccount('SOLANA');
-  // const solanaTokens = useXTokens('solana');
-  // const { data: solanaBalances } = useXBalances({
-  //   xChainId: 'solana',
-  //   xTokens: solanaTokens,
-  //   address: accountSolana,
-  // });
-  // useEffect(() => {
-  //   solanaBalances && dispatch(changeBalances({ xChainId: 'solana', balances: solanaBalances }));
-  // }, [solanaBalances, dispatch]);
+  const { address: accountSolana } = useXAccount('SOLANA');
+  const solanaTokens = useXTokens('solana');
+  const { data: solanaBalances } = useXBalances({
+    xChainId: 'solana',
+    xTokens: solanaTokens,
+    address: accountSolana,
+  });
+  useEffect(() => {
+    solanaBalances && dispatch(changeBalances({ xChainId: 'solana', balances: solanaBalances }));
+  }, [solanaBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

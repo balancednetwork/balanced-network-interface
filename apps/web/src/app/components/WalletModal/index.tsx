@@ -133,13 +133,13 @@ export default function WalletModal() {
         description: t`Borrow. Swap. Supply. Earn.`,
         keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
       },
-      // {
-      //   name: 'Solana',
-      //   xChainType: 'SOLANA',
-      //   logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
-      //   description: t`Borrow. Swap. Supply. Earn.`,
-      //   keyWords: ['solana'],
-      // },
+      {
+        name: 'Solana',
+        xChainType: 'SOLANA',
+        logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: ['solana'],
+      },
       {
         name: 'Sui',
         xChainType: 'SUI',

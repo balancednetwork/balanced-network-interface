@@ -14,6 +14,7 @@ import {
   hubAssetToOriginalAssetMap,
   isValidIntentRelayChainId,
 } from '@sodax/sdk';
+import { xChainMap } from '@sodax/wallet-sdk';
 import React, { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
@@ -93,6 +94,8 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const prices = useOraclePrices();
   const [status, setStatus] = useState<CancelStatus>(CancelStatus.None);
 
+  const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
+
   const currencies = {
     srcToken: SUPPORTED_TOKENS_LIST.find(
       token => token.symbol.toLowerCase() === tokensData?.srcToken?.symbol.toLowerCase(),
@@ -156,14 +159,27 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           size="26px"
         />
         <Details>
-          <Title>
-            Swap {formatSymbol(currencies.srcToken.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
-          </Title>
+          {isBridgeAction ? (
+            <Title>
+              Bridge {formatSymbol(currencies.srcToken.symbol)} to {xChainMap[tokensData.dstChainId].name}
+            </Title>
+          ) : (
+            <Title>
+              Swap {formatSymbol(currencies.srcToken.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
+            </Title>
+          )}
           <Amount>
-            {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-            {formatSymbol(amount.currency.symbol)} for{' '}
-            {/* {formatBalance(toAmount.toFixed(), prices[toAmount.currency.address]?.toFixed() || 1)}{' '} */}
-            {formatSymbol(currencies.dstToken.symbol)}
+            {isBridgeAction ? (
+              <span>
+                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                {formatSymbol(amount.currency.symbol)}
+              </span>
+            ) : (
+              <span>
+                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                {formatSymbol(amount.currency.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
+              </span>
+            )}
           </Amount>
         </Details>
         <Meta>

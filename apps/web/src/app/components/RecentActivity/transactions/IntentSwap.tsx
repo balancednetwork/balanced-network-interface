@@ -12,7 +12,6 @@ import {
   getSpokeChainIdFromIntentRelayChainId,
   getSupportedSolverTokens,
   hubAssetToOriginalAssetMap,
-  isValidIntentRelayChainId,
 } from '@sodax/sdk';
 import { xChainMap } from '@sodax/wallet-sdk';
 import React, { useState } from 'react';
@@ -33,11 +32,14 @@ interface SwapIntentProps {
   tx: UnifiedTransaction;
 }
 
-function parseBigIntString(bigIntString: string): bigint {
-  if (bigIntString.startsWith('BIGINT::')) {
-    return BigInt(bigIntString.substring(8));
+function toBigIntSafe(value: unknown): bigint {
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'number') return BigInt(value);
+  if (typeof value === 'string') {
+    const normalized = value.startsWith('BIGINT::') ? value.substring(8) : value;
+    if (/^\d+$/.test(normalized)) return BigInt(normalized);
   }
-  throw new Error('Invalid BIGINT string format');
+  throw new Error('Invalid bigint-like value');
 }
 
 export const getTokenDataFromIntent = (
@@ -48,10 +50,10 @@ export const getTokenDataFromIntent = (
   try {
     // Convert intent relay chain ID to spoke chain ID
     const srcChainId = getSpokeChainIdFromIntentRelayChainId(
-      parseBigIntString(intentData.srcChain.toString()) as IntentRelayChainId,
+      toBigIntSafe((intentData as any).srcChain) as IntentRelayChainId,
     );
     const dstChainId = getSpokeChainIdFromIntentRelayChainId(
-      parseBigIntString(intentData.dstChain.toString()) as IntentRelayChainId,
+      toBigIntSafe((intentData as any).dstChain) as IntentRelayChainId,
     );
 
     const srcHubAssetMap = Array.from(hubAssetToOriginalAssetMap.entries()).find(
@@ -147,7 +149,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
     return <Container>Order tx - Unknown destination token</Container>;
   }
 
-  const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, parseBigIntString(inputAmount.toString()));
+  const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, toBigIntSafe(inputAmount as unknown));
 
   return (
     <>

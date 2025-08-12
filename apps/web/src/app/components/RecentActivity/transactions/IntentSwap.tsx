@@ -1,5 +1,5 @@
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import { UnifiedTransaction } from '@/hooks/useCombinedTransactions';
+import { UnifiedTransaction, UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
@@ -15,6 +15,7 @@ import {
 } from '@sodax/sdk';
 import { xChainMap } from '@sodax/wallet-sdk';
 import React, { useState } from 'react';
+import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
 import TransactionStatusDisplay from '../TransactionStatusDisplay';
@@ -94,7 +95,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const intentData = tx.data.intent;
   const tokensData = getTokenDataFromIntent(intentData);
   const prices = useOraclePrices();
-  const [status, setStatus] = useState<CancelStatus>(CancelStatus.None);
+  const [cancelStatus, setCancelStatus] = useState<CancelStatus>(CancelStatus.None);
 
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
 
@@ -109,7 +110,9 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
 
   const elapsedTime = useElapsedTime(tx.timestamp);
 
-  const handleCancel = async () => {
+  const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     alert('cancel');
     // setStatus(CancelStatus.Signing);
     // try {
@@ -189,14 +192,14 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
         </Meta>
       </Container>
-      {/* {transaction.status === MMTransactionStatus.pending ? (
+      {tx.status === UnifiedTransactionStatus.pending ? (
         <Flex paddingLeft="38px" marginBottom="-10px" width="100%" justifyContent="flex-end" alignItems="center">
-          {status === CancelStatus.None && <CancelButton onClick={handleCancel}>Cancel</CancelButton>}
-          {status === CancelStatus.Signing && <ElapsedTime>Signing...</ElapsedTime>}
-          {status === CancelStatus.AwaitingConfirmation && <ElapsedTime>Canceling...</ElapsedTime>}
-          {status === CancelStatus.Success && <ElapsedTime>Done</ElapsedTime>}
+          {cancelStatus === CancelStatus.None && <CancelButton onClick={handleCancel}>Cancel</CancelButton>}
+          {cancelStatus === CancelStatus.Signing && <ElapsedTime>Signing...</ElapsedTime>}
+          {cancelStatus === CancelStatus.AwaitingConfirmation && <ElapsedTime>Canceling...</ElapsedTime>}
+          {cancelStatus === CancelStatus.Success && <ElapsedTime>Done</ElapsedTime>}
         </Flex>
-      ) : null} */}
+      ) : null}
     </>
   );
 };

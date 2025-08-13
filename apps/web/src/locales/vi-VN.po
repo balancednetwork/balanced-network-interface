@@ -894,6 +894,10 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Creating order..."
+msgstr ""
+
 #: src/app/components/StellarSponsorshipModal/index.tsx
 msgid "Activate wallet"
 msgstr ""
@@ -1150,7 +1154,6 @@ msgstr "Giao dịch"
 #~ msgstr "Xác nhận giao dịch trên thiết bị Ledger."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr ""
@@ -2786,7 +2789,6 @@ msgid "Voting ends in {endTimeStr}"
 msgstr "Bỏ phiếu kết thúc trong {endTimeStr}"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Completed"
 msgstr ""
 
@@ -2829,6 +2831,10 @@ msgstr "Biểu đồ giá cả hiện chưa có."
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Transferred {0} {1} to {2}."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Order created"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"

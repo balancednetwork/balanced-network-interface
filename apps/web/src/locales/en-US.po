@@ -865,6 +865,10 @@ msgstr "LIQUIDITY"
 msgid "Lock up BALN"
 msgstr "Lock up BALN"
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Creating order..."
+msgstr "Creating order..."
+
 #: src/app/components/StellarSponsorshipModal/index.tsx
 msgid "Activate wallet"
 msgstr "Activate wallet"
@@ -1111,7 +1115,6 @@ msgstr "Trade"
 #~ msgstr "Confirm the transaction on your Ledger."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr "Swapping"
@@ -2724,7 +2727,6 @@ msgid "Voting ends in {endTimeStr}"
 msgstr "Voting ends in {endTimeStr}"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Completed"
 msgstr "Completed"
 
@@ -2767,6 +2769,10 @@ msgstr "No price chart available for this pair."
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Transferred {0} {1} to {2}."
 #~ msgstr "Transferred {0} {1} to {2}."
+
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Order created"
+msgstr "Order created"
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"

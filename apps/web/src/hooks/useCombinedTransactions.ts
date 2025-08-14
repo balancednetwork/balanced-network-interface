@@ -51,3 +51,19 @@ export const useIsAnyTxPending = (): boolean => {
     return orders.some(order => order.status === UnifiedTransactionStatus.pending);
   }, [orders]);
 };
+
+export const usePendingTxCount = (): number => {
+  const { orders } = useOrderStore();
+
+  return useMemo(() => {
+    return orders.filter(order => order.status === UnifiedTransactionStatus.pending).length;
+  }, [orders]);
+};
+
+export const useFailedTxCount = (): number => {
+  const { orders } = useOrderStore();
+
+  return useMemo(() => {
+    return orders.filter(order => order.status === UnifiedTransactionStatus.failed).length;
+  }, [orders]);
+};

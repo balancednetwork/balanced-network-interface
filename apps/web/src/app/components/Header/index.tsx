@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 
 import RecentActivityIcon from '@/assets/icons/activity.svg';
+import TickIcon from '@/assets/icons/tick-dark.svg';
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
@@ -8,9 +9,9 @@ import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-import { Button, IconButton } from '@/app/components/Button';
+import { Button, IconButton, PendingIconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
@@ -20,7 +21,7 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
-import { useIsAnyTxPending } from '@/hooks/useCombinedTransactions';
+import { useFailedTxCount, useIsAnyTxPending, usePendingTxCount } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -101,7 +102,55 @@ const SpinningIcon = styled(RecentActivityIcon)`
   animation: spin 2s ease-in-out infinite;
 `;
 
+const rotate3d = keyframes`
+  0% {
+    transform: rotateY(0);
+  }
+  20% {
+    transform: rotateY(30deg);
+  }
+  60% {
+    transform: rotateY(-20deg);
+  }
+  80% {
+    transform: rotateY(15deg);
+  }
+  100% {
+    transform: rotateY(0);
+  }
+`;
+
+const AnimatedTickIcon = styled(TickIcon)`
+  animation: ${rotate3d} 2s ease-in-out;
+`;
+
+const IconStage = styled.div`
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+`;
+
+const IconLayer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 200ms ease-in-out;
+  will-change: transform, opacity;
+`;
+
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
+
+type AnimationState = 'IDLE' | 'PENDING' | 'COLLAPSING' | 'SUCCESS';
 
 export const CopyableAddress = ({
   account,
@@ -164,7 +213,10 @@ export default function Header(props: { title?: string; className?: string }) {
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
 
-  const isAnyTxPending = useIsAnyTxPending();
+  const pendingTxCount = usePendingTxCount();
+  const [testPendingCount, setTestPendingCount] = React.useState(0);
+  const totalPendingCount = pendingTxCount + testPendingCount;
+  const failedTxCount = useFailedTxCount();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -172,6 +224,54 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const recentActivityButtonRef = React.useRef<HTMLElement>(null);
   const [recentActivityAnchor, setRecentActivityAnchor] = React.useState<HTMLElement | null>(null);
+
+  const handleTestAnimation = () => {
+    setTestPendingCount(1);
+    setTimeout(() => {
+      setTestPendingCount(0);
+    }, 3000);
+  };
+
+  // Animation state machine
+  const [animationState, setAnimationState] = React.useState<AnimationState>('IDLE');
+  const previousPendingRef = React.useRef<number>(0);
+  const successTimer = React.useRef<ReturnType<typeof setTimeout>>();
+
+  // Animate based on pending tx count
+  React.useEffect(() => {
+    const previousPending = previousPendingRef.current;
+    previousPendingRef.current = totalPendingCount;
+
+    if (totalPendingCount > 0 && animationState !== 'PENDING') {
+      clearTimeout(successTimer.current);
+      setAnimationState('PENDING');
+    } else if (totalPendingCount === 0 && previousPending > 0) {
+      setAnimationState('COLLAPSING');
+    }
+  }, [totalPendingCount, animationState]);
+
+  // Handle button transitions
+  const handleActivityTransitionEnd = React.useCallback(
+    (e: React.TransitionEvent<HTMLButtonElement>) => {
+      // Only react to the button's own transition end, not bubbling from icon layers
+      if (e.target !== e.currentTarget) return;
+      const prop = e.propertyName || '';
+      if (/width|padding/.test(prop) && animationState === 'COLLAPSING') {
+        setAnimationState('SUCCESS');
+        successTimer.current = setTimeout(() => {
+          setAnimationState('IDLE');
+        }, 2000);
+      }
+    },
+    [animationState],
+  );
+
+  // Cleanup timer on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(successTimer.current);
+    };
+  }, []);
 
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
@@ -190,6 +290,11 @@ export default function Header(props: { title?: string; className?: string }) {
     setRecentActivityAnchor(recentActivityAnchor ? null : recentActivityButtonRef.current);
   };
   const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
+
+  const isExpanded = animationState === 'PENDING';
+  const showSpinner = animationState === 'PENDING' || animationState === 'COLLAPSING';
+  const showTick = animationState === 'SUCCESS';
+  const showDefault = animationState === 'IDLE';
 
   return (
     <header className={className}>
@@ -275,13 +380,34 @@ export default function Header(props: { title?: string; className?: string }) {
             <RecentActivityButtonWrapper>
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
                 <div>
-                  <IconButton ref={recentActivityButtonRef} onClick={toggleRecentActivityMenu}>
-                    {isAnyTxPending ? (
-                      <SpinningIcon width="26" height="26" />
+                  <PendingIconButton
+                    $expanded={isExpanded}
+                    ref={recentActivityButtonRef}
+                    onClick={toggleRecentActivityMenu}
+                    onTransitionEnd={handleActivityTransitionEnd}
+                  >
+                    {isExpanded ? (
+                      <>
+                        <SpinningIcon width="26" height="26" />
+                        <Typography
+                          color="bg1"
+                          style={{ whiteSpace: 'nowrap' }}
+                        >{`${totalPendingCount} in progress...`}</Typography>
+                      </>
                     ) : (
-                      <RecentActivityIcon width="26" height="26" />
+                      <IconStage>
+                        <IconLayer style={{ transform: `scale(${showSpinner ? 1 : 0})`, opacity: showSpinner ? 1 : 0 }}>
+                          <SpinningIcon width="26" height="26" />
+                        </IconLayer>
+                        <IconLayer style={{ transform: `scale(${showTick ? 1 : 0})`, opacity: showTick ? 1 : 0 }}>
+                          <AnimatedTickIcon width="26" height="26" />
+                        </IconLayer>
+                        <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>
+                          <RecentActivityIcon width="26" height="26" />
+                        </IconLayer>
+                      </IconStage>
                     )}
-                  </IconButton>
+                  </PendingIconButton>
 
                   {recentActivityAnchor && (
                     <DropdownPopper
@@ -297,6 +423,10 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </RecentActivityButtonWrapper>
+
+            <Button onClick={handleTestAnimation} style={{ marginLeft: '10px' }}>
+              Test animation
+            </Button>
           </Flex>
         )}
       </Flex>

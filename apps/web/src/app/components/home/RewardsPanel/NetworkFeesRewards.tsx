@@ -25,9 +25,11 @@ import { useHasNetworkFees } from '@/store/reward/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { XTransactionType, bnJs, getICONXTransactionInput } from '@balancednetwork/xwagmi';
 
+import { bnUSD } from '@/constants/tokens';
 import { useSavingsXChainId } from '@/store/savings/hooks';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import RewardsGrid from './RewardsGrid';
 
 const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
@@ -53,6 +55,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
 
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    if (!account) return;
 
     bnJs
       .inject({ account })
@@ -63,6 +66,12 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           {
             summary: t`Claimed network fees.`,
             pending: t`Claiming network fees...`,
+            type: XTransactionType.CLAIM_NETWORK_FEES,
+            input: getICONXTransactionInput(
+              account,
+              XTransactionType.CLAIM_NETWORK_FEES,
+              CurrencyAmount.fromRawAmount(bnUSD[1], 0),
+            ),
           },
         );
         toggleOpen();

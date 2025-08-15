@@ -9,7 +9,7 @@ import { immer } from 'zustand/middleware/immer';
 import { getXPublicClient } from '@/actions';
 import { xChainMap } from '@/constants/xChains';
 import { jsonStorageOptions } from '@/utils/zustand';
-import { XCallEventType, XTransaction } from '../types';
+import { XCallEventType, XTransaction, XTransactionType } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { transactionActions } from './useTransactionStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
@@ -176,6 +176,18 @@ export const useXMessageStore = create<XMessageStore>()(
         console.log('onMessageUpdate', { xMessage });
         const xTransaction = xTransactionActions.get(xMessage.xTransactionId);
         if (!xTransaction) return;
+
+        // Skip XMessage handling for ICON transactions
+        if (
+          xTransaction.type === XTransactionType.SWAP_ON_ICON ||
+          xTransaction.type === XTransactionType.DEPOSIT_ON_ICON ||
+          xTransaction.type === XTransactionType.WITHDRAW_ON_ICON ||
+          xTransaction.type === XTransactionType.BORROW_ON_ICON ||
+          xTransaction.type === XTransactionType.REPAY_ON_ICON ||
+          xTransaction.type === XTransactionType.CLAIM_NETWORK_FEES
+        ) {
+          return;
+        }
 
         if (xMessage.isPrimary) {
           if (xMessage.status === XMessageStatus.CALL_EXECUTED) {

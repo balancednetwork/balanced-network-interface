@@ -12,7 +12,7 @@ import { getXPublicClient } from '@/actions';
 // } from '@/app/components/Notification/TransactionNotification';
 import { isIconTransaction } from '@/utils';
 import { getTrackerLink } from '@/utils';
-import { Transaction, TransactionStatus, XTransactionType } from '@/xcall/types';
+import { Transaction, TransactionStatus, XTransactionInput } from '@/xcall/types';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { xTransactionActions } from './useXTransactionStore';
@@ -47,6 +47,7 @@ export const transactionActions = {
       pendingMessage?: string;
       successMessage?: string;
       errorMessage?: string;
+      input?: XTransactionInput;
       onSuccess?: () => void;
     },
   ): Transaction => {

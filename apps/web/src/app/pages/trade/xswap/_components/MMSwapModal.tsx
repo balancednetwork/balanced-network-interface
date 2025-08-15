@@ -181,6 +181,7 @@ const MMSwapModal = ({
         toAmount: trade.outputAmount,
         orderId: BigInt(0), // will be set later
         taskId: '',
+        createdAt: Date.now(),
       });
       setIntentId(intentHash.value);
 

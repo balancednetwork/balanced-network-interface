@@ -26,7 +26,9 @@ const StyledPriceContainer = styled(Box)`
 function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   let formattedPrice: string;
   try {
-    formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4);
+    formattedPrice = showInverted
+      ? price.toSignificant(4, { groupSeparator: ',' })
+      : price.invert()?.toSignificant(4, { groupSeparator: ',' });
   } catch (error) {
     formattedPrice = '0';
   }

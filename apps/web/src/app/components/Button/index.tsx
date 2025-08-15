@@ -114,6 +114,23 @@ export const IconButton = styled(RebassButton)`
   }
 `;
 
+export const PendingIconButton = styled(IconButton)<{ $expanded?: boolean }>`
+  overflow: hidden;
+  gap: 10px;
+  transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    padding 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 200ms ease;
+  will-change: width, padding;
+
+  ${({ $expanded }) =>
+    $expanded &&
+    css`
+      width: 160px;
+      padding-left: 12px;
+      padding-right: 12px;
+    `}
+`;
+
 export const AlertButton = styled(RebassButton)`
   display: inline-block;
   border-radius: 10px;

@@ -102,26 +102,23 @@ const SpinningIcon = styled(RecentActivityIcon)`
   animation: spin 2s ease-in-out infinite;
 `;
 
-const rotate3d = keyframes`
+const gentleSpin = keyframes`
   0% {
-    transform: rotateY(0);
-  }
-  20% {
-    transform: rotateY(30deg);
-  }
-  60% {
-    transform: rotateY(-20deg);
+    transform: rotate(90deg);
+    opacity: 0;
   }
   80% {
-    transform: rotateY(15deg);
+    transform: rotate(-390deg);
+    opacity: 1;
   }
   100% {
-    transform: rotateY(0);
+    transform: rotate(-360deg);
+    opacity: 1;
   }
 `;
 
 const AnimatedTickIcon = styled(TickIcon)`
-  animation: ${rotate3d} 2s ease-in-out;
+  animation: ${gentleSpin} 2s cubic-bezier(0.1, 0.9, 0.2, 1);
 `;
 
 const IconStage = styled.div`
@@ -131,7 +128,7 @@ const IconStage = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  perspective: 1000px;
+  perspective: 500px;
 `;
 
 const IconLayer = styled.div`
@@ -143,14 +140,13 @@ const IconLayer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 200ms ease-in-out;
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 400ms ease-in-out;
   will-change: transform, opacity;
 `;
 
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
 
-type AnimationState = 'IDLE' | 'PENDING' | 'COLLAPSING' | 'SUCCESS';
+type AnimationState = 'IDLE' | 'PENDING' | 'SUCCESS' | 'FADING_OUT_SUCCESS';
 
 export const CopyableAddress = ({
   account,
@@ -246,21 +242,18 @@ export default function Header(props: { title?: string; className?: string }) {
       clearTimeout(successTimer.current);
       setAnimationState('PENDING');
     } else if (totalPendingCount === 0 && previousPending > 0) {
-      setAnimationState('COLLAPSING');
+      setAnimationState('SUCCESS');
+      successTimer.current = setTimeout(() => {
+        setAnimationState('FADING_OUT_SUCCESS');
+      }, 2000);
     }
   }, [totalPendingCount, animationState]);
 
-  // Handle button transitions
-  const handleActivityTransitionEnd = React.useCallback(
-    (e: React.TransitionEvent<HTMLButtonElement>) => {
-      // Only react to the button's own transition end, not bubbling from icon layers
+  const handleTickTransitionEnd = React.useCallback(
+    (e: React.TransitionEvent<HTMLDivElement>) => {
       if (e.target !== e.currentTarget) return;
-      const prop = e.propertyName || '';
-      if (/width|padding/.test(prop) && animationState === 'COLLAPSING') {
-        setAnimationState('SUCCESS');
-        successTimer.current = setTimeout(() => {
-          setAnimationState('IDLE');
-        }, 2000);
+      if (animationState === 'FADING_OUT_SUCCESS' && e.propertyName === 'transform') {
+        setAnimationState('IDLE');
       }
     },
     [animationState],
@@ -292,9 +285,13 @@ export default function Header(props: { title?: string; className?: string }) {
   const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
 
   const isExpanded = animationState === 'PENDING';
-  const showSpinner = animationState === 'PENDING' || animationState === 'COLLAPSING';
-  const showTick = animationState === 'SUCCESS';
+  const showSpinner = animationState === 'PENDING' || animationState === 'SUCCESS';
+  const showTick = animationState === 'SUCCESS' || animationState === 'FADING_OUT_SUCCESS';
   const showDefault = animationState === 'IDLE';
+
+  const spinnerOpacity = React.useMemo(() => (animationState === 'PENDING' ? 1 : 0), [animationState]);
+  const tickOpacity = React.useMemo(() => (showTick ? 1 : 0), [showTick]);
+  const tickScale = React.useMemo(() => (animationState === 'SUCCESS' ? 1 : 0), [animationState]);
 
   return (
     <header className={className}>
@@ -384,7 +381,6 @@ export default function Header(props: { title?: string; className?: string }) {
                     $expanded={isExpanded}
                     ref={recentActivityButtonRef}
                     onClick={toggleRecentActivityMenu}
-                    onTransitionEnd={handleActivityTransitionEnd}
                   >
                     {isExpanded ? (
                       <>
@@ -396,10 +392,21 @@ export default function Header(props: { title?: string; className?: string }) {
                       </>
                     ) : (
                       <IconStage>
-                        <IconLayer style={{ transform: `scale(${showSpinner ? 1 : 0})`, opacity: showSpinner ? 1 : 0 }}>
+                        <IconLayer
+                          style={{
+                            transform: 'scale(1)',
+                            opacity: spinnerOpacity,
+                          }}
+                        >
                           <SpinningIcon width="26" height="26" />
                         </IconLayer>
-                        <IconLayer style={{ transform: `scale(${showTick ? 1 : 0})`, opacity: showTick ? 1 : 0 }}>
+                        <IconLayer
+                          onTransitionEnd={handleTickTransitionEnd}
+                          style={{
+                            transform: `scale(${tickScale})`,
+                            opacity: tickOpacity,
+                          }}
+                        >
                           <AnimatedTickIcon width="26" height="26" />
                         </IconLayer>
                         <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>

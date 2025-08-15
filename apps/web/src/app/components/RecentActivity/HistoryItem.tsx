@@ -11,7 +11,8 @@ interface HistoryItemProps {
 const HistoryItem: React.FC<HistoryItemProps> = ({ tx }) => {
   const hash = tx.hash;
   const tokenData = getTokenDataFromIntent(tx.data.intent);
-  const trackerLink = getTxTrackerLink(tx.data.packet.src_tx_hash, tokenData?.srcChainId);
+  // const trackerLink = getTxTrackerLink(tx.data.packet.src_tx_hash, tokenData?.srcChainId);
+  const trackerLink = '';
 
   const handleClick = () => {
     trackerLink && window.open(trackerLink, '_blank');

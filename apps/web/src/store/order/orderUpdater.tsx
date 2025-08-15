@@ -9,7 +9,8 @@ import { Order, useOrderStore } from './useOrderStore';
 // Individual component for each order to safely use the useStatus hook
 const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
   const { updateOrderStatus } = useOrderStore();
-  const { data: status } = useStatus(order.packet.dst_tx_hash as Hex);
+  const { data: status } = useStatus('' as Hex);
+  // const { data: status } = useStatus(order.packet.dst_tx_hash as Hex);
 
   React.useEffect(() => {
     if (status) {

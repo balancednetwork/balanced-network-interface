@@ -6,7 +6,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 export interface Order {
   intentHash: Hex;
   intent: Intent;
-  packet: PacketData;
+  packet: `0x${string}`;
   timestamp: number;
   status: UnifiedTransactionStatus;
 }

@@ -19,7 +19,7 @@ const OrderStatus = ({
   order,
   isLast,
 }: {
-  order: { intentHash: Hex; intent: Intent; packet: PacketData; status: UnifiedTransactionStatus };
+  order: { intentHash: Hex; intent: Intent; packet: `0x${string}`; status: UnifiedTransactionStatus };
   isLast: boolean;
 }) => {
   const removeOrder = useOrderStore(state => state.removeOrder);
@@ -46,7 +46,7 @@ const OrderStatus = ({
     >
       <Typography>Order ID: {order.intent.intentId.toString()}</Typography>
       <Typography>Intent Hash: {order.intentHash}</Typography>
-      <Typography>Intent Tx Hash: {order.packet.dst_tx_hash as Hex}</Typography>
+      {/* <Typography>Intent Tx Hash: {order.packet.dst_tx_hash as Hex}</Typography> */}
       <Typography>
         Status: <strong>{getStatusMessage(order.status)}</strong>
       </Typography>

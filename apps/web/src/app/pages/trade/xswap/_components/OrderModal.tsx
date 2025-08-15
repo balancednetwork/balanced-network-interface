@@ -27,7 +27,7 @@ import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { XToken, xChainMap } from '@balancednetwork/xwagmi';
-import { useCreateIntentOrder, useSwapAllowance, useSwapApprove } from '@sodax/dapp-kit';
+import { useSwap, useSwapAllowance, useSwapApprove } from '@sodax/dapp-kit';
 import { CreateIntentParams, SpokeChainId, Token, encodeAddress } from '@sodax/sdk';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -149,9 +149,10 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
     spokeProvider,
   ]);
 
-  const { mutateAsync: createIntentOrder } = useCreateIntentOrder(spokeProvider);
+  const { mutateAsync: swap } = useSwap(spokeProvider);
   const { data: hasAllowed, isLoading: isAllowanceLoading } = useSwapAllowance(intentOrderPayload, spokeProvider);
-  const { approve, isLoading: isApproving } = useSwapApprove(sourceToken, spokeProvider);
+
+  const { approve, isLoading: isApproving } = useSwapApprove(intentOrderPayload, spokeProvider);
 
   //old
   const gasChecker = useXCallGasChecker(direction.from, tryParseAmount(sourceAmount, sourceToken as XToken));
@@ -207,7 +208,10 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
   // No external transaction watcher; success is handled in handleOrder
 
   const handleApprove = async () => {
-    await approve({ amount: sourceAmount });
+    if (!intentOrderPayload) {
+      return;
+    }
+    await approve({ params: intentOrderPayload });
   };
 
   const handleOrder = async () => {
@@ -226,7 +230,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
 
       if (intentOrderPayload) {
         setOrderStatus(IntentOrderStatus.Executing);
-        const result = await createIntentOrder(intentOrderPayload);
+        const result = await swap(intentOrderPayload);
 
         if (result.ok) {
           const [response, intent, packet] = result.value;

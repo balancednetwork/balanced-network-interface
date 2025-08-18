@@ -47,6 +47,8 @@ const OrderStatus = ({
       <Typography>Order ID: {order.intent.intentId.toString()}</Typography>
       <Typography>Intent Hash: {order.intentHash}</Typography>
       {/* <Typography>Intent Tx Hash: {order.packet.dst_tx_hash as Hex}</Typography> */}
+      {typeof order.packet === 'string' && <Typography>Packet: {order.packet}</Typography>}
+      {/* <Typography>Packet: {order.packet}</Typography> */}
       <Typography>
         Status: <strong>{getStatusMessage(order.status)}</strong>
       </Typography>

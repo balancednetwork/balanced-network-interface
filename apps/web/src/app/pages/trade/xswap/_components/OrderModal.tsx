@@ -126,7 +126,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
       outputToken: destToken.address,
       inputAmount: scaleTokenAmount(sourceAmount, sourceToken.decimals),
       minOutputAmount: BigInt(minOutputAmount.toFixed(0)),
-      deadline: BigInt(0),
+      deadline: BigInt(Math.floor(Date.now() / 1000) + 60 * 5), // 5 minutes from now, in seconds
       allowPartialFill: false,
       srcChain: sourceChain,
       dstChain: destChain,

@@ -21,8 +21,8 @@
     "overrides": {
       "@sodax/sdk": "0.0.1-rc.20",
       "@sodax/dapp-kit": "0.0.1-rc.17",
-      "@sodax/wallet-sdk": "0.0.1-rc.14",
-      "@sodax/types": "0.0.1-rc.11",
+      "@sodax/wallet-sdk": "0.0.1-rc.17",
+      "@sodax/types": "0.0.1-rc.14",
       "wagmi": "2.14.12",
       "viem": "2.29.2"
     }

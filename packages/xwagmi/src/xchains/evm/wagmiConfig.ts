@@ -1,8 +1,8 @@
 import { http, createConfig, type Config } from 'wagmi';
-import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet, optimism, polygon } from 'wagmi/chains';
+import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet, optimism, polygon, sonic } from 'wagmi/chains';
 
 export const wagmiConfig: Config = createConfig({
-  chains: [mainnet, avalanche, bsc, avalancheFuji, arbitrum, base, optimism, polygon],
+  chains: [mainnet, avalanche, bsc, avalancheFuji, arbitrum, base, optimism, polygon, sonic],
   connectors: [],
   transports: {
     [mainnet.id]: http(),
@@ -13,5 +13,6 @@ export const wagmiConfig: Config = createConfig({
     [optimism.id]: http(),
     [base.id]: http(),
     [polygon.id]: http('https://1rpc.io/matic'),
+    [sonic.id]: http('https://rpc.soniclabs.com'),
   },
 });

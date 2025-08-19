@@ -170,5 +170,13 @@ export const PYTH_PRICED_TOKENS = [
     symbol: 'POL',
     pythId: 'ffd11c5a1cfd42f80afb2df4d9f264c15f956d68153335374ec10722edd70472',
   },
+  {
+    symbol: 'S',
+    pythId: 'b2748e718cf3a75b0ca099cb467aea6aa8f7d960b381b3970769b5a2d6be26dc',
+  },
+  {
+    symbol: 'wS',
+    pythId: 'b2748e718cf3a75b0ca099cb467aea6aa8f7d960b381b3970769b5a2d6be26dc',
+  },
 ];
 export const STABLE_TOKENS = ['bnUSD', 'USDC', 'USDT'];

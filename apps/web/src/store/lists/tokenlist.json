@@ -345,6 +345,22 @@
       "symbol": "mSUI",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/msui.png"
+    },
+    {
+      "address": "notreally",
+      "chainId": 1,
+      "name": "Sonic",
+      "symbol": "S",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/s.png"
+    },
+    {
+      "address": "notreally2",
+      "chainId": 1,
+      "name": "Wrapped Sonic",
+      "symbol": "wS",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/s.png"
     }
   ]
 }

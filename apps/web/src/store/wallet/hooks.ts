@@ -162,6 +162,17 @@ export function useWalletFetchBalances() {
     optBalances && dispatch(changeBalances({ xChainId: '0xa.optimism', balances: optBalances }));
   }, [optBalances, dispatch]);
 
+  // fetch balances on op
+  const sonicTokens = useXTokens('sonic');
+  const { data: sonicBalances } = useXBalances({
+    xChainId: 'sonic',
+    xTokens: sonicTokens,
+    address,
+  });
+  useEffect(() => {
+    sonicBalances && dispatch(changeBalances({ xChainId: 'sonic', balances: sonicBalances }));
+  }, [sonicBalances, dispatch]);
+
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
   const { data: baseBalances } = useXBalances({

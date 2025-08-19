@@ -12,4 +12,5 @@ export const balancedSupportedChains: SpokeChainId[] = [
   'solana',
   'stellar',
   'sui',
+  'sonic',
 ];

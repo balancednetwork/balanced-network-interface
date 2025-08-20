@@ -9,7 +9,7 @@ import { UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
 import { statusCodeToMessage } from '@/lib/sodax/utils';
 import { useOrderStore } from '@/store/order/useOrderStore';
 import { Trans } from '@lingui/macro';
-import { Hex, Intent, PacketData } from '@sodax/sdk';
+import { Hex, Intent, IntentDeliveryInfo } from '@sodax/sdk';
 import { Box, Flex } from 'rebass/styled-components';
 
 const MotionBoxPanel = motion(BoxPanel);
@@ -19,7 +19,7 @@ const OrderStatus = ({
   order,
   isLast,
 }: {
-  order: { intentHash: Hex; intent: Intent; packet: `0x${string}`; status: UnifiedTransactionStatus };
+  order: { intentHash: Hex; intent: Intent; packet: IntentDeliveryInfo; status: UnifiedTransactionStatus };
   isLast: boolean;
 }) => {
   const removeOrder = useOrderStore(state => state.removeOrder);
@@ -46,7 +46,8 @@ const OrderStatus = ({
     >
       <Typography>Order ID: {order.intent.intentId.toString()}</Typography>
       <Typography>Intent Hash: {order.intentHash}</Typography>
-      {/* <Typography>Intent Tx Hash: {order.packet.dst_tx_hash as Hex}</Typography> */}
+      {order.packet.dstTxHash && <Typography>Intent Tx Hash: {order.packet.dstTxHash}</Typography>}
+      {order.packet.srcTxHash && <Typography>Intent src Tx Hash: {order.packet.srcTxHash}</Typography>}
       {typeof order.packet === 'string' && <Typography>Packet: {order.packet}</Typography>}
       {/* <Typography>Packet: {order.packet}</Typography> */}
       <Typography>

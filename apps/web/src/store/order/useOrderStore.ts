@@ -1,12 +1,12 @@
 import { UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
-import { Hex, Intent, PacketData } from '@sodax/sdk';
+import { Hex, Intent, IntentDeliveryInfo } from '@sodax/sdk';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface Order {
   intentHash: Hex;
   intent: Intent;
-  packet: `0x${string}`;
+  packet: IntentDeliveryInfo;
   timestamp: number;
   status: UnifiedTransactionStatus;
 }

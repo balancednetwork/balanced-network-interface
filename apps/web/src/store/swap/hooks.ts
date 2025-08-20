@@ -527,33 +527,14 @@ export function useDerivedTradeInfo(): {
   const destToken = currencies[Field.OUTPUT];
   const sourceChain = sourceToken?.xChainId;
   const destChain = destToken?.xChainId;
-  const sourceAmount = parsedAmount?.toFixed();
-
-  // Calculate the adjusted amount for quote request to account for partner fee
-  const adjustedAmountForQuote = useMemo(() => {
-    if (!sourceAmount || Number(sourceAmount) <= 0 || !sourceToken) {
-      return undefined;
-    }
-
-    if (isExactIn) {
-      return scaleTokenAmount(sourceAmount, sourceToken.decimals);
-    } else {
-      // For exact_output: request quote with amount that will result in sourceAmount after partner fee deduction
-      // If user wants output Y, we need to request quote for Y / (1 - partner_fee_percentage)
-      const adjustedAmount = new BigNumber(sourceAmount)
-        .div(new BigNumber(10000).minus(PARTNER_FEE_PERCENTAGE))
-        .times(10000);
-
-      return scaleTokenAmount(adjustedAmount.toFixed(), destToken?.decimals || 0);
-    }
-  }, [sourceAmount, sourceToken, destToken, isExactIn]);
+  const userTypedInAmount = parsedAmount?.toFixed();
 
   const payload = useMemo(() => {
     if (!sourceToken || !destToken) {
       return undefined;
     }
 
-    if (!adjustedAmountForQuote) {
+    if (!userTypedInAmount) {
       return undefined;
     }
 
@@ -566,10 +547,10 @@ export function useDerivedTradeInfo(): {
       token_src_blockchain_id: sourceChain as SpokeChainId,
       token_dst: destToken.address,
       token_dst_blockchain_id: destChain as SpokeChainId,
-      amount: adjustedAmountForQuote,
+      amount: scaleTokenAmount(userTypedInAmount, isExactIn ? sourceToken.decimals : destToken.decimals),
       quote_type: isExactIn ? 'exact_input' : 'exact_output',
     } satisfies SolverIntentQuoteRequest;
-  }, [sourceToken, destToken, sourceChain, destChain, adjustedAmountForQuote, isExactIn]);
+  }, [sourceToken, destToken, sourceChain, destChain, userTypedInAmount, isExactIn]);
 
   const quoteQuery = useQuote(payload);
 
@@ -588,14 +569,14 @@ export function useDerivedTradeInfo(): {
   }, [quoteQuery, isExactIn]);
 
   const exchangeRate = useMemo(() => {
-    if (!quote?.quoted_amount || !sourceAmount) {
+    if (!quote?.quoted_amount || !userTypedInAmount) {
       return new BigNumber(0);
     }
 
     if (isExactIn) {
       // For exact input: exchange rate = output / input
       return calculateExchangeRate(
-        new BigNumber(sourceAmount),
+        new BigNumber(userTypedInAmount),
         new BigNumber(normaliseTokenAmount(quote.quoted_amount, destToken?.decimals ?? 0)),
       );
     } else {
@@ -603,10 +584,10 @@ export function useDerivedTradeInfo(): {
       // quoted_amount is the input amount needed, sourceAmount is the output amount desired
       return calculateExchangeRate(
         new BigNumber(normaliseTokenAmount(quote.quoted_amount, sourceToken?.decimals ?? 0)),
-        new BigNumber(sourceAmount),
+        new BigNumber(userTypedInAmount),
       );
     }
-  }, [quote, sourceAmount, destToken, sourceToken, isExactIn]);
+  }, [quote, userTypedInAmount, destToken, sourceToken, isExactIn]);
 
   const slippageTolerance = useSwapSlippageTolerance();
 
@@ -651,7 +632,7 @@ export function useDerivedTradeInfo(): {
 
       // For exact output, the output amount is what the user typed (sourceAmount)
       // But we need to calculate what the output amount would be after removing partner fee
-      const outputAmountAfterPartnerFee = new BigNumber(sourceAmount ?? 0).multipliedBy(
+      const outputAmountAfterPartnerFee = new BigNumber(userTypedInAmount ?? 0).multipliedBy(
         10 ** (destToken?.decimals ?? 18),
       );
 
@@ -659,7 +640,7 @@ export function useDerivedTradeInfo(): {
       const fee = (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
       return fee;
     }
-  }, [quote, isExactIn, sourceAmount, destToken?.decimals]);
+  }, [quote, isExactIn, userTypedInAmount, destToken?.decimals]);
 
   const sodaxFee = useMemo(() => {
     if (!quote) {
@@ -679,7 +660,7 @@ export function useDerivedTradeInfo(): {
       // For exact output: calculate sodax fee from the output amount (same as exact input)
       // The user wants to receive a specific output amount (sourceAmount)
       // We need to calculate what the output amount would be after removing both fees
-      const outputAmountAfterPartnerFee = new BigNumber(sourceAmount ?? 0).multipliedBy(
+      const outputAmountAfterPartnerFee = new BigNumber(userTypedInAmount ?? 0).multipliedBy(
         10 ** (destToken?.decimals ?? 18),
       );
 
@@ -695,7 +676,7 @@ export function useDerivedTradeInfo(): {
       const fee = outputAmountBeforeSodaxFee - outputAmountBeforePartnerFee;
       return fee;
     }
-  }, [quote, isExactIn, sourceAmount, destToken?.decimals]);
+  }, [quote, isExactIn, userTypedInAmount, destToken?.decimals]);
 
   const formattedFee = useMemo(() => {
     if (!partnerFee || !sodaxFee || !destToken) {

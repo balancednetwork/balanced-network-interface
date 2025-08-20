@@ -3,8 +3,11 @@ import {
   EvmSpokeProvider,
   IconSpokeChainConfig,
   IconSpokeProvider,
+  SONIC_MAINNET_CHAIN_ID,
   SolanaChainConfig,
   SolanaSpokeProvider,
+  SonicSpokeChainConfig,
+  SonicSpokeProvider,
   SpokeProvider,
   StellarSpokeChainConfig,
   StellarSpokeProvider,
@@ -34,6 +37,12 @@ export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeP
     if (!spokeChainId) return undefined;
 
     if (xChainType === 'EVM') {
+      if (spokeChainId === SONIC_MAINNET_CHAIN_ID) {
+        return new SonicSpokeProvider(
+          walletProvider as IEvmWalletProvider,
+          spokeChainConfig[spokeChainId] as SonicSpokeChainConfig,
+        );
+      }
       return new EvmSpokeProvider(
         walletProvider as IEvmWalletProvider,
         spokeChainConfig[spokeChainId] as EvmSpokeChainConfig,

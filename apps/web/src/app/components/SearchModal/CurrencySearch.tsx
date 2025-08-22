@@ -14,6 +14,7 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
+import { SODAX_TOKEN_SYMBOLS } from '@/lib/sodax/tokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
@@ -30,7 +31,6 @@ import SearchInput from './SearchInput';
 import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { shouldHideBecauseOfLowValue } from './utils';
-import { SODAX_TOKEN_SYMBOLS } from '@/lib/sodax/tokens';
 
 export enum CurrencySelectionType {
   TRADE_IN,

@@ -174,9 +174,5 @@ export const PYTH_PRICED_TOKENS = [
     symbol: 'S',
     pythId: 'b2748e718cf3a75b0ca099cb467aea6aa8f7d960b381b3970769b5a2d6be26dc',
   },
-  {
-    symbol: 'wS',
-    pythId: 'b2748e718cf3a75b0ca099cb467aea6aa8f7d960b381b3970769b5a2d6be26dc',
-  },
 ];
 export const STABLE_TOKENS = ['bnUSD', 'USDC', 'USDT'];

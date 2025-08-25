@@ -373,6 +373,12 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
     new XToken('solana', 'solana', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 6, 'USDC', 'USD Coin'),
   ],
+  sonic: [
+    new XToken('sonic', 146, '0x0000000000000000000000000000000000000000', 18, 'S', 'Sonic'),
+    new XToken('sonic', 146, '0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38', 18, 'wS', 'Wrapped Sonic'),
+    new XToken('sonic', 146, '0x29219dd400f2Bf60E5a23d13Be72B486D4038894', 6, 'USDC', 'USD Coin'),
+    new XToken('sonic', 146, '0x6047828dc181963ba44974801ff68e538da5eaf9', 6, 'USDT', 'USDT'),
+  ],
 };
 
 type XTokenMapBySymbol = {

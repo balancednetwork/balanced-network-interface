@@ -1,10 +1,11 @@
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { convertCurrencyWithSodax } from '@/lib/sodax/utils';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS, convertCurrency } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ const getXCurrencyBalance = (
   if (!xBalances) return;
 
   if (selectedChainId) {
-    const xToken = convertCurrency(selectedChainId, currency)!;
+    const xToken = convertCurrencyWithSodax(selectedChainId, currency)!;
     return new BigNumber(xBalances[selectedChainId]?.[xToken.address]?.toFixed() || 0);
   } else {
     if (isXToken(currency)) {

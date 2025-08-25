@@ -56,6 +56,7 @@ const xChainIdMap: Record<XChainId, string> = {
   stellar: 'stellar',
   solana: 'solana',
   '0x89.polygon': 'polygon',
+  sonic: 'sonic',
 };
 
 export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {
@@ -80,7 +81,7 @@ export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {
     if (_xChainHeights) {
       xChains.forEach(({ xChainId }) => {
         try {
-          const height = BigInt(_xChainHeights.find(x => x.network === xChainIdMap[xChainId]).block_height);
+          const height = BigInt(_xChainHeights.find(x => x.network === xChainIdMap[xChainId])?.block_height || 0);
           if (height > xChainHeightActions.getXChainHeight(xChainId)) {
             xChainHeightActions.setXChainHeight(xChainId, BigInt(height));
           }

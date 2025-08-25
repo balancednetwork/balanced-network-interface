@@ -1,7 +1,6 @@
 import { STELLAR_TRUSTLINE_TOKEN_INFO } from '@/constants/xTokens';
 import { useXService } from '@/hooks';
 import { XToken } from '@/types/xToken';
-import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import {
   Account,
   Address,
@@ -120,7 +119,9 @@ export async function sendTX(
   const tx = rpc.assembleTransaction(priorityTx, prioritySimResult).build();
 
   if (tx) {
-    const { signedTxXdr } = await xService.walletsKit.signTransaction(tx.toXDR());
+    // Ensure walletsKit is initialized before using it
+    const walletsKit = await xService.ensureWalletsKitReady();
+    const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
     const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
     const { hash } = await xService.sorobanServer.sendTransaction(txToSubmit);
 

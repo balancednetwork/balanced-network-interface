@@ -14,6 +14,24 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
   return {
     // depending on your application, base can also be "/"
     base: '/',
+    build: {
+      // Optimize memory usage
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks: id => {
+            // Create vendor chunk for React
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+              return 'vendor';
+            }
+            // Create wagmi chunk
+            if (id.includes('node_modules/wagmi') || id.includes('node_modules/viem')) {
+              return 'wagmi';
+            }
+          },
+        },
+      },
+    },
     plugins: [
       svgr({
         include: '**/*.svg',

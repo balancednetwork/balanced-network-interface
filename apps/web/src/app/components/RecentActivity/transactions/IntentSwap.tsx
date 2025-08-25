@@ -1,6 +1,11 @@
+import { TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { UnifiedTransaction, UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useOrderStore } from '@/store/order/useOrderStore';
@@ -8,6 +13,7 @@ import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { useCancelSwap } from '@sodax/dapp-kit';
 import {
@@ -18,7 +24,6 @@ import {
   getSupportedSolverTokens,
   hubAssetToOriginalAssetMap,
 } from '@sodax/sdk';
-import { useEvmSwitchChain, xChainMap } from '@sodax/wallet-sdk';
 import React, { useState } from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
@@ -104,8 +109,9 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const spokeProvider = useSpokeProvider(tx.data.packet.srcChainId);
   const { mutateAsync: cancelIntent } = useCancelSwap(spokeProvider);
   const [cancelStatus, setCancelStatus] = useState<CancelStatus>(CancelStatus.None);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const { updateOrderStatus, removeOrder } = useOrderStore();
-  // const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId as any);
 
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
 
@@ -120,9 +126,18 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
 
   const elapsedTime = useElapsedTime(tx.timestamp);
 
-  const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const openCancelModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setIsCancelModalOpen(true);
+  };
+
+  const closeCancelModal = () => {
+    if (cancelStatus === CancelStatus.Signing) return;
+    setIsCancelModalOpen(false);
+  };
+
+  const handleConfirmCancel = async () => {
     setCancelStatus(CancelStatus.Signing);
 
     try {
@@ -138,16 +153,12 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
         },
       });
 
-      if (response.ok) {
+      if (response.ok || (response as any)?.error?.message === 'Simulation failed') {
         setCancelStatus(CancelStatus.Success);
         updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
+        setIsCancelModalOpen(false);
       } else {
-        if ((response.error as any)?.message === 'Simulation failed') {
-          setCancelStatus(CancelStatus.Success);
-          updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
-        } else {
-          setCancelStatus(CancelStatus.None);
-        }
+        setCancelStatus(CancelStatus.None);
       }
     } catch (e: any) {
       console.error(e);
@@ -212,17 +223,51 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
         </Meta>
       </Container>
       {tx.status === UnifiedTransactionStatus.pending || tx.status === UnifiedTransactionStatus.failed ? (
-        // isWrongChain ? (
-        //   <UnderlineText onClick={handleSwitchChain}>
-        //     <Trans>Switch to {xChainMap[tx.data.packet.srcChainId].name} to cancel</Trans>
-        //   </UnderlineText>
-        // ) : (
         <Flex paddingLeft="38px" marginBottom="-10px" width="100%" justifyContent="flex-end" alignItems="center">
-          {cancelStatus === CancelStatus.None && <CancelButton onClick={handleCancel}>Cancel</CancelButton>}
+          {cancelStatus === CancelStatus.None && <CancelButton onClick={openCancelModal}>Cancel</CancelButton>}
           {cancelStatus === CancelStatus.AwaitingConfirmation && <ElapsedTime>Canceling...</ElapsedTime>}
           {cancelStatus === CancelStatus.Success && <ElapsedTime>Canceled</ElapsedTime>}
         </Flex>
       ) : null}
+
+      <Modal isOpen={isCancelModalOpen} onDismiss={closeCancelModal}>
+        <ModalContent noMessages>
+          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+            <Trans>Cancel {isBridgeAction ? 'bridge' : 'swap'}?</Trans>
+          </Typography>
+
+          <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
+            <Trans>
+              This action will cancel the {isBridgeAction ? 'bridge' : 'swap'} and refund your{' '}
+              <strong style={{ whiteSpace: 'nowrap' }}>
+                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                {formatSymbol(currencies.srcToken.symbol)}
+              </strong>
+            </Trans>
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <TextButton onClick={closeCancelModal}>
+              <Trans>Close</Trans>
+            </TextButton>
+
+            {isWrongChain ? (
+              <StyledButton onClick={handleSwitchChain}>
+                <Trans>Switch to {xChainMap[tx.data.packet.srcChainId].name}</Trans>
+              </StyledButton>
+            ) : (
+              <StyledButton
+                disabled={cancelStatus === CancelStatus.Signing}
+                warning={true}
+                onClick={handleConfirmCancel}
+                $loading={cancelStatus === CancelStatus.Signing}
+              >
+                <Trans>Cancel</Trans>
+              </StyledButton>
+            )}
+          </Flex>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

@@ -28,7 +28,6 @@ import React, { useState } from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
-import { UnderlineText } from '../../DropdownText';
 import TransactionStatusDisplay from '../TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
@@ -110,7 +109,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const { mutateAsync: cancelIntent } = useCancelSwap(spokeProvider);
   const [cancelStatus, setCancelStatus] = useState<CancelStatus>(CancelStatus.None);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const { updateOrderStatus, removeOrder } = useOrderStore();
+  const { updateOrderStatus } = useOrderStore();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId as any);
 
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;

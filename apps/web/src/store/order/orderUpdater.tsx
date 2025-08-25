@@ -27,6 +27,7 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
             newStatus = UnifiedTransactionStatus.failed;
             break;
           default:
+            //todo: probably handle "NOT_FOUND" specifically
             // Keep as pending for other statuses (NOT_FOUND, NOT_STARTED_YET, STARTED_NOT_FINISHED)
             newStatus = null;
             break;

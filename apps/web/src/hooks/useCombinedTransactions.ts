@@ -12,6 +12,7 @@ export const UnifiedTransactionStatus = {
   pending: 'pending',
   success: 'success',
   failed: 'failed',
+  cancelled: 'cancelled',
 } as const;
 
 type UnifiedTransactionType = keyof typeof UnifiedTransactionType;

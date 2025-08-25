@@ -1,10 +1,15 @@
+import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { UnifiedTransaction, UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { useOraclePrices } from '@/store/oracle/hooks';
+import { useOrderStore } from '@/store/order/useOrderStore';
 import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { Trans } from '@lingui/macro';
+import { useCancelSwap } from '@sodax/dapp-kit';
 import {
   Intent,
   IntentRelayChainId,
@@ -13,11 +18,12 @@ import {
   getSupportedSolverTokens,
   hubAssetToOriginalAssetMap,
 } from '@sodax/sdk';
-import { xChainMap } from '@sodax/wallet-sdk';
+import { useEvmSwitchChain, xChainMap } from '@sodax/wallet-sdk';
 import React, { useState } from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
+import { UnderlineText } from '../../DropdownText';
 import TransactionStatusDisplay from '../TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
@@ -95,7 +101,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const intentData = tx.data.intent;
   const tokensData = getTokenDataFromIntent(intentData);
   const prices = useOraclePrices();
+  const spokeProvider = useSpokeProvider(tx.data.packet.srcChainId);
+  const { mutateAsync: cancelIntent } = useCancelSwap(spokeProvider);
   const [cancelStatus, setCancelStatus] = useState<CancelStatus>(CancelStatus.None);
+  const { updateOrderStatus, removeOrder } = useOrderStore();
+  // const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId);
 
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
 
@@ -113,27 +123,36 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    alert('cancel');
-    // setStatus(CancelStatus.Signing);
-    // try {
-    //   if (intentProvider) {
-    //     const result = await intentService.cancelIntentOrder(
-    //       transaction.orderId,
-    //       xChainMap[transaction.fromAmount.currency.xChainId].intentChainId,
-    //       intentProvider,
-    //     );
+    setCancelStatus(CancelStatus.Signing);
 
-    //     if (result.ok) {
-    //       MMTransactionActions.cancel(transaction.id);
-    //       setStatus(CancelStatus.Success);
-    //     } else {
-    //       setStatus(CancelStatus.None);
-    //     }
-    //   }
-    // } catch (e) {
-    //   console.error(e);
-    //   setStatus(CancelStatus.None);
-    // }
+    try {
+      const response = await cancelIntent({
+        intent: {
+          ...tx.data.intent,
+          inputAmount: toBigIntSafe(tx.data.intent.inputAmount),
+          minOutputAmount: toBigIntSafe(tx.data.intent.minOutputAmount),
+          deadline: toBigIntSafe(tx.data.intent.deadline),
+          intentId: toBigIntSafe(tx.data.intent.intentId),
+          srcChain: toBigIntSafe(tx.data.intent.srcChain) as IntentRelayChainId,
+          dstChain: toBigIntSafe(tx.data.intent.dstChain) as IntentRelayChainId,
+        },
+      });
+
+      if (response.ok) {
+        setCancelStatus(CancelStatus.Success);
+        updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
+      } else {
+        if ((response.error as any)?.message === 'Simulation failed') {
+          setCancelStatus(CancelStatus.Success);
+          updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
+        } else {
+          setCancelStatus(CancelStatus.None);
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+      setCancelStatus(CancelStatus.None);
+    }
   };
 
   if (!tokensData?.srcChainId) {
@@ -192,12 +211,16 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
         </Meta>
       </Container>
-      {tx.status === UnifiedTransactionStatus.pending ? (
+      {tx.status === UnifiedTransactionStatus.pending || tx.status === UnifiedTransactionStatus.failed ? (
+        // isWrongChain ? (
+        //   <UnderlineText onClick={handleSwitchChain}>
+        //     <Trans>Switch to {xChainMap[tx.data.packet.srcChainId].name} to cancel</Trans>
+        //   </UnderlineText>
+        // ) : (
         <Flex paddingLeft="38px" marginBottom="-10px" width="100%" justifyContent="flex-end" alignItems="center">
           {cancelStatus === CancelStatus.None && <CancelButton onClick={handleCancel}>Cancel</CancelButton>}
-          {cancelStatus === CancelStatus.Signing && <ElapsedTime>Signing...</ElapsedTime>}
           {cancelStatus === CancelStatus.AwaitingConfirmation && <ElapsedTime>Canceling...</ElapsedTime>}
-          {cancelStatus === CancelStatus.Success && <ElapsedTime>Done</ElapsedTime>}
+          {cancelStatus === CancelStatus.Success && <ElapsedTime>Canceled</ElapsedTime>}
         </Flex>
       ) : null}
     </>

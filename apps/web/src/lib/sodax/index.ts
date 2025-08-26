@@ -15,7 +15,7 @@ const sodaxConfig = {
   solver: {
     intentsContract: '0x6382D6ccD780758C5e8A6123c33ee8F4472F96ef' as `0x${string}`,
     //PROD
-    solverApiEndpoint: 'https://sodax-solver.iconblockchain.xyz/' as HttpUrl,
+    solverApiEndpoint: 'https://sodax-solver.iconblockchain.xyz' as HttpUrl,
     // solverApiEndpoint: 'https://sodax-solver-staging.iconblockchain.xyz' as HttpUrl,
     partnerFee: {
       address: PARTNER_FEE_ADDRESS,

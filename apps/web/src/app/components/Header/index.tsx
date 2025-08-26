@@ -401,7 +401,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       show={Boolean(recentActivityAnchor)}
                       anchorEl={recentActivityAnchor}
                       placement="bottom-end"
-                      offset={[0, 15]}
+                      offset={[65, 15]}
                       zIndex={5050}
                     >
                       <RecentActivity />

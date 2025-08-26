@@ -112,11 +112,15 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const { updateOrderStatus } = useOrderStore();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId as any);
 
+  const minOutputAmount = toBigIntSafe(tx.data.intent.minOutputAmount);
+
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
 
   const currencies = {
     srcToken: SUPPORTED_TOKENS_LIST.find(
-      token => token.symbol.toLowerCase() === tokensData?.srcToken?.symbol.toLowerCase(),
+      token =>
+        token.symbol.toLowerCase() ===
+        (tokensData?.srcToken?.symbol.toLowerCase() === 'ws' ? 's' : tokensData?.srcToken?.symbol.toLowerCase()),
     ),
     dstToken: SUPPORTED_TOKENS_LIST.find(
       token => token.symbol.toLowerCase() === tokensData?.dstToken?.symbol.toLowerCase(),
@@ -143,8 +147,8 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
       const response = await cancelIntent({
         intent: {
           ...tx.data.intent,
+          minOutputAmount: minOutputAmount,
           inputAmount: toBigIntSafe(tx.data.intent.inputAmount),
-          minOutputAmount: toBigIntSafe(tx.data.intent.minOutputAmount),
           deadline: toBigIntSafe(tx.data.intent.deadline),
           intentId: toBigIntSafe(tx.data.intent.intentId),
           srcChain: toBigIntSafe(tx.data.intent.srcChain) as IntentRelayChainId,
@@ -182,6 +186,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   }
 
   const amount = CurrencyAmount.fromRawAmount(currencies.srcToken, toBigIntSafe(inputAmount as unknown));
+  const receivedAmount = CurrencyAmount.fromRawAmount(currencies.dstToken, minOutputAmount);
+  const receivedAmountFormatted = formatBalance(
+    receivedAmount.toFixed(),
+    prices?.[receivedAmount.currency.symbol]?.toFixed() || 1,
+  );
 
   return (
     <>
@@ -211,7 +220,8 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
             ) : (
               <span>
                 {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                {formatSymbol(amount.currency.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
+                {formatSymbol(amount.currency.symbol)} for {receivedAmountFormatted}{' '}
+                {formatSymbol(currencies.dstToken.symbol)}
               </span>
             )}
           </Amount>

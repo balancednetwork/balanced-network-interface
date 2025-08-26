@@ -14,6 +14,7 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
+import { balancedSupportedChains } from '@/lib/sodax/balancedConfig';
 import { SODAX_TOKEN_SYMBOLS } from '@/lib/sodax/tokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
@@ -256,10 +257,17 @@ export function CurrencySearch({
   }, [filteredTokens, assetsTab, xWallet, rates, debouncedQuery]);
 
   const sortedXChainFilterItems = useMemo(() => {
-    return [...xChainFilterItems].sort((a, b) => {
+    let items = [...xChainFilterItems];
+    if (
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
+    ) {
+      items = items.filter(item => balancedSupportedChains.includes(item as any));
+    }
+    return items.sort((a, b) => {
       return xChainMap[a].name.localeCompare(xChainMap[b].name);
     });
-  }, [xChainFilterItems]);
+  }, [xChainFilterItems, currencySelectionType]);
 
   const filteredSortedTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 

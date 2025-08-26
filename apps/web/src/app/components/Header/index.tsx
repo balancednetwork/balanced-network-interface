@@ -81,7 +81,7 @@ const ConnectionStatus = styled(Flex)`
 
 const RecentActivityButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
   position: relative;
-  margin-left: 15px;
+  margin-right: 15px;
   ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
   &::before, &::after {
     left: 7px;
@@ -319,7 +319,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
         {wallets.length > 0 && (
           <Flex alignItems="center">
-            <WalletInfo>
+            {/* <WalletInfo>
               {upSmall && (
                 <>
                   {wallets.length > 1 ? (
@@ -352,27 +352,7 @@ export default function Header(props: { title?: string; className?: string }) {
                   )}
                 </>
               )}
-            </WalletInfo>
-
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
-              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
-                <div>
-                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
-                    <WalletIcon />
-                  </IconButton>
-
-                  <DropdownPopper
-                    show={Boolean(anchor)}
-                    anchorEl={anchor}
-                    placement="bottom-end"
-                    offset={[0, 15]}
-                    zIndex={5050}
-                  >
-                    <Wallet close={closeWalletMenu} />
-                  </DropdownPopper>
-                </div>
-              </ClickAwayListener>
-            </WalletButtonWrapper>
+            </WalletInfo> */}
 
             <RecentActivityButtonWrapper>
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
@@ -430,6 +410,26 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </RecentActivityButtonWrapper>
+
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
+              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
+                <div>
+                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
+                    <WalletIcon />
+                  </IconButton>
+
+                  <DropdownPopper
+                    show={Boolean(anchor)}
+                    anchorEl={anchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={5050}
+                  >
+                    <Wallet close={closeWalletMenu} />
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
+            </WalletButtonWrapper>
           </Flex>
         )}
       </Flex>

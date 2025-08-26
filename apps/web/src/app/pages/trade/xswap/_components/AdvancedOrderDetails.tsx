@@ -1,10 +1,11 @@
-import React from 'react';
 import { Price, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
+import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
+import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Typography } from '@/app/theme';
@@ -12,7 +13,6 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import TradePrice from './TradePrice';
-import Divider from '@/app/components/Divider';
 
 export default function AdvancedOrderDetails() {
   const { exchangeRate, currencies } = useDerivedTradeInfo();
@@ -68,7 +68,7 @@ export default function AdvancedOrderDetails() {
           <Trans>Swap time</Trans>
         </Typography>
 
-        <Typography textAlign="right">~ 15s</Typography>
+        <Typography textAlign="right">~ 30s</Typography>
       </Flex>
     </Box>
   );

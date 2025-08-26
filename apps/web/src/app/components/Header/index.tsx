@@ -430,10 +430,6 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </RecentActivityButtonWrapper>
-
-            <Button onClick={handleTestAnimation} style={{ marginLeft: '10px' }}>
-              Test animation
-            </Button>
           </Flex>
         )}
       </Flex>

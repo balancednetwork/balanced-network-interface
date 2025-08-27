@@ -125,6 +125,7 @@ msgid "15m"
 msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
@@ -504,6 +505,10 @@ msgstr "Review the community token list on GitHub."
 #: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel {0}?"
+msgstr "Cancel {0}?"
 
 #: src/app/pages/home/_components/xLoanModal/index.tsx
 #~ msgid "Loan action"
@@ -1414,8 +1419,8 @@ msgstr "Check that your contract calls are set up correctly before you submit th
 #~ msgstr "Not now"
 
 #: src/app/components/Header/index.tsx
-msgid "Unsupported network"
-msgstr "Unsupported network"
+#~ msgid "Unsupported network"
+#~ msgstr "Unsupported network"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
@@ -1766,8 +1771,8 @@ msgid "Claimed fees."
 msgstr "Claimed fees."
 
 #: src/app/components/Header/index.tsx
-msgid "Multi-chain wallet"
-msgstr "Multi-chain wallet"
+#~ msgid "Multi-chain wallet"
+#~ msgstr "Multi-chain wallet"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1881,6 +1886,10 @@ msgstr "You'll"
 msgid "from network fees over the last 30 days."
 msgstr "from network fees over the last 30 days."
 
+#: src/store/swap/hooks.ts
+msgid "Loading..."
+msgstr "Loading..."
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1979,8 +1988,8 @@ msgid "Send asset?"
 msgstr "Send asset?"
 
 #: src/app/components/Header/index.tsx
-msgid "{0} wallet"
-msgstr "{0} wallet"
+#~ msgid "{0} wallet"
+#~ msgstr "{0} wallet"
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "{0}<0/>{1}"
@@ -2083,6 +2092,7 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
@@ -2891,6 +2901,10 @@ msgstr ", the current rewards will be adjusted to reflect this allocation."
 msgid "All assets"
 msgstr "All assets"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+msgstr "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Voting weight: {0} bBALN"
@@ -3190,6 +3204,7 @@ msgstr "Network fees"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/WalletModal/index.tsx

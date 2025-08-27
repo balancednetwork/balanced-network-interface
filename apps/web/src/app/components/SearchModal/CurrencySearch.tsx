@@ -3,6 +3,7 @@ import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } f
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
+import { useNavigate } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -25,6 +26,7 @@ import BigNumber from 'bignumber.js';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
+import { UnderlineText } from '../DropdownText';
 import CancelSearchButton from './CancelSearchButton';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
@@ -147,6 +149,7 @@ export function CurrencySearch({
   const hasSignedIn = useHasSignedIn();
   const rates = useRatesWithOracle();
   const wallets = useSignedInWallets();
+  const navigate = useNavigate();
 
   const handleChainClick = useCallback((xChainId?: XChainId) => {
     if (xChainId) {
@@ -408,7 +411,21 @@ export function CurrencySearch({
           </Typography>
         </Column>
       )}
-      {showCommunityListControl && debouncedQuery.length ? (
+      {debouncedQuery.length &&
+      (currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT) ? (
+        <Flex paddingTop="15px" width="100%" justifyContent="center">
+          <UnderlineText
+            onClick={() => {
+              navigate('/trade-legacy');
+            }}
+          >
+            <Typography color="primary" textAlign="center">
+              <Trans>Trade more assets on the legacy exchange</Trans>
+            </Typography>
+          </UnderlineText>
+        </Flex>
+      ) : showCommunityListControl && debouncedQuery.length ? (
         <Flex paddingTop="15px" width="100%" justifyContent="center">
           <CommunityListToggle />
         </Flex>

@@ -1,16 +1,47 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 
+import { UnderlineText } from '@/app/components/DropdownText';
 import { Tab, Tabs } from '@/app/components/Tab';
+import { Typography } from '@/app/theme';
 import { useIconReact } from '@/packages/icon-react';
 import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
+import styled from 'styled-components';
+
+const StyledTypography = styled(Typography)`
+  position: relative;
+  padding-right: 12px;
+  
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 7px;
+    height: 1px;
+    border-radius: 2px;
+    background-color: currentColor;
+    transform-origin: right;
+  }
+  
+  &::before {
+    transform: translateY(-50%) rotate(45deg);
+    margin-top: 1px;
+  }
+  
+  &::after {
+    transform: translateY(-50%) rotate(-45deg);
+    margin-top: 0.5px;
+  }
+`;
 
 export function TradePageLayout() {
   const { account } = useIconReact();
@@ -41,6 +72,16 @@ export function TradePageLayout() {
     }
   };
 
+  const isLegacy = location.pathname.includes('trade-legacy');
+
+  const handleExchangeRedirect = () => {
+    if (isLegacy) {
+      navigate('/trade');
+    } else {
+      navigate('/trade-legacy');
+    }
+  };
+
   return (
     <Box flex={1}>
       <Flex mb={10} flexDirection="column">
@@ -56,6 +97,9 @@ export function TradePageLayout() {
               <Trans>Bridge</Trans>
             </Tab> */}
           </Tabs>
+          <UnderlineText onClick={handleExchangeRedirect}>
+            <StyledTypography color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypography>
+          </UnderlineText>
         </Flex>
 
         <Outlet />

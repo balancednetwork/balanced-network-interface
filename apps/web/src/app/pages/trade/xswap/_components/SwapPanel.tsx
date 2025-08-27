@@ -17,16 +17,16 @@ import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useOrderStore } from '@/store/order/useOrderStore';
 import { useDerivedTradeInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { getXChainType, useXAccount, type XToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/sdk-core';
-import PriceImpact from './PriceImpact';
+import { type XToken, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import OrderCommitButton from './OrderCommitButton';
-import { useOrderStore } from '@/store/order/useOrderStore';
 import OrderInfo from './OrderInfo';
+import PriceImpact from './PriceImpact';
 
 export default function SwapPanel() {
   useInitialSwapLoad();

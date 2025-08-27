@@ -34,7 +34,7 @@ const RecentActivity: React.FC = React.memo(() => {
   return (
     <Wrap>
       <Typography variant="h2" px="25px">
-        Recent Activity
+        Recent activity
       </Typography>
       {transactions.length === 0 ? (
         <Typography px="25px" mt="15px">

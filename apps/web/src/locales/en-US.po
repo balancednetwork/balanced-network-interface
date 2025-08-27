@@ -775,6 +775,10 @@ msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete th
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
+#: src/app/pages/trade/layout.tsx
+msgid "Trade on the {0} exchange"
+msgstr "Trade on the {0} exchange"
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets on Balanced"
 msgstr "Assets on Balanced"
@@ -904,6 +908,10 @@ msgstr "Withdrawing {0} / {1} liquidity..."
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {0} to the {1} pool..."
 msgstr "Sending {0} to the {1} pool..."
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Trade more assets on the legacy exchange"
+msgstr "Trade more assets on the legacy exchange"
 
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate"
@@ -1599,6 +1607,10 @@ msgstr "Claimed {0} ICX."
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Transfer fee:"
 msgstr "Transfer fee:"
+
+#: src/app/components/Header/index.tsx
+msgid "Legacy"
+msgstr "Legacy"
 
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Withdraw bnUSD?"

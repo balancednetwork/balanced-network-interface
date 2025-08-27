@@ -804,6 +804,10 @@ msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze tra
 msgid "Connect Wallet"
 msgstr "Koppel je wallet"
 
+#: src/app/pages/trade/layout.tsx
+msgid "Trade on the {0} exchange"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets on Balanced"
 msgstr ""
@@ -932,6 +936,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {0} to the {1} pool..."
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Trade more assets on the legacy exchange"
 msgstr ""
 
 #: src/app/components/StellarTrustlineModal/index.tsx
@@ -1637,6 +1645,10 @@ msgstr "{0} BALN geclaimd."
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Transfer fee:"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Legacy"
 msgstr ""
 
 #: src/app/components/home/Savings/SavingsModal.tsx

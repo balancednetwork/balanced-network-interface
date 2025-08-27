@@ -38,7 +38,7 @@ const RecentActivity: React.FC = React.memo(() => {
       </Typography>
       {transactions.length === 0 ? (
         <Typography px="25px" mt="15px">
-          No activity to display.
+          No recent trades to display.
         </Typography>
       ) : (
         <ul>

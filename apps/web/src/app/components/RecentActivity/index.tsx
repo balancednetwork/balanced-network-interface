@@ -6,7 +6,7 @@ import HistoryItem from './HistoryItem';
 
 const Wrap = styled.div`
   padding: 25px 0;
-  width: 400px;
+  width: 430px;
   max-width: calc(100vw - 4px);
   ul {
     max-height: 500px;

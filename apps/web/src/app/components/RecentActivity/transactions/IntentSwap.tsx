@@ -43,6 +43,12 @@ interface SwapIntentProps {
   tx: UnifiedTransaction;
 }
 
+const CurrencyLogos = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
 function toBigIntSafe(value: unknown): bigint {
   if (typeof value === 'bigint') return value;
   if (typeof value === 'number') return BigInt(value);
@@ -195,12 +201,21 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   return (
     <>
       <Container>
-        <CurrencyLogoWithNetwork
-          currency={currencies.srcToken}
-          chainId={tokensData?.srcChainId}
-          bgColor={theme.colors.bg2}
-          size="26px"
-        />
+        <CurrencyLogos>
+          <CurrencyLogoWithNetwork
+            currency={currencies.srcToken}
+            chainId={tokensData?.srcChainId}
+            bgColor={theme.colors.bg2}
+            size="26px"
+          />
+          <CurrencyLogoWithNetwork
+            currency={currencies.dstToken}
+            chainId={tokensData?.dstChainId}
+            bgColor={theme.colors.bg2}
+            size="26px"
+          />
+        </CurrencyLogos>
+
         <Details>
           {isBridgeAction ? (
             <Title>

@@ -7,7 +7,7 @@ import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balanced
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { useMedia } from 'react-use';
+import { useLocation, useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { keyframes } from 'styled-components';
 
@@ -208,6 +208,8 @@ export default function Header(props: { title?: string; className?: string }) {
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
   const hasBTCB = useHasBTCB();
+  const location = useLocation();
+  const isTradeLegacy = location.pathname?.includes('trade-legacy');
 
   const pendingTxCount = usePendingTxCount();
   const [testPendingCount, setTestPendingCount] = React.useState(0);
@@ -298,6 +300,11 @@ export default function Header(props: { title?: string; className?: string }) {
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
               {CHAIN_INFO[NETWORK_ID].name}
+            </Typography>
+          )}
+          {isTradeLegacy && (
+            <Typography color="text2" fontSize={16} ml={2} pt={'17px'}>
+              {t`Legacy`}
             </Typography>
           )}
         </Flex>

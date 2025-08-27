@@ -8,7 +8,6 @@ export const balancedSupportedChains: SpokeChainId[] = [
   '0xa4b1.arbitrum',
   '0xa86a.avax',
   '0xa.optimism',
-  'injective-1',
   'solana',
   'stellar',
   'sui',

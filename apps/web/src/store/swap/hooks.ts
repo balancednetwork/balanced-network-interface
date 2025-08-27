@@ -553,6 +553,7 @@ export function useDerivedTradeInfo(): {
   }, [sourceToken, destToken, sourceChain, destChain, userTypedInAmount, isExactIn]);
 
   const quoteQuery = useQuote(payload);
+  const quoteQueryLoading = quoteQuery.isLoading;
 
   const quote = useMemo(() => {
     if (quoteQuery.data?.ok) {
@@ -773,7 +774,8 @@ export function useDerivedTradeInfo(): {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
   );
 
-  if (userHasSpecifiedInputOutput && !quote) inputError = t`Swap not supported`;
+  if (!quoteQueryLoading && userHasSpecifiedInputOutput && !quote) inputError = t`Swap not supported`;
+  if (quoteQueryLoading) inputError = t`Loading...`;
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 

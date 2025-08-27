@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import RecentActivityIcon from '@/assets/icons/activity.svg';
+import RecentActivityIcon from '@/assets/icons/anti-clock.svg';
 import TickIcon from '@/assets/icons/tick-dark.svg';
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
@@ -123,8 +123,8 @@ const AnimatedTickIcon = styled(TickIcon)`
 
 const IconStage = styled.div`
   position: relative;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,8 +135,8 @@ const IconLayer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -364,7 +364,7 @@ export default function Header(props: { title?: string; className?: string }) {
                   >
                     {isExpanded ? (
                       <>
-                        <SpinningIcon width="26" height="26" />
+                        <SpinningIcon width="32" height="32" />
                         <Typography
                           color="bg1"
                           style={{ whiteSpace: 'nowrap' }}
@@ -378,7 +378,7 @@ export default function Header(props: { title?: string; className?: string }) {
                             opacity: spinnerOpacity,
                           }}
                         >
-                          <SpinningIcon width="26" height="26" />
+                          <SpinningIcon width="32" height="32" />
                         </IconLayer>
                         <IconLayer
                           onTransitionEnd={handleTickTransitionEnd}
@@ -390,7 +390,7 @@ export default function Header(props: { title?: string; className?: string }) {
                           <AnimatedTickIcon width="26" height="26" />
                         </IconLayer>
                         <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>
-                          <RecentActivityIcon width="26" height="26" />
+                          <RecentActivityIcon width="32" height="32" />
                         </IconLayer>
                       </IconStage>
                     )}

@@ -221,13 +221,6 @@ export default function Header(props: { title?: string; className?: string }) {
   const recentActivityButtonRef = React.useRef<HTMLElement>(null);
   const [recentActivityAnchor, setRecentActivityAnchor] = React.useState<HTMLElement | null>(null);
 
-  const handleTestAnimation = () => {
-    setTestPendingCount(1);
-    setTimeout(() => {
-      setTestPendingCount(0);
-    }, 3000);
-  };
-
   // Animation state machine
   const [animationState, setAnimationState] = React.useState<AnimationState>('IDLE');
   const previousPendingRef = React.useRef<number>(0);

@@ -2,7 +2,7 @@ import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 
 import { HttpUrl, getHubChainConfig, getMoneyMarketConfig } from '@sodax/sdk';
 
-export const PARTNER_FEE_ADDRESS = '0x75F6D018319Dd5Dc2Cb1c3f2FA4Ad161765a9b5A' as `0x${string}`;
+export const PARTNER_FEE_ADDRESS = '0xAf3C63D376e4CEd7156df8938502C73464162E80' as `0x${string}`;
 export const PARTNER_FEE_PERCENTAGE = 10; // 0.1%
 
 // Configure Sodax

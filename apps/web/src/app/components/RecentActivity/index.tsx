@@ -13,7 +13,7 @@ const Wrap = styled.div`
     overflow-y: auto;
     list-style: none;
     padding: 0 25px;
-    margin: 0;
+    margin: -5px 0 0;
   }
 `;
 
@@ -33,7 +33,7 @@ const RecentActivity: React.FC = React.memo(() => {
 
   return (
     <Wrap>
-      <Typography variant="h2" px="25px">
+      <Typography variant="h2" px="25px" pb="15px">
         Recent activity
       </Typography>
       {transactions.length === 0 ? (

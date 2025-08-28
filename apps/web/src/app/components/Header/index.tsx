@@ -261,8 +261,17 @@ export default function Header(props: { title?: string; className?: string }) {
     };
   }, []);
 
-  const toggleWalletMenu = () => {
-    setAnchor(anchor ? null : walletButtonRef.current);
+  const toggleWalletMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (anchor) {
+      // If dropdown is open, close it
+      setAnchor(null);
+    } else {
+      // If dropdown is closed, open it
+      setAnchor(walletButtonRef.current);
+    }
   };
   const closeWalletMenu = useCallback(() => setAnchor(null), []);
 
@@ -274,8 +283,17 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
-  const toggleRecentActivityMenu = () => {
-    setRecentActivityAnchor(recentActivityAnchor ? null : recentActivityButtonRef.current);
+  const toggleRecentActivityMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (recentActivityAnchor) {
+      // If dropdown is open, close it
+      setRecentActivityAnchor(null);
+    } else {
+      // If dropdown is closed, open it
+      setRecentActivityAnchor(recentActivityButtonRef.current);
+    }
   };
   const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
 
@@ -359,6 +377,7 @@ export default function Header(props: { title?: string; className?: string }) {
                 <div>
                   <PendingIconButton
                     $expanded={isExpanded}
+                    $isActive={Boolean(recentActivityAnchor)}
                     ref={recentActivityButtonRef}
                     onClick={toggleRecentActivityMenu}
                   >
@@ -414,7 +433,7 @@ export default function Header(props: { title?: string; className?: string }) {
             <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
-                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
+                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu} $isActive={Boolean(anchor)}>
                     <WalletIcon />
                   </IconButton>
 

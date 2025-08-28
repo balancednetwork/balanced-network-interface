@@ -88,21 +88,21 @@ export const TextButton = styled(RebassButton)`
   `}
 `;
 
-export const IconButton = styled(RebassButton)`
+export const IconButton = styled(RebassButton)<{ $isActive?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
-  background-color: #2395aa;
+  background-color: ${({ $isActive, theme }) => ($isActive ? '#087083' : '#2395aa')};
   border-radius: 100px;
   color: ${({ theme }) => theme.colors.bg1};
   cursor: pointer;
   padding: 4px;
   outline: none;
+  transition: background-color 0.2s ease;
 
-  &:hover,
-  &:focus {
+  &:hover {
     background-color: #087083;
     transition: background-color 0.2s ease;
   }
@@ -114,7 +114,7 @@ export const IconButton = styled(RebassButton)`
   }
 `;
 
-export const PendingIconButton = styled(IconButton)<{ $expanded?: boolean }>`
+export const PendingIconButton = styled(IconButton)<{ $expanded?: boolean; $isActive?: boolean }>`
   overflow: hidden;
   gap: 10px;
   transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1),

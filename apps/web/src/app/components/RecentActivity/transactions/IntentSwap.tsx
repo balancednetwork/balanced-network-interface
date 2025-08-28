@@ -31,6 +31,8 @@ import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
 import TransactionStatusDisplay from '../TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
+import SwapArrow from '@/assets/icons/swap-arrow.svg';
+
 enum CancelStatus {
   None,
   Signing,
@@ -43,10 +45,29 @@ interface SwapIntentProps {
   tx: UnifiedTransaction;
 }
 
+const AssetFrom = styled.div`
+  position: relative;
+  transform: translateY(-10px);
+`;
+
+const AssetTo = styled.div`
+  position: relative;
+  transform: translateX(3px);
+`;
+
+const StyledSwapArrow = styled(SwapArrow)`
+    position: absolute;
+    left: 10px;
+    top: 13px;
+    transform: rotateY(180deg) rotateZ(-30deg);
+`;
+
 const CurrencyLogos = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  position: relative;
+  margin-right: 3px;
 `;
 
 function toBigIntSafe(value: unknown): bigint {
@@ -202,18 +223,24 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
     <>
       <Container>
         <CurrencyLogos>
-          <CurrencyLogoWithNetwork
-            currency={currencies.srcToken}
-            chainId={tokensData?.srcChainId}
-            bgColor={theme.colors.bg2}
-            size="26px"
-          />
-          <CurrencyLogoWithNetwork
-            currency={currencies.dstToken}
-            chainId={tokensData?.dstChainId}
-            bgColor={theme.colors.bg2}
-            size="26px"
-          />
+          <AssetFrom>
+            <CurrencyLogoWithNetwork
+              currency={currencies.srcToken}
+              chainId={tokensData?.srcChainId}
+              bgColor={theme.colors.bg2}
+              size="26px"
+            />
+          </AssetFrom>
+
+          <AssetTo>
+            <CurrencyLogoWithNetwork
+              currency={currencies.dstToken}
+              chainId={tokensData?.dstChainId}
+              bgColor={theme.colors.bg2}
+              size="26px"
+            />
+          </AssetTo>
+          <StyledSwapArrow width="29px" height="29px" />
         </CurrencyLogos>
 
         <Details>

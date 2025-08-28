@@ -481,11 +481,11 @@ export function formatRelativeTime(difference: number): string {
   const minutes = Math.floor((difference % secondsInHour) / secondsInMinute);
 
   if (days > 0) {
-    return `${days} days ago`;
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
   } else if (hours > 0) {
-    return `${hours} hours ago`;
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
   } else if (minutes > 0) {
-    return `${minutes} mins ago`;
+    return `${minutes} ${minutes === 1 ? 'min' : 'mins'} ago`;
   } else {
     return `just now`;
   }

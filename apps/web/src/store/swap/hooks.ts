@@ -775,7 +775,7 @@ export function useDerivedTradeInfo(): {
   );
 
   if (!quoteQueryLoading && userHasSpecifiedInputOutput && !quote) inputError = t`Swap not supported`;
-  if (quoteQueryLoading) inputError = t`Loading...`;
+  if (quoteQueryLoading) inputError = t`Finding best price...`;
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 

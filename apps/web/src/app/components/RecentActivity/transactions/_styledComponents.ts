@@ -29,21 +29,6 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  &:hover {
-    ${Title} {
-      color: ${({ theme }) => theme.colors.primaryBright};
-      padding-right: 0;
-      padding-left: 5px;
-    }
-    ${Amount} {
-      color: ${({ theme }) => theme.colors.primaryBright};
-      padding-right: 0;
-      padding-left: 5px;
-    }
-    ${Status} {
-      color: ${({ theme }) => theme.colors.primaryBright};
-    }
-  }
 `;
 
 export const Details = styled.div`

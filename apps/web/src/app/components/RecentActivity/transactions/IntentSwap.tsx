@@ -13,7 +13,7 @@ import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { getTxTrackerLink, xChainMap } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { useCancelSwap } from '@sodax/dapp-kit';
 import {
@@ -32,6 +32,7 @@ import TransactionStatusDisplay from '../TransactionStatusDisplay';
 import { Amount, Container, Details, ElapsedTime, Meta, Title } from './_styledComponents';
 
 import SwapArrow from '@/assets/icons/swap-arrow.svg';
+import { UnderlineText } from '../../DropdownText';
 
 enum CancelStatus {
   None,
@@ -138,6 +139,12 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const { updateOrderStatus } = useOrderStore();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId as any);
+  const trackerLinkSrc =
+    typeof tx.data.packet.srcTxHash === 'string'
+      ? getTxTrackerLink(tx.data.packet.srcTxHash, tokensData?.srcChainId)
+      : '';
+  const trackerLinkSonic =
+    typeof tx.data.packet.dstTxHash === 'string' ? `https://sonicscan.org/tx/${tx.data.packet.dstTxHash}` : '';
 
   const minOutputAmount = toBigIntSafe(tx.data.intent.minOutputAmount);
 
@@ -255,16 +262,27 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           )}
           <Amount>
             {isBridgeAction ? (
-              <span>
-                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                {formatSymbol(amount.currency.symbol)}
-              </span>
+              <UnderlineText onClick={() => trackerLinkSrc && window.open(trackerLinkSrc, '_blank')}>
+                <Typography color="primaryBright">
+                  {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                  {formatSymbol(amount.currency.symbol)}
+                </Typography>
+              </UnderlineText>
             ) : (
-              <span>
-                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                {formatSymbol(amount.currency.symbol)} for {receivedAmountFormatted}{' '}
-                {formatSymbol(currencies.dstToken.symbol)}
-              </span>
+              <>
+                <UnderlineText onClick={() => trackerLinkSrc && window.open(trackerLinkSrc, '_blank')}>
+                  <Typography color="primaryBright">
+                    {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                    {formatSymbol(amount.currency.symbol)}
+                  </Typography>
+                </UnderlineText>{' '}
+                for{' '}
+                <UnderlineText onClick={() => trackerLinkSonic && window.open(trackerLinkSonic, '_blank')}>
+                  <Typography color="primaryBright">
+                    {receivedAmountFormatted} {formatSymbol(currencies.dstToken.symbol)}
+                  </Typography>
+                </UnderlineText>
+              </>
             )}
           </Amount>
         </Details>

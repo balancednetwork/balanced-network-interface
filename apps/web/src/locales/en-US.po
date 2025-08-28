@@ -507,8 +507,8 @@ msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "Cancel {0}?"
-msgstr "Cancel {0}?"
+#~ msgid "Cancel {0}?"
+#~ msgstr "Cancel {0}?"
 
 #: src/app/pages/home/_components/xLoanModal/index.tsx
 #~ msgid "Loan action"
@@ -721,6 +721,10 @@ msgstr "Verify contract call"
 #~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 #~ msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 
+#: src/store/swap/hooks.ts
+msgid "Finding best price..."
+msgstr "Finding best price..."
+
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Transaction failed. Please try again."
 msgstr "Transaction failed. Please try again."
@@ -897,6 +901,10 @@ msgstr "Before"
 #~ msgid "Order type"
 #~ msgstr "Order type"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "{0} {1} has been returned to your wallet."
+msgstr "{0} {1} has been returned to your wallet."
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Active"
@@ -989,6 +997,10 @@ msgstr ", then deposit bnUSD to earn rewards."
 #~ msgid "Minimum to receive(Intent)"
 #~ msgstr "Minimum to receive(Intent)"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Order cancelled"
+msgstr "Order cancelled"
+
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
 #~ msgstr "sign in"
@@ -1066,6 +1078,7 @@ msgstr "Lock up Balance Tokens?"
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 #: src/app/components/home/Savings/SavingsModal.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
@@ -1310,6 +1323,10 @@ msgstr "Sign in to Balanced"
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "No pools found."
 msgstr "No pools found."
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel order?"
+msgstr "Cancel order?"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
@@ -1899,8 +1916,8 @@ msgid "from network fees over the last 30 days."
 msgstr "from network fees over the last 30 days."
 
 #: src/store/swap/hooks.ts
-msgid "Loading..."
-msgstr "Loading..."
+#~ msgid "Loading..."
+#~ msgstr "Loading..."
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
@@ -2093,6 +2110,10 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #~ msgid "Send {0} to {1}."
 #~ msgstr "Send {0} to {1}."
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel your order to return your <0>{1}</0>"
+msgstr "Cancel your order to return your <0>{1}</0>"
+
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -2104,7 +2125,6 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
@@ -2914,8 +2934,8 @@ msgid "All assets"
 msgstr "All assets"
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
-msgstr "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+#~ msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+#~ msgstr "This action will cancel the {0} and refund your <0>{1} {2}</0>"
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -3216,6 +3236,7 @@ msgstr "Network fees"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx

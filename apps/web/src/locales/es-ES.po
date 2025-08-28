@@ -516,8 +516,8 @@ msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "Cancel {0}?"
-msgstr ""
+#~ msgid "Cancel {0}?"
+#~ msgstr ""
 
 #: src/app/pages/home/_components/xLoanModal/index.tsx
 #~ msgid "Loan action"
@@ -750,6 +750,10 @@ msgstr ""
 #~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 #~ msgstr "Cancelar cualquier transacción pendiente en su Ledger, o dar permiso a Chrome para usarla."
 
+#: src/store/swap/hooks.ts
+msgid "Finding best price..."
+msgstr ""
+
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Transaction failed. Please try again."
 msgstr ""
@@ -926,6 +930,10 @@ msgstr "Antes"
 #~ msgid "Order type"
 #~ msgstr ""
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "{0} {1} has been returned to your wallet."
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Activo"
@@ -1020,6 +1028,10 @@ msgstr ""
 #~ msgid "Minimum to receive(Intent)"
 #~ msgstr ""
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Order cancelled"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
 #~ msgstr ""
@@ -1105,6 +1117,7 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 #: src/app/components/home/Savings/SavingsModal.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
@@ -1348,6 +1361,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "No pools found."
+msgstr ""
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel order?"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -1951,8 +1968,8 @@ msgid "from network fees over the last 30 days."
 msgstr ""
 
 #: src/store/swap/hooks.ts
-msgid "Loading..."
-msgstr ""
+#~ msgid "Loading..."
+#~ msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
@@ -2151,6 +2168,10 @@ msgstr ""
 #~ msgid "Send {0} to {1}."
 #~ msgstr ""
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel your order to return your <0>{1}</0>"
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -2162,7 +2183,6 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
@@ -2976,8 +2996,8 @@ msgid "All assets"
 msgstr ""
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
-msgstr ""
+#~ msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -3282,6 +3302,7 @@ msgstr "Ganancias de la red"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx

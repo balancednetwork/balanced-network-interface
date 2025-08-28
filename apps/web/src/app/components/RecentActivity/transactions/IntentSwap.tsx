@@ -24,7 +24,7 @@ import {
   getSupportedSolverTokens,
   hubAssetToOriginalAssetMap,
 } from '@sodax/sdk';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../CurrencyLogoWithNetwork';
@@ -163,6 +163,25 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
 
   const elapsedTime = useElapsedTime(tx.timestamp);
 
+  // Auto-close modal after 3 seconds when cancellation is successful
+  useEffect(() => {
+    if (cancelStatus === CancelStatus.Success) {
+      let statusTimer: NodeJS.Timeout;
+      const timer = setTimeout(() => {
+        setIsCancelModalOpen(false);
+        statusTimer = setTimeout(() => {
+          setCancelStatus(CancelStatus.None);
+        }, 3000);
+        setCancelStatus(CancelStatus.None);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(statusTimer);
+      };
+    }
+  }, [cancelStatus]);
+
   const openCancelModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -172,6 +191,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const closeCancelModal = () => {
     if (cancelStatus === CancelStatus.Signing) return;
     setIsCancelModalOpen(false);
+    setCancelStatus(CancelStatus.None);
   };
 
   const handleConfirmCancel = async () => {
@@ -193,13 +213,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
       if (response.ok || (response as any)?.error?.message === 'Simulation failed') {
         setCancelStatus(CancelStatus.Success);
         updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
-        setIsCancelModalOpen(false);
       } else {
         setCancelStatus(CancelStatus.None);
       }
     } catch (e: any) {
       console.error(e);
-      setCancelStatus(CancelStatus.None);
     }
   };
 
@@ -301,40 +319,62 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
 
       <Modal isOpen={isCancelModalOpen} onDismiss={closeCancelModal}>
         <ModalContent noMessages>
-          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-            <Trans>Cancel {isBridgeAction ? 'bridge' : 'swap'}?</Trans>
-          </Typography>
+          {cancelStatus === CancelStatus.Success ? (
+            <>
+              <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                <Trans>Order cancelled</Trans>
+              </Typography>
 
-          <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
-            <Trans>
-              This action will cancel the {isBridgeAction ? 'bridge' : 'swap'} and refund your{' '}
-              <strong style={{ whiteSpace: 'nowrap' }}>
-                {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                {formatSymbol(currencies.srcToken.symbol)}
-              </strong>
-            </Trans>
-          </Typography>
+              <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
+                <Trans>
+                  {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
+                  {formatSymbol(currencies.srcToken.symbol)} has been returned to your wallet.
+                </Trans>
+              </Typography>
+              <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={closeCancelModal}>
+                  <Trans>Close</Trans>
+                </TextButton>
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                <Trans>Cancel order?</Trans>
+              </Typography>
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={closeCancelModal}>
-              <Trans>Close</Trans>
-            </TextButton>
+              <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
+                <Trans>
+                  Cancel your order to return your{' '}
+                  <strong style={{ whiteSpace: 'nowrap' }}>
+                    {/* {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '} */}
+                    {formatSymbol(currencies.srcToken.symbol)}
+                  </strong>
+                </Trans>
+              </Typography>
 
-            {isWrongChain ? (
-              <StyledButton onClick={handleSwitchChain}>
-                <Trans>Switch to {xChainMap[tx.data.packet.srcChainId].name}</Trans>
-              </StyledButton>
-            ) : (
-              <StyledButton
-                disabled={cancelStatus === CancelStatus.Signing}
-                warning={true}
-                onClick={handleConfirmCancel}
-                $loading={cancelStatus === CancelStatus.Signing}
-              >
-                <Trans>Cancel</Trans>
-              </StyledButton>
-            )}
-          </Flex>
+              <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={closeCancelModal}>
+                  <Trans>Close</Trans>
+                </TextButton>
+
+                {isWrongChain ? (
+                  <StyledButton onClick={handleSwitchChain}>
+                    <Trans>Switch to {xChainMap[tx.data.packet.srcChainId].name}</Trans>
+                  </StyledButton>
+                ) : (
+                  <StyledButton
+                    disabled={cancelStatus === CancelStatus.Signing}
+                    warning={true}
+                    onClick={handleConfirmCancel}
+                    $loading={cancelStatus === CancelStatus.Signing}
+                  >
+                    <Trans>{cancelStatus === CancelStatus.Signing ? 'Canceling order...' : 'Cancel order'}</Trans>
+                  </StyledButton>
+                )}
+              </Flex>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </>

@@ -114,7 +114,11 @@ export const IconButton = styled(RebassButton)<{ $isActive?: boolean }>`
   }
 `;
 
-export const PendingIconButton = styled(IconButton)<{ $expanded?: boolean; $isActive?: boolean }>`
+export const PendingIconButton = styled(IconButton)<{
+  $expanded?: boolean;
+  $isActive?: boolean;
+  $showAlertBackground?: boolean;
+}>`
   overflow: hidden;
   gap: 10px;
   transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -128,6 +132,16 @@ export const PendingIconButton = styled(IconButton)<{ $expanded?: boolean; $isAc
       width: 160px;
       padding-left: 12px;
       padding-right: 12px;
+    `}
+
+  ${({ $showAlertBackground, theme }) =>
+    $showAlertBackground &&
+    css`
+      background-color: ${theme.colors.alert} !important;
+      
+      &:hover {
+        background-color: #f72c2c !important;
+      }
     `}
 `;
 

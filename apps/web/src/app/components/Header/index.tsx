@@ -237,12 +237,18 @@ export default function Header(props: { title?: string; className?: string }) {
       clearTimeout(successTimer.current);
       setAnimationState('PENDING');
     } else if (totalPendingCount === 0 && previousPending > 0) {
-      setAnimationState('SUCCESS');
-      successTimer.current = setTimeout(() => {
-        setAnimationState('FADING_OUT_SUCCESS');
-      }, 2000);
+      // Check if there are failed transactions
+      if (failedTxCount > 0) {
+        // Don't show success animation if there are failed transactions
+        setAnimationState('IDLE');
+      } else {
+        setAnimationState('SUCCESS');
+        successTimer.current = setTimeout(() => {
+          setAnimationState('FADING_OUT_SUCCESS');
+        }, 2000);
+      }
     }
-  }, [totalPendingCount, animationState]);
+  }, [totalPendingCount, animationState, failedTxCount]);
 
   const handleTickTransitionEnd = React.useCallback(
     (e: React.TransitionEvent<HTMLDivElement>) => {
@@ -299,8 +305,9 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const isExpanded = animationState === 'PENDING';
   const showSpinner = animationState === 'PENDING' || animationState === 'SUCCESS';
-  const showTick = animationState === 'SUCCESS' || animationState === 'FADING_OUT_SUCCESS';
-  const showDefault = animationState === 'IDLE';
+  const showTick = (animationState === 'SUCCESS' || animationState === 'FADING_OUT_SUCCESS') && failedTxCount === 0;
+  const showDefault = animationState === 'IDLE' || (totalPendingCount === 0 && failedTxCount > 0);
+  const showAlertBackground = failedTxCount > 0;
 
   const spinnerOpacity = React.useMemo(() => (animationState === 'PENDING' ? 1 : 0), [animationState]);
   const tickOpacity = React.useMemo(() => (showTick ? 1 : 0), [showTick]);
@@ -378,6 +385,7 @@ export default function Header(props: { title?: string; className?: string }) {
                   <PendingIconButton
                     $expanded={isExpanded}
                     $isActive={Boolean(recentActivityAnchor)}
+                    $showAlertBackground={showAlertBackground}
                     ref={recentActivityButtonRef}
                     onClick={toggleRecentActivityMenu}
                   >

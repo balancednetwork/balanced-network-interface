@@ -3,7 +3,6 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { UnifiedTransaction, UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
@@ -13,15 +12,13 @@ import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
-import { getTxTrackerLink, xChainMap } from '@balancednetwork/xwagmi';
+import { getTxTrackerLink, xChainMap, xTokenMap, XToken } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { useCancelSwap } from '@sodax/dapp-kit';
 import {
   Intent,
   IntentRelayChainId,
-  Token,
   getSpokeChainIdFromIntentRelayChainId,
-  getSupportedSolverTokens,
   hubAssetToOriginalAssetMap,
 } from '@sodax/sdk';
 import React, { useState, useEffect } from 'react';
@@ -84,7 +81,7 @@ function toBigIntSafe(value: unknown): bigint {
 export const getTokenDataFromIntent = (
   intentData: Intent,
 ):
-  | { srcToken: Token | undefined; dstToken: Token | undefined; srcChainId: XChainId; dstChainId: XChainId }
+  | { srcToken: XToken | undefined; dstToken: XToken | undefined; srcChainId: XChainId; dstChainId: XChainId }
   | undefined => {
   try {
     // Convert intent relay chain ID to spoke chain ID
@@ -106,9 +103,9 @@ export const getTokenDataFromIntent = (
       return undefined;
     }
 
-    // Get all supported tokens for this chain
-    const srcSupportedTokens = getSupportedSolverTokens(srcChainId);
-    const dstSupportedTokens = getSupportedSolverTokens(dstChainId);
+    // Get all supported XTokens for this chain
+    const srcSupportedXTokens = xTokenMap[srcChainId as XChainId] || [];
+    const dstSupportedXTokens = xTokenMap[dstChainId as XChainId] || [];
 
     const mappedSrcToken = Array.from(srcHubAssetMap.entries()).find(
       ([key]) => key.toLowerCase() === intentData.inputToken.toLowerCase(),
@@ -117,8 +114,8 @@ export const getTokenDataFromIntent = (
       ([key]) => key.toLowerCase() === intentData.outputToken.toLowerCase(),
     )?.[1];
 
-    const srcToken = srcSupportedTokens.find(token => token.address.toLowerCase() === mappedSrcToken?.toLowerCase());
-    const dstToken = dstSupportedTokens.find(token => token.address.toLowerCase() === mappedDstToken?.toLowerCase());
+    const srcToken = srcSupportedXTokens.find(token => token.address.toLowerCase() === mappedSrcToken?.toLowerCase());
+    const dstToken = dstSupportedXTokens.find(token => token.address.toLowerCase() === mappedDstToken?.toLowerCase());
 
     return { srcToken, dstToken, srcChainId: srcChainId as XChainId, dstChainId: dstChainId as XChainId };
   } catch (error) {
@@ -151,14 +148,8 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const isBridgeAction = tokensData?.srcToken?.symbol === tokensData?.dstToken?.symbol;
 
   const currencies = {
-    srcToken: SUPPORTED_TOKENS_LIST.find(
-      token =>
-        token.symbol.toLowerCase() ===
-        (tokensData?.srcToken?.symbol.toLowerCase() === 'ws' ? 's' : tokensData?.srcToken?.symbol.toLowerCase()),
-    ),
-    dstToken: SUPPORTED_TOKENS_LIST.find(
-      token => token.symbol.toLowerCase() === tokensData?.dstToken?.symbol.toLowerCase(),
-    ),
+    srcToken: tokensData?.srcToken,
+    dstToken: tokensData?.dstToken,
   };
 
   const elapsedTime = useElapsedTime(tx.timestamp);

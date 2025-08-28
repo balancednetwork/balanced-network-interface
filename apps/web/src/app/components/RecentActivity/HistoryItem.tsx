@@ -1,7 +1,7 @@
 import { UnifiedTransaction } from '@/hooks/useCombinedTransactions';
 import { getTxTrackerLink } from '@balancednetwork/xwagmi';
 import React from 'react';
-import IntentSwap, { getTokenDataFromIntent } from './transactions/IntentSwap';
+import IntentSwap from './transactions/IntentSwap';
 
 interface HistoryItemProps {
   tx: UnifiedTransaction;

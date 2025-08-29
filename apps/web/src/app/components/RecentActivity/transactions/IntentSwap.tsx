@@ -12,15 +12,15 @@ import { useElapsedTime } from '@/store/user/hooks';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
-import { getTxTrackerLink, xChainMap, xTokenMap, XToken } from '@balancednetwork/xwagmi';
+import { XToken, getTxTrackerLink, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { useCancelSwap } from '@sodax/dapp-kit';
 import {
+  Hex,
   Intent,
   IntentRelayChainId,
   getSpokeChainIdFromIntentRelayChainId,
   hubAssetToOriginalAssetMap,
-  Hex,
 } from '@sodax/sdk';
 import React, { useState, useEffect } from 'react';
 import { Flex } from 'rebass';
@@ -330,7 +330,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           {cancelStatus === CancelStatus.Success ? (
             <>
               <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                <Trans>Order cancelled</Trans>
+                <Trans>Swap cancelled</Trans>
               </Typography>
 
               <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
@@ -348,12 +348,12 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           ) : (
             <>
               <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                <Trans>Cancel order?</Trans>
+                <Trans>Cancel swap?</Trans>
               </Typography>
 
               <Typography textAlign="center" mt={2} as="h3" fontWeight="normal">
                 <Trans>
-                  Cancel your order to return your{' '}
+                  Cancel your swap to return your{' '}
                   <strong style={{ whiteSpace: 'nowrap' }}>
                     {/* {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '} */}
                     {formatSymbol(currencies.srcToken.symbol)}
@@ -377,7 +377,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                     onClick={handleConfirmCancel}
                     $loading={cancelStatus === CancelStatus.Signing}
                   >
-                    <Trans>{cancelStatus === CancelStatus.Signing ? 'Canceling order...' : 'Cancel order'}</Trans>
+                    <Trans>{cancelStatus === CancelStatus.Signing ? 'Cancelling swap...' : 'Cancel swap'}</Trans>
                   </StyledButton>
                 )}
               </Flex>

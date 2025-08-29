@@ -20,6 +20,7 @@ import {
   IntentRelayChainId,
   getSpokeChainIdFromIntentRelayChainId,
   hubAssetToOriginalAssetMap,
+  Hex,
 } from '@sodax/sdk';
 import React, { useState, useEffect } from 'react';
 import { Flex } from 'rebass';
@@ -134,7 +135,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
   const { mutateAsync: cancelIntent } = useCancelSwap(spokeProvider);
   const [cancelStatus, setCancelStatus] = useState<CancelStatus>(CancelStatus.None);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const { updateOrderStatus } = useOrderStore();
+  const { updateOrderStatus, updateOrderDstTxHash } = useOrderStore();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(tx.data.packet.srcChainId as any);
   const trackerLinkSrc =
     typeof tx.data.packet.srcTxHash === 'string'
@@ -142,6 +143,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
       : '';
   const trackerLinkSonic =
     typeof tx.data.packet.dstTxHash === 'string' ? `https://sonicscan.org/tx/${tx.data.packet.dstTxHash}` : '';
+
+  const cancelTxLink =
+    tx.status === UnifiedTransactionStatus.cancelled
+      ? getTxTrackerLink(tx.data.packet.dstTxHash, tokensData?.srcChainId)
+      : '';
 
   const minOutputAmount = toBigIntSafe(tx.data.intent.minOutputAmount);
 
@@ -204,6 +210,11 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
       if (response.ok || (response as any)?.error?.message === 'Simulation failed') {
         setCancelStatus(CancelStatus.Success);
         updateOrderStatus(tx.data.intentHash, UnifiedTransactionStatus.cancelled);
+
+        // Update the order's destination transaction hash with the cancellation hash
+        if (response.ok && response.value) {
+          updateOrderDstTxHash(tx.data.intentHash, response.value as Hex);
+        }
       } else {
         setCancelStatus(CancelStatus.None);
       }
@@ -286,7 +297,13 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                   </Typography>
                 </UnderlineText>{' '}
                 for{' '}
-                <UnderlineText onClick={() => trackerLinkSonic && window.open(trackerLinkSonic, '_blank')}>
+                <UnderlineText
+                  onClick={() =>
+                    cancelTxLink
+                      ? window.open(cancelTxLink, '_blank')
+                      : trackerLinkSonic && window.open(trackerLinkSonic, '_blank')
+                  }
+                >
                   <Typography color="primaryBright">
                     {receivedAmountFormatted} {formatSymbol(currencies.dstToken.symbol)}
                   </Typography>

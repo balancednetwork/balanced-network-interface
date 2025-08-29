@@ -16,6 +16,7 @@ interface OrderStoreState {
   addOrder: (order: AddOrderDefaults) => void;
   removeOrder: (intentHash: Hex) => void;
   updateOrderStatus: (intentHash: Hex, status: UnifiedTransactionStatus) => void;
+  updateOrderDstTxHash: (intentHash: Hex, dstTxHash: Hex) => void;
 }
 
 type AddOrderDefaults = Omit<Order, 'timestamp' | 'status'>;
@@ -36,6 +37,22 @@ export const useOrderStore = create<OrderStoreState>()(
         const { orders } = get();
         set({
           orders: orders.map(order => (order.intentHash === intentHash ? { ...order, status } : order)),
+        });
+      },
+      updateOrderDstTxHash: (intentHash: Hex, dstTxHash: Hex) => {
+        const { orders } = get();
+        set({
+          orders: orders.map(order =>
+            order.intentHash === intentHash
+              ? {
+                  ...order,
+                  packet: {
+                    ...order.packet,
+                    dstTxHash,
+                  },
+                }
+              : order,
+          ),
         });
       },
     }),

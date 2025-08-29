@@ -68,7 +68,7 @@ const CurrencyLogos = styled.div`
   margin-right: 3px;
 `;
 
-function toBigIntSafe(value: unknown): bigint {
+export function toBigIntSafe(value: unknown): bigint {
   if (typeof value === 'bigint') return value;
   if (typeof value === 'number') return BigInt(value);
   if (typeof value === 'string') {

@@ -3,6 +3,7 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
+import TickIcon from '@/assets/icons/tick.svg';
 import { UnifiedTransaction, UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
@@ -340,9 +341,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                 </Trans>
               </Typography>
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={closeCancelModal}>
-                  <Trans>Close</Trans>
-                </TextButton>
+                <TickIcon width={20} height={20} />
               </Flex>
             </>
           ) : (

@@ -15,6 +15,7 @@ import { DataText, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
 
 import { useHasSignedIn } from '@/hooks/useWallets';
+import { convertCurrencyWithSodax, getSupportedXChainIdsForIntentToken } from '@/lib/sodax/utils';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
@@ -27,7 +28,6 @@ import { CurrencySelectionType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { XChainLogoList } from './styleds';
 import { shouldHideBecauseOfLowValue } from './utils';
-import { convertCurrencyWithSodax, getSupportedXChainIdsForIntentToken } from '@/lib/sodax/utils';
 
 const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   margin-top: 18px;

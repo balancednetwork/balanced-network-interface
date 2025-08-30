@@ -9,7 +9,9 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
+import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useOraclePrices } from '@/store/oracle/hooks';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
@@ -25,7 +27,6 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
-import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -153,7 +154,7 @@ export default function CurrencyInputPanel({
 
   const [ref, width] = useWidth();
 
-  const prices = useRatesWithOracle();
+  const prices = useOraclePrices();
   const price = useMemo(() => {
     if (prices && currency?.symbol) {
       return prices[currency.symbol];

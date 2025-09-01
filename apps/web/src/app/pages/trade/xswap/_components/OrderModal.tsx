@@ -150,7 +150,11 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
   ]);
 
   const { mutateAsync: swap } = useSwap(spokeProvider);
-  const { data: hasAllowed, isLoading: isAllowanceLoading } = useSwapAllowance(intentOrderPayload, spokeProvider);
+  const {
+    data: hasAllowed,
+    isLoading: isAllowanceLoading,
+    refetch: refetchAllowance,
+  } = useSwapAllowance(intentOrderPayload, spokeProvider);
 
   const { approve, isLoading: isApproving } = useSwapApprove(intentOrderPayload, spokeProvider);
 
@@ -212,6 +216,18 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
       return;
     }
     await approve({ params: intentOrderPayload });
+
+    // Proactively refresh allowance to avoid UI lag after approval
+    try {
+      // Try a few times in case the RPC is slightly behind
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const result = await refetchAllowance?.();
+        if (result && (result as any).data) break;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    } catch (_) {
+      // noop; UI will naturally refresh on next query tick
+    }
   };
 
   const handleOrder = async () => {

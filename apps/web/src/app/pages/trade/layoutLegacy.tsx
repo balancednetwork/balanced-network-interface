@@ -43,7 +43,7 @@ const StyledTypography = styled(Typography)`
   }
 `;
 
-export function TradePageLayout() {
+export function TradePageLayoutLegacy() {
   const { account } = useIconReact();
   const location = useLocation();
   const navigate = useNavigate();
@@ -62,13 +62,13 @@ export function TradePageLayout() {
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
     if (value === 0) {
-      navigate('/trade', { replace: true });
+      navigate('/trade-legacy', { replace: true });
     }
     if (value === 1) {
-      navigate('/trade/migrate', { replace: true });
+      navigate('/trade-legacy/supply', { replace: true });
     }
     if (value === 2) {
-      navigate('/trade/bridge', { replace: true });
+      navigate('/trade-legacy/bridge', { replace: true });
     }
   };
 
@@ -90,14 +90,11 @@ export function TradePageLayout() {
             <Tab>
               <Trans>Swap</Trans>
             </Tab>
-            {/* <Tab>
-              <Trans>Supply</Trans>
-            </Tab> */}
-            {/* <Tab>
-              <Trans>Bridge</Trans>
-            </Tab> */}
             <Tab>
-              <Trans>Migrate</Trans>
+              <Trans>Supply</Trans>
+            </Tab>
+            <Tab>
+              <Trans>Bridge</Trans>
             </Tab>
           </Tabs>
           <UnderlineText onClick={handleExchangeRedirect}>

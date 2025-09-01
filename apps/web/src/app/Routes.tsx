@@ -19,10 +19,16 @@ const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
+const TradePageLayoutLegacy = lazyLoad(
+  () => import('./pages/trade/layoutLegacy'),
+  module => module.TradePageLayoutLegacy,
+);
+
 import { IntentCheckPage } from './pages/intent-check/page';
 import { TestPage } from './pages/test/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { SupplyPage } from './pages/trade/supply/page';
+import { MigratePage } from './pages/trade/migrate/page';
 import { TradePage } from './pages/trade/xswap/page';
 import { TradePageLegacy } from './pages/trade/xswap/page-legacy';
 
@@ -104,17 +110,18 @@ export default function RootRoutes() {
       >
         <Route index element={<HomePage />} />
 
-        <Route path="trade" element={<TradePageLayout />}>
-          <Route index element={<TradePage />} />
-          <Route path=":pair" element={<TradePage />} />
+        <Route path="trade-legacy" element={<TradePageLayoutLegacy />}>
+          <Route index element={<TradePageLegacy />} />
+          <Route path=":pair" element={<TradePageLegacy />} />
           <Route path="supply" element={<SupplyPage />} />
           <Route path="supply/:pair" element={<SupplyPage />} />
           <Route path="bridge/" element={<BridgePage />} />
         </Route>
 
-        <Route path="trade-legacy" element={<TradePageLayout />}>
-          <Route index element={<TradePageLegacy />} />
-          <Route path=":pair" element={<TradePageLegacy />} />
+        <Route path="trade" element={<TradePageLayout />}>
+          <Route index element={<TradePage />} />
+          <Route path=":pair" element={<TradePage />} />
+          <Route path="migrate" element={<MigratePage />} />
           <Route path="supply" element={<SupplyPage />} />
           <Route path="supply/:pair" element={<SupplyPage />} />
           <Route path="bridge/" element={<BridgePage />} />

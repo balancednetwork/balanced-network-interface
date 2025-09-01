@@ -34,6 +34,7 @@ import SearchInput from './SearchInput';
 import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { shouldHideBecauseOfLowValue } from './utils';
+import { StyledTypographyWithArrow } from '@/app/pages/trade/layoutLegacy';
 
 export enum CurrencySelectionType {
   TRADE_IN,
@@ -420,9 +421,9 @@ export function CurrencySearch({
               navigate('/trade-legacy');
             }}
           >
-            <Typography color="primary" textAlign="center">
+            <StyledTypographyWithArrow color="primary" textAlign="center">
               <Trans>Trade more assets on the legacy exchange</Trans>
-            </Typography>
+            </StyledTypographyWithArrow>
           </UnderlineText>
         </Flex>
       ) : showCommunityListControl && debouncedQuery.length ? (

@@ -15,7 +15,7 @@ import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import styled from 'styled-components';
 
-const StyledTypography = styled(Typography)`
+export const StyledTypographyWithArrow = styled(Typography)`
   position: relative;
   padding-right: 12px;
   
@@ -98,7 +98,7 @@ export function TradePageLayoutLegacy() {
             </Tab>
           </Tabs>
           <UnderlineText onClick={handleExchangeRedirect}>
-            <StyledTypography color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypography>
+            <StyledTypographyWithArrow color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypographyWithArrow>
           </UnderlineText>
         </Flex>
 

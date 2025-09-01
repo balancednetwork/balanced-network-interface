@@ -368,6 +368,10 @@ msgstr "Add a contract call"
 msgid "Sign in"
 msgstr "Sign in"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel your swap to return your <0>{1}</0>"
+msgstr "Cancel your swap to return your <0>{1}</0>"
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/RespoRewardsInfo.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -879,8 +883,8 @@ msgid "Lock up BALN"
 msgstr "Lock up BALN"
 
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-msgid "Creating order..."
-msgstr "Creating order..."
+#~ msgid "Creating order..."
+#~ msgstr "Creating order..."
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
 msgid "Activate wallet"
@@ -998,8 +1002,8 @@ msgstr ", then deposit bnUSD to earn rewards."
 #~ msgstr "Minimum to receive(Intent)"
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "Order cancelled"
-msgstr "Order cancelled"
+#~ msgid "Order cancelled"
+#~ msgstr "Order cancelled"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
@@ -1325,8 +1329,8 @@ msgid "No pools found."
 msgstr "No pools found."
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "Cancel order?"
-msgstr "Cancel order?"
+#~ msgid "Cancel order?"
+#~ msgstr "Cancel order?"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
@@ -1949,6 +1953,10 @@ msgstr "Core pools"
 #~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 #~ msgstr "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Requesting swap..."
+msgstr "Requesting swap..."
+
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
@@ -2040,6 +2048,10 @@ msgstr "Send asset?"
 msgid "Asset"
 msgstr "Asset"
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Swap requested"
+msgstr "Swap requested"
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
 msgstr "Borrowing bnUSD..."
@@ -2111,8 +2123,8 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #~ msgstr "Send {0} to {1}."
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
-msgid "Cancel your order to return your <0>{1}</0>"
-msgstr "Cancel your order to return your <0>{1}</0>"
+#~ msgid "Cancel your order to return your <0>{1}</0>"
+#~ msgstr "Cancel your order to return your <0>{1}</0>"
 
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/_components/xCollateralModal/index.tsx
@@ -2589,6 +2601,10 @@ msgstr "Verifying contract calls..."
 #~ msgid "to make this transaction."
 #~ msgstr "to make this transaction."
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Swap cancelled"
+msgstr "Swap cancelled"
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
@@ -2701,6 +2717,10 @@ msgstr "Unstake BALN?"
 #~ msgid "Cross-chain transfer requested."
 #~ msgstr "Cross-chain transfer requested."
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel swap?"
+msgstr "Cancel swap?"
+
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Confirming..."
@@ -2812,8 +2832,8 @@ msgstr "No price chart available for this pair."
 #~ msgstr "Transferred {0} {1} to {2}."
 
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-msgid "Order created"
-msgstr "Order created"
+#~ msgid "Order created"
+#~ msgstr "Order created"
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
@@ -3236,7 +3256,6 @@ msgstr "Network fees"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx

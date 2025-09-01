@@ -76,7 +76,7 @@ export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeP
     if (xChainType === 'SOLANA') {
       return new SolanaSpokeProvider(walletProvider as ISolanaWalletProvider, {
         ...solanaConfig,
-        rpcUrl: 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM',
+        rpcUrl: 'https://solana-mainnet.g.alchemy.com/v2/i3q5fE3cYSFBE4Lcg1kS5',
       });
     }
 

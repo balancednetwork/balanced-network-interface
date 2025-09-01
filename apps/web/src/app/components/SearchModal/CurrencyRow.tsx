@@ -16,7 +16,6 @@ import { Typography } from '@/app/theme';
 
 import { useHasSignedIn } from '@/hooks/useWallets';
 import { convertCurrencyWithSodax, getSupportedXChainIdsForIntentToken } from '@/lib/sodax/utils';
-import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
 import { formatBalance, formatPrice, formatSymbol, formatValue } from '@/utils/formatter';
@@ -28,6 +27,7 @@ import { CurrencySelectionType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { XChainLogoList } from './styleds';
 import { shouldHideBecauseOfLowValue } from './utils';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   margin-top: 18px;
@@ -76,7 +76,7 @@ export default function CurrencyRow({
     currencySelectionType === CurrencySelectionType.TRADE_OUT ||
     currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
     currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT;
-  const prices = useRatesWithOracle();
+  const prices = useTokenPricesWithPyth();
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet

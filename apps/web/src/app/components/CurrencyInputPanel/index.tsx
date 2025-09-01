@@ -27,6 +27,7 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -154,7 +155,7 @@ export default function CurrencyInputPanel({
 
   const [ref, width] = useWidth();
 
-  const prices = useOraclePrices();
+  const prices = useTokenPricesWithPyth();
   const price = useMemo(() => {
     if (prices && currency?.symbol) {
       return prices[currency.symbol];

@@ -1,23 +1,28 @@
 import React from 'react';
 
-import { Currency, ICX } from '@balancednetwork/sdk-core';
+import { Currency, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
 import { Flex } from 'rebass/styled-components';
 
+import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
+import { DropdownPopper } from '@/app/components/Popover';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { SelectorWrap } from '@/app/components/home/_components/CollateralChainSelector';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { bnUSD, SUPPORTED_TOKENS_LIST, wICX } from '@/constants/tokens';
-import { FlipButton } from '../xswap/_components/SwapPanel';
-import { Button } from '@/app/components/Button';
+import { SODA, SUPPORTED_TOKENS_LIST, bnUSD, bnUSD_new, useICX, wICX } from '@/constants/tokens';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useRatesWithOracle } from '@/queries/reward';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { maxAmountSpend } from '@/utils';
+import { formatBalance } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
-import { DropdownPopper } from '@/app/components/Popover';
-import { StyledArrowDownIcon } from '@/app/components/DropdownText';
-import { SelectorWrap } from '@/app/components/home/_components/CollateralChainSelector';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
 
 export type MigrationType = 'bnUSD' | 'ICX';
@@ -37,12 +42,24 @@ const MIGRATION_LABELS: Record<MigrationType, string> = {
 
 function useMigrationState() {
   const [inputValue, setInputValue] = React.useState('');
+  const ICX = useICX();
   const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[1]);
   const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD[1]);
+  const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
+  const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
   const [migrationType, setMigrationType] = React.useState<MigrationType>('bnUSD');
   const [currencySelection, setCurrencySelection] = React.useState<CurrencySelectionType>(
     CurrencySelectionType.TRADE_IN,
   );
+  const [inputPercent, setInputPercent] = React.useState<number>(0);
+
+  const setInputChainCB = React.useCallback((chain: XChainId) => {
+    setInputChain(chain);
+  }, []);
+
+  const setOutputChainCB = React.useCallback((chain: XChainId) => {
+    setOutputChain(chain);
+  }, []);
 
   const setInputCurrencyCB = React.useCallback((currency: Currency) => {
     setInputCurrency(currency);
@@ -52,17 +69,30 @@ function useMigrationState() {
     setOutputCurrency(currency);
   }, []);
 
+  const onTokenSwitch = React.useCallback(() => {
+    const prevInputCurrency = inputCurrency;
+    const prevInputChain = inputChain;
+    setInputChain(outputChain);
+    setOutputChain(prevInputChain);
+    setInputCurrency(outputCurrency);
+    setOutputCurrency(prevInputCurrency);
+  }, [inputCurrency, outputCurrency, inputChain, outputChain]);
+
+  const onInputPercentSelect = React.useCallback((percent: number) => {
+    setInputPercent(percent);
+  }, []);
+
   React.useEffect(() => {
     if (migrationType === 'bnUSD') {
       setCurrencySelection(CurrencySelectionType.MIGRATE_BNUSD);
       setInputCurrency(bnUSD[1]);
-      setOutputCurrency(bnUSD[1]);
+      setOutputCurrency(bnUSD_new[1]);
     } else if (migrationType === 'ICX') {
       setCurrencySelection(CurrencySelectionType.MIGRATE_ICX);
-      setInputCurrency(wICX[1]);
-      setOutputCurrency(wICX[1]);
+      setInputCurrency(ICX);
+      setOutputCurrency(SODA[1]);
     }
-  }, [migrationType]);
+  }, [migrationType, ICX]);
 
   return {
     inputCurrency,
@@ -75,26 +105,32 @@ function useMigrationState() {
     setMigrationType,
     currencySelection,
     setCurrencySelection,
+    onTokenSwitch,
+    onInputPercentSelect,
+    inputPercent,
+    setInputChain: setInputChainCB,
+    setOutputChain: setOutputChainCB,
+    inputChain,
+    outputChain,
   } as const;
 }
 
-const onSwitchTokens = () => {
-  console.log('switch tokens');
-};
-
-function MigratePanel() {
-  const {
-    inputCurrency,
-    outputCurrency,
-    inputValue,
-    setInputValue,
-    migrationType,
-    setMigrationType,
-    currencySelection,
-    setOutputCurrency,
-    setInputCurrency,
-  } = useMigrationState();
-
+function MigratePanel({
+  inputCurrency,
+  outputCurrency,
+  inputValue,
+  setInputValue,
+  migrationType,
+  setMigrationType,
+  currencySelection,
+  onInputPercentSelect,
+  inputPercent,
+  setInputChain,
+  setOutputChain,
+  inputChain,
+  outputChain,
+  onTokenSwitch,
+}: ReturnType<typeof useMigrationState>) {
   const openModal = () => {
     if (inputValue && parseFloat(inputValue) > 0 && inputCurrency && outputCurrency) {
       modalActions.openModal(MODAL_ID.MIGRATION_CONFIRM_MODAL);
@@ -122,6 +158,38 @@ function MigratePanel() {
   const migrationTokens = React.useMemo(() => {
     return (['bnUSD', 'ICX'] as MigrationType[]).map(symbol => findTokenBySymbol(symbol)).filter(Boolean) as Currency[];
   }, []);
+
+  // Wallet balance hooks
+  const signedInWallets = useSignedInWallets();
+  const crossChainWallet = useCrossChainWalletBalances();
+  const rates = useRatesWithOracle();
+
+  // Get input currency balance
+  const inputCurrencyBalance = React.useMemo(() => {
+    if (!inputCurrency) return undefined;
+    return crossChainWallet[inputChain]?.[inputCurrency.address];
+  }, [crossChainWallet, inputCurrency, inputChain]);
+
+  // Get output currency balance
+  const outputCurrencyBalance = React.useMemo(() => {
+    if (!outputCurrency) return undefined;
+    return crossChainWallet[outputChain]?.[outputCurrency.address];
+  }, [crossChainWallet, outputCurrency, outputChain]);
+
+  // Calculate max input amount for percent selection
+  const maxInputAmount = React.useMemo(() => maxAmountSpend(inputCurrencyBalance), [inputCurrencyBalance]);
+
+  // Handle input percent selection
+  const handleInputPercentSelect = React.useCallback(
+    (percent: number) => {
+      if (maxInputAmount) {
+        const amount = maxInputAmount.multiply(new Percent(percent, 100)).toFixed();
+        setInputValue(amount);
+        onInputPercentSelect(percent);
+      }
+    },
+    [maxInputAmount, setInputValue, onInputPercentSelect],
+  );
 
   return (
     <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -164,21 +232,50 @@ function MigratePanel() {
             </ClickAwayListener>
           </Flex>
 
+          <Flex alignItems="center" justifyContent="space-between">
+            {signedInWallets.length > 0 && inputCurrencyBalance ? (
+              <Typography as="div">
+                (<Trans>Wallet:</Trans>{' '}
+                {`${formatBalance(
+                  inputCurrencyBalance?.toFixed(),
+                  rates?.[inputCurrencyBalance?.currency.symbol]?.toFixed(),
+                )} ${inputCurrency?.symbol}`}
+                )
+              </Typography>
+            ) : null}
+          </Flex>
+
           <Flex>
             <CurrencyInputPanel
               value={inputValue}
               currency={inputCurrency}
               onUserInput={setInputValue}
-              onCurrencySelect={setInputCurrency}
+              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
+              percent={inputPercent}
               showCrossChainOptions={true}
               currencySelectionType={currencySelection}
+              xChainId={inputChain}
+              onChainSelect={setInputChain}
             />
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" my={1}>
-            <FlipButton onClick={onSwitchTokens}>
+            <FlipButton onClick={onTokenSwitch}>
               <FlipIcon width={25} height={17} />
             </FlipButton>
+          </Flex>
+
+          <Flex alignItems="center" justifyContent="space-between">
+            {signedInWallets.length > 0 && outputCurrencyBalance ? (
+              <Typography as="div">
+                <Trans>Wallet:</Trans>{' '}
+                {`${formatBalance(
+                  outputCurrencyBalance?.toFixed(),
+                  rates?.[outputCurrencyBalance?.currency.symbol]?.toFixed(),
+                )} ${outputCurrency?.symbol}`}
+              </Typography>
+            ) : null}
+            {/* ): <Typography as="div"><Trans>Wallet: 0</Trans></Typography>} */}
           </Flex>
 
           <Flex>
@@ -186,9 +283,10 @@ function MigratePanel() {
               value={inputValue}
               currency={outputCurrency}
               onUserInput={setInputValue}
-              onCurrencySelect={setOutputCurrency}
               showCrossChainOptions={true}
               currencySelectionType={currencySelection}
+              xChainId={outputChain}
+              onChainSelect={setOutputChain}
             />
           </Flex>
 
@@ -205,34 +303,68 @@ function MigratePanel() {
   );
 }
 
-function MigrateDescription() {
+function MigrateDescription({ migrationType }: { migrationType: MigrationType }) {
+  const getMigrationContent = () => {
+    switch (migrationType) {
+      case 'bnUSD':
+        return {
+          title: 'bnUSD (old <> new)',
+          equivalence: '1 bnUSD (old) = 1 bnUSD',
+          description:
+            'Use new bnUSD to trade on every chain except ICON. Use old bnUSD to repay loans and earn through the Balanced Savings Rate.',
+        };
+      case 'ICX':
+        return {
+          title: 'ICX <> SODA',
+          equivalence: '1 ICX = 1 SODA',
+          description:
+            'Migrate your ICX to SODA for enhanced cross-chain functionality and improved trading capabilities.',
+        };
+      default:
+        return {
+          title: 'Migration',
+          equivalence: '',
+          description: 'Select a pair and enter the amount to migrate.',
+        };
+    }
+  };
+
+  const content = getMigrationContent();
+
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
       <Typography variant="h3" mb={2}>
-        Migration
+        {content.title}
       </Typography>
-      <Typography variant="p">Select a pair and enter the amount to migrate.</Typography>
+      {content.equivalence && (
+        <Typography variant="h4" mb={3} textAlign="center" fontWeight="bold" mt="40px">
+          {content.equivalence}
+        </Typography>
+      )}
+      <Typography variant="p" textAlign="center" color="text2">
+        {content.description}
+      </Typography>
     </Flex>
   );
 }
 
 export function MigratePage() {
-  const { inputCurrency, outputCurrency, inputValue, migrationType } = useMigrationState();
+  const migrationState = useMigrationState();
 
   return (
     <>
       <SectionPanel bg="bg2">
-        <MigratePanel />
-        <MigrateDescription />
+        <MigratePanel {...migrationState} />
+        <MigrateDescription migrationType={migrationState.migrationType} />
       </SectionPanel>
 
       <MigrationModal
         modalId={MODAL_ID.MIGRATION_CONFIRM_MODAL}
-        inputCurrency={inputCurrency}
-        outputCurrency={outputCurrency}
-        inputAmount={inputValue}
-        outputAmount={inputValue} // For now, 1:1 ratio
-        migrationType={migrationType}
+        inputCurrency={migrationState.inputCurrency}
+        outputCurrency={migrationState.outputCurrency}
+        inputAmount={migrationState.inputValue}
+        outputAmount={migrationState.inputValue} // For now, 1:1 ratio
+        migrationType={migrationState.migrationType}
       />
     </>
   );

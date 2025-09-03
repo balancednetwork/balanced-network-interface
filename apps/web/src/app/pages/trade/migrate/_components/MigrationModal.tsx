@@ -178,6 +178,7 @@ const MigrationModal = ({
                 {migrationStatus !== MigrationStatus.Failure && (
                   <StyledButton
                     onClick={handleMigration}
+                    $loading={isProcessing}
                     disabled={isProcessing || !inputCurrency || !outputCurrency || !inputAmount || !outputAmount}
                   >
                     {isProcessing ? <Trans>Migrating...</Trans> : <Trans>Migrate</Trans>}

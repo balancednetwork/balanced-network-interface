@@ -44,11 +44,57 @@ export const wICX: TokenMap = {
 };
 
 export const bnUSD: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD (old)', 'Balanced Dollar'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+};
+
+export const bnUSD_new: TokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.SEJONG]: new Token(
+    ChainId.SEJONG,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.YEOUIDO]: new Token(
+    ChainId.YEOUIDO,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.BERLIN]: new Token(
+    ChainId.BERLIN,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.LISBON]: new Token(
+    ChainId.LISBON,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+};
+
+export const SODA: TokenMap = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
 };
 
 export const BALN: TokenMap = {

@@ -35,6 +35,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },
     {
+      "address": "cx0000000000000000000000000000000000000011",
+      "chainId": 1,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
       "address": "cxf61cd5a45dc9f91c15aa65831a30a90d59a09619",
       "chainId": 1,
       "name": "Balance Token",

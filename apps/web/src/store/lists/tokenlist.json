@@ -30,7 +30,7 @@
       "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
       "chainId": 1,
       "name": "Balanced Dollar",
-      "symbol": "bnUSD",
+      "symbol": "bnUSD (old)",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },

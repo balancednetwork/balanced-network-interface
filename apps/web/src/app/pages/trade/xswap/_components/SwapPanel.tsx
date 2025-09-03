@@ -249,6 +249,6 @@ export default function SwapPanel() {
   );
 }
 
-const FlipButton = styled(Box)`
+export const FlipButton = styled(Box)`
   cursor: pointer;
 `;

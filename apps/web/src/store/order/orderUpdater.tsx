@@ -1,5 +1,14 @@
 import { useStatus } from '@sodax/dapp-kit';
-import { Hex } from '@sodax/sdk';
+import {
+  DEFAULT_RELAY_TX_TIMEOUT,
+  getIntentRelayChainId,
+  Hex,
+  IntentError,
+  PacketData,
+  Result,
+  SpokeChainId,
+  waitUntilIntentExecuted,
+} from '@sodax/sdk';
 import { SolverIntentStatusCode } from '@sodax/sdk';
 import React from 'react';
 import { toast } from 'react-toastify';
@@ -12,10 +21,43 @@ import { useOraclePrices } from '@/store/oracle/hooks';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { toBigIntSafe } from '@/app/components/RecentActivity/transactions/IntentSwap';
+import sodaxConfig from '@/lib/sodax';
+
+/**
+ * Get the intent delivery info about solved intent from the Relayer API
+ * @param {SpokeChainId} chainId - The destination spoke chain ID
+ * @param {string} fillTxHash - The fill transaction hash (received from getStatus when status is 3 - SOLVED)
+ * @param {number} timeout - The timeout in milliseconds (default: 120 seconds)
+ * @returns {Promise<IntentDeliveryInfo>} The intent delivery info
+ */
+
+// async function getSolvedIntentPacket({
+//   chainId,
+//   fillTxHash,
+//   timeout = DEFAULT_RELAY_TX_TIMEOUT, // use your default timeout
+// }: { chainId: SpokeChainId; fillTxHash: string; timeout?: number }): Promise<
+//   Result<PacketData, IntentError<'RELAY_TIMEOUT'>>
+// > {
+//   return waitUntilIntentExecuted({
+//     intentRelayChainId: getIntentRelayChainId(chainId).toString(),
+//     spokeTxHash: fillTxHash,
+//     timeout,
+//     apiUrl: sodaxConfig.relayerApiEndpoint,
+//   });
+// }
+
+// (async () => {
+//   const intentDeliveryInfo = await getSolvedIntentPacket({
+//     chainId: '0xa4b1.arbitrum',
+//     fillTxHash: '0xb4d8265dffe331e2163b77d1a8bb08ec14663989807d1efa8067d4e46e0cbc5d',
+//   });
+
+//   console.log('intentDeliveryInfo', intentDeliveryInfo);
+// })();
 
 // Individual component for each order to safely use the useStatus hook
 const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
-  const { updateOrderStatus } = useOrderStore();
+  const { updateOrderStatus, updateOrderDstTxHash } = useOrderStore();
   const { data: status } = useStatus(
     typeof order.packet.dstTxHash === 'string' ? (order.packet.dstTxHash as Hex) : ('' as Hex),
   );
@@ -67,6 +109,17 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
               outputAmount.toFixed(),
               prices?.[outputAmount.currency.symbol]?.toFixed() || 1,
             );
+
+            // if (status.value.fill_tx_hash) {
+            //   (async () => {
+            //     const intentDeliveryInfo = await getSolvedIntentPacket({
+            //       chainId: order.packet.dstChainId,
+            //       fillTxHash: status.value.fill_tx_hash as string,
+            //     });
+
+            //     console.log('intentDeliveryInfo', intentDeliveryInfo);
+            //   })();
+            // }
 
             toast(
               <NotificationSuccess

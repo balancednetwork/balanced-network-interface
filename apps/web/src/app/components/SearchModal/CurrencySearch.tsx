@@ -45,6 +45,8 @@ export enum CurrencySelectionType {
   BRIDGE,
   SODAX_TRADE_IN,
   SODAX_TRADE_OUT,
+  MIGRATE_BNUSD,
+  MIGRATE_ICX,
 }
 
 export enum AssetsTab {
@@ -97,7 +99,7 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
 
 function filterSodaxTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
   return Object.values(tokens)
-    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol))
+    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol.replace('bnUSD (old)', 'bnUSD')))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;
@@ -113,6 +115,26 @@ function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]:
           return acc;
         }, {})
     : bases;
+}
+
+function filterMigrateBNUSD(tokens: { [address: string]: Token }): { [address: string]: Token } {
+  const result = Object.values(tokens)
+    .filter(token => token.symbol === 'bnUSD (old)' || token.symbol === 'bnUSD')
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
+  console.log('filterMigrateBNUSD tokensss', result);
+  return result;
+}
+
+function filterMigrateICX(tokens: { [address: string]: Token }): { [address: string]: Token } {
+  return Object.values(tokens)
+    .filter(token => token.symbol === 'ICX' || token.symbol === 'SODA')
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
 }
 
 interface CurrencySearchProps {
@@ -209,6 +231,10 @@ export function CurrencySearch({
       case CurrencySelectionType.BRIDGE: {
         return xTokens || [];
       }
+      case CurrencySelectionType.MIGRATE_BNUSD:
+        return filterMigrateBNUSD(tokens);
+      case CurrencySelectionType.MIGRATE_ICX:
+        return filterMigrateICX(tokens);
     }
   }, [currencySelectionType, tokens, bases, xTokens, xChainId]);
 

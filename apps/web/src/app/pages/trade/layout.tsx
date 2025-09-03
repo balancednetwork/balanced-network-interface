@@ -56,7 +56,7 @@ export function TradePageLayout() {
   useFetchStabilityFundBalances();
 
   const [value, setValue] = React.useState<number>(
-    location.pathname.includes('/supply') ? 1 : location.pathname.includes('/bridge') ? 2 : 0,
+    location.pathname.includes('/migrate') ? 1 : location.pathname.includes('/bridge') ? 2 : 0,
   );
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {

@@ -48,6 +48,7 @@ function useMigrationState() {
   const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
   const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
   const [migrationType, setMigrationType] = React.useState<MigrationType>('bnUSD');
+  const [revert, setRevert] = React.useState<boolean>(false);
   const [currencySelection, setCurrencySelection] = React.useState<CurrencySelectionType>(
     CurrencySelectionType.TRADE_IN,
   );
@@ -76,6 +77,7 @@ function useMigrationState() {
     setOutputChain(prevInputChain);
     setInputCurrency(outputCurrency);
     setOutputCurrency(prevInputCurrency);
+    setRevert(prev => !prev);
   }, [inputCurrency, outputCurrency, inputChain, outputChain]);
 
   const onInputPercentSelect = React.useCallback((percent: number) => {
@@ -84,13 +86,13 @@ function useMigrationState() {
 
   React.useEffect(() => {
     if (migrationType === 'bnUSD') {
-      setCurrencySelection(CurrencySelectionType.MIGRATE_BNUSD);
       setInputCurrency(bnUSD[1]);
       setOutputCurrency(bnUSD_new[1]);
+      setRevert(false);
     } else if (migrationType === 'ICX') {
-      setCurrencySelection(CurrencySelectionType.MIGRATE_ICX);
       setInputCurrency(ICX);
       setOutputCurrency(SODA[1]);
+      setRevert(false);
     }
   }, [migrationType, ICX]);
 
@@ -112,6 +114,7 @@ function useMigrationState() {
     setOutputChain: setOutputChainCB,
     inputChain,
     outputChain,
+    revert,
   } as const;
 }
 
@@ -365,6 +368,9 @@ export function MigratePage() {
         inputAmount={migrationState.inputValue}
         outputAmount={migrationState.inputValue} // For now, 1:1 ratio
         migrationType={migrationState.migrationType}
+        sourceChain={migrationState.inputChain}
+        receiverChain={migrationState.outputChain}
+        revert={migrationState.revert}
       />
     </>
   );

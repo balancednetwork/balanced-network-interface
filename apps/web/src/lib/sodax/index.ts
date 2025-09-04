@@ -1,6 +1,6 @@
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 
-import { HttpUrl, getHubChainConfig, getMoneyMarketConfig } from '@sodax/sdk';
+import { Sodax, HttpUrl, getHubChainConfig, getMoneyMarketConfig } from '@sodax/sdk';
 
 export const PARTNER_FEE_ADDRESS = '0xAf3C63D376e4CEd7156df8938502C73464162E80' as `0x${string}`;
 export const PARTNER_FEE_PERCENTAGE = 10; // 0.1%
@@ -24,5 +24,7 @@ const sodaxConfig = {
   },
   relayerApiEndpoint: 'https://xcall-relay.nw.iconblockchain.xyz' as HttpUrl,
 };
+
+export const sodax = new Sodax(sodaxConfig);
 
 export default sodaxConfig;

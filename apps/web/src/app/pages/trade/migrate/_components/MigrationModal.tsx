@@ -13,10 +13,24 @@ import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
+import { sodax } from '@/lib/sodax';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { Currency } from '@balancednetwork/sdk-core';
+import { Currency, XChainId } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+  IconSpokeProvider,
+  IcxCreateRevertMigrationParams,
+  IcxMigrateParams,
+  IcxTokenType,
+  IEvmWalletProvider,
+  SonicSpokeProvider,
+  SpokeChainId,
+  UnifiedBnUSDMigrateParams,
+} from '@sodax/sdk';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
+import { wICX } from '@/constants/tokens';
 
 type MigrationModalProps = {
   modalId?: MODAL_ID;
@@ -25,6 +39,9 @@ type MigrationModalProps = {
   inputAmount?: string;
   outputAmount?: string;
   migrationType?: 'bnUSD' | 'ICX';
+  sourceChain?: XChainId;
+  receiverChain?: XChainId;
+  revert: boolean;
 };
 
 enum MigrationStatus {
@@ -40,10 +57,12 @@ const MigrationModal = ({
   outputCurrency,
   inputAmount,
   outputAmount,
+  sourceChain,
+  receiverChain,
   migrationType = 'bnUSD',
+  revert,
 }: MigrationModalProps) => {
   const modalOpen = useModalOpen(modalId);
-  const { track } = useAnalytics();
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,42 +77,107 @@ const MigrationModal = ({
   const slowDismiss = useCallback(() => {
     setTimeout(() => {
       handleDismiss();
-    }, 2000);
+    }, 3000);
   }, [handleDismiss]);
 
+  const accountSource = useXAccount(getXChainType(sourceChain));
+  const accountReceiver = useXAccount(getXChainType(receiverChain));
+  const sourceSpokeProvider = useSpokeProvider(sourceChain as SpokeChainId);
+
   const handleMigration = async () => {
-    if (!inputCurrency || !outputCurrency || !inputAmount || !outputAmount) {
+    if (
+      !inputCurrency ||
+      !outputCurrency ||
+      !inputAmount ||
+      !outputAmount ||
+      !accountSource?.address ||
+      !accountReceiver?.address ||
+      !sourceSpokeProvider
+    ) {
       return;
     }
 
     setMigrationStatus(MigrationStatus.Migrating);
 
     try {
-      // TODO: Implement actual migration logic here
-      // This is a placeholder for the migration implementation
-      console.log('Starting migration:', {
-        inputCurrency: inputCurrency.symbol,
-        outputCurrency: outputCurrency.symbol,
-        inputAmount,
-        outputAmount,
-        migrationType,
-      });
+      if (migrationType === 'bnUSD') {
+        const migrationParams: UnifiedBnUSDMigrateParams = {
+          srcChainId: sourceChain as SpokeChainId,
+          dstChainId: receiverChain as SpokeChainId,
+          //todo fix bnUSD addresses
+          srcbnUSD: inputCurrency.wrapped.address,
+          dstbnUSD: outputCurrency.wrapped.address,
+          amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
+          to: accountReceiver.address as `0x${string}`,
+        };
+        setMigrationStatus(MigrationStatus.Migrating);
+        const result = await sodax.migration.migratebnUSD(migrationParams, sourceSpokeProvider);
+        if (result.ok) {
+          const [spokeTxHash, hubTxHash] = result.value;
+          console.log('bnUSD migration successful!', { spokeTxHash, hubTxHash });
+        } else {
+          throw result.error;
+        }
+      } else if (migrationType === 'ICX') {
+        if (!revert) {
+          setMigrationStatus(MigrationStatus.Migrating);
+          const migrationParams: IcxMigrateParams = {
+            address: 'cx0000000000000000000000000000000000000000' as IcxTokenType,
+            amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
+            to: accountReceiver.address as `0x${string}`,
+          };
+          const result = await sodax.migration.migrateIcxToSoda(
+            migrationParams,
+            sourceSpokeProvider as IconSpokeProvider,
+          );
+          if (result.ok) {
+            const [spokeTxHash, hubTxHash] = result.value;
+            console.log('ICX migration successful!', { spokeTxHash, hubTxHash });
+          } else {
+            throw result.error;
+          }
+        } else {
+          const revertParams: IcxCreateRevertMigrationParams = {
+            amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
+            to: accountReceiver.address as `hx${string}`,
+          };
 
-      // Simulate migration process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+          setMigrationStatus(MigrationStatus.Migrating);
 
-      // For now, always succeed
+          const isAllowed = await sodax.migration.isAllowanceValid(revertParams, 'revert', sourceSpokeProvider);
+
+          if (!isAllowed.ok) {
+            throw isAllowed.error;
+          }
+
+          if (!isAllowed.value) {
+            const approveResult = await sodax.migration.approve(revertParams, 'revert', sourceSpokeProvider);
+            if (approveResult.ok) {
+              const receipt = await (
+                sourceSpokeProvider.walletProvider as IEvmWalletProvider
+              ).waitForTransactionReceipt(approveResult.value as `0x${string}`);
+              console.log('ICX revert approval successful!', { receipt });
+            } else {
+              throw approveResult.error;
+            }
+          }
+
+          const result = await sodax.migration.revertMigrateSodaToIcx(
+            revertParams,
+            sourceSpokeProvider as SonicSpokeProvider,
+          );
+
+          if (result.ok) {
+            const [hubTxHash, spokeTxHash] = result.value;
+            console.log('SODA to ICX revert successful!', { hubTxHash, spokeTxHash });
+          } else {
+            throw result.error;
+          }
+        }
+      }
+
       setMigrationStatus(MigrationStatus.Success);
       slowDismiss();
-
-      // Track migration event
-      track('swap_standard', {
-        inputCurrency: inputCurrency.symbol,
-        outputCurrency: outputCurrency.symbol,
-        inputAmount,
-        outputAmount,
-        migrationType,
-      });
     } catch (e) {
       console.error('Migration error', e);
       setError(e instanceof Error ? e.message : 'An unexpected error occurred');

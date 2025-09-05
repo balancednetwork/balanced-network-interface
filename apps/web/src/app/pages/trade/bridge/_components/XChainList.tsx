@@ -72,7 +72,7 @@ const XChainItem = ({ xChain, isActive, isLast, currency, showTotalXWalletValue 
   const price = React.useMemo(() => {
     if (!prices || !currencyAmount) return;
 
-    return prices[currencyAmount.currency.symbol];
+    return prices[currencyAmount.currency.symbol.replace(' (old)', '')];
   }, [prices, currencyAmount]);
 
   const value = React.useMemo(() => {

@@ -45,8 +45,10 @@ export enum CurrencySelectionType {
   BRIDGE,
   SODAX_TRADE_IN,
   SODAX_TRADE_OUT,
-  MIGRATE_BNUSD,
+  MIGRATE_BNUSD_NEW,
+  MIGRATE_BNUSD_OLD,
   MIGRATE_ICX,
+  MIGRATE_SODAX,
 }
 
 export enum AssetsTab {
@@ -231,10 +233,11 @@ export function CurrencySearch({
       case CurrencySelectionType.BRIDGE: {
         return xTokens || [];
       }
-      case CurrencySelectionType.MIGRATE_BNUSD:
-        return filterMigrateBNUSD(tokens);
+      case CurrencySelectionType.MIGRATE_BNUSD_NEW:
+      case CurrencySelectionType.MIGRATE_BNUSD_OLD:
       case CurrencySelectionType.MIGRATE_ICX:
-        return filterMigrateICX(tokens);
+      case CurrencySelectionType.MIGRATE_SODAX:
+        return [];
     }
   }, [currencySelectionType, tokens, bases, xTokens, xChainId]);
 

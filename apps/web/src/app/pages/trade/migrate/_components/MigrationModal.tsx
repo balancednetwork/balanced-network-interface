@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -12,7 +12,10 @@ import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { ApprovalState } from '@/hooks/useApproveCallback';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useMigrationAllowance } from '@/hooks/useMigrationAllowance';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
 import { formatBigNumber } from '@/utils';
@@ -20,6 +23,7 @@ import { formatSymbol } from '@/utils/formatter';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  getSupportedSolverTokens,
   IconSpokeProvider,
   IcxCreateRevertMigrationParams,
   IcxMigrateParams,
@@ -29,8 +33,7 @@ import {
   SpokeChainId,
   UnifiedBnUSDMigrateParams,
 } from '@sodax/sdk';
-import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
-import { wICX } from '@/constants/tokens';
+import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 
 type MigrationModalProps = {
   modalId?: MODAL_ID;
@@ -84,6 +87,61 @@ const MigrationModal = ({
   const accountReceiver = useXAccount(getXChainType(receiverChain));
   const sourceSpokeProvider = useSpokeProvider(sourceChain as SpokeChainId);
 
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(sourceChain!);
+
+  // Create revert params for ICX revert migration
+  const revertParams: IcxCreateRevertMigrationParams | UnifiedBnUSDMigrateParams | undefined = useMemo(() => {
+    if (!revert || !inputAmount || !inputCurrency || !accountReceiver?.address) {
+      return undefined;
+    }
+
+    if (migrationType === 'ICX') {
+      return {
+        amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
+        to: accountReceiver.address as `hx${string}`,
+      } satisfies IcxCreateRevertMigrationParams;
+    }
+
+    if (migrationType === 'bnUSD') {
+      const srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
+      const dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
+      return {
+        srcChainId: sourceChain as SpokeChainId,
+        dstChainId: receiverChain as SpokeChainId,
+        srcbnUSD,
+        dstbnUSD,
+        amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
+        to: accountReceiver.address as `0x${string}`,
+      } satisfies UnifiedBnUSDMigrateParams;
+    }
+  }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, sourceChain, receiverChain]);
+
+  // Use allowance hook for ICX revert migration
+  const {
+    approve: approveAllowance,
+    approvalState,
+    isApproving,
+    hasAllowance,
+  } = useMigrationAllowance(revertParams, sourceChain as SpokeChainId);
+
+  const shouldApprove = approvalState !== ApprovalState.UNKNOWN && approvalState !== ApprovalState.APPROVED;
+
+  const handleApprove = async () => {
+    if (!revertParams) {
+      return;
+    }
+
+    try {
+      const result = await approveAllowance();
+      if (!result.ok) {
+        throw result.error;
+      }
+    } catch (error) {
+      console.error('Approval error:', error);
+      setError(error instanceof Error ? error.message : 'Approval failed');
+    }
+  };
+
   const handleMigration = async () => {
     if (
       !inputCurrency ||
@@ -101,20 +159,30 @@ const MigrationModal = ({
 
     try {
       if (migrationType === 'bnUSD') {
+        let srcbnUSD: string;
+        let dstbnUSD: string;
+
+        if (!revert) {
+          srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
+          dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
+        } else {
+          srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
+          dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
+        }
+
         const migrationParams: UnifiedBnUSDMigrateParams = {
           srcChainId: sourceChain as SpokeChainId,
           dstChainId: receiverChain as SpokeChainId,
-          //todo fix bnUSD addresses
-          srcbnUSD: inputCurrency.wrapped.address,
-          dstbnUSD: outputCurrency.wrapped.address,
+          srcbnUSD,
+          dstbnUSD,
           amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
           to: accountReceiver.address as `0x${string}`,
         };
+
         setMigrationStatus(MigrationStatus.Migrating);
         const result = await sodax.migration.migratebnUSD(migrationParams, sourceSpokeProvider);
         if (result.ok) {
           const [spokeTxHash, hubTxHash] = result.value;
-          console.log('bnUSD migration successful!', { spokeTxHash, hubTxHash });
         } else {
           throw result.error;
         }
@@ -132,44 +200,18 @@ const MigrationModal = ({
           );
           if (result.ok) {
             const [spokeTxHash, hubTxHash] = result.value;
-            console.log('ICX migration successful!', { spokeTxHash, hubTxHash });
           } else {
             throw result.error;
           }
         } else {
-          const revertParams: IcxCreateRevertMigrationParams = {
-            amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
-            to: accountReceiver.address as `hx${string}`,
-          };
-
-          setMigrationStatus(MigrationStatus.Migrating);
-
-          const isAllowed = await sodax.migration.isAllowanceValid(revertParams, 'revert', sourceSpokeProvider);
-
-          if (!isAllowed.ok) {
-            throw isAllowed.error;
-          }
-
-          if (!isAllowed.value) {
-            const approveResult = await sodax.migration.approve(revertParams, 'revert', sourceSpokeProvider);
-            if (approveResult.ok) {
-              const receipt = await (
-                sourceSpokeProvider.walletProvider as IEvmWalletProvider
-              ).waitForTransactionReceipt(approveResult.value as `0x${string}`);
-              console.log('ICX revert approval successful!', { receipt });
-            } else {
-              throw approveResult.error;
-            }
-          }
-
+          // For ICX revert migration, allowance is handled separately in the UI
           const result = await sodax.migration.revertMigrateSodaToIcx(
-            revertParams,
+            revertParams as IcxCreateRevertMigrationParams,
             sourceSpokeProvider as SonicSpokeProvider,
           );
 
           if (result.ok) {
             const [hubTxHash, spokeTxHash] = result.value;
-            console.log('SODA to ICX revert successful!', { hubTxHash, spokeTxHash });
           } else {
             throw result.error;
           }
@@ -259,15 +301,24 @@ const MigrationModal = ({
                   <Trans>{isProcessing || migrationStatus === MigrationStatus.Failure ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
-                {migrationStatus !== MigrationStatus.Failure && (
-                  <StyledButton
-                    onClick={handleMigration}
-                    $loading={isProcessing}
-                    disabled={isProcessing || !inputCurrency || !outputCurrency || !inputAmount || !outputAmount}
-                  >
-                    {isProcessing ? <Trans>Migrating...</Trans> : <Trans>Migrate</Trans>}
-                  </StyledButton>
-                )}
+                {migrationStatus !== MigrationStatus.Failure &&
+                  (isWrongChain && sourceChain ? (
+                    <StyledButton onClick={handleSwitchChain}>
+                      <Trans>Switch to {xChainMap[sourceChain].name}</Trans>
+                    </StyledButton>
+                  ) : shouldApprove ? (
+                    <StyledButton onClick={handleApprove} disabled={isApproving}>
+                      {isApproving ? 'Approving...' : hasAllowance ? 'Approved' : 'Approve'}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton
+                      onClick={handleMigration}
+                      $loading={isProcessing}
+                      disabled={isProcessing || !inputCurrency || !outputCurrency || !inputAmount || !outputAmount}
+                    >
+                      {isProcessing ? <Trans>Migrating...</Trans> : <Trans>Migrate</Trans>}
+                    </StyledButton>
+                  ))}
               </Flex>
             </motion.div>
           )}

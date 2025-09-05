@@ -19,6 +19,10 @@ import {
   DEFAULT_TOKEN_CHAIN,
   getSupportedXChainForSwapToken,
   getSupportedXChainIdsForSwapToken,
+  icon,
+  avalanche,
+  arbitrum,
+  sui,
 } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
@@ -192,10 +196,21 @@ export default function CurrencyInputPanel({
   const xChains = useMemo(() => {
     if (
       currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
+      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.MIGRATE_BNUSD_NEW ||
+      currencySelectionType === CurrencySelectionType.MIGRATE_SODAX
     ) {
       return sodaxChains;
     }
+
+    if (currencySelectionType === CurrencySelectionType.MIGRATE_ICX) {
+      return [icon];
+    }
+
+    if (currencySelectionType === CurrencySelectionType.MIGRATE_BNUSD_OLD) {
+      return [icon, avalanche, arbitrum, sui];
+    }
+
     return oldWorldChains;
   }, [currencySelectionType, oldWorldChains, sodaxChains]);
 

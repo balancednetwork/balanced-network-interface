@@ -43,14 +43,17 @@ const MIGRATION_LABELS: Record<MigrationType, string> = {
 function useMigrationState() {
   const [inputValue, setInputValue] = React.useState('');
   const ICX = useICX();
-  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[1]);
-  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD[1]);
+  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(ICX);
+  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(SODA[1]);
   const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
   const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
-  const [migrationType, setMigrationType] = React.useState<MigrationType>('bnUSD');
+  const [migrationType, setMigrationType] = React.useState<MigrationType>('ICX');
   const [revert, setRevert] = React.useState<boolean>(false);
-  const [currencySelection, setCurrencySelection] = React.useState<CurrencySelectionType>(
-    CurrencySelectionType.TRADE_IN,
+  const [currencySelectionInput, setCurrencySelectionInput] = React.useState<CurrencySelectionType>(
+    CurrencySelectionType.MIGRATE_ICX,
+  );
+  const [currencySelectionOutput, setCurrencySelectionOutput] = React.useState<CurrencySelectionType>(
+    CurrencySelectionType.MIGRATE_SODAX,
   );
   const [inputPercent, setInputPercent] = React.useState<number>(0);
 
@@ -73,12 +76,16 @@ function useMigrationState() {
   const onTokenSwitch = React.useCallback(() => {
     const prevInputCurrency = inputCurrency;
     const prevInputChain = inputChain;
+    const prevInputCurrencySelection = currencySelectionInput;
+
     setInputChain(outputChain);
     setOutputChain(prevInputChain);
     setInputCurrency(outputCurrency);
     setOutputCurrency(prevInputCurrency);
+    setCurrencySelectionInput(currencySelectionOutput);
+    setCurrencySelectionOutput(prevInputCurrencySelection);
     setRevert(prev => !prev);
-  }, [inputCurrency, outputCurrency, inputChain, outputChain]);
+  }, [inputCurrency, outputCurrency, inputChain, outputChain, currencySelectionInput, currencySelectionOutput]);
 
   const onInputPercentSelect = React.useCallback((percent: number) => {
     setInputPercent(percent);
@@ -86,12 +93,20 @@ function useMigrationState() {
 
   React.useEffect(() => {
     if (migrationType === 'bnUSD') {
+      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_BNUSD_OLD);
+      setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_BNUSD_NEW);
       setInputCurrency(bnUSD[1]);
+      setInputChain('0x1.icon');
       setOutputCurrency(bnUSD_new[1]);
+      setOutputChain('sonic');
       setRevert(false);
     } else if (migrationType === 'ICX') {
+      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_ICX);
+      setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_SODAX);
       setInputCurrency(ICX);
+      setInputChain('0x1.icon');
       setOutputCurrency(SODA[1]);
+      setOutputChain('sonic');
       setRevert(false);
     }
   }, [migrationType, ICX]);
@@ -105,8 +120,6 @@ function useMigrationState() {
     setInputValue,
     migrationType,
     setMigrationType,
-    currencySelection,
-    setCurrencySelection,
     onTokenSwitch,
     onInputPercentSelect,
     inputPercent,
@@ -114,6 +127,8 @@ function useMigrationState() {
     setOutputChain: setOutputChainCB,
     inputChain,
     outputChain,
+    currencySelectionInput,
+    currencySelectionOutput,
     revert,
   } as const;
 }
@@ -125,7 +140,6 @@ function MigratePanel({
   setInputValue,
   migrationType,
   setMigrationType,
-  currencySelection,
   onInputPercentSelect,
   inputPercent,
   setInputChain,
@@ -133,6 +147,8 @@ function MigratePanel({
   inputChain,
   outputChain,
   onTokenSwitch,
+  currencySelectionInput,
+  currencySelectionOutput,
 }: ReturnType<typeof useMigrationState>) {
   const openModal = () => {
     if (inputValue && parseFloat(inputValue) > 0 && inputCurrency && outputCurrency) {
@@ -238,12 +254,11 @@ function MigratePanel({
           <Flex alignItems="center" justifyContent="space-between">
             {signedInWallets.length > 0 && inputCurrencyBalance ? (
               <Typography as="div">
-                (<Trans>Wallet:</Trans>{' '}
+                <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   inputCurrencyBalance?.toFixed(),
                   rates?.[inputCurrencyBalance?.currency.symbol]?.toFixed(),
                 )} ${inputCurrency?.symbol}`}
-                )
               </Typography>
             ) : null}
           </Flex>
@@ -256,7 +271,7 @@ function MigratePanel({
               onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={inputPercent}
               showCrossChainOptions={true}
-              currencySelectionType={currencySelection}
+              currencySelectionType={currencySelectionInput}
               xChainId={inputChain}
               onChainSelect={setInputChain}
             />
@@ -287,7 +302,7 @@ function MigratePanel({
               currency={outputCurrency}
               onUserInput={setInputValue}
               showCrossChainOptions={true}
-              currencySelectionType={currencySelection}
+              currencySelectionType={currencySelectionOutput}
               xChainId={outputChain}
               onChainSelect={setOutputChain}
             />

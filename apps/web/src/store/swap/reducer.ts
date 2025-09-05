@@ -27,7 +27,7 @@ export interface SwapState {
 
 export const INITIAL_SWAP = {
   base: xTokenMap['sui'][0],
-  quote: xTokenMap['0xa4b1.arbitrum'][5],
+  quote: xTokenMap['0xa4b1.arbitrum'][0],
 };
 
 const initialState: SwapState = {

@@ -867,7 +867,7 @@ export function useInitialSwapLoad(): void {
   const tokens = useAllXTokens();
   const { pair = '' } = useParams<{ pair: string }>();
   const { onCurrencySelection } = useSwapActionHandlers();
-  const { currencies } = useDerivedSwapInfo();
+  const { currencies } = useDerivedTradeInfo();
 
   useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {

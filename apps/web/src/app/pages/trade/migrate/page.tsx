@@ -74,6 +74,16 @@ function useMigrationState() {
     setOutputCurrency(currency);
   }, []);
 
+  const setInputValueCB = React.useCallback(
+    (value: string) => {
+      if (inputPercent > 0) {
+        setInputPercent(0);
+      }
+      setInputValue(value);
+    },
+    [inputPercent],
+  );
+
   const onTokenSwitch = React.useCallback(() => {
     const prevInputCurrency = inputCurrency;
     const prevInputChain = inputChain;
@@ -118,7 +128,7 @@ function useMigrationState() {
     setOutputCurrency: setOutputCurrencyCB,
     outputCurrency,
     inputValue,
-    setInputValue,
+    setInputValue: setInputValueCB,
     migrationType,
     setMigrationType,
     onTokenSwitch,

@@ -89,6 +89,73 @@ const MigrationModal = ({
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(sourceChain!);
 
+  /**
+   * Helper function to get bnUSD addresses based on migration direction
+   * @param isRevert - Whether this is a revert migration (new -> old) or forward migration (old -> new)
+   * @returns Object containing source and destination bnUSD token addresses
+   */
+  const getBnUSDAddresses = useCallback(
+    (isRevert: boolean) => {
+      const srcSymbol = isRevert ? 'bnUSD' : 'bnUSD (old)';
+      const dstSymbol = isRevert ? 'bnUSD (old)' : 'bnUSD';
+
+      return {
+        srcbnUSD: xTokenMap[sourceChain as SpokeChainId]?.find(token => token.symbol === srcSymbol)?.address,
+        dstbnUSD: xTokenMap[receiverChain as SpokeChainId]?.find(token => token.symbol === dstSymbol)?.address,
+      };
+    },
+    [sourceChain, receiverChain],
+  );
+
+  /**
+   * Helper function to create bnUSD migration parameters
+   * @param isRevert - Whether this is a revert migration
+   * @param amount - Amount to migrate as string
+   * @param currency - Currency object containing decimals
+   * @param toAddress - Destination address
+   * @returns UnifiedBnUSDMigrateParams or undefined if invalid inputs
+   */
+  const createBnUSDMigrationParams = useCallback(
+    (
+      isRevert: boolean,
+      amount: string,
+      currency: Currency,
+      toAddress: string,
+    ): UnifiedBnUSDMigrateParams | undefined => {
+      if (!amount || !currency || !toAddress) return undefined;
+
+      const { srcbnUSD, dstbnUSD } = getBnUSDAddresses(isRevert);
+
+      return {
+        srcChainId: sourceChain as SpokeChainId,
+        dstChainId: receiverChain as SpokeChainId,
+        srcbnUSD,
+        dstbnUSD,
+        amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
+        to: toAddress as `0x${string}`,
+      };
+    },
+    [sourceChain, receiverChain, getBnUSDAddresses],
+  );
+
+  /**
+   * Helper function to create ICX migration parameters
+   * @param amount - Amount to migrate as string
+   * @param currency - Currency object containing decimals
+   * @param toAddress - Destination address
+   * @returns IcxMigrateParams object
+   */
+  const createIcxMigrationParams = useCallback(
+    (amount: string, currency: Currency, toAddress: string): IcxMigrateParams => {
+      return {
+        address: 'cx0000000000000000000000000000000000000000' as IcxTokenType,
+        amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
+        to: toAddress as `0x${string}`,
+      };
+    },
+    [],
+  );
+
   // Create revert params for ICX revert migration
   const revertParams: IcxCreateRevertMigrationParams | UnifiedBnUSDMigrateParams | undefined = useMemo(() => {
     if (!revert || !inputAmount || !inputCurrency || !accountReceiver?.address) {
@@ -103,18 +170,9 @@ const MigrationModal = ({
     }
 
     if (migrationType === 'bnUSD') {
-      const srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
-      const dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
-      return {
-        srcChainId: sourceChain as SpokeChainId,
-        dstChainId: receiverChain as SpokeChainId,
-        srcbnUSD,
-        dstbnUSD,
-        amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
-        to: accountReceiver.address as `0x${string}`,
-      } satisfies UnifiedBnUSDMigrateParams;
+      return createBnUSDMigrationParams(true, inputAmount, inputCurrency, accountReceiver.address);
     }
-  }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, sourceChain, receiverChain]);
+  }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, createBnUSDMigrationParams]);
 
   // Use allowance hook for ICX revert migration
   const {
@@ -159,27 +217,12 @@ const MigrationModal = ({
 
     try {
       if (migrationType === 'bnUSD') {
-        let srcbnUSD: string;
-        let dstbnUSD: string;
+        const migrationParams = createBnUSDMigrationParams(revert, inputAmount, inputCurrency, accountReceiver.address);
 
-        if (!revert) {
-          srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
-          dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
-        } else {
-          srcbnUSD = xTokenMap[sourceChain as SpokeChainId].find(token => token.symbol === 'bnUSD')?.address;
-          dstbnUSD = xTokenMap[receiverChain as SpokeChainId].find(token => token.symbol === 'bnUSD (old)')?.address;
+        if (!migrationParams) {
+          throw new Error('Failed to create migration parameters');
         }
 
-        const migrationParams: UnifiedBnUSDMigrateParams = {
-          srcChainId: sourceChain as SpokeChainId,
-          dstChainId: receiverChain as SpokeChainId,
-          srcbnUSD,
-          dstbnUSD,
-          amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
-          to: accountReceiver.address as `0x${string}`,
-        };
-
-        setMigrationStatus(MigrationStatus.Migrating);
         const result = await sodax.migration.migratebnUSD(migrationParams, sourceSpokeProvider);
         if (result.ok) {
           const [spokeTxHash, hubTxHash] = result.value;
@@ -188,12 +231,7 @@ const MigrationModal = ({
         }
       } else if (migrationType === 'ICX') {
         if (!revert) {
-          setMigrationStatus(MigrationStatus.Migrating);
-          const migrationParams: IcxMigrateParams = {
-            address: 'cx0000000000000000000000000000000000000000' as IcxTokenType,
-            amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
-            to: accountReceiver.address as `0x${string}`,
-          };
+          const migrationParams = createIcxMigrationParams(inputAmount, inputCurrency, accountReceiver.address);
           const result = await sodax.migration.migrateIcxToSoda(
             migrationParams,
             sourceSpokeProvider as IconSpokeProvider,

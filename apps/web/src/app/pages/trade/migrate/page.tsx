@@ -24,6 +24,7 @@ import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
+import { xTokenMap } from '@balancednetwork/xwagmi';
 
 export type MigrationType = 'bnUSD' | 'ICX';
 
@@ -186,13 +187,17 @@ function MigratePanel({
   // Get input currency balance
   const inputCurrencyBalance = React.useMemo(() => {
     if (!inputCurrency) return undefined;
-    return crossChainWallet[inputChain]?.[inputCurrency.address];
+    return crossChainWallet[inputChain]?.[
+      xTokenMap[inputChain].find(token => token.symbol === inputCurrency.symbol)?.address
+    ];
   }, [crossChainWallet, inputCurrency, inputChain]);
 
   // Get output currency balance
   const outputCurrencyBalance = React.useMemo(() => {
     if (!outputCurrency) return undefined;
-    return crossChainWallet[outputChain]?.[outputCurrency.address];
+    return crossChainWallet[outputChain]?.[
+      xTokenMap[outputChain].find(token => token.symbol === outputCurrency.symbol)?.address
+    ];
   }, [crossChainWallet, outputCurrency, outputChain]);
 
   // Calculate max input amount for percent selection
@@ -277,7 +282,7 @@ function MigratePanel({
             />
           </Flex>
 
-          <Flex alignItems="center" justifyContent="center" my={1}>
+          <Flex alignItems="center" justifyContent="center" mt={1}>
             <FlipButton onClick={onTokenSwitch}>
               <FlipIcon width={25} height={17} />
             </FlipButton>

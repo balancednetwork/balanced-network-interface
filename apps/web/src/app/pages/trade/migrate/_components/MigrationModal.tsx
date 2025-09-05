@@ -18,8 +18,9 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useMigrationAllowance } from '@/hooks/useMigrationAllowance';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
-import { formatBigNumber } from '@/utils';
+import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
+import { getNetworkDisplayName } from '@/utils/xTokens';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -277,28 +278,44 @@ const MigrationModal = ({
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
-          <Trans>{migrationType === 'bnUSD' ? 'bnUSD (old <> new)' : 'ICX <> SODA'}</Trans>
+          {1} {inputCurrency?.symbol} per {outputCurrency?.symbol}
         </Typography>
 
         <Flex my={4}>
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">
-              <Trans>From</Trans>
+              <Trans>Send</Trans>
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
               {inputAmount} {inputCurrency?.symbol}
+            </Typography>
+            <Typography textAlign="center">
+              <Trans>{sourceChain && getNetworkDisplayName(sourceChain)}</Trans>
+            </Typography>
+            <Typography textAlign="center">
+              <Trans>{accountSource?.address && shortenAddress(accountSource.address, 5)}</Trans>
             </Typography>
           </Box>
 
           <Box width={1 / 2}>
             <Typography textAlign="center">
-              <Trans>To</Trans>
+              <Trans>Receive</Trans>
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
               {outputAmount} {outputCurrency?.symbol}
             </Typography>
+            <Typography textAlign="center">
+              <Trans>{receiverChain && getNetworkDisplayName(receiverChain)}</Trans>
+            </Typography>
+            <Typography textAlign="center">
+              <Trans>{accountReceiver?.address && shortenAddress(accountReceiver.address, 5)}</Trans>
+            </Typography>
           </Box>
         </Flex>
+
+        <Typography textAlign="center">
+          <Trans>No fees</Trans>
+        </Typography>
 
         <AnimatePresence>
           {migrationStatus === MigrationStatus.Failure && (

@@ -162,7 +162,7 @@ export default function CurrencyInputPanel({
   const prices = useTokenPricesWithPyth();
   const price = useMemo(() => {
     if (prices && currency?.symbol) {
-      return prices[currency.symbol.replace(' (old)', '')];
+      return prices[currency.symbol.replace('(old)', '')];
     }
   }, [prices, currency]);
 

@@ -97,8 +97,8 @@ const MigrationModal = ({
    */
   const getBnUSDAddresses = useCallback(
     (isRevert: boolean) => {
-      const srcSymbol = isRevert ? 'bnUSD' : 'bnUSD (old)';
-      const dstSymbol = isRevert ? 'bnUSD (old)' : 'bnUSD';
+      const srcSymbol = isRevert ? 'bnUSD' : 'bnUSD(old)';
+      const dstSymbol = isRevert ? 'bnUSD(old)' : 'bnUSD';
 
       return {
         srcbnUSD: xTokenMap[sourceChain as SpokeChainId]?.find(token => token.symbol === srcSymbol)?.address,

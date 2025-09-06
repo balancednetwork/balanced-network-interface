@@ -101,7 +101,7 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
 
 function filterSodaxTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
   return Object.values(tokens)
-    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol.replace('bnUSD (old)', 'bnUSD')))
+    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol.replace('bnUSD(old)', 'bnUSD')))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;
@@ -121,7 +121,7 @@ function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]:
 
 function filterMigrateBNUSD(tokens: { [address: string]: Token }): { [address: string]: Token } {
   const result = Object.values(tokens)
-    .filter(token => token.symbol === 'bnUSD (old)' || token.symbol === 'bnUSD')
+    .filter(token => token.symbol === 'bnUSD(old)' || token.symbol === 'bnUSD')
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;

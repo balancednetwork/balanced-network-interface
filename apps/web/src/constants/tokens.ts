@@ -44,7 +44,7 @@ export const wICX: TokenMap = {
 };
 
 export const bnUSD: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD (old)', 'Balanced Dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD(old)', 'Balanced Dollar'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].bnusd, 18, 'bnUSD', 'Balanced Dollar'),

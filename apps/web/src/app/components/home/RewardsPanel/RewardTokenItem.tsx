@@ -9,7 +9,7 @@ import { formatBalance } from '@/utils/formatter';
 
 const RewardTokenItem = ({ reward }: { reward: CurrencyAmount<Token> }) => {
   const { data: prices } = useTokenPrices();
-  const price = prices?.[reward.currency.symbol!.replace(' (old)', '')];
+  const price = prices?.[reward.currency.symbol!.replace('(old)', '')];
 
   return (
     <>

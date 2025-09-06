@@ -42,7 +42,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const [isAwaitingSignIn, setAwaitingSignIn] = React.useState(false);
   const crossChainBalances = useCrossChainWalletBalances();
-  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
+  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD(old)');
 
   const xChainType = getXChainType(chain.xChainId);
   const xConnect = useXConnect();
@@ -88,7 +88,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
                 )
               : 0
           }`}
-          {' bnUSD'}
+          {' bnUSD(old)'}
         </Typography>
       ) : (
         <Typography color="primaryBright">

@@ -49,7 +49,7 @@ export default function AdvancedOrderDetails() {
         </Typography>
 
         <Typography textAlign="right" maxWidth="200px">
-          <Trans>Sodax intent</Trans>
+          <Trans>SODAX Intent</Trans>
         </Typography>
       </Flex>
 

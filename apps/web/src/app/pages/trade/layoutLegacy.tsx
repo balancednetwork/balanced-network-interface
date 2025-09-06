@@ -4,7 +4,6 @@ import { Trans, t } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 
-import { UnderlineText } from '@/app/components/DropdownText';
 import { Tab, Tabs } from '@/app/components/Tab';
 import { Typography } from '@/app/theme';
 import { useIconReact } from '@/packages/icon-react';
@@ -14,6 +13,7 @@ import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import styled from 'styled-components';
+import { UnderlineText } from '@/app/components/DropdownText';
 
 export const StyledTypographyWithArrow = styled(Typography)`
   position: relative;
@@ -74,14 +74,6 @@ export function TradePageLayoutLegacy() {
 
   const isLegacy = location.pathname.includes('trade-legacy');
 
-  const handleExchangeRedirect = () => {
-    if (isLegacy) {
-      navigate('/trade');
-    } else {
-      navigate('/trade-legacy');
-    }
-  };
-
   return (
     <Box flex={1}>
       <Flex mb={10} flexDirection="column">
@@ -97,9 +89,11 @@ export function TradePageLayoutLegacy() {
               <Trans>Bridge</Trans>
             </Tab>
           </Tabs>
-          <UnderlineText onClick={handleExchangeRedirect}>
-            <StyledTypographyWithArrow color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypographyWithArrow>
-          </UnderlineText>
+          <a href={isLegacy ? '/trade' : '/trade-legacy'} style={{ textDecoration: 'none' }}>
+            <UnderlineText>
+              <StyledTypographyWithArrow color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypographyWithArrow>
+            </UnderlineText>
+          </a>
         </Flex>
 
         <Outlet />

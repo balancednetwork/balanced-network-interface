@@ -44,17 +44,17 @@ const MIGRATION_LABELS: Record<MigrationType, string> = {
 function useMigrationState() {
   const [inputValue, setInputValue] = React.useState('');
   const ICX = useICX();
-  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(ICX);
-  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(SODA[1]);
+  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[0]);
+  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD_new[0]);
   const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
   const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
-  const [migrationType, setMigrationType] = React.useState<MigrationType>('ICX');
+  const [migrationType, setMigrationType] = React.useState<MigrationType>('bnUSD');
   const [revert, setRevert] = React.useState<boolean>(false);
   const [currencySelectionInput, setCurrencySelectionInput] = React.useState<CurrencySelectionType>(
-    CurrencySelectionType.MIGRATE_ICX,
+    CurrencySelectionType.MIGRATE_BNUSD_OLD,
   );
   const [currencySelectionOutput, setCurrencySelectionOutput] = React.useState<CurrencySelectionType>(
-    CurrencySelectionType.MIGRATE_SODAX,
+    CurrencySelectionType.MIGRATE_BNUSD_NEW,
   );
   const [inputPercent, setInputPercent] = React.useState<number>(0);
 

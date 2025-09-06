@@ -98,6 +98,7 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "4H"
 msgstr "4G"
 
@@ -122,12 +123,14 @@ msgid "Rewards:"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "15m"
 msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -163,8 +166,8 @@ msgid "Loan"
 msgstr "Pożyczka"
 
 #: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
-msgid "Sodax intent"
-msgstr ""
+#~ msgid "Sodax intent"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
@@ -208,6 +211,8 @@ msgid "Swapping {0} for {1}..."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/migrate/page.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
@@ -419,6 +424,10 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer fee"
+msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migration completed"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
@@ -702,6 +711,7 @@ msgid "Withdrawing BALN..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1D"
 msgstr "1D"
 
@@ -813,6 +823,7 @@ msgid "Connect Wallet"
 msgstr "Połącz portfel"
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 msgid "Trade on the {0} exchange"
 msgstr ""
 
@@ -839,6 +850,10 @@ msgstr ""
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
 msgstr "Wprowadzona w życie"
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migrate {0} to {1}?"
+msgstr ""
 
 #: src/app/components/CrossChainWalletConnect/index.tsx
 msgid "Enter a recipient address:"
@@ -885,6 +900,10 @@ msgstr "100 bnUSD"
 msgid "Balanced Intent"
 msgstr ""
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migrating..."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Awaiting archway manager message"
 #~ msgstr ""
@@ -914,6 +933,10 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #~ msgid "Creating order..."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+msgid "SODAX Intent"
+msgstr ""
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
 msgid "Activate wallet"
@@ -1075,6 +1098,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1H"
 msgstr "1G"
 
@@ -1098,6 +1122,10 @@ msgstr ""
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Borrow in progress"
 #~ msgstr ""
+
+#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
@@ -1124,6 +1152,11 @@ msgstr ""
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
@@ -1150,9 +1183,9 @@ msgstr ""
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/pages/trade/layout.tsx
-#~ msgid "Bridge"
-#~ msgstr ""
+#: src/app/pages/trade/layoutLegacy.tsx
+msgid "Bridge"
+msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
@@ -1199,6 +1232,7 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 msgid "Send"
 msgstr "Wyślij"
 
@@ -1735,7 +1769,8 @@ msgstr "Obecnie żadne ICX nie są odstake'owywane."
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -2114,7 +2149,7 @@ msgstr "Pożyczanie bnUSD..."
 msgid "{0} sICX added to your wallet."
 msgstr "Dodano {0} sICX do Twojego portfela."
 
-#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
@@ -2308,6 +2343,10 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
 #~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+msgid "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
+msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2545,9 +2584,10 @@ msgstr "Czy chcesz wycofać płynność?"
 #~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
-msgstr ""
+#~ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
+#~ msgstr ""
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2630,6 +2670,10 @@ msgstr ""
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Sent {0} to the bridge contract."
 #~ msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migration failed"
+msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}"
@@ -2886,6 +2930,7 @@ msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network f
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "No price chart available for this pair."
 msgstr "Wykres cenowy nie jest dostępny dla tej pary."
 
@@ -2943,6 +2988,7 @@ msgstr "Zagłosowałeś za"
 #~ msgstr "Zaloguj się poprzez"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Line"
 msgstr "Linia"
 
@@ -2951,6 +2997,7 @@ msgid "liquidity pool"
 msgstr "pula płynności"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Candles"
 msgstr "Świece"
 
@@ -3032,6 +3079,10 @@ msgstr "Zgłoś propozycję"
 msgid "Approve transfer"
 msgstr ""
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "No fees"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"
 msgstr ""
@@ -3048,6 +3099,7 @@ msgid "Switch to"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1W"
 msgstr "1T"
 
@@ -3121,6 +3173,7 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/OrderCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
@@ -3275,6 +3328,12 @@ msgstr ""
 msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Migrate"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Sending {currency} to the {pair} pool..."
 #~ msgstr "Wysyłanie {currency} do puli {pair}..."
@@ -3340,6 +3399,10 @@ msgstr ""
 #: src/xwagmi/xchains/stellar/utils.ts
 #~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
 #~ msgstr ""
+
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@sodax/sdk': 0.0.1-rc.31
-  '@sodax/dapp-kit': 0.0.1-rc.21
+  '@sodax/sdk': 0.0.1-rc.34
+  '@sodax/dapp-kit': 0.0.1-rc.24
   '@sodax/wallet-sdk': 0.0.1-rc.18
   '@sodax/types': 0.0.1-rc.15
   wagmi: 2.14.12
@@ -235,11 +235,11 @@ importers:
         specifier: 9.26.0
         version: 9.26.0(react@18.2.0)
       '@sodax/dapp-kit':
-        specifier: 0.0.1-rc.21
-        version: 0.0.1-rc.21(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
+        specifier: 0.0.1-rc.24
+        version: 0.0.1-rc.24(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
       '@sodax/sdk':
-        specifier: 0.0.1-rc.31
-        version: 0.0.1-rc.31(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
+        specifier: 0.0.1-rc.34
+        version: 0.0.1-rc.34(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
       '@sodax/types':
         specifier: 0.0.1-rc.15
         version: 0.0.1-rc.15
@@ -481,7 +481,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/sdk-core:
     dependencies:
@@ -512,7 +512,7 @@ importers:
         version: 6.2.2
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/v1-sdk:
     dependencies:
@@ -534,7 +534,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/xwagmi:
     dependencies:
@@ -4526,15 +4526,15 @@ packages:
   '@socket.io/component-emitter@3.1.1':
     resolution: {integrity: sha512-dzJtaDAAoXx4GCOJpbB2eG/Qj8VDpdwkLsWGzGm+0L7E8/434RyMbAHmk9ubXWVAb9nXmc44jUf8GKqVDiKezg==}
 
-  '@sodax/dapp-kit@0.0.1-rc.21':
-    resolution: {integrity: sha512-e5bXvtnssecIVtPcgUUf6tI4TQZe+90/SvDiu86J7yEFuP4K5HG7c0/hIZsqbKQWZ/WJRgvkXh1KNc7CXpy2lw==}
+  '@sodax/dapp-kit@0.0.1-rc.24':
+    resolution: {integrity: sha512-7pEa6vObXhKxwf9cbHwkHrqltb61oEGwym5qO/LTjk4JX+tpWG5qX57jFNFrcuVomrcDtdB2O3HKGSdM+TXNdA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@tanstack/react-query': 5.x
       react: '>=18'
 
-  '@sodax/sdk@0.0.1-rc.31':
-    resolution: {integrity: sha512-bU+SWIFQ4cUGPNqxsB6gu3EEIC2x2Q4OYChNR1inK4Zr4VoH6WGK60YrRJ3VPh1XJDVk1ho8WvHCccVOQ4KbhA==}
+  '@sodax/sdk@0.0.1-rc.34':
+    resolution: {integrity: sha512-Y5Ov8g55REEhzDscbfnSRBn2hbjC2dPJ/HgT5/bMT+oNe+5QGOfFF1sQxgCOMFzH0kvLaKQIR4i/1yH15TDFmg==}
     engines: {node: '>=18.0.0'}
 
   '@sodax/types@0.0.1-rc.15':
@@ -19949,9 +19949,9 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.1': {}
 
-  '@sodax/dapp-kit@0.0.1-rc.21(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)':
+  '@sodax/dapp-kit@0.0.1-rc.24(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)':
     dependencies:
-      '@sodax/sdk': 0.0.1-rc.31(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
+      '@sodax/sdk': 0.0.1-rc.34(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)
       '@sodax/types': 0.0.1-rc.15
       '@tanstack/react-query': 5.29.2(react@18.2.0)
       react: 18.2.0
@@ -19972,7 +19972,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@sodax/sdk@0.0.1-rc.31(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)':
+  '@sodax/sdk@0.0.1-rc.34(@types/react@18.2.67)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.67)':
     dependencies:
       '@coral-xyz/anchor': 0.30.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@injectivelabs/core-proto-ts': 1.15.0
@@ -31695,30 +31695,6 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsup@8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2):
-    dependencies:
-      bundle-require: 4.0.2(esbuild@0.19.12)
-      cac: 6.7.14
-      chokidar: 3.6.0
-      debug: 4.3.4
-      esbuild: 0.19.12
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.4.41)
-      resolve-from: 5.0.0
-      rollup: 4.13.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.35.0
-      tree-kill: 1.2.2
-    optionalDependencies:
-      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
-      postcss: 8.4.41
-      typescript: 5.7.2
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-
   tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.5.4):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.19.12)
@@ -31739,6 +31715,30 @@ snapshots:
       '@swc/core': 1.4.8(@swc/helpers@0.5.12)
       postcss: 8.4.41
       typescript: 5.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+
+  tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2):
+    dependencies:
+      bundle-require: 4.0.2(esbuild@0.19.12)
+      cac: 6.7.14
+      chokidar: 3.6.0
+      debug: 4.3.4
+      esbuild: 0.19.12
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 4.0.2(postcss@8.4.41)
+      resolve-from: 5.0.0
+      rollup: 4.13.0
+      source-map: 0.8.0-beta.0
+      sucrase: 3.35.0
+      tree-kill: 1.2.2
+    optionalDependencies:
+      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
+      postcss: 8.4.41
+      typescript: 5.7.2
     transitivePeerDependencies:
       - supports-color
       - ts-node

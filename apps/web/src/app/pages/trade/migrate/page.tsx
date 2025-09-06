@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { Currency, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
-import { Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
-import { StyledArrowDownIcon } from '@/app/components/DropdownText';
+import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
@@ -25,6 +25,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
 import { xTokenMap } from '@balancednetwork/xwagmi';
+import { useTheme } from 'styled-components';
 
 export type MigrationType = 'bnUSD' | 'ICX';
 
@@ -337,21 +338,51 @@ function MigratePanel({
 }
 
 function MigrateDescription({ migrationType }: { migrationType: MigrationType }) {
+  const theme = useTheme();
   const getMigrationContent = () => {
     switch (migrationType) {
       case 'bnUSD':
         return {
           title: 'bnUSD (old <> new)',
-          equivalence: '1 bnUSD (old) = 1 bnUSD',
-          description:
-            'Use new bnUSD to trade on every chain except ICON. Use old bnUSD to repay loans and earn through the Balanced Savings Rate.',
+          equivalence: '1 bnUSD(old) = 1 bnUSD',
+          description: (
+            <>
+              Balanced is transitioning to a new technology stack, powered by{' '}
+              <a
+                href="https://www.sodax.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: theme.colors.primary }}
+              >
+                <UnderlineText>SODAX</UnderlineText>
+              </a>
+              .
+            </>
+          ),
+          bulletPoints: [
+            'Use bnUSD to trade on every chain except ICON.',
+            'Use bnUSD(old) to repay loans and earn through the Savings Rate.',
+          ],
         };
       case 'ICX':
         return {
           title: 'ICX <> SODA',
           equivalence: '1 ICX = 1 SODA',
-          description:
-            'Migrate your ICX to SODA for enhanced cross-chain functionality and improved trading capabilities.',
+          description: (
+            <>
+              The ICON blockchain is now{' '}
+              <a
+                href="https://www.sodax.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: theme.colors.primary }}
+              >
+                <UnderlineText>SODAX</UnderlineText>
+              </a>
+              , a unified liquidity layer and DeFi platform on Sonic. Swap your ICX 1:1 for SODA on the Sonic
+              blockchain.
+            </>
+          ),
         };
       default:
         return {
@@ -374,9 +405,20 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
           {content.equivalence}
         </Typography>
       )}
-      <Typography variant="p" textAlign="center" color="text2">
-        {content.description}
-      </Typography>
+      <Box pl={3}>
+        <Typography variant="p" color="text2" mb={content.bulletPoints ? 3 : 0}>
+          {content.description}
+        </Typography>
+        {content.bulletPoints && (
+          <Flex flexDirection="column" pt={1}>
+            {content.bulletPoints.map((point, index) => (
+              <Typography key={index} variant="p" color="text2" mb={1}>
+                • {point}
+              </Typography>
+            ))}
+          </Flex>
+        )}
+      </Box>
     </Flex>
   );
 }

@@ -60,7 +60,7 @@ const Savings = () => {
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
 
-  const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
+  const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD(old)'];
   const [bnUSDBalance] = useXTokenBalances([bnUSD]);
 
   const [typedValueBN, lockedAmountBN] = React.useMemo(() => {

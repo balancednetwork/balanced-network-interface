@@ -267,7 +267,7 @@ const Savings = () => {
           </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>
+            <Trans>Buy or borrow bnUSD(old), then deposit it here to earn rewards.</Trans>
           </Typography>
         )}
       </Box>

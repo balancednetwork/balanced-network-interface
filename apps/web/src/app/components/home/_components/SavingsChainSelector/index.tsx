@@ -117,7 +117,7 @@ const SavingsChainSelector = ({
           total = new BigNumber(-1);
         }
 
-        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD(old)']!;
         const bnUSDBalance: CurrencyAmount<XToken> | undefined = bnUSD
           ? crossChainBalances[xChainId]?.[bnUSD.address]
           : undefined;

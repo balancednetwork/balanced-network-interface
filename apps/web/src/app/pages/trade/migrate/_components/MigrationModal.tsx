@@ -19,7 +19,7 @@ import { useMigrationAllowance } from '@/hooks/useMigrationAllowance';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
 import { formatBigNumber, shortenAddress } from '@/utils';
-import { formatSymbol } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -287,7 +287,7 @@ const MigrationModal = ({
               <Trans>Send</Trans>
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
-              {inputAmount} {inputCurrency?.symbol}
+              {formatBalance(inputAmount, '1')} {inputCurrency?.symbol}
             </Typography>
             <Typography textAlign="center">
               <Trans>{sourceChain && getNetworkDisplayName(sourceChain)}</Trans>
@@ -302,7 +302,7 @@ const MigrationModal = ({
               <Trans>Receive</Trans>
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
-              {outputAmount} {outputCurrency?.symbol}
+              {formatBalance(outputAmount, '1')} {outputCurrency?.symbol}
             </Typography>
             <Typography textAlign="center">
               <Trans>{receiverChain && getNetworkDisplayName(receiverChain)}</Trans>

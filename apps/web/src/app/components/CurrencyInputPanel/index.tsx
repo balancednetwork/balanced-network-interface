@@ -10,8 +10,6 @@ import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
 import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
-import { useRatesWithOracle } from '@/queries/reward';
-import { useOraclePrices } from '@/store/oracle/hooks';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
@@ -20,9 +18,8 @@ import {
   getSupportedXChainForSwapToken,
   getSupportedXChainIdsForSwapToken,
   icon,
-  avalanche,
-  arbitrum,
   sui,
+  stellar,
 } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
@@ -208,7 +205,7 @@ export default function CurrencyInputPanel({
     }
 
     if (currencySelectionType === CurrencySelectionType.MIGRATE_BNUSD_OLD) {
-      return [icon, avalanche, arbitrum, sui];
+      return [icon, stellar, sui];
     }
 
     return oldWorldChains;

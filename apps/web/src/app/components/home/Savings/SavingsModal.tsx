@@ -94,7 +94,7 @@ const SavingsModal = ({
     if (xAccount.address) {
       try {
         setWalletPrompting(true);
-        const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
+        const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD(old)'];
 
         let txHash;
         if (shouldDeposit) {

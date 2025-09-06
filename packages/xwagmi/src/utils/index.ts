@@ -162,5 +162,5 @@ export function isIconTransaction(from: XChainId | undefined, to: XChainId | und
 }
 
 export function isSpokeToken(token: XToken): boolean {
-  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
+  return ['bnUSD', 'bnUSD(old)', 'sICX', 'BALN'].includes(token.symbol);
 }

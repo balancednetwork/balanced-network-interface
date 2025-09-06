@@ -194,7 +194,7 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD');
+    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD(old)');
     if (!bnUSD) {
       throw new Error('bnUSD XToken not found');
     }

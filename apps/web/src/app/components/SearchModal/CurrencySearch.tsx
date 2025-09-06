@@ -126,7 +126,6 @@ function filterMigrateBNUSD(tokens: { [address: string]: Token }): { [address: s
       tokenMap[token.address] = token;
       return tokenMap;
     }, {});
-  console.log('filterMigrateBNUSD tokensss', result);
   return result;
 }
 

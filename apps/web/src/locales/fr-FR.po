@@ -3095,8 +3095,8 @@ msgid "Approve transfer"
 msgstr ""
 
 #: src/app/pages/trade/migrate/_components/MigrationModal.tsx
-msgid "No fees"
-msgstr ""
+#~ msgid "No fees"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"

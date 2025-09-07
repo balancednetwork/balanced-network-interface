@@ -4,7 +4,7 @@ import { XChainId } from '@balancednetwork/sdk-core';
 import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
-  bnUSD: '0x1.icon',
+  bnUSD: 'sonic',
   sICX: '0x1.icon',
   BALN: '0x1.icon',
   sARCH: 'archway-1',

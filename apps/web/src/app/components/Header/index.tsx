@@ -225,6 +225,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const hasBTCB = useHasBTCB();
   const location = useLocation();
   const isTradeLegacy = location.pathname?.includes('trade-legacy');
+  const isSmall = useMedia('(max-width: 550px)');
 
   const pendingTxCount = usePendingTxCount();
   const [testPendingCount, setTestPendingCount] = React.useState(0);
@@ -400,7 +401,7 @@ export default function Header(props: { title?: string; className?: string }) {
               <ClickAwayListener onClickAway={closeRecentActivityMenu}>
                 <div>
                   <PendingIconButton
-                    $expanded={isExpanded}
+                    $expanded={!isSmall && isExpanded}
                     $isActive={Boolean(recentActivityAnchor)}
                     $showAlertBackground={showAlertBackground}
                     ref={recentActivityButtonRef}
@@ -409,10 +410,12 @@ export default function Header(props: { title?: string; className?: string }) {
                     {isExpanded ? (
                       <>
                         <SpinningIcon width="32" height="32" />
-                        <Typography
-                          color="bg1"
-                          style={{ whiteSpace: 'nowrap' }}
-                        >{`${totalPendingCount} in progress...`}</Typography>
+                        {!isSmall ? (
+                          <Typography
+                            color="bg1"
+                            style={{ whiteSpace: 'nowrap' }}
+                          >{`${totalPendingCount} in progress...`}</Typography>
+                        ) : null}
                       </>
                     ) : (
                       <IconStage>

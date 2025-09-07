@@ -191,6 +191,7 @@ const Savings = () => {
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
+                style={{ paddingLeft: '20px', paddingRight: '20px' }}
                 fontSize={14}
                 onClick={
                   isAdjusting
@@ -208,7 +209,7 @@ const Savings = () => {
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
                     ? t`Withdraw`
                     : bnUSDBalance?.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
-                      ? 'Deposit bnUSD'
+                      ? 'Deposit bnUSD(old)'
                       : 'Adjust'}
               </Button>
             </Flex>
@@ -248,7 +249,7 @@ const Savings = () => {
                     {lockedAmount?.toFixed(2, { groupSeparator: ',' }).replace('.00', '') || 0}
                   </Typography>
                 )}
-                <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD`}</Typography>
+                <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD(old)`}</Typography>
               </Flex>
               {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && staticDailyAmountRate && (
                 <Typography fontSize={14}>{`~ $${typedValueBN

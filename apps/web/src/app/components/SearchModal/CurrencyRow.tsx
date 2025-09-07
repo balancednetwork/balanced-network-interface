@@ -169,8 +169,8 @@ export default function CurrencyRow({
 
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
               {rateFracs &&
-                rateFracs[formatSymbol(currency.symbol!)] &&
-                formatPrice(rateFracs[formatSymbol(currency.symbol!)].toFixed(18))}
+                rateFracs[formatSymbol(currency.symbol!.replace('(old)', ''))] &&
+                formatPrice(rateFracs[formatSymbol(currency.symbol!.replace('(old)', ''))].toFixed(18))}
             </Typography>
           </Flex>
         </Flex>

@@ -57,7 +57,8 @@ const swapSlice = createSlice({
           const supportedChainIds = getSupportedXChainIdsForIntentToken(currency);
 
           if (supportedChainIds.length > 1) {
-            const previousFieldXChainId = state[field].currency?.xChainId;
+            const previousCurrency = state[field].currency;
+            const previousFieldXChainId = previousCurrency?.xChainId;
             // if the selected currency is multichain and the same as the other field currency,
             // but the other field currency has the same xchainid, switch the xchainIds of the fields
             if (currency?.xChainId === state[otherField].currency?.xChainId && previousFieldXChainId) {
@@ -69,6 +70,14 @@ const swapSlice = createSlice({
                   [otherField]: { ...state[otherField], currency: newOtherFieldCurrency },
                 };
               }
+            }
+
+            if (previousCurrency && currency?.xChainId === state[otherField].currency?.xChainId) {
+              return {
+                ...state,
+                [field]: { ...state[field], currency, percent: 0 },
+                [otherField]: { ...state[otherField], currency: previousCurrency, percent: 0 },
+              };
             }
 
             // Allow same currency selection if supported on multiple chains

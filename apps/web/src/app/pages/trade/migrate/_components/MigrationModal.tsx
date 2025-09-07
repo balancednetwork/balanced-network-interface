@@ -280,10 +280,10 @@ const MigrationModal = ({
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
-          {1} {inputCurrency?.symbol} per {outputCurrency?.symbol}
+          {1} {inputCurrency?.symbol} = {1} {outputCurrency?.symbol}
         </Typography>
 
-        <Flex my={4}>
+        <Flex mt={4}>
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">
               <Trans>Send</Trans>
@@ -314,10 +314,6 @@ const MigrationModal = ({
             </Typography>
           </Box>
         </Flex>
-
-        <Typography textAlign="center">
-          <Trans>No fees</Trans>
-        </Typography>
 
         <AnimatePresence>
           {migrationStatus === MigrationStatus.Failure && (

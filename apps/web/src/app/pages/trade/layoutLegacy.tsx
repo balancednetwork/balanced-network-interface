@@ -14,6 +14,7 @@ import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import styled from 'styled-components';
 import { UnderlineText } from '@/app/components/DropdownText';
+import { useMedia } from 'react-use';
 
 export const StyledTypographyWithArrow = styled(Typography)`
   position: relative;
@@ -47,6 +48,7 @@ export function TradePageLayoutLegacy() {
   const { account } = useIconReact();
   const location = useLocation();
   const navigate = useNavigate();
+  const isSmall = useMedia('(max-width: 550px)');
 
   useFetchPrice();
   useFetchBBalnSources(5000, true);
@@ -89,11 +91,13 @@ export function TradePageLayoutLegacy() {
               <Trans>Bridge</Trans>
             </Tab>
           </Tabs>
-          <a href={isLegacy ? '/trade' : '/trade-legacy'} style={{ textDecoration: 'none' }}>
-            <UnderlineText>
-              <StyledTypographyWithArrow color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypographyWithArrow>
-            </UnderlineText>
-          </a>
+          {!isSmall && (
+            <a href={isLegacy ? '/trade' : '/trade-legacy'} style={{ textDecoration: 'none' }}>
+              <UnderlineText>
+                <StyledTypographyWithArrow color="primary">{t`${isLegacy ? 'Regular' : 'Legacy'} exchange`}</StyledTypographyWithArrow>
+              </UnderlineText>
+            </a>
+          )}
         </Flex>
 
         <Outlet />

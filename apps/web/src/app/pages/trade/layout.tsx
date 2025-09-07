@@ -94,7 +94,7 @@ export function TradePageLayout() {
           </Tabs>
           <a href={isLegacy ? '/trade' : '/trade-legacy'} style={{ textDecoration: 'none' }}>
             <UnderlineText>
-              <StyledTypography color="primary">{t`Trade on the ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypography>
+              <StyledTypography color="primary">{t`${isLegacy ? 'Regular' : 'Legacy'} exchange`}</StyledTypography>
             </UnderlineText>
           </a>
         </Flex>

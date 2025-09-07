@@ -5,6 +5,7 @@ import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: 'sonic',
+  'bnUSD(old)': '0x1.icon',
   sICX: '0x1.icon',
   BALN: '0x1.icon',
   sARCH: 'archway-1',

@@ -144,6 +144,21 @@ const IconLayer = styled.div`
   will-change: transform, opacity;
 `;
 
+const StyledFlex = styled(Flex)`
+  align-items: center;
+  position: relative;
+
+  @media(max-width: 550px) {
+    align-items: start;
+    flex-direction: column;
+
+    .legacy-text {
+      padding-top: 0;
+      margin-left: 0;
+    }
+  }
+`;
+
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
 
 type AnimationState = 'IDLE' | 'PENDING' | 'SUCCESS' | 'FADING_OUT_SUCCESS';
@@ -318,20 +333,22 @@ export default function Header(props: { title?: string; className?: string }) {
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Typography variant="h1">
-            {/* @ts-ignore */}
-            <Trans id={title} />
-          </Typography>
-          {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
-              {CHAIN_INFO[NETWORK_ID].name}
+          <StyledFlex>
+            <Typography variant="h1">
+              {/* @ts-ignore */}
+              <Trans id={title} />
             </Typography>
-          )}
-          {isTradeLegacy && (
-            <Typography color="text2" fontSize={16} ml={2} pt={'17px'}>
-              {t`Legacy`}
-            </Typography>
-          )}
+            {NETWORK_ID !== NetworkId.MAINNET && (
+              <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
+                {CHAIN_INFO[NETWORK_ID].name}
+              </Typography>
+            )}
+            {isTradeLegacy && (
+              <Typography className="legacy-text" color="text2" fontSize={16} ml={2} pt={'17px'}>
+                {t`Legacy`}
+              </Typography>
+            )}
+          </StyledFlex>
         </Flex>
 
         {wallets.length === 0 && (

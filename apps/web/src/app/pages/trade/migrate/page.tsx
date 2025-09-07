@@ -267,7 +267,7 @@ function MigratePanel({
             </ClickAwayListener>
           </Flex>
 
-          <Flex alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center" justifyContent="flex-end">
             {signedInWallets.length > 0 && inputCurrencyBalance ? (
               <Typography as="div">
                 <Trans>Wallet:</Trans>{' '}
@@ -299,7 +299,7 @@ function MigratePanel({
             </FlipButton>
           </Flex>
 
-          <Flex alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center" justifyContent="flex-end">
             {signedInWallets.length > 0 && outputCurrencyBalance ? (
               <Typography as="div">
                 <Trans>Wallet:</Trans>{' '}

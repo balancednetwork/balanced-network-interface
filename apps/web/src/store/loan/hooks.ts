@@ -352,7 +352,7 @@ export function useLoanUsedAmount(address?: string): BigNumber {
   const balances = xBalances[loanNetwork];
 
   return React.useMemo(() => {
-    const xBnUSDAddress = getXTokenAddress(loanNetwork, 'bnUSD');
+    const xBnUSDAddress = getXTokenAddress(loanNetwork, 'bnUSD(old)');
 
     if (!balances || !address || !xBnUSDAddress) return ZERO;
 

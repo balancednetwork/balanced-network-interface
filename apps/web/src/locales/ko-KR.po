@@ -245,6 +245,10 @@ msgstr ""
 msgid "Assets to send"
 msgstr "송금할 자산"
 
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+msgid "The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page."
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{0} sent to the {1} pool."
 msgstr ""
@@ -824,8 +828,8 @@ msgstr "지갑 연결"
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/layoutLegacy.tsx
-msgid "Trade on the {0} exchange"
-msgstr ""
+#~ msgid "Trade on the {0} exchange"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets on Balanced"
@@ -916,6 +920,15 @@ msgstr ""
 #: src/app/components/WithdrawalLimitWarning/index.tsx
 #~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
 #~ msgstr ""
+
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
+msgid "Trade on {0} exchange"
+msgstr ""
+
+#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+msgid "Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
@@ -1124,8 +1137,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
-msgstr ""
+#~ msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+#~ msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
@@ -2716,6 +2729,10 @@ msgstr ""
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
+#: src/app/pages/trade/layout.tsx
+msgid "{0} exchange"
+msgstr ""
+
 #: src/app/components/BridgeLimitWarning/index.tsx
 msgid "available on {0}."
 msgstr ""
@@ -3401,8 +3418,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
-msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
-msgstr ""
+#~ msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

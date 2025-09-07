@@ -244,6 +244,10 @@ msgstr "Borrowing"
 msgid "Assets to send"
 msgstr "Assets to send"
 
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+msgid "The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page."
+msgstr "The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page."
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{0} sent to the {1} pool."
 msgstr "{0} sent to the {1} pool."
@@ -795,8 +799,8 @@ msgstr "Connect Wallet"
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/layoutLegacy.tsx
-msgid "Trade on the {0} exchange"
-msgstr "Trade on the {0} exchange"
+#~ msgid "Trade on the {0} exchange"
+#~ msgstr "Trade on the {0} exchange"
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets on Balanced"
@@ -887,6 +891,15 @@ msgstr "bBALN holders received"
 #: src/app/components/WithdrawalLimitWarning/index.tsx
 #~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
 #~ msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
+msgid "Trade on {0} exchange"
+msgstr "Trade on {0} exchange"
+
+#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+msgid "Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+msgstr "Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
@@ -1089,8 +1102,8 @@ msgstr "Claim bribe?"
 #~ msgstr "Borrow in progress"
 
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
-msgstr "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+#~ msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+#~ msgstr "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
@@ -2654,6 +2667,10 @@ msgstr "Swap cancelled"
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 
+#: src/app/pages/trade/layout.tsx
+msgid "{0} exchange"
+msgstr "{0} exchange"
+
 #: src/app/components/BridgeLimitWarning/index.tsx
 msgid "available on {0}."
 msgstr "available on {0}."
@@ -3335,8 +3352,8 @@ msgstr "The current {0} price is"
 #~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
 
 #: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
-msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
-msgstr "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
+#~ msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
+#~ msgstr "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

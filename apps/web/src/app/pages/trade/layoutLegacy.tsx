@@ -94,7 +94,7 @@ export function TradePageLayoutLegacy() {
           {!isSmall && (
             <a href={isLegacy ? '/trade' : '/trade-legacy'} style={{ textDecoration: 'none' }}>
               <UnderlineText>
-                <StyledTypographyWithArrow color="primary">{t`${isLegacy ? 'Regular' : 'Legacy'} exchange`}</StyledTypographyWithArrow>
+                <StyledTypographyWithArrow color="primary">{t`Trade on ${isLegacy ? 'regular' : 'legacy'} exchange`}</StyledTypographyWithArrow>
               </UnderlineText>
             </a>
           )}

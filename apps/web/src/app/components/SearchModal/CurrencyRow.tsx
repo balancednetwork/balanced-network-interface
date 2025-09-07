@@ -63,10 +63,13 @@ export default function CurrencyRow({
       currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
       currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
     ) {
+      if (currency.symbol === 'bnUSD(old)') {
+        return ['0x1.icon' as XChainId];
+      }
       return sodaxXChainIds;
     }
     return oldCurrencyXChainIds;
-  }, [currencySelectionType, oldCurrencyXChainIds, sodaxXChainIds]);
+  }, [currencySelectionType, oldCurrencyXChainIds, sodaxXChainIds, currency]);
 
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
@@ -122,7 +125,7 @@ export default function CurrencyRow({
   const [show, setShow] = useState(false);
   const open = useCallback(() => setShow(true), []);
   const close = useCallback(() => setShow(false), []);
-  const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol)]?.toFixed(8));
+  const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol.replace('(old)', ''))]?.toFixed(8));
   const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(basedOnWallet, price, balance);
 
   const finalXChainIds = useMemo(() => {
@@ -224,8 +227,8 @@ export default function CurrencyRow({
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
             {rateFracs &&
-              rateFracs[formatSymbol(currency.symbol!)] &&
-              formatPrice(rateFracs[formatSymbol(currency.symbol!)].toFixed(18))}
+              rateFracs[formatSymbol(currency.symbol!.replace('(old)', ''))] &&
+              formatPrice(rateFracs[formatSymbol(currency.symbol!.replace('(old)', ''))].toFixed(18))}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

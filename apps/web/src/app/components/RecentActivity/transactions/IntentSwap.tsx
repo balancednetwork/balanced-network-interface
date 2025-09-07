@@ -109,12 +109,21 @@ export const getTokenDataFromIntent = (
     const srcSupportedXTokens = xTokenMap[srcChainId as XChainId] || [];
     const dstSupportedXTokens = xTokenMap[dstChainId as XChainId] || [];
 
-    const mappedSrcToken = Array.from(srcHubAssetMap.entries()).find(
+    let mappedSrcToken = Array.from(srcHubAssetMap.entries()).find(
       ([key]) => key.toLowerCase() === intentData.inputToken.toLowerCase(),
     )?.[1];
-    const mappedDstToken = Array.from(dstHubAssetMap.entries()).find(
+    let mappedDstToken = Array.from(dstHubAssetMap.entries()).find(
       ([key]) => key.toLowerCase() === intentData.outputToken.toLowerCase(),
     )?.[1];
+
+    mappedSrcToken = mappedSrcToken?.replace(
+      'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
+      'cx0000000000000000000000000000000000000000',
+    );
+    mappedDstToken = mappedDstToken?.replace(
+      'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
+      'cx0000000000000000000000000000000000000000',
+    );
 
     const srcToken = srcSupportedXTokens.find(token => token.address.toLowerCase() === mappedSrcToken?.toLowerCase());
     const dstToken = dstSupportedXTokens.find(token => token.address.toLowerCase() === mappedDstToken?.toLowerCase());

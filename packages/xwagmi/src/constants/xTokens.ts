@@ -365,7 +365,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'sui',
       'sui',
-      '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+      '0xff4de2b2b57dd7611d2812d231a467d007b702a101fd5c7ad3b278257cddb507::bnusd::BNUSD',
       9,
       'bnUSD',
       'Balanced Dollar',

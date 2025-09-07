@@ -141,7 +141,7 @@ const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
       <ScrollHelper>
         <Typography mb="15px">
           <Trans>
-            Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page.
+            Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page.
           </Trans>
         </Typography>
         <Flex width="100%" justifyContent="space-between">

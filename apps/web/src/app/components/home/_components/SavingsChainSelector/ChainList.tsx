@@ -219,7 +219,7 @@ const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
 
       <ScrollHelper>
         <Typography mb="15px">
-          <Trans>The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page.</Trans>
+          <Trans>The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page.</Trans>
         </Typography>
         <Grid>
           <StyledHeaderText

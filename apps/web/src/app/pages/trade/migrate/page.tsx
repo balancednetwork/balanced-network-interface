@@ -25,7 +25,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
 import { xTokenMap } from '@balancednetwork/xwagmi';
-import { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 export type MigrationType = 'bnUSD' | 'ICX';
 
@@ -41,6 +41,12 @@ const MIGRATION_LABELS: Record<MigrationType, string> = {
   ICX: 'ICX <> SODA',
   // BALN: 'BALN <> SODA',
 };
+
+const StyledUnderlineText = styled(UnderlineText)`
+  &:after {
+    margin-top: -2px;
+  }
+`;
 
 function useMigrationState() {
   const [inputValue, setInputValue] = React.useState('');
@@ -354,7 +360,7 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
                 rel="noopener noreferrer"
                 style={{ color: theme.colors.primary }}
               >
-                <UnderlineText>SODAX</UnderlineText>
+                <StyledUnderlineText>SODAX</StyledUnderlineText>
               </a>
               .
             </>
@@ -377,7 +383,7 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
                 rel="noopener noreferrer"
                 style={{ color: theme.colors.primary }}
               >
-                <UnderlineText>SODAX</UnderlineText>
+                <StyledUnderlineText>SODAX</StyledUnderlineText>
               </a>
               , a unified liquidity layer and DeFi platform on Sonic. Swap your ICX 1:1 for SODA on the Sonic
               blockchain.

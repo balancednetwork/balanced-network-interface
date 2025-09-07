@@ -127,7 +127,7 @@ const MigrationModal = ({
 
       const { srcbnUSD, dstbnUSD } = getBnUSDAddresses(isRevert);
 
-      const decimals = sourceChain === 'sui' ? 9 : currency.decimals;
+      const decimals = sourceChain === 'sui' || sourceChain === 'solana' ? 9 : currency.decimals;
 
       return {
         srcChainId: sourceChain as SpokeChainId,

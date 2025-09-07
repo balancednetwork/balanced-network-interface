@@ -279,7 +279,7 @@ function MigratePanel({
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   inputCurrencyBalance?.toFixed(),
-                  rates?.[inputCurrencyBalance?.currency.symbol]?.toFixed(),
+                  rates?.[inputCurrencyBalance?.currency.symbol?.replace('(old)', '')]?.toFixed(),
                 )} ${inputCurrency?.symbol}`}
               </Typography>
             ) : null}
@@ -311,7 +311,7 @@ function MigratePanel({
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   outputCurrencyBalance?.toFixed(),
-                  rates?.[outputCurrencyBalance?.currency.symbol]?.toFixed(),
+                  rates?.[outputCurrencyBalance?.currency.symbol?.replace('(old)', '')]?.toFixed(),
                 )} ${outputCurrency?.symbol}`}
               </Typography>
             ) : null}

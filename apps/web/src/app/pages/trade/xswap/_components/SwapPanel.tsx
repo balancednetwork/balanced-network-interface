@@ -139,7 +139,7 @@ export default function SwapPanel() {
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   currencyBalances[Field.INPUT]?.toFixed(),
-                  rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed(),
+                  rates?.[currencyBalances[Field.INPUT]?.currency.symbol.replace('(old)', '')]?.toFixed(),
                 )} ${currencies[Field.INPUT]?.symbol}`}
               </Typography>
             )}
@@ -181,7 +181,7 @@ export default function SwapPanel() {
                       currencyBalances[Field.OUTPUT]
                         ? formatBalance(
                             currencyBalances[Field.OUTPUT]?.toFixed(),
-                            rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed(),
+                            rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol.replace('(old)', '')]?.toFixed(),
                           )
                         : '0'
                     } ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`

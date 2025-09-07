@@ -20,6 +20,7 @@ import {
   icon,
   sui,
   stellar,
+  convertCurrency,
 } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
@@ -213,16 +214,18 @@ export default function CurrencyInputPanel({
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency, setDefaultChain = true) => {
-      onCurrencySelect && onCurrencySelect(currency);
-
       if (setDefaultChain && currency?.symbol) {
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId) {
+          const convertedCurrency = convertCurrency(defaultXChainId, currency);
+          onCurrencySelect && convertedCurrency && onCurrencySelect(convertedCurrency);
           const supportedChainIds = getSupportedXChainIdsForSwapToken(currency);
           const chainCount = supportedChainIds.length;
           onChainSelect && onChainSelect(defaultXChainId);
           chainCount > 2 && setTimeout(() => setXChainOptionsOpen(true), 100);
         }
+      } else {
+        onCurrencySelect && onCurrencySelect(currency);
       }
     },
     [onCurrencySelect, onChainSelect],

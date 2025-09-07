@@ -57,6 +57,20 @@ const swapSlice = createSlice({
           const supportedChainIds = getSupportedXChainIdsForIntentToken(currency);
 
           if (supportedChainIds.length > 1) {
+            const previousFieldXChainId = state[field].currency?.xChainId;
+            // if the selected currency is multichain and the same as the other field currency,
+            // but the other field currency has the same xchainid, switch the xchainIds of the fields
+            if (currency?.xChainId === state[otherField].currency?.xChainId && previousFieldXChainId) {
+              const newOtherFieldCurrency = convertCurrency(previousFieldXChainId, state[otherField].currency);
+              if (newOtherFieldCurrency) {
+                return {
+                  ...state,
+                  [field]: { ...state[field], currency, percent: 0 },
+                  [otherField]: { ...state[otherField], currency: newOtherFieldCurrency },
+                };
+              }
+            }
+
             // Allow same currency selection if supported on multiple chains
             return {
               ...state,
@@ -104,24 +118,25 @@ const swapSlice = createSlice({
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
+      const previousChainId = state[field].currency?.xChainId;
+
+      const updatedCurrency = convertCurrency(xChainId, state[field].currency);
+      if (updatedCurrency) {
+        state[field].currency = updatedCurrency;
+      }
+
       // Check if both currencies are the same and user is trying to select the same chain
       if (
         state[field].currency?.symbol === state[otherField].currency?.symbol &&
         state[otherField].currency?.xChainId === xChainId
       ) {
         // Switch the chains instead
-        const otherChainId = state[field].currency?.xChainId;
-        if (otherChainId) {
-          const updatedOtherCurrency = convertCurrency(otherChainId, state[otherField].currency);
+        if (previousChainId) {
+          const updatedOtherCurrency = convertCurrency(previousChainId, state[otherField].currency);
           if (updatedOtherCurrency) {
             state[otherField].currency = updatedOtherCurrency;
           }
         }
-      }
-
-      const updatedCurrency = convertCurrency(xChainId, state[field].currency);
-      if (updatedCurrency) {
-        state[field].currency = updatedCurrency;
       }
     }),
 

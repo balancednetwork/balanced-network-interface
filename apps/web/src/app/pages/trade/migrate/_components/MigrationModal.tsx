@@ -127,12 +127,14 @@ const MigrationModal = ({
 
       const { srcbnUSD, dstbnUSD } = getBnUSDAddresses(isRevert);
 
+      const decimals = sourceChain === 'sui' ? 9 : currency.decimals;
+
       return {
         srcChainId: sourceChain as SpokeChainId,
         dstChainId: receiverChain as SpokeChainId,
         srcbnUSD,
         dstbnUSD,
-        amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
+        amount: BigInt(new BigNumber(amount).times(10 ** decimals).toFixed()),
         to: toAddress as `0x${string}`,
       };
     },

@@ -50,10 +50,10 @@ export default function SwapDescription() {
   const [ref, width] = useWidth();
 
   const priceChartQuery = usePriceChartDataQuery(XCurrencies, chartOption.period);
-  const isChartLoading = priceChartQuery?.isLoading;
-  const data = priceChartQuery.data;
+  // const isChartLoading = priceChartQuery?.isLoading;
+  // const data = priceChartQuery.data;
 
-  const ratio = useRatio();
+  // const ratio = useRatio();
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -72,25 +72,25 @@ export default function SwapDescription() {
   const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`;
-  const isSuperSmall = useMedia('(max-width: 359px)');
+  // const isSuperSmall = useMedia('(max-width: 359px)');
 
-  const hasTradingView = React.useMemo(() => {
-    return (
-      SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.INPUT]?.symbol) &&
-      SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.OUTPUT]?.symbol)
-    );
-  }, [XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
+  // const hasTradingView = React.useMemo(() => {
+  //   return (
+  //     SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.INPUT]?.symbol) &&
+  //     SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.OUTPUT]?.symbol)
+  //   );
+  // }, [XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
 
-  const [, pair] = useV2Pair(XCurrencies[Field.INPUT], XCurrencies[Field.OUTPUT]);
+  // const [, pair] = useV2Pair(XCurrencies[Field.INPUT], XCurrencies[Field.OUTPUT]);
 
-  const hasChart = React.useMemo(() => {
-    const pairExists = !!pair;
-    const isOraclePriced =
-      ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.INPUT]?.symbol!) ||
-      ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.OUTPUT]?.symbol!);
+  // const hasChart = React.useMemo(() => {
+  //   const pairExists = !!pair;
+  //   const isOraclePriced =
+  //     ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.INPUT]?.symbol!) ||
+  //     ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.OUTPUT]?.symbol!);
 
-    return pairExists && !isOraclePriced;
-  }, [pair, XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
+  //   return pairExists && !isOraclePriced;
+  // }, [pair, XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
 
   const { onCurrencySelection } = useSwapActionHandlers();
 

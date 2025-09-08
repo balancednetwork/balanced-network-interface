@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useLocation, useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 import { Button, IconButton, PendingIconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
@@ -120,6 +120,24 @@ const gentleSpin = keyframes`
 
 const AnimatedTickIcon = styled(TickIcon)`
   animation: ${gentleSpin} 2s cubic-bezier(0.1, 0.9, 0.2, 1);
+`;
+
+const slowClockwise = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const InnerSpinningIcon = styled(RecentActivityInnerIcon)<{ $isSpinning?: boolean }>`
+  transform-origin: 50% 50%;
+  ${({ $isSpinning }) =>
+    $isSpinning &&
+    css`
+    animation: ${slowClockwise} 8s linear infinite;
+  `}
 `;
 
 const IconStage = styled.div`
@@ -415,7 +433,7 @@ export default function Header(props: { title?: string; className?: string }) {
                             <SpinningIcon width="32" height="32" />
                           </IconLayer>
                           <IconLayer>
-                            <RecentActivityInnerIcon width="32" height="32" />
+                            <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
                           </IconLayer>
                         </IconStage>
                         {!isSmall ? (
@@ -441,7 +459,7 @@ export default function Header(props: { title?: string; className?: string }) {
                             opacity: spinnerOpacity,
                           }}
                         >
-                          <RecentActivityInnerIcon width="32" height="32" />
+                          <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
                         </IconLayer>
                         <IconLayer
                           onTransitionEnd={handleTickTransitionEnd}
@@ -456,7 +474,7 @@ export default function Header(props: { title?: string; className?: string }) {
                           <RecentActivityIcon width="32" height="32" />
                         </IconLayer>
                         <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>
-                          <RecentActivityInnerIcon width="32" height="32" />
+                          <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
                         </IconLayer>
                       </IconStage>
                     )}

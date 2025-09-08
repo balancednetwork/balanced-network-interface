@@ -19,6 +19,7 @@ import { useMedia } from 'react-use';
 export const StyledTypographyWithArrow = styled(Typography)`
   position: relative;
   padding-right: 12px;
+  white-space: nowrap;
   
   &::before,
   &::after {

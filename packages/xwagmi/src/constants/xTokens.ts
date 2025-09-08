@@ -176,6 +176,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x38.bsc', 56, '0xd94F0Aea6d6f14C012d992e8886C8C1736921e10', 18, 'sICX', 'Staked ICX'),
     new XToken('0x38.bsc', 56, '0x94cf269d63c4140eD481CB0b149daE03c4620cdF', 18, 'BALN', 'Balance Token'),
+    new XToken('0x38.bsc', 56, '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', 18, 'USDC', 'USDC Coin'),
   ],
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
@@ -212,6 +213,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa.optimism', 10, '0xdccd213951d8214fbaca720728474e2cef9d247b', 18, 'bnUSD(old)', 'Balanced Dollar'),
     new XToken('0xa.optimism', 10, '0xF4f7dC27c17470a26d0de9039Cf0EA5045F100E8', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa.optimism', 10, '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', 6, 'USDC', 'USD Coin'),
+    new XToken('0xa.optimism', 10, '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', 6, 'USDT', 'USD Tether'),
     new XToken('0xa.optimism', 10, '0x91b36B5b078A3150EA05d5451b3feB608CFcEEE1', 18, 'sICX', 'Staked ICX'),
     new XToken('0xa.optimism', 10, '0xD336c74B840f9962cF2c666f8666d6d61Ec24440', 18, 'BALN', 'Balance Token'),
   ],

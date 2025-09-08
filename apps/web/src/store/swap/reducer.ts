@@ -126,10 +126,10 @@ const swapSlice = createSlice({
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
       const previousChainId = state[field].currency?.xChainId;
 
       const updatedCurrency = convertCurrency(xChainId, state[field].currency);
+
       if (updatedCurrency) {
         state[field].currency = updatedCurrency;
       }

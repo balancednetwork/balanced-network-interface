@@ -170,6 +170,9 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
 
   const elapsedTime = useElapsedTime(tx.timestamp);
 
+  // Check if pending for more than 5 minutes (300 seconds)
+  const isPendingForMoreThan5Minutes = tx.status === UnifiedTransactionStatus.pending && elapsedTime >= 300;
+
   // Auto-close modal after 3 seconds when cancellation is successful
   useEffect(() => {
     if (cancelStatus === CancelStatus.Success) {
@@ -327,7 +330,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
           <ElapsedTime>{formatRelativeTime(elapsedTime)}</ElapsedTime>
         </Meta>
       </Container>
-      {tx.status === UnifiedTransactionStatus.pending || tx.status === UnifiedTransactionStatus.failed ? (
+      {tx.status === UnifiedTransactionStatus.failed || isPendingForMoreThan5Minutes ? (
         <Flex paddingLeft="38px" marginBottom="-10px" width="100%" justifyContent="flex-end" alignItems="center">
           {cancelStatus === CancelStatus.None && <CancelButton onClick={openCancelModal}>Cancel</CancelButton>}
           {cancelStatus === CancelStatus.AwaitingConfirmation && <ElapsedTime>Canceling...</ElapsedTime>}

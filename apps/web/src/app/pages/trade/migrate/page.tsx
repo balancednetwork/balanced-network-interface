@@ -180,6 +180,8 @@ function MigratePanel({
   };
 
   const selectorRef = React.useRef<HTMLDivElement | null>(null);
+  const arrowRef = React.useRef<HTMLDivElement | null>(null);
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const [isOpen, setOpen] = React.useState(false);
 
@@ -250,24 +252,45 @@ function MigratePanel({
               Migrate:
             </Typography>
             <ClickAwayListener onClickAway={closeDropdown}>
-              <div>
+              <div ref={containerRef}>
                 <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }} ref={selectorRef}>
-                  <Typography fontSize={14} pr="1px" pt={2}>
+                  <UnderlineText style={{ paddingRight: '1px', paddingTop: '11px', fontSize: '14px' }}>
                     {MIGRATION_LABELS[migrationType]}
-                  </Typography>
-                  {/* <div ref={arrowRef} style={{ display: 'inline-block' }}>
-                    <StyledArrowDownIcon style={{ transform: 'translate3d(-2px, 1px, 0)' }} />
-                  </div> */}
+                  </UnderlineText>
+                  <div ref={arrowRef} style={{ display: 'inline-block' }}>
+                    <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+                  </div>
                 </SelectorWrap>
 
-                <DropdownPopper show={isOpen} anchorEl={anchor} placement="bottom" offset={[0, 9]} strategy="absolute">
+                <DropdownPopper
+                  show={isOpen}
+                  anchorEl={anchor}
+                  arrowEl={arrowRef.current}
+                  customArrowStyle={{
+                    transform: `translateX(${arrowRef.current && containerRef.current ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.current.getBoundingClientRect().x) + (migrationType === 'bnUSD' ? 9 : 30) + 'px' : '0'})`,
+                  }}
+                  placement="bottom"
+                  forcePlacement={true}
+                  offset={[0, 7]}
+                  strategy="absolute"
+                >
                   <div style={{ padding: '6px 0', minWidth: 160 }}>
                     {MIGRATION_TYPES.map(type => (
                       <Flex
                         key={type}
                         alignItems="center"
                         p={2}
-                        sx={{ cursor: 'pointer' }}
+                        sx={{
+                          cursor: 'pointer',
+                          '& span': {
+                            transition: 'color 0.2s ease',
+                          },
+                          '&:hover': {
+                            '& span': {
+                              color: 'primary',
+                            },
+                          },
+                        }}
                         onClick={() => {
                           setMigrationType(type);
                           setOpen(false);

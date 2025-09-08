@@ -122,7 +122,7 @@ export default function SwapDescription() {
             {symbolName}
           </Typography>
 
-          {hasChart && (
+          {/* {hasChart && (
             <>
               <Typography variant="p">
                 <Trans>
@@ -131,9 +131,9 @@ export default function SwapDescription() {
                 </Trans>
               </Typography>
             </>
-          )}
+          )} */}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
+        {/* <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -143,7 +143,6 @@ export default function SwapDescription() {
                 onClick={handleChartPeriodChange}
                 $active={chartOption.period === CHART_PERIODS[key]}
               >
-                {/* @ts-ignore */}
                 <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
               </ChartControlButton>
             ))}
@@ -158,7 +157,6 @@ export default function SwapDescription() {
                 onClick={handleChartTypeChange}
                 $active={chartOption.type === CHART_TYPES[key]}
               >
-                {/* @ts-ignore */}
                 <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
               </ChartControlButton>
             ))}
@@ -169,33 +167,15 @@ export default function SwapDescription() {
               </ChartControlButton>
             )}
           </ChartControlGroup>
-        </Box>
+        </Box> */}
       </Flex>
       <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
         <ChartContainer my="auto" width="100%" ref={ref}>
-          {hasChart && pair ? (
-            <>
-              {isChartLoading ? (
-                <Spinner size={75} $centered />
-              ) : (
-                <>
-                  {chartOption.type === CHART_TYPES.AREA && (
-                    <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.AREA} />
-                  )}
-
-                  {chartOption.type === CHART_TYPES.CANDLE && (
-                    <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.CANDLE} />
-                  )}
-                </>
-              )}
-            </>
-          ) : (
-            <Flex justifyContent="center" alignItems="center" height="100%">
-              <Typography>
-                <Trans>No price chart available for this pair.</Trans>
-              </Typography>
-            </Flex>
-          )}
+          <Flex justifyContent="center" alignItems="center" height="100%">
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
+          </Flex>
         </ChartContainer>
       </div>
 

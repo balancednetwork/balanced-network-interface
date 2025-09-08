@@ -18,13 +18,14 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
-import { xTokenMap } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount, xTokenMap } from '@balancednetwork/xwagmi';
 import styled, { useTheme } from 'styled-components';
 
 export type MigrationType = 'bnUSD' | 'ICX';
@@ -170,7 +171,11 @@ function MigratePanel({
 }: ReturnType<typeof useMigrationState>) {
   const openModal = () => {
     if (inputValue && parseFloat(inputValue) > 0 && inputCurrency && outputCurrency) {
-      modalActions.openModal(MODAL_ID.MIGRATION_CONFIRM_MODAL);
+      if (!sourceAccount.address) {
+        toggleWalletModal();
+      } else {
+        modalActions.openModal(MODAL_ID.MIGRATION_CONFIRM_MODAL);
+      }
     }
   };
 
@@ -200,6 +205,10 @@ function MigratePanel({
   const signedInWallets = useSignedInWallets();
   const crossChainWallet = useCrossChainWalletBalances();
   const rates = useRatesWithOracle();
+  const toggleWalletModal = useWalletModalToggle();
+
+  // Check if user is signed in on the source chain
+  const sourceAccount = useXAccount(getXChainType(inputChain));
 
   // Get input currency balance
   const inputCurrencyBalance = React.useMemo(() => {
@@ -369,6 +378,15 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
             'Use bnUSD to trade on every chain except ICON.',
             'Use bnUSD(old) to repay loans and earn through the Savings Rate.',
           ],
+          importantNote: (
+            <>
+              If you hold bnUSD(old) on a chain other than ICON, Stellar, or Sui, you'll need to transfer it via the{' '}
+              <a href="/trade-legacy" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
+                <StyledUnderlineText>legacy exchange</StyledUnderlineText>
+              </a>{' '}
+              before you can migrate.
+            </>
+          ),
         };
       case 'ICX':
         return {
@@ -423,6 +441,11 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
               </Typography>
             ))}
           </Flex>
+        )}
+        {content.importantNote && (
+          <Typography variant="p" color="text2" mt={3}>
+            {content.importantNote}
+          </Typography>
         )}
       </Box>
     </Flex>

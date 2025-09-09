@@ -286,7 +286,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
         <Details>
           {isBridgeAction ? (
             <Title>
-              Bridge {formatSymbol(currencies.srcToken.symbol)} to {xChainMap[tokensData.dstChainId].name}
+              Transfer {formatSymbol(currencies.srcToken.symbol)} to {xChainMap[tokensData.dstChainId].name}
             </Title>
           ) : (
             <Title>

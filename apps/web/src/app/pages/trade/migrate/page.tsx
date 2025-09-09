@@ -262,13 +262,16 @@ function MigratePanel({
             </Typography>
             <ClickAwayListener onClickAway={closeDropdown}>
               <div ref={containerRef}>
-                <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }} ref={selectorRef}>
-                  <UnderlineText style={{ paddingRight: '1px', paddingTop: '11px', fontSize: '14px' }}>
+                <SelectorWrap style={{ position: 'relative' }} ref={selectorRef}>
+                  {/* <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }} ref={selectorRef}> */}
+                  {/* <UnderlineText style={{ paddingRight: '1px', paddingTop: '11px', fontSize: '14px' }}> */}
+                  <Typography fontSize={14} pt="11px" color="text1" style={{ cursor: 'default' }}>
                     {MIGRATION_LABELS[migrationType]}
-                  </UnderlineText>
-                  <div ref={arrowRef} style={{ display: 'inline-block' }}>
+                  </Typography>
+                  {/* </UnderlineText> */}
+                  {/* <div ref={arrowRef} style={{ display: 'inline-block' }}>
                     <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
-                  </div>
+                  </div> */}
                 </SelectorWrap>
 
                 <DropdownPopper

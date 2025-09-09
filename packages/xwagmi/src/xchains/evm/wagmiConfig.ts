@@ -13,6 +13,6 @@ export const wagmiConfig: Config = createConfig({
     [optimism.id]: http(),
     [base.id]: http(),
     [polygon.id]: http('https://1rpc.io/matic'),
-    [sonic.id]: http('https://rpc.soniclabs.com'),
+    [sonic.id]: http('https://sonic.drpc.org'),
   },
 });

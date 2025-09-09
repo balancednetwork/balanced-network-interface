@@ -12,7 +12,6 @@ export function TradePage() {
         <SwapPanel />
         <SwapDescription />
       </SectionPanel>
-      <PendingOrders />
     </>
   );
 }

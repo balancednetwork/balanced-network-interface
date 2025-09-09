@@ -14,15 +14,26 @@ export const useMigrationAllowance = (
   const [isApproving, setIsApproving] = useState(false);
   const [hasAllowance, setHasAllowance] = useState(false);
 
+  // Check if this is an EVM chain
+  const isEVMChain = useMemo(() => {
+    return getXChainType(sourceChain as XChainId) === 'EVM';
+  }, [sourceChain]);
+
   const checkAllowance = useCallback(async () => {
+    if (!isEVMChain) {
+      return { ok: false, error: new Error('Only EVM chains are supported') };
+    }
     if (!revertParams || !sourceSpokeProvider) {
       return { ok: false, error: new Error('Missing params or provider') };
     }
 
     return await sodax.migration.isAllowanceValid(revertParams, 'revert', sourceSpokeProvider);
-  }, [revertParams, sourceSpokeProvider]);
+  }, [isEVMChain, revertParams, sourceSpokeProvider]);
 
   const approve = useCallback(async () => {
+    if (!isEVMChain) {
+      return { ok: false, error: new Error('Only EVM chains are supported') };
+    }
     if (!revertParams || !sourceSpokeProvider) {
       return { ok: false, error: new Error('Missing params or provider') };
     }
@@ -45,12 +56,12 @@ export const useMigrationAllowance = (
     } finally {
       setIsApproving(false);
     }
-  }, [revertParams, sourceSpokeProvider]);
+  }, [isEVMChain, revertParams, sourceSpokeProvider]);
 
-  // Check allowance on mount and when dependencies change
+  // Check allowance on mount and when dependencies change (only for EVM chains)
   useEffect(() => {
     const checkAllowanceStatus = async () => {
-      if (!revertParams || !sourceChain) {
+      if (!isEVMChain || !revertParams || !sourceChain) {
         return;
       }
 
@@ -72,20 +83,20 @@ export const useMigrationAllowance = (
     };
 
     checkAllowanceStatus();
-  }, [revertParams, sourceChain, checkAllowance]);
+  }, [isEVMChain, revertParams, sourceChain, checkAllowance]);
 
   const approvalState = useMemo(() => {
-    if (getXChainType(sourceChain as XChainId) !== 'EVM') return ApprovalState.APPROVED; // No approval needed for non-EVM chains
+    if (!isEVMChain) return ApprovalState.APPROVED; // No approval needed for non-EVM chains
     if (isCheckingAllowance) return ApprovalState.UNKNOWN;
     if (isApproving) return ApprovalState.PENDING;
     if (hasAllowance) return ApprovalState.APPROVED;
     return ApprovalState.NOT_APPROVED;
-  }, [sourceChain, isCheckingAllowance, isApproving, hasAllowance]);
+  }, [isEVMChain, isCheckingAllowance, isApproving, hasAllowance]);
 
   const isAllowanceValid = useMemo(() => {
-    if (getXChainType(sourceChain as XChainId) !== 'EVM') return true; // No approval needed for non-EVM chains
+    if (!isEVMChain) return true; // No approval needed for non-EVM chains
     return hasAllowance;
-  }, [sourceChain, hasAllowance]);
+  }, [isEVMChain, hasAllowance]);
 
   return {
     checkAllowance,

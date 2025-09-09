@@ -25,8 +25,9 @@ import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
-import { getXChainType, useXAccount, xTokenMap } from '@balancednetwork/xwagmi';
+import { getXChainType, useValidateStellarTrustline, useXAccount, xTokenMap } from '@balancednetwork/xwagmi';
 import styled, { useTheme } from 'styled-components';
+import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 
 export type MigrationType = 'bnUSD' | 'ICX';
 
@@ -171,7 +172,7 @@ function MigratePanel({
 }: ReturnType<typeof useMigrationState>) {
   const openModal = () => {
     if (inputValue && parseFloat(inputValue) > 0 && inputCurrency && outputCurrency) {
-      if (!sourceAccount.address) {
+      if (!sourceAccount.address || !receiver) {
         toggleWalletModal();
       } else {
         modalActions.openModal(MODAL_ID.MIGRATION_CONFIRM_MODAL);
@@ -208,6 +209,14 @@ function MigratePanel({
   const crossChainWallet = useCrossChainWalletBalances();
   const rates = useRatesWithOracle();
   const toggleWalletModal = useWalletModalToggle();
+
+  const receiver = useXAccount(getXChainType(outputChain)).address;
+  const stellarBnUSD = xTokenMap['stellar'].find(token => token.symbol === 'bnUSD');
+  const stellarTrustlineValidationQuery = useValidateStellarTrustline(
+    outputChain === 'stellar' ? receiver : undefined,
+    outputChain === 'stellar' ? stellarBnUSD : undefined,
+  );
+  const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
 
   // Check if user is signed in on the source chain
   const sourceAccount = useXAccount(getXChainType(inputChain));
@@ -362,14 +371,27 @@ function MigratePanel({
             />
           </Flex>
 
-          <AutoColumn gap="5px" mt={5}>
+          <AutoColumn gap="5px" mt={1}>
             <Flex justifyContent="center" mt={4}>
-              <Button onClick={openModal} disabled={!inputValue || parseFloat(inputValue) <= 0}>
+              <Button
+                onClick={openModal}
+                disabled={!inputValue || parseFloat(inputValue) <= 0 || !stellarTrustlineValidation?.ok}
+              >
                 <Trans>Migrate</Trans>
               </Button>
             </Flex>
           </AutoColumn>
         </AutoColumn>
+
+        {stellarTrustlineValidation?.ok === false && stellarTrustlineValidation.error && receiver && (
+          <Flex alignItems="center" justifyContent="center" mt={3} flexDirection="column">
+            <StellarTrustlineModal
+              currency={stellarBnUSD}
+              text={`Activate ${stellarBnUSD.symbol} for your Stellar wallet.`}
+              address={receiver}
+            />
+          </Flex>
+        )}
       </div>
     </BrightPanel>
   );

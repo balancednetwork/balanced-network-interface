@@ -132,12 +132,12 @@ const slowClockwise = keyframes`
 `;
 
 const InnerSpinningIcon = styled(RecentActivityInnerIcon)<{ $isSpinning?: boolean }>`
-  transform-origin: 50% 50%;
+  /* transform-origin: 50% 50%;
   ${({ $isSpinning }) =>
     $isSpinning &&
     css`
     animation: ${slowClockwise} 8s linear infinite;
-  `}
+  `} */
 `;
 
 const IconStage = styled.div`

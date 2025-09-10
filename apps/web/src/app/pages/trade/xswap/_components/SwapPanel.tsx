@@ -26,7 +26,6 @@ import { XChainId } from '@balancednetwork/sdk-core';
 import { type XToken, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import OrderCommitButton from './OrderCommitButton';
 import OrderInfo from './OrderInfo';
-import PriceImpact from './PriceImpact';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -209,7 +208,6 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <PriceImpact trade={undefined} />
           <OrderInfo />
           <Flex justifyContent="center" mt={4}>
             <OrderCommitButton

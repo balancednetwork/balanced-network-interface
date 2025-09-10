@@ -249,6 +249,10 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
     pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
   },
   {
+    symbol: 'BTCB',
+    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
     symbol: 'BNB',
     pythId: '2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f',
   },

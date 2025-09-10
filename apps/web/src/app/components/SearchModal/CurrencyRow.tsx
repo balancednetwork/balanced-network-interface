@@ -171,7 +171,9 @@ export default function CurrencyRow({
               <DataText variant="p" fontWeight="bold">
                 {formatSymbol(currency?.symbol)}
               </DataText>
-              {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
+              {currencySelectionType !== CurrencySelectionType.SODAX_TRADE_IN &&
+                currencySelectionType !== CurrencySelectionType.SODAX_TRADE_OUT &&
+                currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
             </Flex>
 
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
@@ -229,7 +231,9 @@ export default function CurrencyRow({
           <DataText variant="p" fontWeight="bold" ml={'15px'}>
             {formatSymbol(currency?.symbol)}
           </DataText>
-          {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
+          {currencySelectionType !== CurrencySelectionType.SODAX_TRADE_IN &&
+            currencySelectionType !== CurrencySelectionType.SODAX_TRADE_OUT &&
+            currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">

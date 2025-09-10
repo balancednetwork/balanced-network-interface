@@ -14,5 +14,4 @@ export function getTokens() {
     .filter((token, index, self) => self.indexOf(token) === index)
     .filter(token => !MANUAL_TOKEN_BLACKLIST.includes(token));
 }
-
 export const SODAX_TOKEN_SYMBOLS = getTokens();

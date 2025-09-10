@@ -98,7 +98,6 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "4H"
 msgstr "4U"
 
@@ -123,7 +122,6 @@ msgid "Rewards:"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "15m"
 msgstr "15m"
 
@@ -715,7 +713,6 @@ msgid "Withdrawing BALN..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1D"
 msgstr "1D"
 
@@ -1111,7 +1108,6 @@ msgstr "BALN vergrendelen..."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1H"
 msgstr "1U"
 
@@ -1781,8 +1777,6 @@ msgstr "Er is geen ICX aan het unstaken."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -3005,7 +2999,6 @@ msgstr "Je hebt goedgekeurd"
 #~ msgstr "Inloggen met"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Line"
 msgstr "Lijn"
 
@@ -3014,7 +3007,6 @@ msgid "liquidity pool"
 msgstr "liquiditeitspool"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Candles"
 msgstr "Kaarsen"
 
@@ -3116,7 +3108,6 @@ msgid "Switch to"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1W"
 msgstr "1W"
 

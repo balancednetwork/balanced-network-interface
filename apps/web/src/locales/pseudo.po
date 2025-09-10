@@ -95,7 +95,6 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "4H"
 msgstr ""
 
@@ -120,7 +119,6 @@ msgid "Rewards:"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "15m"
 msgstr ""
 
@@ -692,7 +690,6 @@ msgid "Withdrawing BALN..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1D"
 msgstr ""
 
@@ -1072,7 +1069,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1H"
 msgstr ""
 
@@ -1738,8 +1734,6 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -2934,7 +2928,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Line"
 msgstr ""
 
@@ -2943,7 +2936,6 @@ msgid "liquidity pool"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Candles"
 msgstr ""
 
@@ -3045,7 +3037,6 @@ msgid "Switch to"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1W"
 msgstr ""
 

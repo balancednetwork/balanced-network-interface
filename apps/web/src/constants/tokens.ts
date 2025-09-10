@@ -217,8 +217,8 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
     pythId: '2dc7f272d3010abe4de48755a50fcf5bd9eefd3b4af01d8f39f6c80ae51544fe',
   },
   {
-    symbol: 'wETH',
-    pythId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+    symbol: 'WETH',
+    pythId: '9d4294bbcd1174d6f2003ec365831e64cc31d9f6f15a2b85399db8d5000960f6',
   },
   {
     symbol: 'POL',

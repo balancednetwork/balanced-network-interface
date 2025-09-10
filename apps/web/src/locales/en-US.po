@@ -97,7 +97,6 @@ msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "4H"
 msgstr "4H"
 
@@ -122,7 +121,6 @@ msgid "Rewards:"
 msgstr "Rewards:"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "15m"
 msgstr "15m"
 
@@ -694,7 +692,6 @@ msgid "Withdrawing BALN..."
 msgstr "Withdrawing BALN..."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1D"
 msgstr "1D"
 
@@ -1076,7 +1073,6 @@ msgstr "Locking BALN..."
 #~ msgstr "You'll also pay"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1H"
 msgstr "1H"
 
@@ -1742,8 +1738,6 @@ msgstr "There's no ICX unstaking."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -2942,7 +2936,6 @@ msgstr "You approved"
 #~ msgstr "Sign in with"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Line"
 msgstr "Line"
 
@@ -2951,7 +2944,6 @@ msgid "liquidity pool"
 msgstr "liquidity pool"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Candles"
 msgstr "Candles"
 
@@ -3053,7 +3045,6 @@ msgid "Switch to"
 msgstr "Switch to"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1W"
 msgstr "1W"
 

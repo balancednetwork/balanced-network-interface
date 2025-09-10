@@ -98,7 +98,6 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "4H"
 msgstr "4H"
 
@@ -123,7 +122,6 @@ msgid "Rewards:"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "15m"
 msgstr "15m"
 
@@ -715,7 +713,6 @@ msgid "Withdrawing BALN..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1D"
 msgstr "1J"
 
@@ -1111,7 +1108,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1H"
 msgstr "1H"
 
@@ -1781,8 +1777,6 @@ msgstr "Il n'y a pas de déstaking d'ICX."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -3002,7 +2996,6 @@ msgstr "Vous avez approuvé"
 #~ msgstr "Se connecter avec"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Line"
 msgstr "Ligne"
 
@@ -3011,7 +3004,6 @@ msgid "liquidity pool"
 msgstr "Pool de liquidité"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "Candles"
 msgstr "Chandeliers"
 
@@ -3113,7 +3105,6 @@ msgid "Switch to"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "1W"
 msgstr "1S"
 

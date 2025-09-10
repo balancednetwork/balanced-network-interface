@@ -192,6 +192,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa4b1.arbitrum', 42161, '0x35751007a407ca6feffe80b3cb397736d2cf4dbe', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0x5979D7b546E38E414F7E9822514be443A4800529', 18, 'wstETH', 'Wrapped stETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
+    new XToken('0xa4b1.arbitrum', 42161, '0xfB0ACB1b2720B620935F50a6dd3F7FEA52b2FCBe', 18, 'wBTC', 'Wrapped Bitcoin'),
     new XToken(
       '0xa4b1.arbitrum',
       42161,
@@ -222,6 +223,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x2105.base', 8453, '0xAcfab3F31C0a18559D78556BBf297EC29c6cf8aa', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x2105.base', 8453, '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0x2105.base', 8453, '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452', 18, 'wstETH', 'Wrapped stETH'),
+    new XToken('0x2105.base', 8453, '0x2803a23a3BA6b09e57D1c71deC0D9eFdBB00A27F', 18, 'cbBTC', 'Coinbase BTC'),
     new XToken(
       '0x2105.base',
       8453,

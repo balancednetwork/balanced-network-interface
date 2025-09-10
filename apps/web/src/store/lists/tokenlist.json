@@ -323,6 +323,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
     },
     {
+      "address": "cx0000000000000000000000000000000000000011",
+      "chainId": 1,
+      "name": "Coinbase BTC",
+      "symbol": "cbBTC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cbbtc.png"
+    },
+    {
       "address": "cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4",
       "chainId": 1,
       "name": "Volo Staked SUI",

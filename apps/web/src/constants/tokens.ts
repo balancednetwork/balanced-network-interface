@@ -204,7 +204,7 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
-export const UNTRADEABLE_TOKENS = ['JitoSOL', 'bnUSD'];
+export const UNTRADEABLE_TOKENS = ['JitoSOL', 'bnUSD', 'wBTC', 'tBTC', 'cbBTC', 'wETH'];
 
 //search for Pyth ID here https://hermes.pyth.network/docs/#/rest/price_feeds_metadata
 export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
@@ -219,6 +219,18 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   {
     symbol: 'WETH',
     pythId: '9d4294bbcd1174d6f2003ec365831e64cc31d9f6f15a2b85399db8d5000960f6',
+  },
+  {
+    symbol: 'cbBTC',
+    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
+    symbol: 'tBTC',
+    pythId: '56a3121958b01f99fdc4e1fd01e81050602c7ace3a571918bb55c6a96657cca9',
+  },
+  {
+    symbol: 'wBTC',
+    pythId: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
   },
   {
     symbol: 'POL',

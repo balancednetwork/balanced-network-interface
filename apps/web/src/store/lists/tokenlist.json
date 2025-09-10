@@ -302,7 +302,7 @@
       "address": "cx2000000000000000000000000000000000000000",
       "chainId": 1,
       "name": "Wrapped Ether",
-      "symbol": "wETH",
+      "symbol": "WETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weth.png"
     },

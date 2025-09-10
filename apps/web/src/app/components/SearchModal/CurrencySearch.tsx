@@ -99,8 +99,9 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
 }
 
 function filterSodaxTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
+  const lowerCaseSodaxSymbols = SODAX_TOKEN_SYMBOLS.map(symbol => symbol.toLowerCase());
   return Object.values(tokens)
-    .filter(token => SODAX_TOKEN_SYMBOLS.includes(token.symbol.replace('bnUSD(old)', 'bnUSD')))
+    .filter(token => lowerCaseSodaxSymbols.includes(token.symbol.replace('bnUSD(old)', 'bnUSD').toLowerCase()))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;

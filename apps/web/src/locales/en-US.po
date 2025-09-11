@@ -2467,6 +2467,12 @@ msgstr "Unlocked {0} BALN."
 msgid "This will take about a minute."
 msgstr "This will take about a minute."
 
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Wallet: 0.00"
+msgstr "Wallet: 0.00"
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
 msgstr "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."

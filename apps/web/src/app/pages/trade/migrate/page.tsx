@@ -326,7 +326,11 @@ function MigratePanel({
                   rates?.[inputCurrencyBalance?.currency.symbol?.replace('(old)', '')]?.toFixed(),
                 )} ${inputCurrency?.symbol}`}
               </Typography>
-            ) : null}
+            ) : (
+              <Typography as="div">
+                <Trans>Wallet: 0</Trans> {inputCurrency?.symbol}
+              </Typography>
+            )}
           </Flex>
 
           <Flex>
@@ -358,8 +362,11 @@ function MigratePanel({
                   rates?.[outputCurrencyBalance?.currency.symbol?.replace('(old)', '')]?.toFixed(),
                 )} ${outputCurrency?.symbol}`}
               </Typography>
-            ) : null}
-            {/* ): <Typography as="div"><Trans>Wallet: 0</Trans></Typography>} */}
+            ) : (
+              <Typography as="div">
+                <Trans>Wallet: 0</Trans> {outputCurrency?.symbol}
+              </Typography>
+            )}
           </Flex>
 
           <Flex>

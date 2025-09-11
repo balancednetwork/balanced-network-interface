@@ -133,13 +133,17 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            {sourceAddress && currencyBalances[Field.INPUT] && (
+            {sourceAddress && currencyBalances[Field.INPUT] ? (
               <Typography as="div" hidden={!sourceAddress}>
                 <Trans>Wallet:</Trans>{' '}
                 {`${formatBalance(
                   currencyBalances[Field.INPUT]?.toFixed(),
                   rates?.[currencyBalances[Field.INPUT]?.currency.symbol.replace('(old)', '')]?.toFixed(),
                 )} ${currencies[Field.INPUT]?.symbol}`}
+              </Typography>
+            ) : (
+              <Typography as="div">
+                <Trans>Wallet: 0</Trans> {currencies[Field.INPUT]?.symbol}
               </Typography>
             )}
           </Flex>

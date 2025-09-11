@@ -9,7 +9,7 @@ const Wrap = styled.div`
   width: 430px;
   max-width: calc(100vw - 4px);
   ul {
-    max-height: 500px;
+    max-height: 465px;
     overflow-y: auto;
     list-style: none;
     padding: 0 25px;

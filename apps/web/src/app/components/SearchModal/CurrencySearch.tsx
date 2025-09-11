@@ -295,6 +295,8 @@ export function CurrencySearch({
       currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
     ) {
       items = items.filter(item => balancedSupportedChains.includes(item as any));
+    } else {
+      items = items.filter(item => item !== 'sonic');
     }
     return items.sort((a, b) => {
       return xChainMap[a].name.localeCompare(xChainMap[b].name);

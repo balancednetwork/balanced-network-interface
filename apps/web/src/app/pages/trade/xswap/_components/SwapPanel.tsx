@@ -143,7 +143,7 @@ export default function SwapPanel() {
               </Typography>
             ) : (
               <Typography as="div">
-                <Trans>Wallet: 0</Trans> {currencies[Field.INPUT]?.symbol}
+                <Trans>Wallet: 0.00</Trans> {currencies[Field.INPUT]?.symbol}
               </Typography>
             )}
           </Flex>
@@ -186,7 +186,7 @@ export default function SwapPanel() {
                             currencyBalances[Field.OUTPUT]?.toFixed(),
                             rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol.replace('(old)', '')]?.toFixed(),
                           )
-                        : '0'
+                        : '0.00'
                     } ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>

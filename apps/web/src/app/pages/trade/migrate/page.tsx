@@ -328,7 +328,7 @@ function MigratePanel({
               </Typography>
             ) : (
               <Typography as="div">
-                <Trans>Wallet: 0</Trans> {inputCurrency?.symbol}
+                <Trans>Wallet: 0.00</Trans> {inputCurrency?.symbol}
               </Typography>
             )}
           </Flex>
@@ -364,7 +364,7 @@ function MigratePanel({
               </Typography>
             ) : (
               <Typography as="div">
-                <Trans>Wallet: 0</Trans> {outputCurrency?.symbol}
+                <Trans>Wallet: 0.00</Trans> {outputCurrency?.symbol}
               </Typography>
             )}
           </Flex>

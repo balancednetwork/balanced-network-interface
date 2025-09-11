@@ -286,11 +286,13 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
         <Details>
           {isBridgeAction ? (
             <Title>
-              Transfer {formatSymbol(currencies.srcToken.symbol)} to {xChainMap[tokensData.dstChainId].name}
+              Transfer {formatSymbol(currencies.srcToken.spokeVersion || currencies.srcToken.symbol)} to{' '}
+              {xChainMap[tokensData.dstChainId].name}
             </Title>
           ) : (
             <Title>
-              Swap {formatSymbol(currencies.srcToken.symbol)} for {formatSymbol(currencies.dstToken.symbol)}
+              Swap {formatSymbol(currencies.srcToken.spokeVersion || currencies.srcToken.symbol)} for{' '}
+              {formatSymbol(currencies.dstToken.spokeVersion || currencies.dstToken.symbol)}
             </Title>
           )}
           <Amount>
@@ -298,7 +300,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
               <UnderlineText onClick={() => trackerLinkSrc && window.open(trackerLinkSrc, '_blank')}>
                 <Typography color="primaryBright">
                   {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                  {formatSymbol(amount.currency.symbol)}
+                  {formatSymbol(amount.currency.spokeVersion || amount.currency.symbol)}
                 </Typography>
               </UnderlineText>
             ) : (
@@ -306,7 +308,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                 <UnderlineText onClick={() => trackerLinkSrc && window.open(trackerLinkSrc, '_blank')}>
                   <Typography color="primaryBright">
                     {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '}
-                    {formatSymbol(amount.currency.symbol)}
+                    {formatSymbol(amount.currency.spokeVersion || amount.currency.symbol)}
                   </Typography>
                 </UnderlineText>{' '}
                 for{' '}
@@ -318,7 +320,8 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                   }
                 >
                   <Typography color="primaryBright">
-                    {receivedAmountFormatted} {formatSymbol(currencies.dstToken.symbol)}
+                    {receivedAmountFormatted}{' '}
+                    {formatSymbol(currencies.dstToken.spokeVersion || currencies.dstToken.symbol)}
                   </Typography>
                 </UnderlineText>
               </>
@@ -367,7 +370,7 @@ const SwapIntent: React.FC<SwapIntentProps> = ({ tx }) => {
                   Cancel your swap to return your{' '}
                   <strong style={{ whiteSpace: 'nowrap' }}>
                     {/* {formatBalance(amount.toFixed(), prices?.[amount.currency.symbol]?.toFixed() || 1)}{' '} */}
-                    {formatSymbol(currencies.srcToken.symbol)}
+                    {formatSymbol(currencies.srcToken.spokeVersion || currencies.srcToken.symbol)}
                   </strong>
                 </Trans>
               </Typography>

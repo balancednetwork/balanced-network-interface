@@ -124,7 +124,7 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
             toast(
               <NotificationSuccess
                 sonicScanLink={sonicScanLink}
-                summary={`Swapped ${inputAmountFormatted} ${formatSymbol(inputAmount.currency.symbol)} for ${outputAmountFormatted} ${formatSymbol(outputAmount.currency.symbol)}`}
+                summary={`Swapped ${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${outputAmountFormatted} ${formatSymbol(outputAmount.currency.spokeVersion || outputAmount.currency.symbol)}`}
               />,
               {
                 toastId: order.intentHash,
@@ -146,7 +146,7 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
 
             toast(
               <NotificationError
-                failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
+                failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
                 sonicScanLink={sonicScanLink}
               />,
               {
@@ -174,7 +174,7 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
 
           toast(
             <NotificationError
-              failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
+              failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
               sonicScanLink={sonicScanLink}
             />,
             {

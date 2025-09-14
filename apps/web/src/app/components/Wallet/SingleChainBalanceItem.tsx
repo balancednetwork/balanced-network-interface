@@ -59,8 +59,7 @@ const SingleChainBalanceItem = ({
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {/* @ts-ignore */}
-            {isNested ? xChainMap[xChainId].name : formatSymbol(currency?.spokeVersion || symbol)}
+            {isNested ? xChainMap[xChainId].name : formatSymbol(symbol)}
             {isICONAsset && <Chevron $isNested={isNested} />}
           </Typography>
         </AssetSymbol>

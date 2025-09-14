@@ -46,6 +46,7 @@ type MigrationModalProps = {
   sourceChain?: XChainId;
   receiverChain?: XChainId;
   revert: boolean;
+  showSolanaWarning?: boolean;
 };
 
 enum MigrationStatus {
@@ -65,6 +66,7 @@ const MigrationModal = ({
   receiverChain,
   migrationType = 'bnUSD',
   revert,
+  showSolanaWarning = false,
 }: MigrationModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
@@ -325,6 +327,12 @@ const MigrationModal = ({
             </Typography>
           </Box>
         </Flex>
+
+        {showSolanaWarning && (
+          <Typography textAlign="center" mt="30px">
+            <Trans>Solana can deduct a "new token" fee of 0.50 {formatSymbol(outputCurrency?.symbol)}.</Trans>
+          </Typography>
+        )}
 
         <AnimatePresence>
           {migrationStatus === MigrationStatus.Failure && (

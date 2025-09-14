@@ -34,6 +34,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 type OrderModalProps = {
   modalId?: MODAL_ID;
   recipient?: string | null;
+  showSolanaWarning?: boolean;
 };
 
 type DerivedTradeInfo = ReturnType<typeof useDerivedTradeInfo>;
@@ -50,7 +51,7 @@ enum IntentOrderStatus {
   Failure,
 }
 
-const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: OrderModalProps) => {
+const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, showSolanaWarning }: OrderModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const derivedTradeInfo = useDerivedTradeInfo();
   const derivedTradeInfoRef = useRef<DerivedTradeInfo>(derivedTradeInfo);
@@ -326,6 +327,12 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient }: Order
         {formattedFee && (
           <Typography textAlign="center">
             <Trans>Swap fee (included):</Trans> {formattedFee}
+          </Typography>
+        )}
+
+        {showSolanaWarning && (
+          <Typography textAlign="center" mt={2}>
+            <Trans>Solana can deduct a "new token" fee of 0.50 {formatSymbol(destToken.symbol)}.</Trans>
           </Typography>
         )}
 

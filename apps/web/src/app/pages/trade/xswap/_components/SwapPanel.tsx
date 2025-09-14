@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { Currency, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
@@ -17,13 +17,12 @@ import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
-import { useOrderStore } from '@/store/order/useOrderStore';
 import { useDerivedTradeInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XChainId } from '@balancednetwork/sdk-core';
-import { type XToken, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import OrderCommitButton from './OrderCommitButton';
 import OrderInfo from './OrderInfo';
 
@@ -125,6 +124,14 @@ export default function SwapPanel() {
     return formattedAmounts[Field.OUTPUT];
   }, [formattedAmounts]);
 
+  const showSolanaWarning = useMemo(() => {
+    return (
+      direction.to === 'solana' &&
+      currencies[Field.OUTPUT]?.symbol !== 'SOL' &&
+      !currencyBalances[Field.OUTPUT]?.greaterThan(0)
+    );
+  }, [direction.to, currencyBalances[Field.OUTPUT], currencies[Field.OUTPUT]]);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -214,6 +221,7 @@ export default function SwapPanel() {
               recipient={recipient}
               stellarValidation={stellarValidation}
               stellarTrustlineValidation={stellarTrustlineValidation}
+              showSolanaWarning={showSolanaWarning}
             />
           </Flex>
 

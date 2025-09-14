@@ -502,6 +502,27 @@ function MigrateDescription({ migrationType }: { migrationType: MigrationType })
 export function MigratePage() {
   const migrationState = useMigrationState();
 
+  // Wallet balance hooks for Solana warning logic
+  const crossChainWallet = useCrossChainWalletBalances();
+
+  // Get output currency balance
+  const outputCurrencyBalance = React.useMemo(() => {
+    if (!migrationState.outputCurrency) return undefined;
+    return crossChainWallet[migrationState.outputChain]?.[
+      xTokenMap[migrationState.outputChain].find(token => token.symbol === migrationState.outputCurrency?.symbol)
+        ?.address
+    ];
+  }, [crossChainWallet, migrationState.outputCurrency, migrationState.outputChain]);
+
+  // Check if we should show Solana warning (when output token is bnUSD on Solana and user has no balance)
+  const showSolanaWarning = React.useMemo(() => {
+    return (
+      migrationState.outputChain === 'solana' &&
+      migrationState.outputCurrency?.symbol === 'bnUSD' &&
+      !outputCurrencyBalance?.greaterThan(0)
+    );
+  }, [migrationState.outputChain, migrationState.outputCurrency?.symbol, outputCurrencyBalance]);
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -519,6 +540,7 @@ export function MigratePage() {
         sourceChain={migrationState.inputChain}
         receiverChain={migrationState.outputChain}
         revert={migrationState.revert}
+        showSolanaWarning={showSolanaWarning}
       />
     </>
   );

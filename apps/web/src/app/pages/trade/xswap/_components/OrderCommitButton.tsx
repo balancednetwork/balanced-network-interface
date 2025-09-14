@@ -15,10 +15,11 @@ interface OrderCommitButtonProps {
   recipient: string | undefined | null;
   stellarValidation?: StellarAccountValidation;
   stellarTrustlineValidation?: StellarTrustlineValidation;
+  showSolanaWarning?: boolean;
 }
 
 const OrderCommitButton: React.FC<OrderCommitButtonProps> = props => {
-  const { recipient, stellarValidation, stellarTrustlineValidation } = props;
+  const { recipient, stellarValidation, stellarTrustlineValidation, showSolanaWarning } = props;
   const { sourceAddress, direction, currencies, inputError } = useDerivedTradeInfo();
 
   const toggleWalletModal = useWalletModalToggle();
@@ -51,7 +52,7 @@ const OrderCommitButton: React.FC<OrderCommitButtonProps> = props => {
         {inputError || t`Swap`}
       </Button>
 
-      <OrderModal recipient={recipient} />
+      <OrderModal recipient={recipient} showSolanaWarning={showSolanaWarning} />
     </>
   );
 };

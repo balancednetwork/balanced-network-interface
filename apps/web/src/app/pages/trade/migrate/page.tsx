@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Currency, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button } from '@/app/components/Button';
@@ -20,7 +21,7 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { maxAmountSpend } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
@@ -252,6 +253,25 @@ function MigratePanel({
     [maxInputAmount, setInputValue, onInputPercentSelect],
   );
 
+  // Check if user has sufficient balance for the input amount
+  const hasInsufficientBalance = React.useMemo(() => {
+    if (!inputValue || parseFloat(inputValue) <= 0 || !inputCurrencyBalance || !inputCurrency) {
+      return false;
+    }
+
+    try {
+      // Convert input value to BigNumber for comparison
+      const inputAmountBN = new BigNumber(inputValue);
+      const balanceAmountBN = new BigNumber(inputCurrencyBalance.toFixed());
+
+      // Check if input amount is greater than available balance
+      return inputAmountBN.isGreaterThan(balanceAmountBN);
+    } catch (error) {
+      // If there's an error parsing the amounts, consider it insufficient
+      return true;
+    }
+  }, [inputValue, inputCurrencyBalance, inputCurrency]);
+
   return (
     <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
       <div>
@@ -377,9 +397,18 @@ function MigratePanel({
             <Flex justifyContent="center" mt={4}>
               <Button
                 onClick={openModal}
-                disabled={!inputValue || parseFloat(inputValue) <= 0 || !stellarTrustlineValidation?.ok}
+                disabled={
+                  !inputValue ||
+                  parseFloat(inputValue) <= 0 ||
+                  !stellarTrustlineValidation?.ok ||
+                  hasInsufficientBalance
+                }
               >
-                <Trans>Migrate</Trans>
+                {hasInsufficientBalance ? (
+                  <Trans>Insufficient {formatSymbol(inputCurrency?.symbol)}</Trans>
+                ) : (
+                  <Trans>Migrate</Trans>
+                )}
               </Button>
             </Flex>
           </AutoColumn>

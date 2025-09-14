@@ -36,11 +36,7 @@ const SingleChainBalanceItem = ({
   const [isOpen, setOpen] = React.useState(false);
   const rates = useRatesWithOracle();
 
-  //tmp
-  const hasBTCB = currency?.symbol === 'BTCB' && balance?.greaterThan(0);
-  //end of tmp
-
-  const hasNotification = (baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0)) || hasBTCB;
+  const hasNotification = baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0);
 
   const closeModal = React.useCallback(() => {
     setOpen(false);
@@ -63,7 +59,8 @@ const SingleChainBalanceItem = ({
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : formatSymbol(symbol)}
+            {/* @ts-ignore */}
+            {isNested ? xChainMap[xChainId].name : formatSymbol(currency?.spokeVersion || symbol)}
             {isICONAsset && <Chevron $isNested={isNested} />}
           </Typography>
         </AssetSymbol>

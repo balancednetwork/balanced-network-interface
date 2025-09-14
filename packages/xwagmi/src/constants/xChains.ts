@@ -207,7 +207,7 @@ export const bsc: XChain = {
     bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
   },
   autoExecution: true,
-  gasThreshold: 0.005,
+  gasThreshold: 0.001,
   testnet: false,
   useXCallScanner: true,
 };

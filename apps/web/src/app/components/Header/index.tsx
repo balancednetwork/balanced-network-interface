@@ -32,7 +32,6 @@ import RecentActivity from '../RecentActivity';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
-import { useHasBTCB } from '../Wallet/useClaimableICX';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -241,7 +240,6 @@ export default function Header(props: { title?: string; className?: string }) {
   const upSmall = useMedia('(min-width: 600px)');
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
-  const hasBTCB = useHasBTCB();
   const location = useLocation();
   const isTradeLegacy = location.pathname?.includes('trade-legacy');
   const isSmall = useMedia('(max-width: 550px)');
@@ -495,7 +493,7 @@ export default function Header(props: { title?: string; className?: string }) {
               </ClickAwayListener>
             </RecentActivityButtonWrapper>
 
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu} $isActive={Boolean(anchor)}>

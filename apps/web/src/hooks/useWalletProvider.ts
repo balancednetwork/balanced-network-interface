@@ -1,14 +1,15 @@
-import { SolanaXService, StellarXService } from '@balancednetwork/xwagmi';
+import { getXChainType, SolanaXService, StellarXService, XChainId } from '@balancednetwork/xwagmi';
 import { ChainId, IconEoaAddress } from '@sodax/types';
 import {
+  BrowserExtensionEvmWalletConfig,
   EvmWalletProvider,
   IconWalletProvider,
+  isBrowserExtensionEvmWalletConfig,
   SolanaWalletProvider,
   StellarWalletConfig,
   StellarWalletProvider,
   SuiWalletProvider,
-  getXChainType,
-} from '@sodax/wallet-sdk';
+} from '@sodax/wallet-sdk-core';
 import { useMemo } from 'react';
 import {
   ICONWalletProviderOptions,
@@ -19,7 +20,7 @@ import {
 } from './useWalletProviderOptions';
 
 export function useWalletProvider(spokeChainId: ChainId | undefined) {
-  const xChainType = getXChainType(spokeChainId);
+  const xChainType = getXChainType(spokeChainId as XChainId);
   const walletProviderOptions = useWalletProviderOptions(spokeChainId);
 
   return useMemo(() => {
@@ -30,8 +31,10 @@ export function useWalletProvider(spokeChainId: ChainId | undefined) {
 
     switch (xChainType) {
       case 'EVM':
-        // @ts-ignore
-        return new EvmWalletProvider(walletProviderOptions);
+        if (isBrowserExtensionEvmWalletConfig(walletProviderOptions as BrowserExtensionEvmWalletConfig)) {
+          return new EvmWalletProvider(walletProviderOptions as BrowserExtensionEvmWalletConfig);
+        }
+        return undefined;
 
       case 'SUI': {
         const { client, wallet, account } = walletProviderOptions as SuiWalletProviderOptions;

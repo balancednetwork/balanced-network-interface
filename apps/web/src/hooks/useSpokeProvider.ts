@@ -23,13 +23,13 @@ import type {
   ISuiWalletProvider,
   SpokeChainId,
 } from '@sodax/types';
-import { getXChainType } from '@sodax/wallet-sdk';
 import { useMemo } from 'react';
 
 import { useWalletProvider } from './useWalletProvider';
+import { getXChainType, XChainId } from '@balancednetwork/xwagmi';
 
 export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeProvider | undefined {
-  const xChainType = getXChainType(spokeChainId);
+  const xChainType = getXChainType(spokeChainId as XChainId);
   const walletProvider = useWalletProvider(spokeChainId);
 
   const spokeProvider = useMemo(() => {

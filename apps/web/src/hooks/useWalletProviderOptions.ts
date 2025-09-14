@@ -1,12 +1,14 @@
 import { CHAIN_INFO, SupportedChainId } from '@balancednetwork/balanced-js';
-import { useXAccount, useXService } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount, useXService } from '@balancednetwork/xwagmi';
 import type { EvmXService, SolanaXService, StellarXService, SuiXService, XChainId } from '@balancednetwork/xwagmi';
 import type { ChainId } from '@sodax/types';
-import { getXChainType } from '@sodax/wallet-sdk';
-import { getWagmiChainId } from '@sodax/wallet-sdk';
 import { useEffect, useState } from 'react';
+import { Account, Chain, PublicClient, Transport, WalletClient } from 'viem';
 
-export type EVMWalletProviderOptions = { walletClient: any; publicClient: any };
+export type EVMWalletProviderOptions = {
+  walletClient: WalletClient<Transport, Chain, Account>;
+  publicClient: PublicClient;
+};
 export type ICONWalletProviderOptions = { walletAddress: string; rpcUrl: string };
 export type SuiWalletProviderOptions = { client: any; wallet: any; account: any };
 export type StellarWalletProviderOptions = { walletsKit: any; network: any; service: StellarXService };
@@ -18,8 +20,23 @@ export type WalletProviderOptions =
   | StellarWalletProviderOptions
   | SolanaWalletProviderOptions;
 
+export const getWagmiChainId = (xChainId: XChainId): number => {
+  const xChainMap = {
+    '0xa869.fuji': 43113,
+    'sonic-blaze': 57054,
+    sonic: 146,
+    '0xa86a.avax': 43114,
+    '0x38.bsc': 56,
+    '0xa4b1.arbitrum': 42161,
+    '0x2105.base': 8453,
+    '0xa.optimism': 10,
+    '0x89.polygon': 137,
+  };
+  return xChainMap[xChainId] ?? 0;
+};
+
 export function useWalletProviderOptions(xChainId: ChainId | undefined): WalletProviderOptions | undefined {
-  const xChainType = getXChainType(xChainId);
+  const xChainType = getXChainType(xChainId as XChainId);
   const evmXService = useXService('EVM') as EvmXService | undefined;
   const xService = useXService(xChainType);
   const xAccount = useXAccount(xChainType);
@@ -36,10 +53,11 @@ export function useWalletProviderOptions(xChainId: ChainId | undefined): WalletP
       switch (xChainType) {
         case 'EVM': {
           if (!evmXService) return;
-          const wagmiChainId = getWagmiChainId(xChainId);
+          const wagmiChainId = getWagmiChainId(xChainId as XChainId);
           const publicClient = evmXService.getPublicClient(wagmiChainId);
-          const walletClient = await evmXService.getWalletClient(wagmiChainId);
-          setOptions({ walletClient, publicClient });
+          const walletClient: WalletClient = await evmXService.getWalletClient(wagmiChainId);
+          if (!walletClient?.account || !publicClient) return;
+          setOptions({ walletClient: walletClient as WalletClient<Transport, Chain, Account>, publicClient });
           break;
         }
         case 'SUI': {

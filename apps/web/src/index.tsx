@@ -8,8 +8,6 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '@/app';
 import store from '@/store';
-// import { wagmiConfig } from '@balancednetwork/xwagmi';
-// import { XWagmiProviders } from '@sodax/wallet-sdk';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { RpcConfig, SodaxProvider } from '@sodax/dapp-kit';
 import { LanguageProvider } from './i18n';

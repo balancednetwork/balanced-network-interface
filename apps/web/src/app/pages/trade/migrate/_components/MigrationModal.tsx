@@ -330,7 +330,7 @@ const MigrationModal = ({
 
         {showSolanaWarning && (
           <Typography textAlign="center" mt="30px">
-            <Trans>Solana can deduct a "new token" fee of 0.50 {formatSymbol(outputCurrency?.symbol)}.</Trans>
+            <Trans>Solana may deduct a "new token" fee of 0.50 {formatSymbol(outputCurrency?.symbol)}.</Trans>
           </Typography>
         )}
 

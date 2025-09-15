@@ -332,7 +332,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, showSol
 
         {showSolanaWarning && (
           <Typography textAlign="center" mt={2}>
-            <Trans>Solana can deduct a "new token" fee of 0.50 {formatSymbol(destToken.symbol)}.</Trans>
+            <Trans>Solana may deduct a "new token" fee of 0.50 {formatSymbol(destToken.symbol)}.</Trans>
           </Typography>
         )}
 

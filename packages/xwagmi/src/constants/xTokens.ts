@@ -118,7 +118,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619', 18, 'BALN', 'Balance Token'),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cxf594ce6068da86b9a0fd0dfa8f969a7eab8aa7a7', 18, 'POL', 'Polygon'),
   ],
   'archway-1': [
     new XToken('archway-1', 'archway-1', '0x0000000000000000000000000000000000000000', 18, 'aARCH', 'Arch'),

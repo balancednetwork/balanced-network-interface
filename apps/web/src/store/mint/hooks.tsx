@@ -5,7 +5,7 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
@@ -373,16 +373,11 @@ export function useDerivedMintInfo(): {
 export function useInitialSupplyLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const navigate = useNavigate();
-  const location = useLocation();
   const tokens = useAllTokens();
   const bases = useCommonBases();
   const { onCurrencySelection } = useMintActionHandlers(true);
   const { currencies } = useDerivedMintInfo();
   const { pair = '' } = useParams<{ pair: string }>();
-
-  // Determine if we're on the legacy route
-  const isLegacy = location.pathname.includes('trade-legacy');
-  const basePath = isLegacy ? '/trade-legacy/supply' : '/trade/supply';
 
   React.useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
@@ -405,12 +400,12 @@ export function useInitialSupplyLoad(): void {
         // TODO: is this necessary?
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
           navigate(
-            `${basePath}/${currencies.CURRENCY_A.symbol}:${currencies.CURRENCY_A.xChainId}_${currencies.CURRENCY_B.symbol}`,
+            `/trade/supply/${currencies.CURRENCY_A.symbol}:${currencies.CURRENCY_A.xChainId}_${currencies.CURRENCY_B.symbol}`,
             { replace: true },
           );
         } else {
           navigate(
-            `${basePath}/${INITIAL_MINT.currencyA.symbol}:${INITIAL_MINT.currencyA.xChainId}_${INITIAL_MINT.currencyB.symbol}`,
+            `/trade/supply/${INITIAL_MINT.currencyA.symbol}:${INITIAL_MINT.currencyA.xChainId}_${INITIAL_MINT.currencyB.symbol}`,
             {
               replace: true,
             },
@@ -419,17 +414,7 @@ export function useInitialSupplyLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [
-    firstLoad,
-    tokens,
-    onCurrencySelection,
-    currencies.CURRENCY_A,
-    currencies.CURRENCY_B,
-    bases,
-    pair,
-    navigate,
-    basePath,
-  ]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, pair, navigate]);
 
   useEffect(() => {
     if (!firstLoad && currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
@@ -440,8 +425,8 @@ export function useInitialSupplyLoad(): void {
       const newPair = `${inputCurrency}_${outputCurrency}`;
 
       if (pair !== newPair) {
-        navigate(`${basePath}/${newPair}`, { replace: true });
+        navigate(`/trade/supply/${newPair}`, { replace: true });
       }
     }
-  }, [currencies, pair, navigate, firstLoad, basePath]);
+  }, [currencies, pair, navigate, firstLoad]);
 }

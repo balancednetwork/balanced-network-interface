@@ -3,7 +3,6 @@ import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } f
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
-import { useNavigate } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -15,8 +14,6 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
-import { balancedSupportedChains } from '@/lib/sodax/balancedConfig';
-import { SODAX_TOKEN_SYMBOLS } from '@/lib/sodax/tokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
@@ -26,7 +23,6 @@ import BigNumber from 'bignumber.js';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
-import { UnderlineText } from '../DropdownText';
 import CancelSearchButton from './CancelSearchButton';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
@@ -42,12 +38,6 @@ export enum CurrencySelectionType {
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
   BRIDGE,
-  SODAX_TRADE_IN,
-  SODAX_TRADE_OUT,
-  MIGRATE_BNUSD_NEW,
-  MIGRATE_BNUSD_OLD,
-  MIGRATE_ICX,
-  MIGRATE_SODAX,
 }
 
 export enum AssetsTab {
@@ -98,16 +88,6 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
     }, {});
 }
 
-function filterSodaxTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
-  const lowerCaseSodaxSymbols = SODAX_TOKEN_SYMBOLS.map(symbol => symbol.toLowerCase());
-  return Object.values(tokens)
-    .filter(token => lowerCaseSodaxSymbols.includes(token.symbol.replace('bnUSD(old)', 'bnUSD').toLowerCase()))
-    .reduce((tokenMap, token) => {
-      tokenMap[token.address] = token;
-      return tokenMap;
-    }, {});
-}
-
 function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]: Token }) {
   return xChainId === 'archway-1' || xChainId === '0x100.icon'
     ? Object.values(bases)
@@ -117,25 +97,6 @@ function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]:
           return acc;
         }, {})
     : bases;
-}
-
-function filterMigrateBNUSD(tokens: { [address: string]: Token }): { [address: string]: Token } {
-  const result = Object.values(tokens)
-    .filter(token => token.symbol === 'bnUSD(old)' || token.symbol === 'bnUSD')
-    .reduce((tokenMap, token) => {
-      tokenMap[token.address] = token;
-      return tokenMap;
-    }, {});
-  return result;
-}
-
-function filterMigrateICX(tokens: { [address: string]: Token }): { [address: string]: Token } {
-  return Object.values(tokens)
-    .filter(token => token.symbol === 'ICX' || token.symbol === 'SODA')
-    .reduce((tokenMap, token) => {
-      tokenMap[token.address] = token;
-      return tokenMap;
-    }, {});
 }
 
 interface CurrencySearchProps {
@@ -173,7 +134,6 @@ export function CurrencySearch({
   const hasSignedIn = useHasSignedIn();
   const rates = useRatesWithOracle();
   const wallets = useSignedInWallets();
-  const navigate = useNavigate();
 
   const handleChainClick = useCallback((xChainId?: XChainId) => {
     if (xChainId) {
@@ -199,7 +159,6 @@ export function CurrencySearch({
     if (
       hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
-        currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
         currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE)
     ) {
       setAssetsTab(AssetsTab.YOUR);
@@ -220,9 +179,6 @@ export function CurrencySearch({
         return filterUntradeableTokens(tokens);
       case CurrencySelectionType.TRADE_OUT:
         return filterUntradeableTokens(tokens);
-      case CurrencySelectionType.SODAX_TRADE_IN:
-      case CurrencySelectionType.SODAX_TRADE_OUT:
-        return filterSodaxTokens(tokens);
       case CurrencySelectionType.TRADE_MINT_BASE:
         return removeStableTokens(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
@@ -232,11 +188,6 @@ export function CurrencySearch({
       case CurrencySelectionType.BRIDGE: {
         return xTokens || [];
       }
-      case CurrencySelectionType.MIGRATE_BNUSD_NEW:
-      case CurrencySelectionType.MIGRATE_BNUSD_OLD:
-      case CurrencySelectionType.MIGRATE_ICX:
-      case CurrencySelectionType.MIGRATE_SODAX:
-        return [];
     }
   }, [currencySelectionType, tokens, bases, xTokens, xChainId]);
 
@@ -289,19 +240,10 @@ export function CurrencySearch({
   }, [filteredTokens, assetsTab, xWallet, rates, debouncedQuery]);
 
   const sortedXChainFilterItems = useMemo(() => {
-    let items = [...xChainFilterItems];
-    if (
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT
-    ) {
-      items = items.filter(item => balancedSupportedChains.includes(item as any));
-    } else {
-      items = items.filter(item => item !== 'sonic');
-    }
-    return items.sort((a, b) => {
+    return [...xChainFilterItems].sort((a, b) => {
       return xChainMap[a].name.localeCompare(xChainMap[b].name);
     });
-  }, [xChainFilterItems, currencySelectionType]);
+  }, [xChainFilterItems]);
 
   const filteredSortedTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
@@ -342,8 +284,6 @@ export function CurrencySearch({
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.TRADE_IN ||
       currencySelectionType === CurrencySelectionType.TRADE_OUT ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
       ? undefined
       : xChainId;
@@ -368,8 +308,6 @@ export function CurrencySearch({
     if (
       currencySelectionType === CurrencySelectionType.TRADE_IN ||
       currencySelectionType === CurrencySelectionType.TRADE_OUT ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
     ) {
       return assetsTab === AssetsTab.ALL || wallets.length > 1;
@@ -405,8 +343,6 @@ export function CurrencySearch({
       {hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
         currencySelectionType === CurrencySelectionType.TRADE_OUT ||
-        currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-        currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
         currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
@@ -442,21 +378,7 @@ export function CurrencySearch({
           </Typography>
         </Column>
       )}
-      {debouncedQuery.length &&
-      (currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-        currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT) ? (
-        <Flex paddingTop="15px" width="100%" justifyContent="center">
-          <UnderlineText
-            onClick={() => {
-              navigate('/trade-legacy');
-            }}
-          >
-            <Typography color="primary" textAlign="center">
-              <Trans>Trade more assets on the legacy exchange</Trans>
-            </Typography>
-          </UnderlineText>
-        </Flex>
-      ) : showCommunityListControl && debouncedQuery.length ? (
+      {showCommunityListControl && debouncedQuery.length ? (
         <Flex paddingTop="15px" width="100%" justifyContent="center">
           <CommunityListToggle />
         </Flex>

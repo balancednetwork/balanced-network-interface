@@ -144,8 +144,7 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
     if (xChainId === ICON_XCALL_NETWORK_ID) {
       return XToken.getXToken(xChainId, currency);
     }
-    // console.error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
-    // throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
+    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 
   return token;
@@ -162,5 +161,5 @@ export function isIconTransaction(from: XChainId | undefined, to: XChainId | und
 }
 
 export function isSpokeToken(token: XToken): boolean {
-  return ['bnUSD', 'bnUSD(old)', 'sICX', 'BALN'].includes(token.symbol);
+  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
 }

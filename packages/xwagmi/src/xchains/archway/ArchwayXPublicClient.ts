@@ -189,7 +189,7 @@ export class ArchwayXPublicClient extends XPublicClient {
   needsApprovalCheck(xToken: XToken): boolean {
     if (xToken.isNativeToken) return false;
 
-    const isBnUSD = xToken.symbol === 'bnUSD' || xToken.symbol === 'bnUSD(old)';
+    const isBnUSD = xToken.symbol === 'bnUSD';
     const isDenom = isDenomAsset(xToken);
     if (isDenom || isBnUSD) return false;
 

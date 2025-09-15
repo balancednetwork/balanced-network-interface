@@ -4,8 +4,7 @@ import { XChainId } from '@balancednetwork/sdk-core';
 import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
-  bnUSD: 'sonic',
-  'bnUSD(old)': '0x1.icon',
+  bnUSD: '0x1.icon',
   sICX: '0x1.icon',
   BALN: '0x1.icon',
   sARCH: 'archway-1',
@@ -30,7 +29,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   POL: '0x89.polygon',
   JitoSOL: 'solana',
   mSUI: 'sui',
-  WETH: 'sonic',
+  wETH: '0x89.polygon',
 };
 
 export const wICX = XToken.wICX;
@@ -38,7 +37,7 @@ export const wICX = XToken.wICX;
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [
     new XToken('0x1.icon', ChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX'),
-    new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD(old)', 'Balanced Dollar'),
+    new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
     new XToken(
       '0x1.icon',
       ChainId.MAINNET,
@@ -118,6 +117,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619', 18, 'BALN', 'Balance Token'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxf594ce6068da86b9a0fd0dfa8f969a7eab8aa7a7', 18, 'POL', 'Polygon'),
   ],
   'archway-1': [
     new XToken('archway-1', 'archway-1', '0x0000000000000000000000000000000000000000', 18, 'aARCH', 'Arch'),
@@ -126,7 +126,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'archway-1',
       'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
       18,
-      'bnUSD(old)',
+      'bnUSD',
       'Balanced Dollar',
     ),
     new XToken(
@@ -142,55 +142,44 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa86a.avax', 43114, '0x0000000000000000000000000000000000000000', 18, 'AVAX', 'AVAX'),
     new XToken('0xa86a.avax', 43114, '0x8475509d391e6ee5A8b7133221CE17019D307B3E', 18, 'hyTB', 'HiYield Treasury Bill'),
     new XToken('0xa86a.avax', 43114, '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', 6, 'USDC', 'USD Coin'),
-    new XToken('0xa86a.avax', 43114, '0xdBDd50997361522495EcFE57EBb6850dA0E4C699', 18, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('0xa86a.avax', 43114, '0x6958a4CBFe11406E2a1c1d3a71A1971aD8B3b92F', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa86a.avax', 43114, '0xdBDd50997361522495EcFE57EBb6850dA0E4C699', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa86a.avax', 43114, '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', 6, 'USDT', 'Tether USD'),
     new XToken('0xa86a.avax', 43114, '0xC7FE3f5B4970Ddc36d850A98e87bb28FaBb866D2', 18, 'sICX', 'Staked ICX'),
     new XToken('0xa86a.avax', 43114, '0x542245f2B93B30994a4670121541B38226f1208c', 18, 'BALN', 'Balance Token'),
   ],
   '0x89.polygon': [
     new XToken('0x89.polygon', 137, '0x0000000000000000000000000000000000000000', 18, 'POL', 'Polygon'),
-    new XToken('0x89.polygon', 137, '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699', 18, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('0x89.polygon', 137, '0x39E77f86C1B1f3fbAb362A82b49D2E86C09659B4', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x89.polygon', 137, '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x89.polygon', 137, '0x6185D52640EA3b683AedD8bA52d18053A41fee09', 18, 'sICX', 'Staked ICX'),
     new XToken('0x89.polygon', 137, '0x51260f53933db7C3319a61ee444fD9548cFF94D5', 18, 'BALN', 'Balance Token'),
     new XToken('0x89.polygon', 137, '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6, 'USDC', 'USD Coin'),
+    new XToken('0x89.polygon', 137, '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', 18, 'wETH', 'Wrapped Ether'),
     new XToken('0x89.polygon', 137, '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', 18, 'wPOL', 'Wrapped POL'),
   ],
   '0x38.bsc': [
     new XToken('0x38.bsc', 56, '0x0000000000000000000000000000000000000000', 18, 'BNB', 'BNB'),
     new XToken('0x38.bsc', 56, '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', 18, 'ETH', 'Ethereum'),
-    new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('0x38.bsc', 56, '0x8428FedC020737a5A2291F46cB1B80613eD71638', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken(
       '0x38.bsc',
       56,
       '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
       18,
-      'BTCB',
+      'BTC',
       'Binance-Peg BTCB Token',
       'BTC1',
+      'BTCB',
     ),
     new XToken('0x38.bsc', 56, '0xd94F0Aea6d6f14C012d992e8886C8C1736921e10', 18, 'sICX', 'Staked ICX'),
     new XToken('0x38.bsc', 56, '0x94cf269d63c4140eD481CB0b149daE03c4620cdF', 18, 'BALN', 'Balance Token'),
-    new XToken('0x38.bsc', 56, '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', 18, 'USDC', 'USDC Coin'),
   ],
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', 18, 'WETH', 'Wrapped Ether'),
-    new XToken(
-      '0xa4b1.arbitrum',
-      42161,
-      '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e',
-      18,
-      'bnUSD(old)',
-      'Balanced Dollar',
-    ),
-    new XToken('0xa4b1.arbitrum', 42161, '0xA256dd181C3f6E5eC68C6869f5D50a712d47212e', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa4b1.arbitrum', 42161, '0x35751007a407ca6feffe80b3cb397736d2cf4dbe', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0x5979D7b546E38E414F7E9822514be443A4800529', 18, 'wstETH', 'Wrapped stETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
-    new XToken('0xa4b1.arbitrum', 42161, '0xfB0ACB1b2720B620935F50a6dd3F7FEA52b2FCBe', 18, 'wBTC', 'Wrapped Bitcoin'),
     new XToken(
       '0xa4b1.arbitrum',
       42161,
@@ -208,20 +197,16 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0xa.optimism': [
     new XToken('0xa.optimism', 10, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
-    new XToken('0xa.optimism', 10, '0xdccd213951d8214fbaca720728474e2cef9d247b', 18, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('0xa.optimism', 10, '0xF4f7dC27c17470a26d0de9039Cf0EA5045F100E8', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa.optimism', 10, '0xdccd213951d8214fbaca720728474e2cef9d247b', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa.optimism', 10, '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', 6, 'USDC', 'USD Coin'),
-    new XToken('0xa.optimism', 10, '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', 6, 'USDT', 'USD Tether'),
     new XToken('0xa.optimism', 10, '0x91b36B5b078A3150EA05d5451b3feB608CFcEEE1', 18, 'sICX', 'Staked ICX'),
     new XToken('0xa.optimism', 10, '0xD336c74B840f9962cF2c666f8666d6d61Ec24440', 18, 'BALN', 'Balance Token'),
   ],
   '0x2105.base': [
     new XToken('0x2105.base', 8453, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
-    new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('0x2105.base', 8453, '0xAcfab3F31C0a18559D78556BBf297EC29c6cf8aa', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x2105.base', 8453, '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0x2105.base', 8453, '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452', 18, 'wstETH', 'Wrapped stETH'),
-    new XToken('0x2105.base', 8453, '0x2803a23a3BA6b09e57D1c71deC0D9eFdBB00A27F', 18, 'cbBTC', 'Coinbase BTC'),
     new XToken(
       '0x2105.base',
       8453,
@@ -238,7 +223,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0x100.icon': [
     new XToken('0x100.icon', 0x100, 'hx0000000000000000000000000000000000000000', 18, 'HVH', 'HVH'),
-    new XToken('0x100.icon', 0x100, 'cx4b40466250f9ccf04cc92da1b6633968ba3ec7cc', 18, 'bnUSD(old)', 'Balanced Dollar'),
+    new XToken('0x100.icon', 0x100, 'cx4b40466250f9ccf04cc92da1b6633968ba3ec7cc', 18, 'bnUSD', 'Balanced Dollar'),
   ],
   '0x2.icon': [],
   '0xa869.fuji': [],
@@ -250,7 +235,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'injective-1',
       'factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
       18,
-      'bnUSD(old)',
+      'bnUSD',
       'Balanced Dollar',
     ),
     new XToken(
@@ -285,14 +270,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'stellar',
       'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
       18,
-      'bnUSD(old)',
-      'Balanced Dollar',
-    ),
-    new XToken(
-      'stellar',
-      'stellar',
-      'CD6YBFFWMU2UJHX2NGRJ7RN76IJVTCC7MRA46DUBXNB7E6W7H7JRJ2CX',
-      7,
       'bnUSD',
       'Balanced Dollar',
     ),
@@ -360,14 +337,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0x3917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
       9,
-      'bnUSD(old)',
-      'Balanced Dollar',
-    ),
-    new XToken(
-      'sui',
-      'sui',
-      '0xff4de2b2b57dd7611d2812d231a467d007b702a101fd5c7ad3b278257cddb507::bnusd::BNUSD',
-      9,
       'bnUSD',
       'Balanced Dollar',
     ),
@@ -398,21 +367,11 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   solana: [
     new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
-    new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD(old)', 'Balanced Dollar'),
-    new XToken('solana', 'solana', '3rSPCLNEF7Quw4wX8S1NyKivELoyij8eYA2gJwBgt4V5', 9, 'bnUSD', 'Balanced Dollar'),
+    new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
     new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
     new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
     new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
     new XToken('solana', 'solana', 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 6, 'USDC', 'USD Coin'),
-  ],
-  sonic: [
-    new XToken('sonic', 146, '0x0000000000000000000000000000000000000000', 18, 'S', 'Sonic'),
-    new XToken('sonic', 146, '0x7c7d53EEcda37a87ce0D5bf8E0b24512A48dC963', 18, 'SODA', 'SODA'),
-    new XToken('sonic', 146, '0xE801CA34E19aBCbFeA12025378D19c4FBE250131', 18, 'bnUSD', 'bnUSD'),
-    new XToken('sonic', 146, '0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38', 18, 'wS', 'Wrapped Sonic'),
-    new XToken('sonic', 146, '0x29219dd400f2Bf60E5a23d13Be72B486D4038894', 6, 'USDC', 'USD Coin'),
-    new XToken('sonic', 146, '0x6047828dc181963ba44974801ff68e538da5eaf9', 6, 'USDT', 'USDT'),
-    new XToken('sonic', 146, '0x50c42dEAcD8Fc9773493ED674b675bE577f2634b', 18, 'WETH', 'Wrapped Ether'),
   ],
 };
 
@@ -463,10 +422,5 @@ export const STELLAR_TRUSTLINE_TOKEN_INFO = [
     asset_code: 'USDC',
     contract_id: 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75',
     asset_issuer: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
-  },
-  {
-    asset_code: 'bnUSD',
-    contract_id: 'CD6YBFFWMU2UJHX2NGRJ7RN76IJVTCC7MRA46DUBXNB7E6W7H7JRJ2CX',
-    asset_issuer: 'GDYUTHY75A7WUZJQDPOP66FB32BOYGZRXHWTWO4Q6LQTANT5X3V5HNFA',
   },
 ];

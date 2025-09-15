@@ -9,9 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/app';
 import store from '@/store';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
-import { RpcConfig, SodaxProvider } from '@sodax/dapp-kit';
 import { LanguageProvider } from './i18n';
-import sodaxConfig from './lib/sodax';
 import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
 
@@ -34,11 +32,6 @@ const fmt = {
   suffix: '',
 };
 
-const rpcConfig: RpcConfig = {
-  //solana
-  solana: 'https://solana-mainnet.g.alchemy.com/v2/i3q5fE3cYSFBE4Lcg1kS5',
-};
-
 BigInt.prototype['toJSON'] = function () {
   return 'BIGINT::' + this.toString();
 };
@@ -49,17 +42,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <BrowserRouter>
         <HelmetProvider>
-          <SodaxProvider testnet={false} config={sodaxConfig} rpcConfig={rpcConfig}>
-            <QueryClientProvider client={queryClient}>
-              <XWagmiProviders>
-                <LanguageProvider>
-                  <PlausibleProvider domain="app.balanced.network">
-                    <App />
-                  </PlausibleProvider>
-                </LanguageProvider>
-              </XWagmiProviders>
-            </QueryClientProvider>
-          </SodaxProvider>
+          <QueryClientProvider client={queryClient}>
+            <XWagmiProviders>
+              <LanguageProvider>
+                <PlausibleProvider domain="app.balanced.network">
+                  <App />
+                </PlausibleProvider>
+              </LanguageProvider>
+            </XWagmiProviders>
+          </QueryClientProvider>
         </HelmetProvider>
       </BrowserRouter>
     </Provider>

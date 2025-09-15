@@ -30,7 +30,6 @@ import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { SUPPORTED_XCALL_CHAINS, stellar } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
-import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   const signedInWallets = useSignedInWallets();
@@ -162,17 +161,6 @@ export function useWalletFetchBalances() {
   useEffect(() => {
     optBalances && dispatch(changeBalances({ xChainId: '0xa.optimism', balances: optBalances }));
   }, [optBalances, dispatch]);
-
-  // fetch balances on op
-  const sonicTokens = useXTokens('sonic');
-  const { data: sonicBalances } = useXBalances({
-    xChainId: 'sonic',
-    xTokens: sonicTokens,
-    address,
-  });
-  useEffect(() => {
-    sonicBalances && dispatch(changeBalances({ xChainId: 'sonic', balances: sonicBalances }));
-  }, [sonicBalances, dispatch]);
 
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
@@ -331,7 +319,7 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
 export function useXBalancesByToken(): XWalletAssetRecord[] {
   const balances = useCrossChainWalletBalances();
   const tokenListConfig = useTokenListConfig();
-  const prices = useTokenPricesWithPyth();
+  const prices = useRatesWithOracle();
   const MIN_VALUE_TO_DISPLAY = new BigNumber(0.01);
 
   return React.useMemo(() => {
@@ -340,7 +328,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
         (acc, [chainId, chainBalances]) => {
           if (chainBalances) {
             forEach(chainBalances, balance => {
-              const price = prices?.[balance.currency?.symbol.replace('(old)', '') || ''] || new BigNumber(0);
+              const price = prices?.[balance.currency?.symbol || ''] || new BigNumber(0);
               if (
                 balance.currency &&
                 balance?.greaterThan(0) &&
@@ -374,10 +362,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
           xTokenAmounts,
           isBalanceSingleChain: Object.keys(xTokenAmounts).length === 1,
           total,
-          value:
-            prices && prices[symbol.replace('(old)', '')]
-              ? total.times(prices[symbol.replace('(old)', '')])
-              : undefined,
+          value: prices && prices[symbol] ? total.times(prices[symbol]) : undefined,
         };
       })
       .filter((item): item is XWalletAssetRecord => Boolean(item));

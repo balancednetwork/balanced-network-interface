@@ -1,4 +1,3 @@
-import { getSupportedXChainIdsForIntentToken } from '@/lib/sodax/utils';
 import { XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
@@ -27,7 +26,7 @@ export interface SwapState {
 
 export const INITIAL_SWAP = {
   base: xTokenMap['sui'][0],
-  quote: xTokenMap['0xa4b1.arbitrum'][0],
+  quote: xTokenMap['0x2105.base'][1],
 };
 
 const initialState: SwapState = {
@@ -50,52 +49,17 @@ const swapSlice = createSlice({
     selectCurrency: create.reducer<{ currency: XToken | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
-        // Check if the selected currency is the same as the other field
+        // the case where we have to swap the order
         if (currency?.symbol === state[otherField].currency?.symbol) {
-          // Check if the currency is supported on multiple xChains using SODAX configuration
-          const supportedChainIds = getSupportedXChainIdsForIntentToken(currency);
-
-          if (supportedChainIds.length > 1) {
-            const previousCurrency = state[field].currency;
-            const previousFieldXChainId = previousCurrency?.xChainId;
-            // if the selected currency is multichain and the same as the other field currency,
-            // but the other field currency has the same xchainid, switch the xchainIds of the fields
-            if (currency?.xChainId === state[otherField].currency?.xChainId && previousFieldXChainId) {
-              const newOtherFieldCurrency = convertCurrency(previousFieldXChainId, state[otherField].currency);
-              if (newOtherFieldCurrency) {
-                return {
-                  ...state,
-                  [field]: { ...state[field], currency, percent: 0 },
-                  [otherField]: { ...state[otherField], currency: newOtherFieldCurrency },
-                };
-              }
-            }
-
-            if (previousCurrency && currency?.xChainId === state[otherField].currency?.xChainId) {
-              return {
-                ...state,
-                [field]: { ...state[field], currency, percent: 0 },
-                [otherField]: { ...state[otherField], currency: previousCurrency, percent: 0 },
-              };
-            }
-
-            // Allow same currency selection if supported on multiple chains
-            return {
-              ...state,
-              [field]: { ...state[field], currency, percent: 0 },
-            };
-          } else {
-            // Fall back to original behavior - switch currencies
-            return {
-              ...state,
-              independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-              [field]: state[otherField],
-              [otherField]: state[field],
-            };
-          }
+          // the case where we have to swap the order
+          return {
+            ...state,
+            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
+            [field]: state[otherField],
+            [otherField]: state[field],
+          };
         } else {
-          // Normal case - different currency
+          // the normal case
           return {
             ...state,
             [field]: { ...state[field], currency, percent: 0 },
@@ -125,27 +89,9 @@ const swapSlice = createSlice({
       };
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
-      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-      const previousChainId = state[field].currency?.xChainId;
-
       const updatedCurrency = convertCurrency(xChainId, state[field].currency);
-
       if (updatedCurrency) {
         state[field].currency = updatedCurrency;
-      }
-
-      // Check if both currencies are the same and user is trying to select the same chain
-      if (
-        state[field].currency?.symbol === state[otherField].currency?.symbol &&
-        state[otherField].currency?.xChainId === xChainId
-      ) {
-        // Switch the chains instead
-        if (previousChainId) {
-          const updatedOtherCurrency = convertCurrency(previousChainId, state[otherField].currency);
-          if (updatedOtherCurrency) {
-            state[otherField].currency = updatedOtherCurrency;
-          }
-        }
       }
     }),
 

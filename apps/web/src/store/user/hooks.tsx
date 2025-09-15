@@ -6,7 +6,6 @@ import { SupportedLocale } from '@/constants/locales';
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '@/constants/routing';
 import { useAllTokens } from '@/hooks/Tokens';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { useEffect, useState } from 'react';
 
 import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { SerializedToken, addSerializedToken, removeSerializedToken, updateUserLocale } from './reducer';
@@ -137,29 +136,4 @@ export function useUserLocaleManager(): [SupportedLocale | null, (newLocale: Sup
   );
 
   return [locale, setLocale];
-}
-
-export function useElapsedTime(timestamp: number | undefined): number {
-  const [elapsedTime, setElapsedTime] = useState(0);
-
-  useEffect(() => {
-    if (timestamp) {
-      const updateElapsedTime = () => {
-        setElapsedTime(Math.floor((Date.now() - timestamp) / 1000));
-      };
-
-      updateElapsedTime(); // Update immediately
-
-      const interval = setInterval(
-        () => {
-          updateElapsedTime();
-        },
-        Date.now() - timestamp > 600000 ? 60000 : 1000,
-      ); // 600000 ms = 10 minutes
-
-      return () => clearInterval(interval);
-    }
-  }, [timestamp]);
-
-  return elapsedTime;
 }

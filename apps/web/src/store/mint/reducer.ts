@@ -89,7 +89,7 @@ const mintSlice = createSlice({
       const currencyB = state[Field.CURRENCY_B].currency;
 
       const sICX = xTokenMapBySymbol[currency.xChainId]['sICX'];
-      const bnUSD = xTokenMapBySymbol[currency.xChainId]['bnUSD(old)'];
+      const bnUSD = xTokenMapBySymbol[currency.xChainId]['bnUSD'];
 
       if (field === Field.CURRENCY_A && currency.symbol === currencyB?.symbol) {
         return {
@@ -117,7 +117,7 @@ const mintSlice = createSlice({
       try {
         updatedCurrencyB = convertCurrency(xChainId, state[Field.CURRENCY_B].currency);
       } catch (error) {
-        updatedCurrencyB = xTokenMapBySymbol[xChainId]['bnUSD(old)'];
+        updatedCurrencyB = xTokenMapBySymbol[xChainId]['bnUSD'];
       }
       state[Field.CURRENCY_A].currency = updatedCurrencyA;
       state[Field.CURRENCY_B].currency = updatedCurrencyB;

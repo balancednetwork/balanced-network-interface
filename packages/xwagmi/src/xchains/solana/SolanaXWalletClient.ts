@@ -180,8 +180,8 @@ export class SolanaXWalletClient extends XWalletClient {
     const amount = inputAmount.quotient * 1_000_000_000n + '';
 
     // @ts-ignore
-    const tokenProgram = new Program(TokenProgramMap[inputAmount.currency.symbol.replace('(old)', '')].IDL, provider);
-    const tokenProgramId = new PublicKey(TokenProgramMap[inputAmount.currency.symbol.replace('(old)', '')].programId);
+    const tokenProgram = new Program(TokenProgramMap[inputAmount.currency.symbol].IDL, provider);
+    const tokenProgramId = new PublicKey(TokenProgramMap[inputAmount.currency.symbol].programId);
     const mintToken = new PublicKey(inputAmount.currency.address);
 
     const statePda = findPda(['state'], tokenProgramId);

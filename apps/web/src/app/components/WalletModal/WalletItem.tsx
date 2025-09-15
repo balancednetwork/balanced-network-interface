@@ -90,7 +90,7 @@ const WalletItem = ({ name, xChainType, logo, description, border, xChains, swit
           <XChainsWrap signedIn={!!address}>
             {xChains.map(chain => (
               <Box key={chain.xChainId} onClick={() => handleSwitchChain(chain)} style={{ cursor: 'pointer' }}>
-                <ChainLogo chain={chain} size="19px" key={chain.xChainId} />
+                <ChainLogo chain={chain} size="24px" key={chain.xChainId} />
               </Box>
             ))}
           </XChainsWrap>

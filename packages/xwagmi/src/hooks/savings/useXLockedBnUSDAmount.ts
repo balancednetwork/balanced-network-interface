@@ -8,7 +8,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 const fetchLockedAmount = async ({ address, xChainId }) => {
   if (xChainId && address) {
     const res = await bnJs.Savings.getLockedAmount(xChainId === '0x1.icon' ? address : `${xChainId}/${address}`);
-    const bnUSDOnIcon = xTokenMapBySymbol['0x1.icon']['bnUSD(old)'];
+    const bnUSDOnIcon = xTokenMapBySymbol['0x1.icon']['bnUSD'];
     return res ? convertCurrencyAmount(xChainId, CurrencyAmount.fromRawAmount<XToken>(bnUSDOnIcon, BigInt(res))) : null;
   }
   return null;

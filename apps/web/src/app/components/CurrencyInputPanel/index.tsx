@@ -9,7 +9,7 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
-import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
+import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
@@ -17,10 +17,6 @@ import {
   DEFAULT_TOKEN_CHAIN,
   getSupportedXChainForSwapToken,
   getSupportedXChainIdsForSwapToken,
-  icon,
-  sui,
-  stellar,
-  convertCurrency,
 } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
@@ -29,7 +25,6 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
-import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -157,10 +152,10 @@ export default function CurrencyInputPanel({
 
   const [ref, width] = useWidth();
 
-  const prices = useTokenPricesWithPyth();
+  const prices = useRatesWithOracle();
   const price = useMemo(() => {
     if (prices && currency?.symbol) {
-      return prices[currency.symbol.replace('(old)', '')];
+      return prices[currency.symbol];
     }
   }, [prices, currency]);
 
@@ -189,43 +184,20 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
-  const oldWorldChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
-  const sodaxChains = useMemo(() => getSupportedXChainForIntentToken(currency), [currency]);
-  const xChains = useMemo(() => {
-    if (
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
-      currencySelectionType === CurrencySelectionType.MIGRATE_BNUSD_NEW ||
-      currencySelectionType === CurrencySelectionType.MIGRATE_SODAX
-    ) {
-      return sodaxChains;
-    }
-
-    if (currencySelectionType === CurrencySelectionType.MIGRATE_ICX) {
-      return [icon];
-    }
-
-    if (currencySelectionType === CurrencySelectionType.MIGRATE_BNUSD_OLD) {
-      return [icon, stellar, sui];
-    }
-
-    return oldWorldChains;
-  }, [currencySelectionType, oldWorldChains, sodaxChains]);
+  const xChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency, setDefaultChain = true) => {
+      onCurrencySelect && onCurrencySelect(currency);
+
       if (setDefaultChain && currency?.symbol) {
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId) {
-          const convertedCurrency = convertCurrency(defaultXChainId, currency);
-          onCurrencySelect && convertedCurrency && onCurrencySelect(convertedCurrency);
           const supportedChainIds = getSupportedXChainIdsForSwapToken(currency);
           const chainCount = supportedChainIds.length;
           onChainSelect && onChainSelect(defaultXChainId);
           chainCount > 2 && setTimeout(() => setXChainOptionsOpen(true), 100);
         }
-      } else {
-        onCurrencySelect && onCurrencySelect(currency);
       }
     },
     [onCurrencySelect, onChainSelect],
@@ -247,9 +219,7 @@ export default function CurrencyInputPanel({
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
                   <StyledTokenName className="token-symbol-container">{formatSymbol(currency.symbol)}</StyledTokenName>
-                  {currencySelectionType !== CurrencySelectionType.SODAX_TRADE_IN &&
-                    currencySelectionType !== CurrencySelectionType.SODAX_TRADE_OUT &&
-                    currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
+                  {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
                 </>
               ) : (
                 <StyledTokenName>Choose a token</StyledTokenName>

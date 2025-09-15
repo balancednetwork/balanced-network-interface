@@ -19,7 +19,6 @@ type NotificationProps = {
   redirectOnSuccess?: string;
   generic?: boolean;
   title?: string;
-  sonicScanLink?: string;
 };
 
 const NotificationPending = ({ summary }: NotificationProps) => {
@@ -56,12 +55,11 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
   );
 };
 
-const NotificationError = ({ failureReason, generic, title, sonicScanLink }: NotificationProps) => {
+const NotificationError = ({ failureReason, generic, title }: NotificationProps) => {
   const arbitraryCallsTestExecutionPassed = failureReason && failureReason.indexOf('everted(20)') >= 0;
   return (
     <NotificationContainer
       onClick={() => {
-        if (sonicScanLink) window.open(sonicScanLink, '_blank');
         if (generic) window.open('https://docs.balanced.network/troubleshooting#transaction-error', '_blank');
       }}
     >

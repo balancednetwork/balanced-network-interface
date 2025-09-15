@@ -1,4 +1,5 @@
 import { Typography } from '@/app/theme';
+import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -7,7 +8,6 @@ import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
-import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;
@@ -20,7 +20,7 @@ type MultiChainBalanceItemProps = {
 const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXChainId }: MultiChainBalanceItemProps) => {
   const { symbol } = baseToken;
   const arrowRef = React.useRef<HTMLElement>(null);
-  const rates = useTokenPricesWithPyth();
+  const rates = useRatesWithOracle();
 
   const filteredBreakdown = React.useMemo(
     () =>
@@ -52,7 +52,7 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXCha
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {formatBalance(total?.toFixed(), rates?.[baseToken.symbol.replace('(old)', '')]?.toFixed())}
+            {formatBalance(total?.toFixed(), rates?.[baseToken.symbol]?.toFixed())}
           </DataText>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
             {!value ? '-' : formatValue(value.toFixed())}

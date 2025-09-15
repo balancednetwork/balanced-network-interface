@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { SectionPanel } from '@/app/components/Panel';
+import PendingOrders from './_components/PendingOrders';
 import SwapDescription from './_components/SwapDescription';
 import SwapPanel from './_components/SwapPanel';
-import TokenList from './_components/TokenList';
 
 export function TradePage() {
   return (
@@ -12,7 +12,6 @@ export function TradePage() {
         <SwapPanel />
         <SwapDescription />
       </SectionPanel>
-      <TokenList />
     </>
   );
 }

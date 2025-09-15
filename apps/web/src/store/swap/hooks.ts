@@ -39,10 +39,15 @@ import {
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
 import { ALLOWED_XCHAIN_IDS, intentService } from '@/lib/intent';
+import { PARTNER_FEE_PERCENTAGE } from '@/lib/sodax';
+import { calculateExchangeRate, normaliseTokenAmount, scaleTokenAmount } from '@/lib/sodax/utils';
 import { useAllTokensByAddress } from '@/queries/backendv2';
 import { WithdrawalFloorDataType } from '@/types';
 import { CallData } from '@balancednetwork/balanced-js';
+import { useQuote } from '@sodax/dapp-kit';
+import { SolverIntentQuoteRequest, SpokeChainId } from '@sodax/sdk';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useSwapSlippageTolerance } from '../application/hooks';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -468,13 +473,401 @@ export function useDerivedSwapInfo(): {
   };
 }
 
+export function useDerivedTradeInfo(): {
+  sourceAddress: string | undefined;
+  currencies: { [field in Field]?: XToken };
+  percents: { [field in Field]?: number };
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  parsedAmount: CurrencyAmount<XToken> | undefined;
+  inputError?: string;
+  direction: { from: XChainId; to: XChainId };
+  dependentField: Field;
+  parsedAmounts: {
+    [field in Field]: CurrencyAmount<XToken> | undefined;
+  };
+  formattedAmounts: {
+    [field in Field]: string;
+  };
+  stellarValidation?: StellarAccountValidation;
+  stellarTrustlineValidation?: StellarTrustlineValidation;
+  quote: any | undefined;
+  exchangeRate: BigNumber;
+  minOutputAmount: BigNumber | undefined;
+  formattedFee: string;
+} {
+  const {
+    independentField,
+    typedValue,
+    recipient,
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
+    [Field.OUTPUT]: { currency: outputCurrency },
+  } = useSwapState();
+
+  const sourceAddress = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
+  const crossChainWallet = useCrossChainWalletBalances();
+  const isExactIn: boolean = independentField === Field.INPUT;
+  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
+
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
+    return {
+      [Field.INPUT]: inputCurrency ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency.address] : undefined,
+    };
+  }, [crossChainWallet, inputCurrency, outputCurrency]);
+
+  const currencies: { [field in Field]?: XToken } = useMemo(() => {
+    return {
+      [Field.INPUT]: inputCurrency ?? undefined,
+      [Field.OUTPUT]: outputCurrency ?? undefined,
+    };
+  }, [inputCurrency, outputCurrency]);
+
+  //!! SODAX start
+  const sourceToken = currencies[Field.INPUT];
+  const destToken = currencies[Field.OUTPUT];
+  const sourceChain = sourceToken?.xChainId;
+  const destChain = destToken?.xChainId;
+  const userTypedInAmount = parsedAmount?.toFixed();
+
+  const payload = useMemo(() => {
+    if (!sourceToken || !destToken) {
+      return undefined;
+    }
+
+    if (!userTypedInAmount) {
+      return undefined;
+    }
+
+    if (!sourceChain || !destChain) {
+      return undefined;
+    }
+
+    return {
+      token_src: sourceToken.address,
+      token_src_blockchain_id: sourceChain as SpokeChainId,
+      token_dst: destToken.address,
+      token_dst_blockchain_id: destChain as SpokeChainId,
+      amount: scaleTokenAmount(userTypedInAmount, isExactIn ? sourceToken.decimals : destToken.decimals),
+      quote_type: isExactIn ? 'exact_input' : 'exact_output',
+    } satisfies SolverIntentQuoteRequest;
+  }, [sourceToken, destToken, sourceChain, destChain, userTypedInAmount, isExactIn]);
+
+  const quoteQuery = useQuote(payload);
+  const quoteQueryLoading = quoteQuery.isLoading;
+
+  const quote = useMemo(() => {
+    if (quoteQuery.data?.ok) {
+      if (isExactIn) {
+        return {
+          ...quoteQuery.data.value,
+          quoted_amount: (quoteQuery.data.value.quoted_amount * BigInt(10000 - PARTNER_FEE_PERCENTAGE)) / BigInt(10000),
+        };
+      } else {
+        return quoteQuery.data.value;
+      }
+    }
+    return undefined;
+  }, [quoteQuery, isExactIn]);
+
+  const exchangeRate = useMemo(() => {
+    if (!quote?.quoted_amount || !userTypedInAmount) {
+      return new BigNumber(0);
+    }
+
+    if (isExactIn) {
+      // For exact input: exchange rate = output / input
+      return calculateExchangeRate(
+        new BigNumber(userTypedInAmount),
+        new BigNumber(normaliseTokenAmount(quote.quoted_amount, destToken?.decimals ?? 0)),
+      );
+    } else {
+      // For exact output: exchange rate = output / input (but we need to invert the calculation)
+      // quoted_amount is the input amount needed, sourceAmount is the output amount desired
+      return calculateExchangeRate(
+        new BigNumber(normaliseTokenAmount(quote.quoted_amount, sourceToken?.decimals ?? 0)),
+        new BigNumber(userTypedInAmount),
+      );
+    }
+  }, [quote, userTypedInAmount, destToken, sourceToken, isExactIn]);
+
+  const slippageTolerance = useSwapSlippageTolerance();
+
+  const minOutputAmount = useMemo(() => {
+    if (!quote?.quoted_amount) {
+      return undefined;
+    }
+
+    if (isExactIn) {
+      // For exact input: min output is the quoted amount minus slippage
+      return new BigNumber(quote.quoted_amount.toString())
+        .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
+        .div(100);
+    } else {
+      // For exact output: min output is the user's typed amount minus slippage
+      return new BigNumber(typedValue ?? 0)
+        .multipliedBy(10 ** (currencies[Field.OUTPUT]?.decimals ?? 18))
+        .multipliedBy(new BigNumber(100).minus(new BigNumber(slippageTolerance).div(100)))
+        .div(100);
+    }
+  }, [quote, slippageTolerance, isExactIn, typedValue, currencies[Field.OUTPUT]?.decimals]);
+
+  const partnerFee = useMemo(() => {
+    if (!quote) {
+      return BigInt(0);
+    }
+
+    if (isExactIn) {
+      // For exact input: quoted_amount is the output amount (after partner fee removed, sodax fee included)
+      // We need to reconstruct the original output amount to calculate the partner fee
+      const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+      const fee = amountBeforePartnerFee - quote.quoted_amount;
+      return fee;
+    } else {
+      // For exact output: quoted_amount is the input amount needed (including both partner and sodax fees)
+      // We need to calculate what the output amount would be, then calculate fees from that output amount
+      // This is the same approach as exact input, but we need to work backwards from input to output
+
+      // The user wants to receive a specific output amount (sourceAmount)
+      // The quoted_amount is what they need to pay (input amount)
+      // We need to calculate what the actual output amount would be after fees
+
+      // For exact output, the output amount is what the user typed (sourceAmount)
+      // But we need to calculate what the output amount would be after removing partner fee
+      const outputAmountAfterPartnerFee = new BigNumber(userTypedInAmount ?? 0).multipliedBy(
+        10 ** (destToken?.decimals ?? 18),
+      );
+
+      // Calculate the partner fee from the output amount (same as exact input)
+      const fee = (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
+      return fee;
+    }
+  }, [quote, isExactIn, userTypedInAmount, destToken?.decimals]);
+
+  const sodaxFee = useMemo(() => {
+    if (!quote) {
+      return BigInt(0);
+    }
+
+    const SODAX_FEE_BASIS_POINTS = 10; // 0.1%
+
+    if (isExactIn) {
+      // For exact input: quoted_amount is the output amount (after partner fee removed, sodax fee included)
+      // We need to reconstruct the original output amount to calculate the sodax fee
+      const amountBeforePartnerFee = (quote.quoted_amount * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+      const initialAmount = (amountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+      const fee = initialAmount - amountBeforePartnerFee;
+      return fee;
+    } else {
+      // For exact output: calculate sodax fee from the output amount (same as exact input)
+      // The user wants to receive a specific output amount (sourceAmount)
+      // We need to calculate what the output amount would be after removing both fees
+      const outputAmountAfterPartnerFee = new BigNumber(userTypedInAmount ?? 0).multipliedBy(
+        10 ** (destToken?.decimals ?? 18),
+      );
+
+      // Calculate what the output amount would be before partner fee
+      const outputAmountBeforePartnerFee =
+        (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+
+      // Calculate what the output amount would be before sodax fee
+      const outputAmountBeforeSodaxFee =
+        (outputAmountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+
+      // Calculate sodax fee as the difference
+      const fee = outputAmountBeforeSodaxFee - outputAmountBeforePartnerFee;
+      return fee;
+    }
+  }, [quote, isExactIn, userTypedInAmount, destToken?.decimals]);
+
+  const formattedFee = useMemo(() => {
+    if (!partnerFee || !sodaxFee || !destToken) {
+      return '';
+    }
+
+    // For both exact input and exact output: fees are in output token terms
+    const bnPartnerFee = new BigNumber(partnerFee.toString()).div(10 ** destToken.decimals);
+    const bnSodaxFee = new BigNumber(sodaxFee.toString()).div(10 ** destToken.decimals);
+    const totalFee = bnPartnerFee.plus(bnSodaxFee);
+
+    // Format the fee to avoid scientific notation and show proper decimal places
+    let formattedAmount: string;
+    if (totalFee.isLessThan(0.000001) && totalFee.isGreaterThan(0)) {
+      // For very small amounts, show more decimal places
+      formattedAmount = totalFee.toFixed(10);
+    } else if (totalFee.isLessThan(0.001) && totalFee.isGreaterThan(0)) {
+      // For very small amounts, show more decimal places
+      formattedAmount = totalFee.toFixed(6);
+    } else if (totalFee.isLessThan(1)) {
+      // For amounts less than 1, show up to 4 decimal places
+      formattedAmount = totalFee.toPrecision(3);
+    } else {
+      // For amounts 1 or greater, show up to 2 decimal places
+      formattedAmount = totalFee.toFormat(2, { groupSeparator: ',' });
+    }
+
+    // Remove trailing zeros after decimal point
+    formattedAmount = formattedAmount.replace(/\.?0+$/, '');
+
+    return `${formattedAmount} ${destToken.symbol}`;
+  }, [destToken, partnerFee, sodaxFee]);
+  //!! SODAX end
+
+  const percents: { [field in Field]?: number } = React.useMemo(
+    () => ({
+      [Field.INPUT]: inputPercent,
+    }),
+    [inputPercent],
+  );
+
+  const _currencies: { [field in Field]?: Currency } = useMemo(() => {
+    return {
+      [Field.INPUT]:
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : convertCurrency('0x1.icon', inputCurrency),
+      [Field.OUTPUT]:
+        outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
+    };
+  }, [inputCurrency, outputCurrency]);
+
+  const _parsedAmount = useMemo(
+    () => tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined),
+    [typedValue, isExactIn, _currencies],
+  );
+
+  let inputError: string | undefined;
+
+  if (sourceAddress && !recipient) {
+    inputError = t`Choose address`;
+  }
+
+  if (sourceAddress && !parsedAmount) {
+    inputError = t`Enter amount`;
+  }
+
+  if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
+    inputError = inputError ?? t`Select a token`;
+  }
+
+  //check sufficient balance
+  if (quote && currencyBalances[Field.INPUT]) {
+    if (isExactIn) {
+      // For exact input: check if user has enough input currency for the amount they typed
+      if (parsedAmount?.greaterThan(currencyBalances[Field.INPUT])) {
+        inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+      }
+    } else {
+      // For exact output: check if user has enough input currency for the required input amount from quote
+      const requiredInputAmount = CurrencyAmount.fromRawAmount(currencies[Field.INPUT]!, quote.quoted_amount);
+      if (requiredInputAmount.greaterThan(currencyBalances[Field.INPUT])) {
+        inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+      }
+    }
+  }
+
+  // decimal scales are different for different chains for the same token
+  // if (
+
+  // ) {
+  //   inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
+  // }
+
+  const userHasSpecifiedInputOutput = Boolean(
+    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+  );
+
+  if (!quoteQueryLoading && userHasSpecifiedInputOutput && !quote) inputError = t`Swap not supported`;
+  if (quoteQueryLoading) inputError = t`Finding best price...`;
+
+  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
+  const _parsedAmounts = React.useMemo(
+    () =>
+      destToken &&
+      sourceToken && {
+        [Field.INPUT]:
+          independentField === Field.INPUT
+            ? _parsedAmount
+            : CurrencyAmount.fromRawAmount(sourceToken, quote?.quoted_amount || 0n),
+        [Field.OUTPUT]:
+          independentField === Field.OUTPUT
+            ? _parsedAmount
+            : CurrencyAmount.fromRawAmount(destToken, quote?.quoted_amount || 0n),
+      },
+    [independentField, _parsedAmount, quote, sourceToken, destToken],
+  );
+
+  const formattedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: _parsedAmounts?.[dependentField]?.toSignificant(6) ?? '',
+    } as { [field in Field]: string };
+  }, [dependentField, independentField, _parsedAmounts, typedValue]);
+
+  const parsedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: parsedAmount,
+      [dependentField]:
+        currencies[dependentField] && formattedAmounts[dependentField]
+          ? CurrencyAmount.fromRawAmount(
+              currencies[dependentField]!,
+              new BigNumber(formattedAmounts[dependentField])
+                .times(10 ** currencies[dependentField]!.wrapped.decimals)
+                .toFixed(0),
+            )
+          : undefined,
+    } as { [field in Field]: CurrencyAmount<XToken> | undefined };
+  }, [parsedAmount, currencies, dependentField, formattedAmounts, independentField]);
+
+  const direction = {
+    from: currencies[Field.INPUT]?.xChainId || '0x1.icon', //TODO: remove hardcoded ICON
+    to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
+  };
+
+  const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
+  const stellarTrustlineValidationQuery = useValidateStellarTrustline(
+    direction.to === 'stellar' ? recipient : undefined,
+    currencies[Field.OUTPUT],
+  );
+  const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
+
+  if (stellarValidationQuery.isLoading) {
+    inputError = t`Validating Stellar wallet`;
+  }
+
+  //TODO: solana check
+  // const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
+  // if (!isSolanaAccountActive) {
+  //   inputError = t`Swap`;
+  // }
+
+  return {
+    sourceAddress,
+    currencies,
+    currencyBalances,
+    parsedAmount,
+    inputError,
+    percents,
+    direction,
+    dependentField,
+    parsedAmounts,
+    formattedAmounts,
+    stellarValidation,
+    stellarTrustlineValidation,
+    quote,
+    exchangeRate,
+    minOutputAmount,
+    formattedFee,
+  };
+}
+
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const navigate = useNavigate();
   const tokens = useAllXTokens();
   const { pair = '' } = useParams<{ pair: string }>();
   const { onCurrencySelection } = useSwapActionHandlers();
-  const { currencies } = useDerivedSwapInfo();
+  const { currencies } = useDerivedTradeInfo();
 
   useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {

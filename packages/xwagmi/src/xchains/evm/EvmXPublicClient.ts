@@ -238,7 +238,7 @@ export class EvmXPublicClient extends XPublicClient {
   needsApprovalCheck(xToken: XToken): boolean {
     if (xToken.isNativeToken) return false;
 
-    const isBnUSD = xToken.symbol === 'bnUSD';
+    const isBnUSD = xToken.symbol === 'bnUSD' || xToken.symbol === 'bnUSD(old)';
     if (isBnUSD) return false;
 
     return true;
@@ -295,7 +295,7 @@ export class EvmXPublicClient extends XPublicClient {
 
     // check if the bridge asset is native
     const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const isBnUSD = inputAmount.currency.symbol === 'bnUSD' || inputAmount.currency.symbol === 'bnUSD(old)';
 
     const publicClient = this.getPublicClient();
     try {

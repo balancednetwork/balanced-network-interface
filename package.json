@@ -9,15 +9,23 @@
     "preinstall": "npx only-allow pnpm",
     "dev": "turbo run dev --filter=web...",
     "dev:stats": "turbo run dev --filter=stats...",
-    "dev:hswap": "turbo run dev --filter=hswap...",
-    "build": "turbo run build --filter=web...",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=8192\" turbo run build --filter=web...",
     "build:stats": "turbo run build --filter=stats...",
-    "build:hswap": "turbo run build --filter=hswap...",
     "pretty": "turbo run pretty",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo",
     "checkTs": "turbo run checkTs",
     "lint": "turbo run lint",
     "prepare": "husky"
+  },
+  "pnpm": {
+    "overrides": {
+      "@sodax/sdk": "0.0.1-rc.37",
+      "@sodax/dapp-kit": "0.0.1-rc.27",
+      "@sodax/wallet-sdk-core": "0.0.1-rc.2",
+      "@sodax/types": "0.0.1-rc.16",
+      "wagmi": "2.14.12",
+      "viem": "2.29.2"
+    }
   },
   "keywords": [],
   "author": "",
@@ -28,5 +36,8 @@
     "lint-staged": "^15.2.2",
     "turbo": "^2.0.12",
     "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "neverthrow": "^8.2.0"
   }
 }

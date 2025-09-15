@@ -125,8 +125,11 @@ msgid "15m"
 msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr "Switch to {0}"
@@ -159,6 +162,10 @@ msgstr "Claim Savings Rate rewards?"
 msgid "Loan"
 msgstr "Loan"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+#~ msgid "Sodax intent"
+#~ msgstr "Sodax intent"
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
 msgstr "You have no pending cross-chain transactions."
@@ -179,6 +186,10 @@ msgstr "Unstaking"
 msgid "Change vote"
 msgstr "Change vote"
 
+#: src/app/pages/trade/xswap/_components/PendingOrders.tsx
+msgid "Orders"
+msgstr "Orders"
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -197,8 +208,12 @@ msgid "Swapping {0} for {1}..."
 msgstr "Swapping {0} for {1}..."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/migrate/page.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "Wallet:"
 msgstr "Wallet:"
 
@@ -226,6 +241,10 @@ msgstr "Borrowing"
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
 msgstr "Assets to send"
+
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+msgid "The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page."
+msgstr "The Savings Rate uses bnUSD(old), which you can get from the Migrate tab on the Trade page."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{0} sent to the {1} pool."
@@ -287,6 +306,7 @@ msgid "Rewards"
 msgstr "Rewards"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -355,6 +375,10 @@ msgstr "Add a contract call"
 msgid "Sign in"
 msgstr "Sign in"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel your swap to return your <0>{1}</0>"
+msgstr "Cancel your swap to return your <0>{1}</0>"
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/RespoRewardsInfo.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -398,6 +422,10 @@ msgstr "Claiming network fees..."
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer fee"
 msgstr "Transfer fee"
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migration completed"
+msgstr "Migration completed"
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 msgid "Tokens"
@@ -493,6 +521,10 @@ msgstr "Review the community token list on GitHub."
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+#~ msgid "Cancel {0}?"
+#~ msgstr "Cancel {0}?"
+
 #: src/app/pages/home/_components/xLoanModal/index.tsx
 #~ msgid "Loan action"
 #~ msgstr "Loan action"
@@ -541,6 +573,7 @@ msgstr "All proposals"
 #~ msgstr "Transfer {0} to Archway."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "Custom"
 msgstr "Custom"
 
@@ -703,6 +736,10 @@ msgstr "Verify contract call"
 #~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 #~ msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 
+#: src/store/swap/hooks.ts
+msgid "Finding best price..."
+msgstr "Finding best price..."
+
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Transaction failed. Please try again."
 msgstr "Transaction failed. Please try again."
@@ -741,6 +778,7 @@ msgid "Sign a transaction to activate {0} for your Stellar wallet."
 msgstr "Sign a transaction to activate {0} for your Stellar wallet."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 msgid "Swap failed"
 msgstr "Swap failed"
 
@@ -755,6 +793,11 @@ msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete th
 #: src/store/mint/hooks.tsx
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
+
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
+#~ msgid "Trade on the {0} exchange"
+#~ msgstr "Trade on the {0} exchange"
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets on Balanced"
@@ -779,6 +822,10 @@ msgstr "Liquidity pools"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
 msgstr "Enacted"
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migrate {0} to {1}?"
+msgstr "Migrate {0} to {1}?"
 
 #: src/app/components/CrossChainWalletConnect/index.tsx
 msgid "Enter a recipient address:"
@@ -825,6 +872,10 @@ msgstr "100 bnUSD"
 msgid "Balanced Intent"
 msgstr "Balanced Intent"
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migrating..."
+msgstr "Migrating..."
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Awaiting archway manager message"
 #~ msgstr "Awaiting archway manager message"
@@ -838,6 +889,15 @@ msgstr "bBALN holders received"
 #~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
 #~ msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
 
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
+msgid "Trade on {0} exchange"
+msgstr "Trade on {0} exchange"
+
+#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+msgid "Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+msgstr "Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr "Unstaking BALN..."
@@ -850,6 +910,14 @@ msgstr "LIQUIDITY"
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN"
 msgstr "Lock up BALN"
+
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#~ msgid "Creating order..."
+#~ msgstr "Creating order..."
+
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
+msgid "SODAX Intent"
+msgstr "SODAX Intent"
 
 #: src/app/components/StellarSponsorshipModal/index.tsx
 msgid "Activate wallet"
@@ -870,6 +938,10 @@ msgstr "Before"
 #~ msgid "Order type"
 #~ msgstr "Order type"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "{0} {1} has been returned to your wallet."
+msgstr "{0} {1} has been returned to your wallet."
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Active"
@@ -881,6 +953,10 @@ msgstr "Withdrawing {0} / {1} liquidity..."
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {0} to the {1} pool..."
 msgstr "Sending {0} to the {1} pool..."
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Trade more assets on the legacy exchange"
+msgstr "Trade more assets on the legacy exchange"
 
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Activate"
@@ -920,6 +996,7 @@ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
 
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Swap not supported"
 msgstr "Swap not supported"
 
@@ -927,6 +1004,7 @@ msgstr "Swap not supported"
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
@@ -955,6 +1033,10 @@ msgstr ", then deposit bnUSD to earn rewards."
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
 #~ msgid "Minimum to receive(Intent)"
 #~ msgstr "Minimum to receive(Intent)"
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+#~ msgid "Order cancelled"
+#~ msgstr "Order cancelled"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
@@ -1015,6 +1097,10 @@ msgstr "Claim bribe?"
 #~ msgid "Borrow in progress"
 #~ msgstr "Borrow in progress"
 
+#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#~ msgid "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+#~ msgstr "Loans use bnUSD (old). If you need some to repay your loan, visit the Migrate tab on the Trade page."
+
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
@@ -1033,8 +1119,14 @@ msgstr "Lock up Balance Tokens?"
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/ClaimSavingsRewardsModal.tsx
 #: src/app/components/home/Savings/SavingsModal.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
@@ -1045,6 +1137,11 @@ msgstr "Lock up Balance Tokens?"
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1056,7 +1153,7 @@ msgstr "Lock up Balance Tokens?"
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 msgid "Bridge"
 msgstr "Bridge"
 
@@ -1064,6 +1161,7 @@ msgstr "Bridge"
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Enter amount"
@@ -1104,6 +1202,7 @@ msgstr "Stake"
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 msgid "Send"
 msgstr "Send"
 
@@ -1222,6 +1321,7 @@ msgid "Title"
 msgstr "Title"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
@@ -1270,6 +1370,10 @@ msgstr "Sign in to Balanced"
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "No pools found."
 msgstr "No pools found."
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+#~ msgid "Cancel order?"
+#~ msgstr "Cancel order?"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
@@ -1387,8 +1491,8 @@ msgstr "Check that your contract calls are set up correctly before you submit th
 #~ msgstr "Not now"
 
 #: src/app/components/Header/index.tsx
-msgid "Unsupported network"
-msgstr "Unsupported network"
+#~ msgid "Unsupported network"
+#~ msgstr "Unsupported network"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
@@ -1568,6 +1672,10 @@ msgstr "Claimed {0} ICX."
 msgid "Transfer fee:"
 msgstr "Transfer fee:"
 
+#: src/app/components/Header/index.tsx
+msgid "Legacy"
+msgstr "Legacy"
+
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Withdraw bnUSD?"
 msgstr "Withdraw bnUSD?"
@@ -1576,6 +1684,7 @@ msgstr "Withdraw bnUSD?"
 msgid "Couldn't send {0} to the {1} pool. Try again."
 msgstr "Couldn't send {0} to the {1} pool. Try again."
 
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Select a token"
 msgstr "Select a token"
@@ -1628,8 +1737,7 @@ msgid "There's no ICX unstaking."
 msgstr "There's no ICX unstaking."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -1674,6 +1782,8 @@ msgstr "Transfer {inputCurrency} to {network}..."
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Insufficient {0}"
@@ -1735,8 +1845,8 @@ msgid "Claimed fees."
 msgstr "Claimed fees."
 
 #: src/app/components/Header/index.tsx
-msgid "Multi-chain wallet"
-msgstr "Multi-chain wallet"
+#~ msgid "Multi-chain wallet"
+#~ msgstr "Multi-chain wallet"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1767,6 +1877,7 @@ msgstr "Contract doesn't exist on this network."
 #~ msgstr "Future incentives"
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+#: src/app/pages/trade/xswap/_components/OrderInfo.tsx
 #: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Minimum to receive"
@@ -1825,6 +1936,7 @@ msgstr "Withdrawing sICX..."
 #~ msgstr "{currency} sent to the {pair} pool."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 msgid "For"
 msgstr "For"
 
@@ -1847,6 +1959,10 @@ msgstr "You'll"
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "from network fees over the last 30 days."
 msgstr "from network fees over the last 30 days."
+
+#: src/store/swap/hooks.ts
+#~ msgid "Loading..."
+#~ msgstr "Loading..."
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
@@ -1877,6 +1993,10 @@ msgstr "Core pools"
 #: src/app/pages/home/LoanPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 #~ msgstr "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Requesting swap..."
+msgstr "Requesting swap..."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1921,6 +2041,7 @@ msgstr "Send your liquidity to Balanced, then click Supply."
 
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/swap/hooks.ts
+#: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr "Choose address"
 
@@ -1945,8 +2066,8 @@ msgid "Send asset?"
 msgstr "Send asset?"
 
 #: src/app/components/Header/index.tsx
-msgid "{0} wallet"
-msgstr "{0} wallet"
+#~ msgid "{0} wallet"
+#~ msgstr "{0} wallet"
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "{0}<0/>{1}"
@@ -1968,6 +2089,10 @@ msgstr "{0} wallet"
 msgid "Asset"
 msgstr "Asset"
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Swap requested"
+msgstr "Swap requested"
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
 msgstr "Borrowing bnUSD..."
@@ -1976,7 +2101,7 @@ msgstr "Borrowing bnUSD..."
 msgid "{0} sICX added to your wallet."
 msgstr "{0} sICX added to your wallet."
 
-#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
@@ -2037,6 +2162,10 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Send {0} to {1}."
 #~ msgstr "Send {0} to {1}."
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+#~ msgid "Cancel your order to return your <0>{1}</0>"
+#~ msgstr "Cancel your order to return your <0>{1}</0>"
 
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/_components/xCollateralModal/index.tsx
@@ -2106,6 +2235,7 @@ msgstr "available"
 msgid "Unlock Balance Tokens?"
 msgstr "Unlock Balance Tokens?"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "If the price slips by more than this amount, your swap will fail."
@@ -2161,6 +2291,10 @@ msgstr "Borrow. Swap. Supply. Earn."
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
 #~ msgstr "To deposit {collateralType}"
+
+#: src/app/components/home/Savings/index.tsx
+msgid "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
+msgstr "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2258,6 +2392,7 @@ msgid "Home"
 msgstr "Home"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap fee (included):"
 msgstr "Swap fee (included):"
@@ -2332,6 +2467,12 @@ msgstr "Unlocked {0} BALN."
 msgid "This will take about a minute."
 msgstr "This will take about a minute."
 
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/migrate/page.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Wallet: 0.00"
+msgstr "Wallet: 0.00"
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
 msgstr "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
@@ -2393,10 +2534,12 @@ msgstr "Withdraw liquidity?"
 #~ msgstr "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
-msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
+#~ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
+#~ msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -2478,6 +2621,10 @@ msgstr "{0} {1} added to your wallet."
 #~ msgid "Sent {0} to the bridge contract."
 #~ msgstr "Sent {0} to the bridge contract."
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Migration failed"
+msgstr "Migration failed"
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}"
 #~ msgstr "Swap {0} for {1}"
@@ -2510,10 +2657,18 @@ msgstr "Verifying contract calls..."
 #~ msgid "to make this transaction."
 #~ msgstr "to make this transaction."
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Swap cancelled"
+msgstr "Swap cancelled"
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+
+#: src/app/pages/trade/layout.tsx
+msgid "{0} exchange"
+msgstr "{0} exchange"
 
 #: src/app/components/BridgeLimitWarning/index.tsx
 msgid "available on {0}."
@@ -2593,6 +2748,7 @@ msgstr "{title}"
 msgid "Enter address"
 msgstr "Enter address"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap time"
 msgstr "Swap time"
@@ -2620,6 +2776,10 @@ msgstr "Unstake BALN?"
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Cross-chain transfer requested."
 #~ msgstr "Cross-chain transfer requested."
+
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+msgid "Cancel swap?"
+msgstr "Cancel swap?"
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
@@ -2724,6 +2884,7 @@ msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network f
 msgstr "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity rewards."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "No price chart available for this pair."
 msgstr "No price chart available for this pair."
 
@@ -2731,10 +2892,15 @@ msgstr "No price chart available for this pair."
 #~ msgid "Transferred {0} {1} to {2}."
 #~ msgstr "Transferred {0} {1} to {2}."
 
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+#~ msgid "Order created"
+#~ msgstr "Order created"
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
 msgstr "APY"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"
@@ -2807,6 +2973,7 @@ msgstr "You rejected"
 #~ msgid "for"
 #~ msgstr "for"
 
+#: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Exchange rate"
@@ -2847,6 +3014,10 @@ msgstr ", the current rewards will be adjusted to reflect this allocation."
 msgid "All assets"
 msgstr "All assets"
 
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
+#~ msgid "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+#~ msgstr "This action will cancel the {0} and refund your <0>{1} {2}</0>"
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Voting weight: {0} bBALN"
@@ -2859,6 +3030,10 @@ msgstr "Submit proposal"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 msgid "Approve transfer"
 msgstr "Approve transfer"
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#~ msgid "No fees"
+#~ msgstr "No fees"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"
@@ -2949,11 +3124,15 @@ msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/layoutLegacy.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/OrderCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanelLegacy.tsx
 #: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Swap"
@@ -2983,6 +3162,7 @@ msgid "Remove community token list?"
 msgstr "Remove community token list?"
 
 #: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar wallet"
 msgstr "Validating Stellar wallet"
@@ -3099,6 +3279,12 @@ msgstr "Liquidity is held on ICON, with varied availability on other blockchains
 msgid "Pay a {0} BALN fee to unlock early."
 msgstr "Pay a {0} BALN fee to unlock early."
 
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Migrate"
+msgstr "Migrate"
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Sending {currency} to the {pair} pool..."
 #~ msgstr "Sending {currency} to the {pair} pool..."
@@ -3142,6 +3328,7 @@ msgstr "Network fees"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/StellarTrustlineModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -3159,6 +3346,10 @@ msgstr "The current {0} price is"
 #: src/xwagmi/xchains/stellar/utils.ts
 #~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
 #~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
+
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
+#~ msgid "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
+#~ msgstr "The Savings Rate uses bnUSD (old), which you can get from the Migrate tab on the Trade page."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

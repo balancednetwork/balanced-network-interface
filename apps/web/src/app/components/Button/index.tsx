@@ -88,21 +88,21 @@ export const TextButton = styled(RebassButton)`
   `}
 `;
 
-export const IconButton = styled(RebassButton)`
+export const IconButton = styled(RebassButton)<{ $isActive?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
-  background-color: #2395aa;
+  background-color: ${({ $isActive, theme }) => ($isActive ? '#087083' : '#2395aa')};
   border-radius: 100px;
   color: ${({ theme }) => theme.colors.bg1};
   cursor: pointer;
   padding: 4px;
   outline: none;
+  transition: background-color 0.2s ease;
 
-  &:hover,
-  &:focus {
+  &:hover {
     background-color: #087083;
     transition: background-color 0.2s ease;
   }
@@ -112,6 +112,37 @@ export const IconButton = styled(RebassButton)`
     pointer-events: none;
     color: rgba(255, 255, 255, 0.15);
   }
+`;
+
+export const PendingIconButton = styled(IconButton)<{
+  $expanded?: boolean;
+  $isActive?: boolean;
+  $showAlertBackground?: boolean;
+}>`
+  overflow: hidden;
+  gap: 10px;
+  transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    padding 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 200ms ease;
+  will-change: width, padding;
+
+  ${({ $expanded }) =>
+    $expanded &&
+    css`
+      width: 160px;
+      padding-left: 12px;
+      padding-right: 12px;
+    `}
+
+  ${({ $showAlertBackground, theme }) =>
+    $showAlertBackground &&
+    css`
+      background-color: ${theme.colors.alert} !important;
+      
+      &:hover {
+        background-color: #f72c2c !important;
+      }
+    `}
 `;
 
 export const AlertButton = styled(RebassButton)`

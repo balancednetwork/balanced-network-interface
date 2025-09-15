@@ -285,7 +285,7 @@ const MigrationModal = ({
 
   return (
     <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
-      <ModalContent noMessages={isProcessing}>
+      <ModalContent noMessages={true}>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
             Migrate {formatSymbol(inputCurrency?.symbol)} to {formatSymbol(outputCurrency?.symbol)}?

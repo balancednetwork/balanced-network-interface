@@ -26,8 +26,15 @@ import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
 import { MigrationModal } from './_components';
-import { getXChainType, useValidateStellarTrustline, useXAccount, xTokenMap } from '@balancednetwork/xwagmi';
+import {
+  getXChainType,
+  useValidateStellarAccount,
+  useValidateStellarTrustline,
+  useXAccount,
+  xTokenMap,
+} from '@balancednetwork/xwagmi';
 import styled, { useTheme } from 'styled-components';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 
 export type MigrationType = 'bnUSD' | 'ICX';
@@ -170,6 +177,7 @@ function MigratePanel({
   onTokenSwitch,
   currencySelectionInput,
   currencySelectionOutput,
+  revert,
 }: ReturnType<typeof useMigrationState>) {
   const openModal = () => {
     if (inputValue && parseFloat(inputValue) > 0 && inputCurrency && outputCurrency) {
@@ -201,10 +209,6 @@ function MigratePanel({
     if (isOpen) setOpen(false);
   };
 
-  const migrationTokens = React.useMemo(() => {
-    return (['bnUSD', 'ICX'] as MigrationType[]).map(symbol => findTokenBySymbol(symbol)).filter(Boolean) as Currency[];
-  }, []);
-
   // Wallet balance hooks
   const signedInWallets = useSignedInWallets();
   const crossChainWallet = useCrossChainWalletBalances();
@@ -213,9 +217,15 @@ function MigratePanel({
 
   const receiver = useXAccount(getXChainType(outputChain)).address;
   const stellarBnUSD = xTokenMap['stellar'].find(token => token.symbol === 'bnUSD');
+
+  // Stellar account validation
+  const stellarValidationQuery = useValidateStellarAccount(outputChain === 'stellar' ? receiver : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
+  // Stellar trustline validation
   const stellarTrustlineValidationQuery = useValidateStellarTrustline(
-    outputChain === 'stellar' ? receiver : undefined,
-    outputChain === 'stellar' ? stellarBnUSD : undefined,
+    !revert && outputChain === 'stellar' ? receiver : undefined,
+    !revert && outputChain === 'stellar' ? stellarBnUSD : undefined,
   );
   const { data: stellarTrustlineValidation } = stellarTrustlineValidationQuery;
 
@@ -400,6 +410,7 @@ function MigratePanel({
                 disabled={
                   !inputValue ||
                   parseFloat(inputValue) <= 0 ||
+                  (!stellarValidation?.ok && outputChain === 'stellar') ||
                   !stellarTrustlineValidation?.ok ||
                   hasInsufficientBalance
                 }
@@ -413,6 +424,12 @@ function MigratePanel({
             </Flex>
           </AutoColumn>
         </AutoColumn>
+
+        {stellarValidation?.ok === false && stellarValidation.error && receiver && (
+          <Flex alignItems="center" justifyContent="center" mt={3} flexDirection="column">
+            <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={receiver} />
+          </Flex>
+        )}
 
         {stellarTrustlineValidation?.ok === false && stellarTrustlineValidation.error && receiver && (
           <Flex alignItems="center" justifyContent="center" mt={3} flexDirection="column">

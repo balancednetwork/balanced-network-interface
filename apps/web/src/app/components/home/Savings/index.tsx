@@ -60,7 +60,7 @@ const Savings = () => {
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
 
-  const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD(old)'];
+  const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
   const [bnUSDBalance] = useXTokenBalances([bnUSD]);
 
   const [typedValueBN, lockedAmountBN] = React.useMemo(() => {
@@ -191,7 +191,6 @@ const Savings = () => {
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
-                style={{ paddingLeft: '20px', paddingRight: '20px' }}
                 fontSize={14}
                 onClick={
                   isAdjusting
@@ -209,7 +208,7 @@ const Savings = () => {
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
                     ? t`Withdraw`
                     : bnUSDBalance?.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
-                      ? 'Deposit bnUSD(old)'
+                      ? 'Deposit bnUSD'
                       : 'Adjust'}
               </Button>
             </Flex>
@@ -249,7 +248,7 @@ const Savings = () => {
                     {lockedAmount?.toFixed(2, { groupSeparator: ',' }).replace('.00', '') || 0}
                   </Typography>
                 )}
-                <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD(old)`}</Typography>
+                <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD`}</Typography>
               </Flex>
               {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && staticDailyAmountRate && (
                 <Typography fontSize={14}>{`~ $${typedValueBN
@@ -268,7 +267,7 @@ const Savings = () => {
           </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Buy or borrow bnUSD(old), then deposit it here to earn rewards.</Trans>
+            <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>
           </Typography>
         )}
       </Box>

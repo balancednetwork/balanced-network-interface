@@ -35,7 +35,7 @@ export default function CurrencySearchModal({
   onDismiss,
   onCurrencySelect,
   selectedCurrency,
-  currencySelectionType = CurrencySelectionType.SODAX_TRADE_IN,
+  currencySelectionType = CurrencySelectionType.TRADE_IN,
   width,
   anchorEl,
   showCommunityListControl,
@@ -90,8 +90,6 @@ export default function CurrencySearchModal({
         offset={
           currencySelectionType === CurrencySelectionType.TRADE_IN ||
           currencySelectionType === CurrencySelectionType.TRADE_OUT ||
-          currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
-          currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? [0, 35]

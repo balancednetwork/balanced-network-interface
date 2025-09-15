@@ -102,7 +102,7 @@ export const getSupportedXChainIdsForSwapToken = (currency: Currency | XToken): 
     .filter(t => !unTradeableTokenAddress.find(addr => addr.toLowerCase() === t.address.toLowerCase()))
     .map(t => t.xChainId);
 
-  return chainIds.length === 0 ? [ICON_XCALL_NETWORK_ID] : chainIds.filter(t => t !== 'sonic');
+  return chainIds.length === 0 ? [ICON_XCALL_NETWORK_ID] : chainIds;
 };
 
 export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | null): XChain[] | undefined => {
@@ -111,12 +111,4 @@ export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | nu
   const xChainIds = getSupportedXChainIdsForSwapToken(currency) || [];
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
-};
-
-export const getTxTrackerLink = (hash?: string, xChainId?: XChainId): string | undefined => {
-  if (hash && xChainId) {
-    return `${xChains.find(x => x.xChainId === xChainId)?.tracker.tx}/${hash}`;
-  }
-
-  return undefined;
 };

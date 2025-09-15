@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { NavLink, NavLinkProps, useLocation } from 'react-router-dom';
+import { useLocation, NavLink, NavLinkProps } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -167,14 +167,7 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLink
-            to="/trade"
-            onClick={e =>
-              location.pathname.startsWith('/trade') &&
-              !location.pathname.startsWith('/trade-legacy') &&
-              e.preventDefault()
-            }
-          >
+          <StyledNavLink to="/trade" onClick={e => location.pathname.startsWith('/trade') && e.preventDefault()}>
             <TradeIcon width="35" height="33" />
             <Text>
               <Trans>Trade</Trans>

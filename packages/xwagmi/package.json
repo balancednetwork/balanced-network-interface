@@ -61,8 +61,8 @@
     "react-dom": "^18.2.0",
     "react-toastify": "7.0.3",
     "rlp": "3.0.0",
-    "viem": "^2.29.2",
-    "wagmi": "2.14.12",
+    "viem": "2.x",
+    "wagmi": "2.5.20",
     "zustand": "4.5.2"
   },
   "devDependencies": {

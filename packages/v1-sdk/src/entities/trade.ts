@@ -230,39 +230,6 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    * @param currencyAmountIn used in recursion; the original value of the currencyAmountIn parameter
    * @param bestTrades used in recursion; the current list of best trades
    */
-  /**
-   * Validates that a sequence of pairs forms a valid connected trading route
-   */
-  private static isValidRoute<TInput extends Currency, TOutput extends Currency>(
-    pairs: Pair[],
-    input: TInput,
-    output: TOutput,
-  ): boolean {
-    if (pairs.length === 0) return false;
-
-    const wrappedInput = input.wrapped;
-    const wrappedOutput = output.wrapped;
-
-    // Check that first pair involves input token
-    if (!pairs[0].involvesToken(wrappedInput)) return false;
-
-    // Check that last pair involves output token
-    if (!pairs[pairs.length - 1].involvesToken(wrappedOutput)) return false;
-
-    // Check that pairs form a connected path
-    let currentToken = wrappedInput;
-    for (let i = 0; i < pairs.length; i++) {
-      const pair = pairs[i];
-      if (!pair.involvesToken(currentToken)) return false;
-
-      // Get the output token for this pair
-      currentToken = currentToken.equals(pair.token0) ? pair.token1 : pair.token0;
-    }
-
-    // Check that we end up at the output token
-    return currentToken.equals(wrappedOutput);
-  }
-
   public static bestTradeExactIn<TInput extends Currency, TOutput extends Currency>(
     pairs: Pair[],
     currencyAmountIn: CurrencyAmount<TInput>,
@@ -302,21 +269,16 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (bestTrades[hop] === undefined) {
           bestTrades[hop] = [];
         }
-
-        const routePairs = [...currentPairs, pair];
-        // Validate that the route is valid before creating it
-        if (Trade.isValidRoute(routePairs, currencyAmountIn.currency, currencyOut)) {
-          sortedInsert(
-            bestTrades[hop],
-            new Trade(
-              new Route(routePairs, currencyAmountIn.currency, currencyOut),
-              currencyAmountIn,
-              TradeType.EXACT_INPUT,
-            ),
-            maxNumResults,
-            tradeComparator,
-          );
-        }
+        sortedInsert(
+          bestTrades[hop],
+          new Trade(
+            new Route([...currentPairs, pair], currencyAmountIn.currency, currencyOut),
+            currencyAmountIn,
+            TradeType.EXACT_INPUT,
+          ),
+          maxNumResults,
+          tradeComparator,
+        );
       } else if (maxHops > 1 && pairs.length > 1) {
         const pairsExcludingThisPair = pairs.slice(0, i).concat(pairs.slice(i + 1, pairs.length));
 
@@ -408,21 +370,16 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (bestTrades[hop] === undefined) {
           bestTrades[hop] = [];
         }
-
-        const routePairs = [pair, ...currentPairs];
-        // Validate that the route is valid before creating it
-        if (Trade.isValidRoute(routePairs, currencyIn, currencyAmountOut.currency)) {
-          sortedInsert(
-            bestTrades[hop],
-            new Trade(
-              new Route(routePairs, currencyIn, currencyAmountOut.currency),
-              currencyAmountOut,
-              TradeType.EXACT_OUTPUT,
-            ),
-            maxNumResults,
-            tradeComparator,
-          );
-        }
+        sortedInsert(
+          bestTrades[hop],
+          new Trade(
+            new Route([pair, ...currentPairs], currencyIn, currencyAmountOut.currency),
+            currencyAmountOut,
+            TradeType.EXACT_OUTPUT,
+          ),
+          maxNumResults,
+          tradeComparator,
+        );
       } else if (maxHops > 1 && pairs.length > 1) {
         const pairsExcludingThisPair = pairs.slice(0, i).concat(pairs.slice(i + 1, pairs.length));
 

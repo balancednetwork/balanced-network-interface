@@ -3,7 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 
-import { NumberStyle, getFormattedNumber } from '@/utils/formatter';
+import { getFormattedNumber, NumberStyle } from '@/utils/formatter';
 
 import { GridItemLight } from '../index';
 import { IncomeGrid, StyledSkeleton } from '../sections/EarningSection';

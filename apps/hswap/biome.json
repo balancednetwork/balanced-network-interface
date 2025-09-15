@@ -1,0 +1,10 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "extends": ["../../biome.json"],
+  "files": {
+    "ignore": ["./src/charting_library/**", "./src/locales/**"]
+  },
+  "linter": {
+    "ignore": ["./src/packages/nouislider-react/**"]
+  }
+}

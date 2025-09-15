@@ -77,9 +77,7 @@ const SavingsChainSelector = ({
     // If there are no signed in wallets, return empty rewards
     if (signedWallets.length === 0) {
       return xChains
-        .filter(
-          chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon' && chain.xChainId !== 'sonic',
-        )
+        .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
         .map(({ xChainId }) => ({
           xChainId,
           name: xChainMap[xChainId].name,
@@ -90,7 +88,7 @@ const SavingsChainSelector = ({
     }
 
     return xChains
-      .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon' && chain.xChainId !== 'sonic')
+      .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
       .map(({ xChainId }) => {
         const isWalletConnected = signedWallets.some(wallet => wallet.xChainId === xChainId);
         const lockedAmount = lockedAmounts?.[xChainId]
@@ -117,10 +115,8 @@ const SavingsChainSelector = ({
           total = new BigNumber(-1);
         }
 
-        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD(old)']!;
-        const bnUSDBalance: CurrencyAmount<XToken> | undefined = bnUSD
-          ? crossChainBalances[xChainId]?.[bnUSD.address]
-          : undefined;
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
+        const bnUSDBalance: CurrencyAmount<XToken> | undefined = crossChainBalances[xChainId]?.[bnUSD.address];
         return {
           xChainId,
           name: xChainMap[xChainId].name,

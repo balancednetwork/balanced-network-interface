@@ -166,7 +166,7 @@ const XLoanModal = ({
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {storedModalValues.before} bnUSD(old)
+                {storedModalValues.before} bnUSD
               </Typography>
             </Box>
 
@@ -175,7 +175,7 @@ const XLoanModal = ({
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {storedModalValues.after} bnUSD(old)
+                {storedModalValues.after} bnUSD
               </Typography>
             </Box>
           </Flex>

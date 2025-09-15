@@ -30,14 +30,6 @@
       "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
       "chainId": 1,
       "name": "Balanced Dollar",
-      "symbol": "bnUSD(old)",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
-    },
-    {
-      "address": "cx0000000000000000000000000000000000000011",
-      "chainId": 1,
-      "name": "Balanced Dollar",
       "symbol": "bnUSD",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
@@ -302,7 +294,7 @@
       "address": "cx2000000000000000000000000000000000000000",
       "chainId": 1,
       "name": "Wrapped Ether",
-      "symbol": "WETH",
+      "symbol": "wETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weth.png"
     },
@@ -321,14 +313,6 @@
       "symbol": "JitoSOL",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
-    },
-    {
-      "address": "cx0000000000000000000000000000000000000011",
-      "chainId": 1,
-      "name": "Coinbase BTC",
-      "symbol": "cbBTC",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cbbtc.png"
     },
     {
       "address": "cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4",
@@ -361,14 +345,6 @@
       "symbol": "mSUI",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/msui.png"
-    },
-    {
-      "address": "cx0000000000000000000000000000000000000003",
-      "chainId": 1,
-      "name": "Sonic",
-      "symbol": "S",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/s.png"
     }
   ]
 }

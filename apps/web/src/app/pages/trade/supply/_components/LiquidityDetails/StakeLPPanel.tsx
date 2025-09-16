@@ -79,12 +79,14 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
 
   const isIncentivised = useMemo(
     () =>
-      incentivisedPairs &&
-      !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)) &&
-      xChainId !== 'archway-1' &&
-      xChainId !== '0x100.icon',
+      pairName.includes('bnUSD(old)') ||
+      (incentivisedPairs &&
+        !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)) &&
+        xChainId !== 'archway-1' &&
+        xChainId !== '0x100.icon'),
     [incentivisedPairs, pairName, xChainId],
   );
+
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
       {!upSmall && <RespoRewardsInfo pool={pool} />}
@@ -104,7 +106,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [totalStaked.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
+                max: [totalStaked.dp(10).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
               }}
               onSlide={handleSlide}
             />

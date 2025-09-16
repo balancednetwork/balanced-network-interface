@@ -13,6 +13,7 @@ import { useIncentivisedPairs } from '@/queries/reward';
 import { useEmissions } from '@/store/reward/hooks';
 import { PairInfo } from '@/types';
 import { bnJs } from '@balancednetwork/xwagmi';
+import { useOraclePrices } from '@/store/oracle/hooks';
 
 export type ContractMethodsDataType = {
   address: string;
@@ -347,6 +348,19 @@ export function useTokenPrices() {
       ),
     };
   }, [allTokens]);
+}
+
+export function useTokenPricesWithPyth() {
+  const { data: prices } = useTokenPrices();
+  const oraclePrices = useOraclePrices();
+
+  return useMemo(() => {
+    return {
+      ...prices,
+      ...oraclePrices,
+      SODA: prices?.['ICX'],
+    };
+  }, [prices, oraclePrices]);
 }
 
 export function useTokenTrendData(tokenSymbol, start, end) {

@@ -78,7 +78,9 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
         .setTimeout(180)
         .build();
 
-      const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+      const { signedTxXdr: signedTx } = await (await stellarXService.ensureWalletsKitReady()).signTransaction(
+        transaction.toXDR(),
+      );
 
       setLoading(true);
       setInitiated(true);

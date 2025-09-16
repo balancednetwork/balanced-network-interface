@@ -110,7 +110,7 @@ export const PoolRecord = ({
   const upSmall = useMedia('(min-width: 800px)');
   const prices = useRatesWithOracle();
   const stakedLPPercent = useStakedLPPercent(poolId); // TODO
-  const pairName = `${formatSymbol(baseAmount.currency.symbol) || '...'}/${formatSymbol(quoteAmount.currency.symbol) || '...'}`;
+  const pairName = `${formatSymbol(baseAmount.currency.symbol) || '...'} / ${formatSymbol(quoteAmount.currency.symbol) || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { baseValue: baseWithdrawValue, quoteValue: quoteWithdrawValue } = useWithdrawnPercent(poolId) || {};

@@ -1,15 +1,18 @@
 import React, { useCallback } from 'react';
 
+import RecentActivityIcon from '@/assets/icons/anti-clock.svg';
+import RecentActivityInnerIcon from '@/assets/icons/anti-clock-inner.svg';
+import TickIcon from '@/assets/icons/tick-dark.svg';
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { useMedia } from 'react-use';
+import { useLocation, useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
-import { Button, IconButton } from '@/app/components/Button';
+import { Button, IconButton, PendingIconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
@@ -19,15 +22,16 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
+import { useFailedTxCount, useIsAnyTxPending, usePendingTxCount } from '@/hooks/useCombinedTransactions';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import RecentActivity from '../RecentActivity';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
-import { useHasBTCB } from '../Wallet/useClaimableICX';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -75,7 +79,107 @@ const ConnectionStatus = styled(Flex)`
   }
 `;
 
+const RecentActivityButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
+  position: relative;
+  margin-right: 15px;
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
+  &::before, &::after {
+    left: 7px;
+    top: 13px;
+    ${({ theme }) => `background-color: ${theme.colors.bg5}`};
+  }
+`;
+
+const SpinningIcon = styled(RecentActivityIcon)`
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-720deg);
+    }
+  }
+  animation: spin 2s ease-in-out infinite;
+`;
+
+const gentleSpin = keyframes`
+  0% {
+    transform: rotate(90deg);
+    opacity: 0;
+  }
+  80% {
+    transform: rotate(-390deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-360deg);
+    opacity: 1;
+  }
+`;
+
+const AnimatedTickIcon = styled(TickIcon)`
+  animation: ${gentleSpin} 2s cubic-bezier(0.1, 0.9, 0.2, 1);
+`;
+
+const slowClockwise = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const InnerSpinningIcon = styled(RecentActivityInnerIcon)<{ $isSpinning?: boolean }>`
+  /* transform-origin: 50% 50%;
+  ${({ $isSpinning }) =>
+    $isSpinning &&
+    css`
+    animation: ${slowClockwise} 8s linear infinite;
+  `} */
+`;
+
+const IconStage = styled.div`
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 500px;
+`;
+
+const IconLayer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 400ms ease-in-out;
+  will-change: transform, opacity;
+`;
+
+const StyledFlex = styled(Flex)`
+  align-items: center;
+  position: relative;
+
+  @media(max-width: 550px) {
+    align-items: start;
+    flex-direction: column;
+
+    .legacy-text {
+      padding-top: 0;
+      margin-left: 0;
+    }
+  }
+`;
+
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
+
+type AnimationState = 'IDLE' | 'PENDING' | 'SUCCESS' | 'FADING_OUT_SUCCESS';
 
 export const CopyableAddress = ({
   account,
@@ -136,14 +240,77 @@ export default function Header(props: { title?: string; className?: string }) {
   const upSmall = useMedia('(min-width: 600px)');
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
-  const hasBTCB = useHasBTCB();
+  const location = useLocation();
+  const isTradeLegacy = location.pathname?.includes('trade-legacy');
+  const isSmall = useMedia('(max-width: 550px)');
+
+  const pendingTxCount = usePendingTxCount();
+  const [testPendingCount, setTestPendingCount] = React.useState(0);
+  const totalPendingCount = pendingTxCount + testPendingCount;
+  const failedTxCount = useFailedTxCount();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const walletButtonRef = React.useRef<HTMLElement>(null);
 
-  const toggleWalletMenu = () => {
-    setAnchor(anchor ? null : walletButtonRef.current);
+  const recentActivityButtonRef = React.useRef<HTMLElement>(null);
+  const [recentActivityAnchor, setRecentActivityAnchor] = React.useState<HTMLElement | null>(null);
+
+  // Animation state machine
+  const [animationState, setAnimationState] = React.useState<AnimationState>('IDLE');
+  const previousPendingRef = React.useRef<number>(0);
+  const successTimer = React.useRef<ReturnType<typeof setTimeout>>();
+
+  // Animate based on pending tx count
+  React.useEffect(() => {
+    const previousPending = previousPendingRef.current;
+    previousPendingRef.current = totalPendingCount;
+
+    if (totalPendingCount > 0 && animationState !== 'PENDING') {
+      clearTimeout(successTimer.current);
+      setAnimationState('PENDING');
+    } else if (totalPendingCount === 0 && previousPending > 0) {
+      // Check if there are failed transactions
+      if (failedTxCount > 0) {
+        // Don't show success animation if there are failed transactions
+        setAnimationState('IDLE');
+      } else {
+        setAnimationState('SUCCESS');
+        successTimer.current = setTimeout(() => {
+          setAnimationState('FADING_OUT_SUCCESS');
+        }, 2000);
+      }
+    }
+  }, [totalPendingCount, animationState, failedTxCount]);
+
+  const handleTickTransitionEnd = React.useCallback(
+    (e: React.TransitionEvent<HTMLDivElement>) => {
+      if (e.target !== e.currentTarget) return;
+      if (animationState === 'FADING_OUT_SUCCESS' && e.propertyName === 'transform') {
+        setAnimationState('IDLE');
+      }
+    },
+    [animationState],
+  );
+
+  // Cleanup timer on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(successTimer.current);
+    };
+  }, []);
+
+  const toggleWalletMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (anchor) {
+      // If dropdown is open, close it
+      setAnchor(null);
+    } else {
+      // If dropdown is closed, open it
+      setAnchor(walletButtonRef.current);
+    }
   };
   const closeWalletMenu = useCallback(() => setAnchor(null), []);
 
@@ -155,20 +322,51 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
+  const toggleRecentActivityMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (recentActivityAnchor) {
+      // If dropdown is open, close it
+      setRecentActivityAnchor(null);
+    } else {
+      // If dropdown is closed, open it
+      setRecentActivityAnchor(recentActivityButtonRef.current);
+    }
+  };
+  const closeRecentActivityMenu = useCallback(() => setRecentActivityAnchor(null), []);
+
+  const isExpanded = animationState === 'PENDING';
+  const showSpinner = animationState === 'PENDING' || animationState === 'SUCCESS';
+  const showTick = (animationState === 'SUCCESS' || animationState === 'FADING_OUT_SUCCESS') && failedTxCount === 0;
+  const showDefault = animationState === 'IDLE' || (totalPendingCount === 0 && failedTxCount > 0);
+  const showAlertBackground = failedTxCount > 0;
+
+  const spinnerOpacity = React.useMemo(() => (animationState === 'PENDING' ? 1 : 0), [animationState]);
+  const tickOpacity = React.useMemo(() => (showTick ? 1 : 0), [showTick]);
+  const tickScale = React.useMemo(() => (animationState === 'SUCCESS' ? 1 : 0), [animationState]);
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Typography variant="h1">
-            {/* @ts-ignore */}
-            <Trans id={title} />
-          </Typography>
-          {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
-              {CHAIN_INFO[NETWORK_ID].name}
+          <StyledFlex>
+            <Typography variant="h1">
+              {/* @ts-ignore */}
+              <Trans id={title} />
             </Typography>
-          )}
+            {NETWORK_ID !== NetworkId.MAINNET && (
+              <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
+                {CHAIN_INFO[NETWORK_ID].name}
+              </Typography>
+            )}
+            {isTradeLegacy && (
+              <Typography className="legacy-text" color="text2" fontSize={16} ml={2} pt={'17px'}>
+                {t`Legacy`}
+              </Typography>
+            )}
+          </StyledFlex>
         </Flex>
 
         {wallets.length === 0 && (
@@ -181,7 +379,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
         {wallets.length > 0 && (
           <Flex alignItems="center">
-            <WalletInfo>
+            {/* <WalletInfo>
               {upSmall && (
                 <>
                   {wallets.length > 1 ? (
@@ -214,12 +412,91 @@ export default function Header(props: { title?: string; className?: string }) {
                   )}
                 </>
               )}
-            </WalletInfo>
+            </WalletInfo> */}
 
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
+            <RecentActivityButtonWrapper>
+              <ClickAwayListener onClickAway={closeRecentActivityMenu}>
+                <div>
+                  <PendingIconButton
+                    $expanded={!isSmall && isExpanded}
+                    $isActive={Boolean(recentActivityAnchor)}
+                    $showAlertBackground={showAlertBackground}
+                    ref={recentActivityButtonRef}
+                    onClick={toggleRecentActivityMenu}
+                  >
+                    {isExpanded ? (
+                      <>
+                        <IconStage>
+                          <IconLayer>
+                            <SpinningIcon width="32" height="32" />
+                          </IconLayer>
+                          <IconLayer>
+                            <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
+                          </IconLayer>
+                        </IconStage>
+                        {!isSmall ? (
+                          <Typography
+                            color="bg1"
+                            style={{ whiteSpace: 'nowrap' }}
+                          >{`${totalPendingCount} in progress...`}</Typography>
+                        ) : null}
+                      </>
+                    ) : (
+                      <IconStage>
+                        <IconLayer
+                          style={{
+                            transform: 'scale(1)',
+                            opacity: spinnerOpacity,
+                          }}
+                        >
+                          <SpinningIcon width="32" height="32" />
+                        </IconLayer>
+                        <IconLayer
+                          style={{
+                            transform: 'scale(1)',
+                            opacity: spinnerOpacity,
+                          }}
+                        >
+                          <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
+                        </IconLayer>
+                        <IconLayer
+                          onTransitionEnd={handleTickTransitionEnd}
+                          style={{
+                            transform: `scale(${tickScale})`,
+                            opacity: tickOpacity,
+                          }}
+                        >
+                          <AnimatedTickIcon width="26" height="26" />
+                        </IconLayer>
+                        <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>
+                          <RecentActivityIcon width="32" height="32" />
+                        </IconLayer>
+                        <IconLayer style={{ transform: `scale(${showDefault ? 1 : 0})`, opacity: showDefault ? 1 : 0 }}>
+                          <InnerSpinningIcon width="32" height="32" $isSpinning={totalPendingCount > 0} />
+                        </IconLayer>
+                      </IconStage>
+                    )}
+                  </PendingIconButton>
+
+                  {recentActivityAnchor && (
+                    <DropdownPopper
+                      show={Boolean(recentActivityAnchor)}
+                      anchorEl={recentActivityAnchor}
+                      placement="bottom-end"
+                      offset={[65, 15]}
+                      zIndex={5050}
+                    >
+                      <RecentActivity />
+                    </DropdownPopper>
+                  )}
+                </div>
+              </ClickAwayListener>
+            </RecentActivityButtonWrapper>
+
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
-                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
+                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu} $isActive={Boolean(anchor)}>
                     <WalletIcon />
                   </IconButton>
 

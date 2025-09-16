@@ -96,7 +96,9 @@ const StellarTrustlineModal = ({ text, address, currency }: StellarTrustlineModa
         .setTimeout(180)
         .build();
 
-      const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+      const { signedTxXdr: signedTx } = await (await stellarXService.ensureWalletsKitReady()).signTransaction(
+        transaction.toXDR(),
+      );
 
       if (signedTx) {
         setLoading(true);

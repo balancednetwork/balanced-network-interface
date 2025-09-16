@@ -1,10 +1,11 @@
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { convertCurrencyWithSodax } from '@/lib/sodax/utils';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS, convertCurrency } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,13 +23,13 @@ const getXCurrencyBalance = (
   if (!xBalances) return;
 
   if (selectedChainId) {
-    const xToken = convertCurrency(selectedChainId, currency)!;
+    const xToken = convertCurrencyWithSodax(selectedChainId, currency)!;
     return new BigNumber(xBalances[selectedChainId]?.[xToken.address]?.toFixed() || 0);
   } else {
     if (isXToken(currency)) {
       return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
         if (xBalances[xChainId]) {
-          const tokenAddress = getXTokenAddress(xChainId, currency.symbol);
+          const tokenAddress = getXTokenAddress(xChainId, currency.symbol.replace('(old)', ''));
           const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
           sum = sum.plus(balance);
         }
@@ -87,16 +88,18 @@ export default function useSortCurrency(initialState: SortingType, selectedChain
         dataToSort.sort((a, b) => {
           const aBalance = getXCurrencyBalance(xBalances, a, selectedChainId) || new BigNumber(0);
           const bBalance = getXCurrencyBalance(xBalances, b, selectedChainId) || new BigNumber(0);
-          const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol]?.toFixed(8) || '0'));
-          const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol]?.toFixed(8) || '0'));
+          const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol.replace('(old)', '')]?.toFixed(8) || '0'));
+          const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol.replace('(old)', '')]?.toFixed(8) || '0'));
           return aValue.isGreaterThan(bValue) ? -1 * direction : 1 * direction;
         });
       }
 
       if (sortBy.key === 'price') {
         dataToSort.sort((a, b) => {
-          if (!rateFracs[a.symbol] || !rateFracs[b.symbol]) return 0;
-          return rateFracs[a.symbol].greaterThan(rateFracs[b.symbol]) ? -1 * direction : 1 * direction;
+          if (!rateFracs[a.symbol.replace('(old)', '')] || !rateFracs[b.symbol.replace('(old)', '')]) return 0;
+          return rateFracs[a.symbol.replace('(old)', '')].greaterThan(rateFracs[b.symbol.replace('(old)', '')])
+            ? -1 * direction
+            : 1 * direction;
         });
       }
 

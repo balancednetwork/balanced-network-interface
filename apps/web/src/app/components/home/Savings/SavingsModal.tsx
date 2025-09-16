@@ -94,7 +94,7 @@ const SavingsModal = ({
     if (xAccount.address) {
       try {
         setWalletPrompting(true);
-        const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
+        const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD(old)'];
 
         let txHash;
         if (shouldDeposit) {
@@ -144,20 +144,20 @@ const SavingsModal = ({
             {shouldDeposit ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
           </Typography>
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${bnUSDDiff.abs().toFormat(2)} bnUSD`}
+            {`${bnUSDDiff.abs().toFormat(2)} bnUSD(old)`}
           </Typography>
           <Flex my={'25px'}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {lockedAmount?.toFixed(2, { groupSeparator: ',' }) || 0} bnUSD
+                {lockedAmount?.toFixed(2, { groupSeparator: ',' }) || 0} bnUSD(old)
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {`${bnUSDDiff.plus(new BigNumber(lockedAmount?.toFixed() ?? 0)).toFixed(2)} bnUSD`}
+                {`${bnUSDDiff.plus(new BigNumber(lockedAmount?.toFixed() ?? 0)).toFixed(2)} bnUSD(old)`}
               </Typography>
             </Box>
           </Flex>

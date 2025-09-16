@@ -44,11 +44,57 @@ export const wICX: TokenMap = {
 };
 
 export const bnUSD: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD(old)', 'Balanced Dollar'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+};
+
+export const bnUSD_new: TokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.SEJONG]: new Token(
+    ChainId.SEJONG,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.YEOUIDO]: new Token(
+    ChainId.YEOUIDO,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.BERLIN]: new Token(
+    ChainId.BERLIN,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+  [ChainId.LISBON]: new Token(
+    ChainId.LISBON,
+    'cx0000000000000000000000000000000000000011',
+    18,
+    'bnUSD',
+    'Balanced Dollar',
+  ),
+};
+
+export const SODA: TokenMap = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx0000000000000000000000000000000000000004', 18, 'SODA', 'SODA'),
 };
 
 export const BALN: TokenMap = {
@@ -158,17 +204,98 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
-export const UNTRADEABLE_TOKENS = ['JitoSOL', 'SOL'];
+export const UNTRADEABLE_TOKENS = ['JitoSOL', 'SOL', 'bnUSD', 'wBTC', 'tBTC', 'cbBTC', 'wETH', 'S', 'USDT', 'USDC'];
 
 //search for Pyth ID here https://hermes.pyth.network/docs/#/rest/price_feeds_metadata
-export const PYTH_PRICED_TOKENS = [
+export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   {
-    symbol: 'wETH',
-    pythId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+    symbol: 'USDC',
+    pythId: 'eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a',
+  },
+  {
+    symbol: 'USDT',
+    pythId: '2dc7f272d3010abe4de48755a50fcf5bd9eefd3b4af01d8f39f6c80ae51544fe',
+  },
+  {
+    symbol: 'WETH',
+    pythId: '9d4294bbcd1174d6f2003ec365831e64cc31d9f6f15a2b85399db8d5000960f6',
+  },
+  {
+    symbol: 'cbBTC',
+    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
+    symbol: 'tBTC',
+    pythId: '56a3121958b01f99fdc4e1fd01e81050602c7ace3a571918bb55c6a96657cca9',
+  },
+  {
+    symbol: 'wBTC',
+    pythId: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
   },
   {
     symbol: 'POL',
     pythId: 'ffd11c5a1cfd42f80afb2df4d9f264c15f956d68153335374ec10722edd70472',
   },
+  {
+    symbol: 'S',
+    pythId: 'f490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d',
+  },
+  {
+    symbol: 'AVAX',
+    pythId: '93da3352f9f1d105fdfe4971cfa80e9dd777bfc5d0f683ebb6e1294b92137bb7',
+  },
+  {
+    symbol: 'ETH',
+    pythId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+  },
+  {
+    symbol: 'weETH',
+    pythId: '9ee4e7c60b940440a261eb54b6d8149c23b580ed7da3139f7f08f4ea29dad395',
+  },
+  {
+    symbol: 'wstETH',
+    pythId: '6df640f3b8963d8f8358f791f352b8364513f6ab1cca5ed3f1f7b5448980e784',
+  },
+  {
+    symbol: 'BTC',
+    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
+    symbol: 'BTCB',
+    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  },
+  {
+    symbol: 'BNB',
+    pythId: '2f95862b045670cd22bee3114c39763a4a08beeb663b145d283c31d7d1101c4f',
+  },
+  {
+    symbol: 'INJ',
+    pythId: '7a5bc1d2b56ad029048cd63964b3ad2776eadf812edc1a43a31406cb54bff592',
+  },
+  {
+    symbol: 'XLM',
+    pythId: 'b7a8eba68a997cd0210c2e1e4ee811ad2d174b3611c22d9ebf16f4cb7e9ba850',
+  },
+  {
+    symbol: 'SOL',
+    pythId: 'ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d',
+  },
+  {
+    symbol: 'SUI',
+    pythId: '23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744',
+  },
+  {
+    symbol: 'afSUI',
+    pythId: '17cd845b16e874485b2684f8b8d1517d744105dbb904eec30222717f4bc9ee0d',
+  },
+  {
+    symbol: 'haSUI',
+    pythId: '6120ffcf96395c70aa77e72dcb900bf9d40dccab228efca59a17b90ce423d5e8',
+  },
+  {
+    symbol: 'vSUI',
+    pythId: '57ff7100a282e4af0c91154679c5dae2e5dcacb93fd467ea9cb7e58afdcfde27',
+  },
 ];
+
 export const STABLE_TOKENS = ['bnUSD', 'USDC', 'USDT'];

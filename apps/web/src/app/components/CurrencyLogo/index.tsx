@@ -44,7 +44,10 @@ export default function CurrencyLogo({
     if (!currency || currency.isNative) return [];
 
     if (currency?.isToken) {
-      const defaultUrls = [getTokenLogoURL(currency.address), getTokenLogoURLFromSymbol(currency?.symbol!)];
+      const defaultUrls = [
+        getTokenLogoURL(currency.address),
+        getTokenLogoURLFromSymbol(currency?.symbol!.replace('(old)', '')),
+      ];
 
       if (currency instanceof WrappedTokenInfo) {
         return uriLocation ? [uriLocation, ...defaultUrls] : [...defaultUrls];

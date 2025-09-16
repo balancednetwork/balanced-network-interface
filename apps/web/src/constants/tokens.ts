@@ -238,7 +238,7 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   },
   {
     symbol: 'S',
-    pythId: 'b2748e718cf3a75b0ca099cb467aea6aa8f7d960b381b3970769b5a2d6be26dc',
+    pythId: 'f490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d',
   },
   {
     symbol: 'AVAX',

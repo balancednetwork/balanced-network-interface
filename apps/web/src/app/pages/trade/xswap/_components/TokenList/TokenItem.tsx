@@ -98,7 +98,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
             <Box ml={2} sx={{ minWidth: '160px' }}>
               <Flex flexDirection={isSmall ? 'column' : 'row'}>
                 <Typography color="text" fontSize={16} marginRight="7px">
-                  {token.name.replace(' TOKEN', ' Token')}
+                  {token.name.replace(' TOKEN', ' Token').replace('Balanced Dollar', 'Legacy bnUSD')}
                 </Typography>
                 <Typography color="text2" fontSize={14} paddingTop="2px">
                   {token.symbol}

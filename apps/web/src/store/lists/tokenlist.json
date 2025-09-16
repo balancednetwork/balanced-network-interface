@@ -323,6 +323,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
     },
     {
+      "address": "cx0000000000000000000000000000000000000004",
+      "chainId": 1,
+      "name": "SODA",
+      "symbol": "SODA",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/soda.png"
+    },
+    {
       "address": "cx0000000000000000000000000000000000000011",
       "chainId": 1,
       "name": "Coinbase BTC",

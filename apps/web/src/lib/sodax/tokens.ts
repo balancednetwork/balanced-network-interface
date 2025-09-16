@@ -1,7 +1,7 @@
 import { SpokeChainId, spokeChainConfig, supportedSpokeChains, supportedTokensPerChain } from '@sodax/sdk';
 import { balancedSupportedChains } from './balancedConfig';
 
-const MANUAL_TOKEN_BLACKLIST = ['BALN'];
+const MANUAL_TOKEN_BLACKLIST = ['BALN', 'SODA'];
 
 export function getTokens() {
   const chains = supportedSpokeChains.filter(chain => balancedSupportedChains.includes(chain));

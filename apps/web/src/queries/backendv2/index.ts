@@ -358,6 +358,7 @@ export function useTokenPricesWithPyth() {
     return {
       ...prices,
       ...oraclePrices,
+      SODA: prices?.['ICX'],
     };
   }, [prices, oraclePrices]);
 }

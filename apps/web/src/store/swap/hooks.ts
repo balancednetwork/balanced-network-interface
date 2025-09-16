@@ -638,7 +638,7 @@ export function useDerivedTradeInfo(): {
       );
 
       // Calculate the partner fee from the output amount (same as exact input)
-      const fee = (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(PARTNER_FEE_PERCENTAGE)) / BigInt(10000);
+      const fee = BigInt(outputAmountAfterPartnerFee.multipliedBy(PARTNER_FEE_PERCENTAGE).div(10000).toFixed(0));
       return fee;
     }
   }, [quote, isExactIn, userTypedInAmount, destToken?.decimals]);
@@ -666,12 +666,20 @@ export function useDerivedTradeInfo(): {
       );
 
       // Calculate what the output amount would be before partner fee
-      const outputAmountBeforePartnerFee =
-        (BigInt(outputAmountAfterPartnerFee.toString()) * BigInt(10000)) / BigInt(10000 - PARTNER_FEE_PERCENTAGE);
+      const outputAmountBeforePartnerFee = BigInt(
+        outputAmountAfterPartnerFee
+          .multipliedBy(10000)
+          .div(10000 - PARTNER_FEE_PERCENTAGE)
+          .toFixed(0),
+      );
 
       // Calculate what the output amount would be before sodax fee
-      const outputAmountBeforeSodaxFee =
-        (outputAmountBeforePartnerFee * BigInt(10000)) / BigInt(10000 - SODAX_FEE_BASIS_POINTS);
+      const outputAmountBeforeSodaxFee = BigInt(
+        new BigNumber(outputAmountBeforePartnerFee.toString())
+          .multipliedBy(10000)
+          .div(10000 - SODAX_FEE_BASIS_POINTS)
+          .toFixed(0),
+      );
 
       // Calculate sodax fee as the difference
       const fee = outputAmountBeforeSodaxFee - outputAmountBeforePartnerFee;

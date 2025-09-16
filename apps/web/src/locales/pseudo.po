@@ -1776,6 +1776,7 @@ msgstr ""
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr ""
 
+#: src/app/pages/trade/migrate/page.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
@@ -2380,6 +2381,11 @@ msgstr ""
 msgid "Claim"
 msgstr ""
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#: src/app/pages/trade/xswap/_components/OrderModal.tsx
+msgid "Solana may deduct a \"new token\" fee of 0.50 {0}."
+msgstr ""
+
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
 msgid "Home"
@@ -2462,8 +2468,8 @@ msgstr ""
 #: src/app/pages/trade/migrate/page.tsx
 #: src/app/pages/trade/migrate/page.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Wallet: 0.00"
-msgstr ""
+#~ msgid "Wallet: 0.00"
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."

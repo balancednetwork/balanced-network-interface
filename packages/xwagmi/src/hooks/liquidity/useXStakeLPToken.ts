@@ -21,7 +21,7 @@ export const useXStakeLPToken = () => {
         tokenA: XToken,
         tokenB: XToken,
       ) => {
-        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD'];
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD(old)'];
         const inputAmount = CurrencyAmount.fromRawAmount(
           bnUSD,
           new BigNumber(rawStakeAmount).times((10n ** BigInt(decimals)).toString()).toFixed(0),

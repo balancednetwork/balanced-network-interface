@@ -5,3 +5,4 @@ export { EvmXWalletClient } from './EvmXWalletClient';
 export { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 export { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 export { xCallContractAbi } from './abis/xCallContractAbi';
+export { wagmiConfig } from './wagmiConfig';

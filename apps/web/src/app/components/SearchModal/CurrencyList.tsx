@@ -15,6 +15,7 @@ import { toFraction } from '@/utils';
 import CurrencyRow from './CurrencyRow';
 import { CurrencySelectionType } from './CurrencySearch';
 import { HeaderText } from './styleds';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -64,9 +65,11 @@ export default function CurrencyList({
   const hasSignedIn = useHasSignedIn();
   const isSwapSelector =
     currencySelectionType === CurrencySelectionType.TRADE_IN ||
-    currencySelectionType === CurrencySelectionType.TRADE_OUT;
+    currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_IN ||
+    currencySelectionType === CurrencySelectionType.SODAX_TRADE_OUT;
 
-  const rates = useRatesWithOracle();
+  const rates = useTokenPricesWithPyth();
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {

@@ -92,7 +92,7 @@ export const useLPReward = account => {
 
 export const calculateTotal = (balances, rates): BigNumber => {
   return balances.reduce((sum, balance) => {
-    sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));
+    sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol?.replace('(old)', '')] || 0));
     return sum;
   }, new BigNumber(0));
 };

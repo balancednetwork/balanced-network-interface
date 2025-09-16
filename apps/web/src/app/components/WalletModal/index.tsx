@@ -111,6 +111,7 @@ export default function WalletModal() {
           'optimism',
           'binance',
           'base',
+          'sonic',
         ],
         xChains: Object.values(xChainMap)
           .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)

@@ -207,7 +207,7 @@ export const bsc: XChain = {
     bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
   },
   autoExecution: true,
-  gasThreshold: 0.005,
+  gasThreshold: 0.001,
   testnet: false,
   useXCallScanner: true,
 };
@@ -419,6 +419,31 @@ export const optimism: XChain = {
   useXCallScanner: true,
 };
 
+export const sonic: XChain = {
+  id: 146,
+  name: 'Sonic',
+  xChainId: 'sonic',
+  xChainType: 'EVM',
+  tracker: { tx: 'https://sonicscan.org//tx' },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Sonic',
+    symbol: 'S',
+  },
+  rpc: {
+    http: 'https://rpc.soniclabs.com',
+  },
+  contracts: {
+    xCall: 'sonicXCALL',
+    assetManager: 'sonicAM',
+    bnUSD: 'sonicBNUSD',
+  },
+  autoExecution: true,
+  gasThreshold: 0.2,
+  testnet: false,
+  useXCallScanner: true,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -437,6 +462,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   stellar: stellar,
   sui: sui,
   solana: solana,
+  sonic: sonic,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -458,6 +484,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
   '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   'archway-1': [],
+  sonic: [],
 };
 
 /** to other chain from icon sources */
@@ -474,5 +501,6 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   sui: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  sonic: [],
   'archway-1': [],
 };

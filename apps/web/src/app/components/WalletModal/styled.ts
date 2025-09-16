@@ -156,7 +156,7 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
   flex-wrap: wrap;
   background: ${({ theme }) => theme.colors.bg4};
   border-radius: 10px;
-  padding: 2px 10px;
+  padding: 2px 8px;
   margin-top: 10px;
   margin-bottom: 5px;
 

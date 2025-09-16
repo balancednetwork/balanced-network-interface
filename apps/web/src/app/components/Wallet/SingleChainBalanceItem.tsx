@@ -36,11 +36,7 @@ const SingleChainBalanceItem = ({
   const [isOpen, setOpen] = React.useState(false);
   const rates = useRatesWithOracle();
 
-  //tmp
-  const hasBTCB = currency?.symbol === 'BTCB' && balance?.greaterThan(0);
-  //end of tmp
-
-  const hasNotification = (baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0)) || hasBTCB;
+  const hasNotification = baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0);
 
   const closeModal = React.useCallback(() => {
     setOpen(false);

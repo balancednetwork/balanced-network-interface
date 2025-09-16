@@ -42,7 +42,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const [isAwaitingSignIn, setAwaitingSignIn] = React.useState(false);
   const crossChainBalances = useCrossChainWalletBalances();
-  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
+  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD(old)');
 
   const xChainType = getXChainType(chain.xChainId);
   const xConnect = useXConnect();
@@ -88,7 +88,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
                 )
               : 0
           }`}
-          {' bnUSD'}
+          {' bnUSD(old)'}
         </Typography>
       ) : (
         <Typography color="primaryBright">
@@ -139,6 +139,11 @@ const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
       </SearchWrap>
 
       <ScrollHelper>
+        <Typography mb="15px">
+          <Trans>
+            Loans use bnUSD(old). If you need some to repay your loan, visit the Migrate tab on the Trade page.
+          </Trans>
+        </Typography>
         <Flex width="100%" justifyContent="space-between">
           <StyledHeaderText
             role="button"

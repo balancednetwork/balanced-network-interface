@@ -144,9 +144,9 @@ export class SuiXWalletClient extends XWalletClient {
     const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
     txb.moveCall({
-      target: `${TokenModuleMap[inputAmount.currency.symbol].packageId}::${TokenModuleMap[inputAmount.currency.symbol].name}::cross_transfer`,
+      target: `${TokenModuleMap[inputAmount.currency.symbol.replace('(old)', '')].packageId}::${TokenModuleMap[inputAmount.currency.symbol.replace('(old)', '')].name}::cross_transfer`,
       arguments: [
-        txb.object(TokenModuleMap[inputAmount.currency.symbol].storage),
+        txb.object(TokenModuleMap[inputAmount.currency.symbol.replace('(old)', '')].storage),
         txb.object(addressesMainnet['xCall Storage']),
         txb.object(addressesMainnet['xCall Manager Storage']),
         feeCoin,
@@ -194,7 +194,7 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD');
+    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD(old)');
     if (!bnUSD) {
       throw new Error('bnUSD XToken not found');
     }

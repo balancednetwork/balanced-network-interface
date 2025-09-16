@@ -464,3 +464,29 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
 
   return { descriptionAction, descriptionAmount };
 }
+
+/**
+ * Formats a given time difference in seconds into a human-readable relative time string.
+ *
+ * @param difference - The difference in seconds between two Unix timestamps.
+ * @returns A string representing the relative time, such as "x days ago", "x hours ago", "x mins ago", or "just now".
+ */
+export function formatRelativeTime(difference: number): string {
+  const secondsInMinute = 60;
+  const secondsInHour = 3600;
+  const secondsInDay = 86400;
+
+  const days = Math.floor(difference / secondsInDay);
+  const hours = Math.floor((difference % secondsInDay) / secondsInHour);
+  const minutes = Math.floor((difference % secondsInHour) / secondsInMinute);
+
+  if (days > 0) {
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (hours > 0) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (minutes > 0) {
+    return `${minutes} ${minutes === 1 ? 'min' : 'mins'} ago`;
+  } else {
+    return `just now`;
+  }
+}

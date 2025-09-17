@@ -101,7 +101,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
                   {token.name.replace(' TOKEN', ' Token').replace('Balanced Dollar', 'Legacy bnUSD')}
                 </Typography>
                 <Typography color="text2" fontSize={14} paddingTop="2px">
-                  {token.symbol.replace('bnUSD', 'bnUSD(old)')}
+                  {token.symbol}
                 </Typography>
               </Flex>
               <ChainsWrapper>

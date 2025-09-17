@@ -282,6 +282,37 @@ function MigratePanel({
     }
   }, [inputValue, inputCurrencyBalance, inputCurrency]);
 
+  // Check if user is trying to migrate too much ICX (leaving insufficient gas)
+  const hasInsufficientGasBuffer = React.useMemo(() => {
+    // Only check for ICX token migration from ICON chain
+    if (
+      !inputValue ||
+      parseFloat(inputValue) <= 0 ||
+      !inputCurrencyBalance ||
+      !inputCurrency ||
+      inputCurrency.symbol !== 'ICX' ||
+      inputChain !== '0x1.icon'
+    ) {
+      return false;
+    }
+
+    try {
+      // Convert input value to BigNumber for comparison
+      const inputAmountBN = new BigNumber(inputValue);
+      const balanceAmountBN = new BigNumber(inputCurrencyBalance.toFixed());
+
+      const gasBuffer = new BigNumber(2);
+
+      // Check if user is trying to migrate more than (total balance - gas buffer)
+      const maxMigratableAmount = balanceAmountBN.minus(gasBuffer);
+
+      return inputAmountBN.isGreaterThan(maxMigratableAmount);
+    } catch (error) {
+      // If there's an error parsing the amounts, consider it insufficient
+      return true;
+    }
+  }, [inputValue, inputCurrencyBalance, inputCurrency, inputChain]);
+
   return (
     <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
       <div>
@@ -411,10 +442,11 @@ function MigratePanel({
                   parseFloat(inputValue) <= 0 ||
                   (!stellarValidation?.ok && outputChain === 'stellar') ||
                   !stellarTrustlineValidation?.ok ||
-                  hasInsufficientBalance
+                  hasInsufficientBalance ||
+                  hasInsufficientGasBuffer
                 }
               >
-                {hasInsufficientBalance ? (
+                {hasInsufficientBalance || hasInsufficientGasBuffer ? (
                   <Trans>Insufficient {formatSymbol(inputCurrency?.symbol)}</Trans>
                 ) : (
                   <Trans>Migrate</Trans>

@@ -341,7 +341,12 @@ export function useTokenPrices() {
     return {
       data: allTokens?.reduce(
         (tokens, item) => {
-          tokens[item['symbol']] = new BigNumber(item.price);
+          if (item['symbol'] === 'bnUSD(old)' || item['symbol'] === 'bnUSD') {
+            tokens['bnUSD'] = new BigNumber(item.price);
+            tokens['bnUSD(old)'] = new BigNumber(item.price);
+          } else {
+            tokens[item['symbol']] = new BigNumber(item.price);
+          }
           return tokens;
         },
         {} as { [key in string]: BigNumber },

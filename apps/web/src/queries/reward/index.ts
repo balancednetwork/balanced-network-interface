@@ -190,6 +190,20 @@ export const useRatesWithOracle = () => {
     // add WBTC price
     combinedRates['WBTC'] = combinedRates['BTC'];
 
+    if (combinedRates['bnUSD(old)'] && !combinedRates['bnUSD']) {
+      combinedRates['bnUSD'] = combinedRates['bnUSD(old)'];
+    } else if (combinedRates['bnUSD'] && !combinedRates['bnUSD(old)']) {
+      combinedRates['bnUSD(old)'] = combinedRates['bnUSD'];
+    }
+
+    if (!combinedRates['bnUSD']) {
+      combinedRates['bnUSD'] = new BigNumber(1);
+    }
+
+    if (!combinedRates['bnUSD(old)']) {
+      combinedRates['bnUSD(old)'] = new BigNumber(1);
+    }
+
     return combinedRates;
   }, [rates, oraclePrices]);
 };

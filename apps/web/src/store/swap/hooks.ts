@@ -706,11 +706,10 @@ export function useDerivedTradeInfo(): {
       // For very small amounts, show more decimal places
       formattedAmount = totalFee.toFixed(6);
     } else if (totalFee.isLessThan(1)) {
-      // For amounts less than 1, show up to 4 decimal places
-      formattedAmount = totalFee.toPrecision(3);
+      formattedAmount = totalFee.toFixed(3);
     } else {
       // For amounts 1 or greater, show up to 2 decimal places
-      formattedAmount = totalFee.toFormat(2, { groupSeparator: ',' });
+      formattedAmount = totalFee.toFormat(2, { groupSeparator: ',', decimalSeparator: '.' });
     }
 
     // Remove trailing zeros after decimal point

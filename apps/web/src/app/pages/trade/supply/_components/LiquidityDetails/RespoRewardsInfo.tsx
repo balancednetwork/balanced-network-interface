@@ -23,7 +23,7 @@ export default function RespoRewardsInfo({ pool }: { pool: Pool }) {
   const { data: allPairs } = useAllPairsById();
   const sources = useSources();
   const [aBalance, bBalance] = usePoolTokenAmounts(pool);
-  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
+  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`.replace('(old)', '');
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const { data: incentivisedPairs } = useIncentivisedPairs();
   const isIncentivised = useMemo(

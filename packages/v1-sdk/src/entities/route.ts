@@ -4,6 +4,11 @@ import { Currency, Price, Token } from '@balancednetwork/sdk-core';
 
 import { Pair, PairType } from './pair';
 
+// Helper function to check if a token is bnUSD (handles both 'bnUSD' and 'bnUSD(old)' symbols)
+function isBnUSD(token: Token): boolean {
+  return token.symbol === 'bnUSD' || token.symbol === 'bnUSD(old)';
+}
+
 export type RouteAction = {
   type: number;
   address: string | null;
@@ -52,8 +57,8 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     for (const [i, pair] of this.pairs.entries()) {
       if (pair.type === PairType.STABILITY_FUND) {
         let price;
-        // pair.token1 is always bnUSD
-        if (this.path[i].symbol === 'bnUSD') {
+        // pair.token1 is always bnUSD (or bnUSD(old))
+        if (isBnUSD(this.path[i])) {
           // bnUSD -> USDC
           price = new Price(
             pair.token1,

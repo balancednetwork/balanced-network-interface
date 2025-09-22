@@ -16,6 +16,11 @@ import { ONE, STABILITY_FUND_FRACTION, ZERO } from '../constants';
 import { Pair, PairType } from './pair';
 import { Route } from './route';
 
+// Helper function to check if a token is bnUSD (handles both 'bnUSD' and 'bnUSD(old)' symbols)
+function isBnUSD(token: Token): boolean {
+  return token.symbol === 'bnUSD' || token.symbol === 'bnUSD(old)';
+}
+
 // minimal interface so the input output comparator may be shared across types
 interface InputOutput<TInput extends Currency, TOutput extends Currency> {
   readonly inputAmount: CurrencyAmount<TInput>;
@@ -451,11 +456,10 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     let result = new Fraction(ONE);
     for (let i = 0; i < this.route.path.length - 1; i++) {
       const pair = this.route.pairs[i];
-      const inputCurrencySymbol = this.route.path[i].symbol;
       const outputCurrencySymbol = this.route.path[i + 1].symbol;
 
       if (pair.type === PairType.STABILITY_FUND) {
-        if (inputCurrencySymbol === 'bnUSD') {
+        if (isBnUSD(this.route.path[i])) {
           result = result.multiply(STABILITY_FUND_FRACTION);
         }
       } else if (pair.type === PairType.STAKING) {

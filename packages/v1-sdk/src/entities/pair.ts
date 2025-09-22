@@ -19,6 +19,11 @@ import {
 } from '../constants';
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors';
 
+// Helper function to check if a token is bnUSD (handles both 'bnUSD' and 'bnUSD(old)' symbols)
+function isBnUSD(token: Token): boolean {
+  return token.symbol === 'bnUSD' || token.symbol === 'bnUSD(old)';
+}
+
 export const computePairAddress = ({
   factoryAddress,
   tokenA,
@@ -203,8 +208,8 @@ export class Pair {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
 
     if (this.type === PairType.STABILITY_FUND) {
-      // this.token1 is always bnUSD
-      if (inputAmount.currency.symbol === 'bnUSD') {
+      // this.token1 is always bnUSD (or bnUSD(old))
+      if (isBnUSD(inputAmount.currency)) {
         // bnUSD -> USDC
         // apply fee 0.1%
         const outputAmount = CurrencyAmount.fromRawAmount(
@@ -262,8 +267,8 @@ export class Pair {
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
     if (this.type === PairType.STABILITY_FUND) {
-      // this.token1 is always bnUSD
-      if (outputAmount.currency.symbol === 'bnUSD') {
+      // this.token1 is always bnUSD (or bnUSD(old))
+      if (isBnUSD(outputAmount.currency)) {
         // USDC -> bnUSD
         return [
           CurrencyAmount.fromRawAmount(

@@ -24,6 +24,7 @@ import { Field } from '@/store/swap/reducer';
 import { toFraction } from '@/utils';
 import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
+import { CoinGeckoExample } from '@/components/CoinGeckoExample';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
@@ -132,6 +133,9 @@ export default function SwapDescription() {
               </Typography>
             </>
           )} */}
+        </Box>
+        <Box width={[1, 1 / 2]}>
+          <CoinGeckoExample />
         </Box>
         {/* <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
           <ChartControlGroup mb={2}>

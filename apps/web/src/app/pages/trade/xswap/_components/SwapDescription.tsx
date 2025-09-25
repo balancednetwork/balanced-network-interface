@@ -24,7 +24,8 @@ import { Field } from '@/store/swap/reducer';
 import { toFraction } from '@/utils';
 import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
-import { CoinGeckoExample } from '@/components/CoinGeckoExample';
+import { useCoinGeckoProcessedChartData } from '@/queries/coingecko';
+import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
@@ -48,14 +49,6 @@ export default function SwapDescription() {
     period: CHART_PERIODS['1D'],
   });
 
-  const [ref, width] = useWidth();
-
-  const priceChartQuery = usePriceChartDataQuery(XCurrencies, chartOption.period);
-  // const isChartLoading = priceChartQuery?.isLoading;
-  // const data = priceChartQuery.data;
-
-  // const ratio = useRatio();
-
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
       ...chartOption,
@@ -70,8 +63,41 @@ export default function SwapDescription() {
     });
   };
 
+  const inputCoinId = XCurrencies[Field.INPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.INPUT]?.symbol!] : null;
+  const outputCoinId = XCurrencies[Field.OUTPUT]?.symbol
+    ? COINGECKO_COIN_IDS[XCurrencies[Field.OUTPUT]?.symbol!]
+    : null;
+
+  const { data: chartDataForInput, isLoading: chartForInputLoading } = useCoinGeckoProcessedChartData(
+    inputCoinId || '',
+    'usd',
+    30, // 30 days
+    !!inputCoinId, // Only enable if coin ID exists
+  );
+
+  const { data: chartDataForOutput, isLoading: chartForOutputLoading } = useCoinGeckoProcessedChartData(
+    outputCoinId || '',
+    'usd',
+    30, // 30 days
+    !!outputCoinId, // Only enable if coin ID exists
+  );
+
+  // Convert CoinGecko data to TradingView format
+  const convertToTradingViewFormat = (coinGeckoData: any) => {
+    if (!coinGeckoData?.prices) return [];
+
+    return coinGeckoData.prices.map((point: any) => ({
+      time: Math.floor(point.timestamp / 1000) as any, // Convert to seconds
+      value: point.price,
+    }));
+  };
+
+  const inputChartData = convertToTradingViewFormat(chartDataForInput);
+  const outputChartData = convertToTradingViewFormat(chartDataForOutput);
+
+  const [ref, width] = useWidth();
+
   const { account } = useIconReact();
-  const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`;
   // const isSuperSmall = useMedia('(max-width: 359px)');
 
@@ -93,28 +119,6 @@ export default function SwapDescription() {
   //   return pairExists && !isOraclePriced;
   // }, [pair, XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
 
-  const { onCurrencySelection } = useSwapActionHandlers();
-
-  const handleTVDismiss = () => {
-    setTradingViewActive(false);
-
-    if (activeSymbol !== undefined) {
-      const tokens = activeSymbol.split('/');
-
-      const inputToken = SUPPORTED_TOKENS_LIST.filter(
-        token => token.symbol!.toLowerCase() === tokens[0].toLowerCase(),
-      )[0];
-      const outputToken = SUPPORTED_TOKENS_LIST.filter(
-        token => token.symbol!.toLowerCase() === tokens[1].toLowerCase(),
-      )[0];
-
-      if (inputToken && outputToken) {
-        onCurrencySelection(Field.INPUT, inputToken);
-        onCurrencySelection(Field.OUTPUT, outputToken);
-      }
-    }
-  };
-
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
@@ -134,9 +138,7 @@ export default function SwapDescription() {
             </>
           )} */}
         </Box>
-        <Box width={[1, 1 / 2]}>
-          <CoinGeckoExample />
-        </Box>
+        <Box width={[1, 1 / 2]}></Box>
         {/* <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
@@ -173,29 +175,63 @@ export default function SwapDescription() {
           </ChartControlGroup>
         </Box> */}
       </Flex>
-      <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
-        <ChartContainer my="auto" width="100%" ref={ref}>
-          <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>
-              <Trans>No price chart available for this pair.</Trans>
-            </Typography>
-          </Flex>
-        </ChartContainer>
-      </div>
+      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
+        {/* Input Token Chart */}
+        <Box mb={4}>
+          <Typography variant="h4" mb={2}>
+            {formatSymbol(XCurrencies[Field.INPUT]?.symbol)} Price Chart (30 days)
+          </Typography>
+          <ChartContainer width="100%" ref={ref}>
+            {!inputCoinId ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>Chart not available for {formatSymbol(XCurrencies[Field.INPUT]?.symbol)}</Trans>
+                </Typography>
+              </Flex>
+            ) : chartForInputLoading ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Spinner />
+              </Flex>
+            ) : inputChartData.length > 0 ? (
+              <TradingViewChart type={CHART_TYPES.AREA} data={inputChartData} volumeData={[]} width={width} />
+            ) : (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>No chart data available for {formatSymbol(XCurrencies[Field.INPUT]?.symbol)}</Trans>
+                </Typography>
+              </Flex>
+            )}
+          </ChartContainer>
+        </Box>
 
-      <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
-        {tradingViewActive && (
-          <TVChartContainerWrap>
-            <TVChartContainer
-              interval={chartOption.period as ResolutionString}
-              symbol={symbolName.replaceAll(' ', '')}
-              setActiveSymbol={setActiveSymbol}
-              userId={account || 'not_signed_in'}
-              locale={'en' as LanguageCode}
-            />
-          </TVChartContainerWrap>
-        )}
-      </Modal>
+        {/* Output Token Chart */}
+        <Box>
+          <Typography variant="h4" mb={2}>
+            {formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)} Price Chart (30 days)
+          </Typography>
+          <ChartContainer width="100%">
+            {!outputCoinId ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>Chart not available for {formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}</Trans>
+                </Typography>
+              </Flex>
+            ) : chartForOutputLoading ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Spinner />
+              </Flex>
+            ) : outputChartData.length > 0 ? (
+              <TradingViewChart type={CHART_TYPES.AREA} data={outputChartData} volumeData={[]} width={width} />
+            ) : (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>No chart data available for {formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}</Trans>
+                </Typography>
+              </Flex>
+            )}
+          </ChartContainer>
+        </Box>
+      </div>
     </Flex>
   );
 }

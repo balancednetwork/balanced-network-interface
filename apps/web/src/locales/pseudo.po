@@ -2655,6 +2655,11 @@ msgstr ""
 #~ msgid "to make this transaction."
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "Chart not available for {0}"
+msgstr ""
+
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 msgid "Swap cancelled"
 msgstr ""
@@ -2881,7 +2886,6 @@ msgstr ""
 msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity rewards."
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescriptionLegacy.tsx
 msgid "No price chart available for this pair."
 msgstr ""
@@ -3115,6 +3119,11 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "No chart data available for {0}"
 msgstr ""
 
 #: src/store/transactions/hooks.tsx

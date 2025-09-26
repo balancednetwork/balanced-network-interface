@@ -11,8 +11,8 @@ import TradingViewChart, { CHART_TYPES } from '@/app/components/TradingViewChart
 import { Typography } from '@/app/theme';
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { formatSymbol } from '@/utils/formatter';
-import { useCoinGeckoProcessedChartData } from '@/queries/coingecko';
+import { formatSymbol, formatPrice } from '@/utils/formatter';
+import { useCoinGeckoProcessedChartData, useCoinGeckoPrice } from '@/queries/coingecko';
 import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
 // Timeframe options
@@ -116,6 +116,12 @@ export default function SwapDescription() {
     !!selectedCoinId, // Only enable if coin ID exists
   );
 
+  const { price: currentPrice, isLoading: priceLoading } = useCoinGeckoPrice(
+    selectedCoinId || '',
+    'usd',
+    !!selectedCoinId, // Only enable if coin ID exists
+  );
+
   // Convert CoinGecko data to TradingView format
   const convertToTradingViewFormat = useCallback((coinGeckoData: any) => {
     if (!coinGeckoData?.prices) return [];
@@ -176,28 +182,39 @@ export default function SwapDescription() {
 
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
-      <Flex mb={5} width="100%" flexWrap="wrap" justifyContent="space-between" alignItems="center">
-        <Flex alignItems="center" mb={2}>
-          <ClickableTokenSymbol
-            variant="h3"
-            $isActive={selectedToken === Field.INPUT}
-            onClick={() => handleTokenSelect(Field.INPUT)}
-          >
-            {inputTokenSymbol}
-          </ClickableTokenSymbol>
-          <Typography variant="h3" style={{ marginRight: '8px' }}>
-            {' '}
-            /{' '}
-          </Typography>
-          <ClickableTokenSymbol
-            variant="h3"
-            $isActive={selectedToken === Field.OUTPUT}
-            onClick={() => handleTokenSelect(Field.OUTPUT)}
-          >
-            {outputTokenSymbol}
-          </ClickableTokenSymbol>
-        </Flex>
-        <ChartControlGroup pb={'12px'}>
+      <Flex mb={5} width="100%" flexWrap="wrap" justifyContent="space-between">
+        <Box>
+          <Flex alignItems="center" mb={2}>
+            <ClickableTokenSymbol
+              variant="h3"
+              $isActive={selectedToken === Field.INPUT}
+              onClick={() => handleTokenSelect(Field.INPUT)}
+            >
+              {inputTokenSymbol}
+            </ClickableTokenSymbol>
+            <Typography variant="h3" style={{ marginRight: '8px' }}>
+              {' '}
+              /{' '}
+            </Typography>
+            <ClickableTokenSymbol
+              variant="h3"
+              $isActive={selectedToken === Field.OUTPUT}
+              onClick={() => handleTokenSelect(Field.OUTPUT)}
+            >
+              {outputTokenSymbol}
+            </ClickableTokenSymbol>
+          </Flex>
+
+          {/* Price Display */}
+          {selectedCoinId && (
+            <Box>
+              <Typography variant="p" color="text1">
+                {selectedTokenSymbol} price: {priceLoading ? '...' : currentPrice ? formatPrice(currentPrice) : '-'}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <ChartControlGroup py={'3px'}>
           {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
             <ChartControlButton
               key={key}
@@ -210,6 +227,7 @@ export default function SwapDescription() {
           ))}
         </ChartControlGroup>
       </Flex>
+
       <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
         {/* Input Token Chart */}
         <Box mt={3}>

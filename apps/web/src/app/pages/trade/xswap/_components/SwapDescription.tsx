@@ -247,7 +247,13 @@ export default function SwapDescription() {
 
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
-      <Flex mb={5} width="100%" flexWrap="wrap" justifyContent="space-between">
+      <Flex
+        mb={5}
+        width="100%"
+        flexDirection={['column', 'row']}
+        justifyContent="space-between"
+        alignItems={['flex-start', 'flex-start']}
+      >
         <Box>
           <Flex alignItems="center" mb={2}>
             <ClickableTokenSymbol
@@ -279,7 +285,7 @@ export default function SwapDescription() {
             </Box>
           )}
         </Box>
-        <Flex flexDirection="column" alignItems="flex-end">
+        <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} mt={[3, 0]}>
           <ChartControlGroup pt={'3px'} mb={2}>
             {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
               <ChartControlButton

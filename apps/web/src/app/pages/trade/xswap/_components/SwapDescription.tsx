@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ChartContainer } from '@/app/components/ChartControl';
+import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Spinner from '@/app/components/Spinner';
 import TradingViewChart, { CHART_TYPES } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
@@ -13,6 +13,16 @@ import { Field } from '@/store/swap/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { useCoinGeckoProcessedChartData } from '@/queries/coingecko';
 import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
+
+// Timeframe options
+const TIMEFRAMES = {
+  '7d': { label: '7D', days: 7 },
+  '1m': { label: '1M', days: 30 },
+  '6m': { label: '6M', days: 180 },
+  '1y': { label: '1Y', days: 365 },
+} as const;
+
+type TimeframeKey = keyof typeof TIMEFRAMES;
 
 // Custom hook for stable width measurement using ResizeObserver
 const useStableWidth = () => {
@@ -66,6 +76,7 @@ const MemoizedTradingViewChart = React.memo(TradingViewChart, (prevProps, nextPr
 
 export default function SwapDescription() {
   const { currencies: XCurrencies } = useDerivedTradeInfo();
+  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>('6m');
 
   const inputCoinId = useMemo(
     () => (XCurrencies[Field.INPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.INPUT]?.symbol!] : null),
@@ -75,7 +86,7 @@ export default function SwapDescription() {
   const { data: chartDataForInput, isLoading: chartForInputLoading } = useCoinGeckoProcessedChartData(
     inputCoinId || '',
     'usd',
-    180, // 180 days
+    TIMEFRAMES[selectedTimeframe].days,
     !!inputCoinId, // Only enable if coin ID exists
   );
 
@@ -101,6 +112,16 @@ export default function SwapDescription() {
     [XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol],
   );
 
+  const inputTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[Field.INPUT]?.symbol),
+    [XCurrencies[Field.INPUT]?.symbol],
+  );
+
+  // Handle timeframe change
+  const handleTimeframeChange = useCallback((timeframe: TimeframeKey) => {
+    setSelectedTimeframe(timeframe);
+  }, []);
+
   // Memoize chart props to prevent unnecessary re-renders
   const chartProps = useMemo(
     () => ({
@@ -112,24 +133,28 @@ export default function SwapDescription() {
     [inputChartData, width],
   );
 
-  const inputTokenSymbol = useMemo(
-    () => formatSymbol(XCurrencies[Field.INPUT]?.symbol),
-    [XCurrencies[Field.INPUT]?.symbol],
-  );
-
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
-      <Flex mb={5} flexWrap="wrap">
-        <Box width={[1, 1 / 2]}>
-          <Typography variant="h3" mb={2}>
-            {symbolName}
-          </Typography>
-        </Box>
-        <Box width={[1, 1 / 2]}></Box>
+      <Flex mb={5} width="100%" flexWrap="wrap" justifyContent="space-between" alignItems="center">
+        <Typography variant="h3" mb={2}>
+          {symbolName}
+        </Typography>
+        <ChartControlGroup pb={'12px'}>
+          {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
+            <ChartControlButton
+              key={key}
+              type="button"
+              onClick={() => handleTimeframeChange(key as TimeframeKey)}
+              $active={selectedTimeframe === key}
+            >
+              <Typography fontSize={12}>{timeframe.label}</Typography>
+            </ChartControlButton>
+          ))}
+        </ChartControlGroup>
       </Flex>
       <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
         {/* Input Token Chart */}
-        <Box mt={5}>
+        <Box mt={3}>
           <ChartContainer width="100%" ref={ref}>
             {!inputCoinId ? (
               <Flex justifyContent="center" alignItems="center" height="300px">

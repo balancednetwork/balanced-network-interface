@@ -56,7 +56,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
     borderColor: '#304a68',
   },
   crosshair: {
-    mode: CrosshairMode.Magnet,
+    mode: CrosshairMode.Normal,
   },
   localization: {
     timeFormatter: (time: BusinessDay | UTCTimestamp) => {
@@ -145,6 +145,8 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
           borderUpColor: 'rgba(44, 169, 183, 1)',
           wickDownColor: '#fb6a6a',
           wickUpColor: 'rgba(44, 169, 183, 1)',
+          priceLineVisible: false,
+          lastValueVisible: false,
         });
 
         candleSeries.setData(data);
@@ -169,6 +171,8 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
           bottomColor: 'rgba(44, 169, 183, 0.04)',
           lineColor: 'rgba(44, 169, 183, 1)',
           lineWidth: 2,
+          priceLineVisible: false,
+          lastValueVisible: false,
         });
         series.setData(data);
       }

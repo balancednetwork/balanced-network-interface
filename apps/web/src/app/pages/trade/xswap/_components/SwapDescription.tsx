@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -8,13 +8,50 @@ import { ChartContainer } from '@/app/components/ChartControl';
 import Spinner from '@/app/components/Spinner';
 import TradingViewChart, { CHART_TYPES } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
-import useWidth from '@/hooks/useWidth';
-import { useIconReact } from '@/packages/icon-react';
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { useCoinGeckoProcessedChartData } from '@/queries/coingecko';
 import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
+
+// Custom hook for stable width measurement using ResizeObserver
+const useStableWidth = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    // Set initial width
+    const updateWidth = () => {
+      const newWidth = element.clientWidth;
+      if (newWidth !== width) {
+        setWidth(newWidth);
+      }
+    };
+
+    updateWidth();
+
+    // Use ResizeObserver for more stable width tracking
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        if (newWidth !== width && newWidth > 0) {
+          setWidth(newWidth);
+        }
+      }
+    });
+
+    resizeObserver.observe(element);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [width]);
+
+  return [ref, width] as const;
+};
 
 // Memoized chart component to prevent unnecessary re-renders
 const MemoizedTradingViewChart = React.memo(TradingViewChart, (prevProps, nextProps) => {
@@ -57,10 +94,7 @@ export default function SwapDescription() {
     [chartDataForInput, convertToTradingViewFormat],
   );
 
-  const [ref, width] = useWidth();
-
-  // Memoize width to prevent unnecessary chart re-renders
-  const memoizedWidth = useMemo(() => width, [width]);
+  const [ref, width] = useStableWidth();
 
   const symbolName = useMemo(
     () => `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`,
@@ -73,9 +107,9 @@ export default function SwapDescription() {
       type: CHART_TYPES.AREA,
       data: inputChartData,
       volumeData: [] as any[],
-      width: memoizedWidth,
+      width: width,
     }),
-    [inputChartData, memoizedWidth],
+    [inputChartData, width],
   );
 
   const inputTokenSymbol = useMemo(

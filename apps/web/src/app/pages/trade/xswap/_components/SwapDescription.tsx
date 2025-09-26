@@ -12,7 +12,12 @@ import { Typography } from '@/app/theme';
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatSymbol, formatPrice } from '@/utils/formatter';
-import { useCoinGeckoProcessedChartData, useCoinGeckoPrice, useCoinGeckoOHLC } from '@/queries/coingecko';
+import {
+  useCoinGeckoProcessedChartData,
+  useCoinGeckoPrice,
+  useCoinGeckoOHLC,
+  useCoinGeckoSimplePrice,
+} from '@/queries/coingecko';
 import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
 // Timeframe options
@@ -114,13 +119,7 @@ export default function SwapDescription() {
     selectedCoinId || '',
     'usd',
     TIMEFRAMES[selectedTimeframe].days,
-    !!selectedCoinId, // Only enable if coin ID exists
-  );
-
-  const { price: currentPrice, isLoading: priceLoading } = useCoinGeckoPrice(
-    selectedCoinId || '',
-    'usd',
-    !!selectedCoinId, // Only enable if coin ID exists
+    !!selectedCoinId && selectedChartType === CHART_TYPES.AREA, // Only fetch line chart data when area chart is selected
   );
 
   const { data: ohlcData, isLoading: ohlcLoading } = useCoinGeckoOHLC(
@@ -129,6 +128,23 @@ export default function SwapDescription() {
     TIMEFRAMES[selectedTimeframe].days,
     !!selectedCoinId && selectedChartType === CHART_TYPES.CANDLE, // Only fetch OHLC for candlestick charts
   );
+
+  // Get real-time price for both display and candlestick chart updates
+  const { data: realTimePriceData, isLoading: currentPriceLoading } = useCoinGeckoSimplePrice(
+    selectedCoinId ? [selectedCoinId] : [],
+    ['usd'],
+    !!selectedCoinId, // Always fetch current price for display and candlestick updates
+  );
+
+  // Extract current price from the price data
+  const currentPrice = useMemo(() => {
+    if (realTimePriceData && selectedCoinId && realTimePriceData[selectedCoinId]?.usd) {
+      return realTimePriceData[selectedCoinId].usd;
+    }
+    return null;
+  }, [realTimePriceData, selectedCoinId]);
+
+  const priceLoading = currentPriceLoading;
 
   // Convert CoinGecko data to TradingView format
   const convertToTradingViewFormat = useCallback((coinGeckoData: any) => {
@@ -140,18 +156,38 @@ export default function SwapDescription() {
     }));
   }, []);
 
-  // Convert OHLC data to TradingView candlestick format
-  const convertOHLCToTradingViewFormat = useCallback((ohlcData: number[][]) => {
-    if (!ohlcData) return [];
+  // Convert OHLC data to TradingView candlestick format, updating the latest candle with real-time price
+  const convertOHLCToTradingViewFormat = useCallback(
+    (ohlcData: number[][]) => {
+      if (!ohlcData) return [];
 
-    return ohlcData.map((candle: number[]) => ({
-      time: Math.floor(candle[0] / 1000) as any, // Convert timestamp to seconds
-      open: candle[1],
-      high: candle[2],
-      low: candle[3],
-      close: candle[4],
-    }));
-  }, []);
+      const convertedData = ohlcData.map((candle: number[]) => ({
+        time: Math.floor(candle[0] / 1000) as any, // Convert timestamp to seconds
+        open: candle[1],
+        high: candle[2],
+        low: candle[3],
+        close: candle[4],
+      }));
+
+      // Update the latest candle with real-time price if available
+      if (realTimePriceData && selectedCoinId && realTimePriceData[selectedCoinId]?.usd && convertedData.length > 0) {
+        const latestCandle = convertedData[convertedData.length - 1];
+        const realTimePrice = realTimePriceData[selectedCoinId].usd;
+
+        // Update close price and adjust high/low if necessary
+        latestCandle.close = realTimePrice;
+        if (realTimePrice > latestCandle.high) {
+          latestCandle.high = realTimePrice;
+        }
+        if (realTimePrice < latestCandle.low) {
+          latestCandle.low = realTimePrice;
+        }
+      }
+
+      return convertedData;
+    },
+    [realTimePriceData, selectedCoinId],
+  );
 
   const chartData = useMemo(() => {
     if (selectedChartType === CHART_TYPES.CANDLE) {

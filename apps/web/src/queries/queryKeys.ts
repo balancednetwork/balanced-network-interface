@@ -46,6 +46,18 @@ export const QUERY_KEYS = {
     ...args,
     transactions,
   ],
+  CoinGecko: {
+    SimplePrice: (coinIds: string[], currencies: string[]) => ['CoinGecko', 'SimplePrice', coinIds, currencies],
+    MarketChart: (coinId: string, currency: string, days: number | string) => [
+      'CoinGecko',
+      'MarketChart',
+      coinId,
+      currency,
+      days,
+    ],
+    CoinDetails: (coinId: string) => ['CoinGecko', 'CoinDetails', coinId],
+    MarketData: (coinIds: string[], currency: string) => ['CoinGecko', 'MarketData', coinIds, currency],
+  },
 };
 
 export default QUERY_KEYS;

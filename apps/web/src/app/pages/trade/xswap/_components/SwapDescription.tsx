@@ -1,213 +1,349 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 
-import { Currency, Price } from '@balancednetwork/sdk-core';
-import { Trans, defineMessage } from '@lingui/macro';
-import { useMedia } from 'react-use';
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { theme } from '@/app/theme';
 
 import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
-import Modal from '@/app/components/Modal';
 import Spinner from '@/app/components/Spinner';
-import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartContainer';
-import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
+import TradingViewChart, { CHART_TYPES } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
-import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
-import { ORACLE_PRICED_TOKENS, SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
-import { useV2Pair } from '@/hooks/useV2Pairs';
-import useWidth from '@/hooks/useWidth';
-import { useIconReact } from '@/packages/icon-react';
-import { usePriceChartDataQuery } from '@/queries/swap';
-import { useRatio } from '@/store/ratio/hooks';
-import { useDerivedTradeInfo, useSwapActionHandlers } from '@/store/swap/hooks';
+import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { toFraction } from '@/utils';
-import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { formatSymbol, formatPrice } from '@/utils/formatter';
+import {
+  useCoinGeckoProcessedChartData,
+  useCoinGeckoPrice,
+  useCoinGeckoOHLC,
+  useCoinGeckoSimplePrice,
+} from '@/queries/coingecko';
+import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
-const CHART_TYPES_LABELS = {
-  [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
-  [CHART_TYPES.CANDLE]: defineMessage({ message: 'Candles' }),
+// Timeframe options
+const TIMEFRAMES = {
+  '7d': { label: '7D', days: 7 },
+  '1m': { label: '1M', days: 30 },
+  '6m': { label: '6M', days: 180 },
+  '1y': { label: '1Y', days: 365 },
+} as const;
+
+type TimeframeKey = keyof typeof TIMEFRAMES;
+
+// Styled component for clickable token symbols with animated border
+const ClickableTokenSymbol = styled(Typography)<{ $isActive: boolean }>`
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 2px;
+    background-color: ${({ $isActive }) => ($isActive ? theme().colors.primary : 'transparent')};
+    transition: all 0.3s ease;
+    width: ${({ $isActive }) => ($isActive ? '100%' : '0%')};
+  }
+
+  &:hover::after {
+    width: 100%;
+    background-color: ${theme().colors.primary};
+  }
+`;
+
+// Custom hook for stable width measurement using ResizeObserver
+const useStableWidth = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    // Set initial width
+    const updateWidth = () => {
+      const newWidth = element.clientWidth;
+      if (newWidth !== width) {
+        setWidth(newWidth);
+      }
+    };
+
+    updateWidth();
+
+    // Use ResizeObserver for more stable width tracking
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        if (newWidth !== width && newWidth > 0) {
+          setWidth(newWidth);
+        }
+      }
+    });
+
+    resizeObserver.observe(element);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [width]);
+
+  return [ref, width] as const;
 };
 
-const CHART_PERIODS_LABELS = {
-  [CHART_PERIODS['15m']]: defineMessage({ message: '15m' }),
-  [CHART_PERIODS['1H']]: defineMessage({ message: '1H' }),
-  [CHART_PERIODS['4H']]: defineMessage({ message: '4H' }),
-  [CHART_PERIODS['1D']]: defineMessage({ message: '1D' }),
-  [CHART_PERIODS['1W']]: defineMessage({ message: '1W' }),
-};
+// Memoized chart component to prevent unnecessary re-renders
+const MemoizedTradingViewChart = React.memo(TradingViewChart, (prevProps, nextProps) => {
+  // Only re-render if data, width, or type actually changes
+  return (
+    prevProps.data === nextProps.data &&
+    prevProps.width === nextProps.width &&
+    prevProps.type === nextProps.type &&
+    prevProps.volumeData === nextProps.volumeData
+  );
+});
 
 export default function SwapDescription() {
-  const { exchangeRate, currencies: XCurrencies } = useDerivedTradeInfo();
-  const [tradingViewActive, setTradingViewActive] = useState(false);
+  const { currencies: XCurrencies } = useDerivedTradeInfo();
+  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>('6m');
+  const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
+  const [selectedChartType, setSelectedChartType] = useState<CHART_TYPES>(CHART_TYPES.CANDLE);
 
-  const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
-    type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['1D'],
-  });
+  const selectedCoinId = useMemo(
+    () => (XCurrencies[selectedToken]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[selectedToken]?.symbol!] : null),
+    [XCurrencies, selectedToken],
+  );
 
-  const [ref, width] = useWidth();
+  const { data: chartDataForSelected, isLoading: chartLoading } = useCoinGeckoProcessedChartData(
+    selectedCoinId || '',
+    'usd',
+    TIMEFRAMES[selectedTimeframe].days,
+    !!selectedCoinId && selectedChartType === CHART_TYPES.AREA, // Only fetch line chart data when area chart is selected
+  );
 
-  const priceChartQuery = usePriceChartDataQuery(XCurrencies, chartOption.period);
-  // const isChartLoading = priceChartQuery?.isLoading;
-  // const data = priceChartQuery.data;
+  const { data: ohlcData, isLoading: ohlcLoading } = useCoinGeckoOHLC(
+    selectedCoinId || '',
+    'usd',
+    TIMEFRAMES[selectedTimeframe].days,
+    !!selectedCoinId && selectedChartType === CHART_TYPES.CANDLE, // Only fetch OHLC for candlestick charts
+  );
 
-  // const ratio = useRatio();
+  // Get real-time price for both display and candlestick chart updates
+  const { data: realTimePriceData, isLoading: currentPriceLoading } = useCoinGeckoSimplePrice(
+    selectedCoinId ? [selectedCoinId] : [],
+    ['usd'],
+    !!selectedCoinId, // Always fetch current price for display and candlestick updates
+  );
 
-  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setChartOption({
-      ...chartOption,
-      period: event.currentTarget.value as CHART_PERIODS,
-    });
-  };
-
-  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setChartOption({
-      ...chartOption,
-      type: event.currentTarget.value as CHART_TYPES,
-    });
-  };
-
-  const { account } = useIconReact();
-  const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
-  const symbolName = `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`;
-  // const isSuperSmall = useMedia('(max-width: 359px)');
-
-  // const hasTradingView = React.useMemo(() => {
-  //   return (
-  //     SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.INPUT]?.symbol) &&
-  //     SUPPORTED_TOKENS_LIST.some(token => token.symbol === XCurrencies[Field.OUTPUT]?.symbol)
-  //   );
-  // }, [XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
-
-  // const [, pair] = useV2Pair(XCurrencies[Field.INPUT], XCurrencies[Field.OUTPUT]);
-
-  // const hasChart = React.useMemo(() => {
-  //   const pairExists = !!pair;
-  //   const isOraclePriced =
-  //     ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.INPUT]?.symbol!) ||
-  //     ORACLE_PRICED_TOKENS.includes(XCurrencies[Field.OUTPUT]?.symbol!);
-
-  //   return pairExists && !isOraclePriced;
-  // }, [pair, XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol]);
-
-  const { onCurrencySelection } = useSwapActionHandlers();
-
-  const handleTVDismiss = () => {
-    setTradingViewActive(false);
-
-    if (activeSymbol !== undefined) {
-      const tokens = activeSymbol.split('/');
-
-      const inputToken = SUPPORTED_TOKENS_LIST.filter(
-        token => token.symbol!.toLowerCase() === tokens[0].toLowerCase(),
-      )[0];
-      const outputToken = SUPPORTED_TOKENS_LIST.filter(
-        token => token.symbol!.toLowerCase() === tokens[1].toLowerCase(),
-      )[0];
-
-      if (inputToken && outputToken) {
-        onCurrencySelection(Field.INPUT, inputToken);
-        onCurrencySelection(Field.OUTPUT, outputToken);
-      }
+  // Extract current price from the price data
+  const currentPrice = useMemo(() => {
+    if (realTimePriceData && selectedCoinId && realTimePriceData[selectedCoinId]?.usd) {
+      return realTimePriceData[selectedCoinId].usd;
     }
-  };
+    return null;
+  }, [realTimePriceData, selectedCoinId]);
+
+  const priceLoading = currentPriceLoading;
+
+  // Convert CoinGecko data to TradingView format
+  const convertToTradingViewFormat = useCallback((coinGeckoData: any) => {
+    if (!coinGeckoData?.prices) return [];
+
+    return coinGeckoData.prices.map((point: any) => ({
+      time: Math.floor(point.timestamp / 1000) as any, // Convert to seconds
+      value: point.price,
+    }));
+  }, []);
+
+  // Convert OHLC data to TradingView candlestick format, updating the latest candle with real-time price
+  const convertOHLCToTradingViewFormat = useCallback(
+    (ohlcData: number[][]) => {
+      if (!ohlcData) return [];
+
+      const convertedData = ohlcData.map((candle: number[]) => ({
+        time: Math.floor(candle[0] / 1000) as any, // Convert timestamp to seconds
+        open: candle[1],
+        high: candle[2],
+        low: candle[3],
+        close: candle[4],
+      }));
+
+      // Update the latest candle with real-time price if available
+      if (realTimePriceData && selectedCoinId && realTimePriceData[selectedCoinId]?.usd && convertedData.length > 0) {
+        const latestCandle = convertedData[convertedData.length - 1];
+        const realTimePrice = realTimePriceData[selectedCoinId].usd;
+
+        // Update close price and adjust high/low if necessary
+        latestCandle.close = realTimePrice;
+        if (realTimePrice > latestCandle.high) {
+          latestCandle.high = realTimePrice;
+        }
+        if (realTimePrice < latestCandle.low) {
+          latestCandle.low = realTimePrice;
+        }
+      }
+
+      return convertedData;
+    },
+    [realTimePriceData, selectedCoinId],
+  );
+
+  const chartData = useMemo(() => {
+    if (selectedChartType === CHART_TYPES.CANDLE) {
+      return convertOHLCToTradingViewFormat(ohlcData || []);
+    } else {
+      return convertToTradingViewFormat(chartDataForSelected);
+    }
+  }, [chartDataForSelected, ohlcData, selectedChartType, convertToTradingViewFormat, convertOHLCToTradingViewFormat]);
+
+  const [ref, width] = useStableWidth();
+
+  const symbolName = useMemo(
+    () => `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`,
+    [XCurrencies[Field.INPUT]?.symbol, XCurrencies[Field.OUTPUT]?.symbol],
+  );
+
+  const inputTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[Field.INPUT]?.symbol),
+    [XCurrencies[Field.INPUT]?.symbol],
+  );
+
+  const outputTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[Field.OUTPUT]?.symbol),
+    [XCurrencies[Field.OUTPUT]?.symbol],
+  );
+
+  const selectedTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[selectedToken]?.symbol),
+    [XCurrencies, selectedToken],
+  );
+
+  // Handle timeframe change
+  const handleTimeframeChange = useCallback((timeframe: TimeframeKey) => {
+    setSelectedTimeframe(timeframe);
+  }, []);
+
+  // Handle token selection
+  const handleTokenSelect = useCallback((token: Field) => {
+    setSelectedToken(token);
+  }, []);
+
+  // Handle chart type change
+  const handleChartTypeChange = useCallback((chartType: CHART_TYPES) => {
+    setSelectedChartType(chartType);
+  }, []);
+
+  // Memoize chart props to prevent unnecessary re-renders
+  const chartProps = useMemo(
+    () => ({
+      type: selectedChartType,
+      data: chartData,
+      volumeData: [] as any[],
+      width: width,
+    }),
+    [chartData, width, selectedChartType],
+  );
 
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
-      <Flex mb={5} flexWrap="wrap">
-        <Box width={[1, 1 / 2]}>
-          <Typography variant="h3" mb={2}>
-            {symbolName}
-          </Typography>
-
-          {/* {hasChart && (
-            <>
-              <Typography variant="p">
-                <Trans>
-                  {`${exchangeRate ? formatUnitPrice(exchangeRate.toFixed(10)) : '...'} 
-                    ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} `}
-                </Trans>
-              </Typography>
-            </>
-          )} */}
-        </Box>
-        {/* <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
-          <ChartControlGroup mb={2}>
-            {Object.keys(CHART_PERIODS).map(key => (
-              <ChartControlButton
-                key={key}
-                type="button"
-                value={CHART_PERIODS[key]}
-                onClick={handleChartPeriodChange}
-                $active={chartOption.period === CHART_PERIODS[key]}
-              >
-                <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
-              </ChartControlButton>
-            ))}
-          </ChartControlGroup>
-
-          <ChartControlGroup>
-            {Object.keys(CHART_TYPES).map(key => (
-              <ChartControlButton
-                key={key}
-                type="button"
-                value={CHART_TYPES[key]}
-                onClick={handleChartTypeChange}
-                $active={chartOption.type === CHART_TYPES[key]}
-              >
-                <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
-              </ChartControlButton>
-            ))}
-
-            {!isSuperSmall && hasTradingView && (
-              <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} $active={tradingViewActive}>
-                TradingView
-              </ChartControlButton>
-            )}
-          </ChartControlGroup>
-        </Box> */}
-      </Flex>
-      <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
-        <ChartContainer my="auto" width="100%" ref={ref}>
-          <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>
-              <Trans>No price chart available for this pair.</Trans>
+      <Flex
+        mb={5}
+        width="100%"
+        flexDirection={['column', 'row']}
+        justifyContent="space-between"
+        alignItems={['flex-start', 'flex-start']}
+      >
+        <Box>
+          <Flex alignItems="center" mb={2}>
+            <ClickableTokenSymbol
+              variant="h3"
+              $isActive={selectedToken === Field.INPUT}
+              onClick={() => handleTokenSelect(Field.INPUT)}
+            >
+              {inputTokenSymbol}
+            </ClickableTokenSymbol>
+            <Typography variant="h3" style={{ marginRight: '8px' }}>
+              {' '}
+              /{' '}
             </Typography>
+            <ClickableTokenSymbol
+              variant="h3"
+              $isActive={selectedToken === Field.OUTPUT}
+              onClick={() => handleTokenSelect(Field.OUTPUT)}
+            >
+              {outputTokenSymbol}
+            </ClickableTokenSymbol>
           </Flex>
-        </ChartContainer>
-      </div>
 
-      <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
-        {tradingViewActive && (
-          <TVChartContainerWrap>
-            <TVChartContainer
-              interval={chartOption.period as ResolutionString}
-              symbol={symbolName.replaceAll(' ', '')}
-              setActiveSymbol={setActiveSymbol}
-              userId={account || 'not_signed_in'}
-              locale={'en' as LanguageCode}
-            />
-          </TVChartContainerWrap>
-        )}
-      </Modal>
+          {/* Price Display */}
+          {selectedCoinId && (
+            <Box>
+              <Typography variant="p" color="text1">
+                {selectedTokenSymbol} price: {priceLoading ? '...' : currentPrice ? formatPrice(currentPrice) : '-'}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} mt={[3, 0]}>
+          <ChartControlGroup pt={'3px'} mb={2}>
+            {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
+              <ChartControlButton
+                key={key}
+                type="button"
+                onClick={() => handleTimeframeChange(key as TimeframeKey)}
+                $active={selectedTimeframe === key}
+              >
+                <Typography fontSize={12}>{timeframe.label}</Typography>
+              </ChartControlButton>
+            ))}
+          </ChartControlGroup>
+
+          <ChartControlGroup pb={'3px'}>
+            <ChartControlButton
+              type="button"
+              onClick={() => handleChartTypeChange(CHART_TYPES.AREA)}
+              $active={selectedChartType === CHART_TYPES.AREA}
+            >
+              <Typography fontSize={12}>Line</Typography>
+            </ChartControlButton>
+            <ChartControlButton
+              type="button"
+              onClick={() => handleChartTypeChange(CHART_TYPES.CANDLE)}
+              $active={selectedChartType === CHART_TYPES.CANDLE}
+            >
+              <Typography fontSize={12}>Candles</Typography>
+            </ChartControlButton>
+          </ChartControlGroup>
+        </Flex>
+      </Flex>
+
+      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
+        {/* Input Token Chart */}
+        <Box mt={3}>
+          <ChartContainer width="100%" ref={ref}>
+            {!selectedCoinId ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>Chart not available for {selectedTokenSymbol}</Trans>
+                </Typography>
+              </Flex>
+            ) : chartLoading || (selectedChartType === CHART_TYPES.CANDLE && ohlcLoading) ? (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Spinner />
+              </Flex>
+            ) : chartData.length > 0 ? (
+              <MemoizedTradingViewChart {...chartProps} />
+            ) : (
+              <Flex justifyContent="center" alignItems="center" height="300px">
+                <Typography>
+                  <Trans>No chart data available for {selectedTokenSymbol}</Trans>
+                </Typography>
+              </Flex>
+            )}
+          </ChartContainer>
+        </Box>
+      </div>
     </Flex>
   );
 }
-
-const TVChartContainerWrap = styled(Flex)`
-  left: 0;
-  top: 0;
-  z-index: 99999;
-  width: 100%;
-
-  .TVChartContainer {
-    width: 100%;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
-`;

@@ -3,6 +3,7 @@ import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { theme } from '@/app/theme';
 
 import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Spinner from '@/app/components/Spinner';
@@ -23,6 +24,30 @@ const TIMEFRAMES = {
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;
+
+// Styled component for clickable token symbols with animated border
+const ClickableTokenSymbol = styled(Typography)<{ $isActive: boolean }>`
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 2px;
+    background-color: ${({ $isActive }) => ($isActive ? theme().colors.primary : 'transparent')};
+    transition: all 0.3s ease;
+    width: ${({ $isActive }) => ($isActive ? '100%' : '0%')};
+  }
+
+  &:hover::after {
+    width: 100%;
+    background-color: ${theme().colors.primary};
+  }
+`;
 
 // Custom hook for stable width measurement using ResizeObserver
 const useStableWidth = () => {
@@ -77,17 +102,18 @@ const MemoizedTradingViewChart = React.memo(TradingViewChart, (prevProps, nextPr
 export default function SwapDescription() {
   const { currencies: XCurrencies } = useDerivedTradeInfo();
   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>('6m');
+  const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
 
-  const inputCoinId = useMemo(
-    () => (XCurrencies[Field.INPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.INPUT]?.symbol!] : null),
-    [XCurrencies[Field.INPUT]?.symbol],
+  const selectedCoinId = useMemo(
+    () => (XCurrencies[selectedToken]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[selectedToken]?.symbol!] : null),
+    [XCurrencies, selectedToken],
   );
 
-  const { data: chartDataForInput, isLoading: chartForInputLoading } = useCoinGeckoProcessedChartData(
-    inputCoinId || '',
+  const { data: chartDataForSelected, isLoading: chartLoading } = useCoinGeckoProcessedChartData(
+    selectedCoinId || '',
     'usd',
     TIMEFRAMES[selectedTimeframe].days,
-    !!inputCoinId, // Only enable if coin ID exists
+    !!selectedCoinId, // Only enable if coin ID exists
   );
 
   // Convert CoinGecko data to TradingView format
@@ -100,9 +126,9 @@ export default function SwapDescription() {
     }));
   }, []);
 
-  const inputChartData = useMemo(
-    () => convertToTradingViewFormat(chartDataForInput),
-    [chartDataForInput, convertToTradingViewFormat],
+  const chartData = useMemo(
+    () => convertToTradingViewFormat(chartDataForSelected),
+    [chartDataForSelected, convertToTradingViewFormat],
   );
 
   const [ref, width] = useStableWidth();
@@ -117,28 +143,60 @@ export default function SwapDescription() {
     [XCurrencies[Field.INPUT]?.symbol],
   );
 
+  const outputTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[Field.OUTPUT]?.symbol),
+    [XCurrencies[Field.OUTPUT]?.symbol],
+  );
+
+  const selectedTokenSymbol = useMemo(
+    () => formatSymbol(XCurrencies[selectedToken]?.symbol),
+    [XCurrencies, selectedToken],
+  );
+
   // Handle timeframe change
   const handleTimeframeChange = useCallback((timeframe: TimeframeKey) => {
     setSelectedTimeframe(timeframe);
+  }, []);
+
+  // Handle token selection
+  const handleTokenSelect = useCallback((token: Field) => {
+    setSelectedToken(token);
   }, []);
 
   // Memoize chart props to prevent unnecessary re-renders
   const chartProps = useMemo(
     () => ({
       type: CHART_TYPES.AREA,
-      data: inputChartData,
+      data: chartData,
       volumeData: [] as any[],
       width: width,
     }),
-    [inputChartData, width],
+    [chartData, width],
   );
 
   return (
     <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
       <Flex mb={5} width="100%" flexWrap="wrap" justifyContent="space-between" alignItems="center">
-        <Typography variant="h3" mb={2}>
-          {symbolName}
-        </Typography>
+        <Flex alignItems="center" mb={2}>
+          <ClickableTokenSymbol
+            variant="h3"
+            $isActive={selectedToken === Field.INPUT}
+            onClick={() => handleTokenSelect(Field.INPUT)}
+          >
+            {inputTokenSymbol}
+          </ClickableTokenSymbol>
+          <Typography variant="h3" style={{ marginRight: '8px' }}>
+            {' '}
+            /{' '}
+          </Typography>
+          <ClickableTokenSymbol
+            variant="h3"
+            $isActive={selectedToken === Field.OUTPUT}
+            onClick={() => handleTokenSelect(Field.OUTPUT)}
+          >
+            {outputTokenSymbol}
+          </ClickableTokenSymbol>
+        </Flex>
         <ChartControlGroup pb={'12px'}>
           {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
             <ChartControlButton
@@ -156,22 +214,22 @@ export default function SwapDescription() {
         {/* Input Token Chart */}
         <Box mt={3}>
           <ChartContainer width="100%" ref={ref}>
-            {!inputCoinId ? (
+            {!selectedCoinId ? (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Typography>
-                  <Trans>Chart not available for {inputTokenSymbol}</Trans>
+                  <Trans>Chart not available for {selectedTokenSymbol}</Trans>
                 </Typography>
               </Flex>
-            ) : chartForInputLoading ? (
+            ) : chartLoading ? (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Spinner />
               </Flex>
-            ) : inputChartData.length > 0 ? (
+            ) : chartData.length > 0 ? (
               <MemoizedTradingViewChart {...chartProps} />
             ) : (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Typography>
-                  <Trans>No chart data available for {inputTokenSymbol}</Trans>
+                  <Trans>No chart data available for {selectedTokenSymbol}</Trans>
                 </Typography>
               </Flex>
             )}

@@ -3,18 +3,42 @@ export const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3';
 export const COINGECKO_API_KEY = import.meta.env.VITE_COINGECKO_API_KEY;
 
 // Supported Cryptocurrency IDs for CoinGecko API
+// Only includes tokens with chainId: 1 from tokenlist.json with verified CoinGecko IDs
 export const COINGECKO_COIN_IDS = {
-  SUI: 'sui',
-  ETH: 'ethereum',
-  SOL: 'solana',
-  BTC: 'bitcoin',
   ICX: 'icon',
+  // sICX: 'staked-icon', // Not confirmed on CoinGecko
+  // bnUSD: '', // Not confirmed on CoinGecko
   BALN: 'balanced-dao',
+  // OMM: '', // Not confirmed on CoinGecko
+  // CFT: '', // Not confirmed on CoinGecko
+  // BTCB: '', // Not confirmed on CoinGecko
+  BTC: 'bitcoin',
+  BTCB: 'bitcoin',
+  ETH: 'ethereum',
+  // sARCH: '', // Not confirmed on CoinGecko
   USDC: 'usd-coin',
   USDT: 'tether',
   BNB: 'binancecoin',
-  MATIC: 'matic-network',
+  POL: 'polygon-ecosystem-token',
   AVAX: 'avalanche-2',
+  INJ: 'injective-protocol',
+  // HVH: '', // Not confirmed on CoinGecko
+  // hyTB: '', // Not confirmed on CoinGecko
+  SUI: 'sui',
+  XLM: 'stellar',
+  tBTC: 'tbtc', // Need to verify
+  // wstETH: 'wrapped-steth', // Need to verify
+  // weETH: '', // Not confirmed on CoinGecko
+  WETH: 'weth',
+  SOL: 'solana',
+  // JitoSOL: 'jito-staked-sol', // Need to verify
+  // SODA: '', // Not confirmed on CoinGecko
+  // cbBTC: 'coinbase-wrapped-btc', // Need to verify
+  // vSUI: '', // Not confirmed on CoinGecko
+  // haSUI: '', // Not confirmed on CoinGecko
+  // afSUI: '', // Not confirmed on CoinGecko
+  // mSUI: '', // Not confirmed on CoinGecko
+  // S: '', // Not confirmed on CoinGecko
 } as const;
 
 // Chart time periods supported by CoinGecko

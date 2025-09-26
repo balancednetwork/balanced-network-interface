@@ -129,10 +129,7 @@ export default function SwapDescription() {
       </Flex>
       <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
         {/* Input Token Chart */}
-        <Box mb={4}>
-          <Typography variant="h4" mb={2}>
-            {inputTokenSymbol} Price Chart
-          </Typography>
+        <Box mt={5}>
           <ChartContainer width="100%" ref={ref}>
             {!inputCoinId ? (
               <Flex justifyContent="center" alignItems="center" height="300px">

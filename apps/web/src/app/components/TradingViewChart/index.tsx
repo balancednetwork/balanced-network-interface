@@ -33,7 +33,7 @@ const Wrapper = styled.div`
 `;
 
 // constant height for charts
-export const HEIGHT = 260;
+export const HEIGHT = 320;
 
 const AreaOption: DeepPartial<ChartOptions> = {
   height: HEIGHT,

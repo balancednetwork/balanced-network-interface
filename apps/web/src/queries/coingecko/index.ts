@@ -209,3 +209,29 @@ export const useCoinGeckoPrices = (coinIds: string[], currency: string = 'usd', 
     prices,
   };
 };
+
+// OHLC data for candlestick charts
+export const useCoinGeckoOHLC = (
+  coinId: string,
+  currency: string = 'usd',
+  days: number = 30,
+  enabled: boolean = true,
+) => {
+  return useQuery<number[][]>({
+    queryKey: [...QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days), 'ohlc'],
+    queryFn: async () => {
+      const { data } = await axios.get<number[][]>(`${COINGECKO_API_BASE_URL}/coins/${coinId}/ohlc`, {
+        params: {
+          vs_currency: currency,
+          days,
+          ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
+        },
+      });
+      return data;
+    },
+    enabled: enabled && !!coinId,
+    staleTime: 300000, // 5 minutes
+    refetchInterval: 300000, // Refetch every 5 minutes
+    placeholderData: keepPreviousData,
+  });
+};

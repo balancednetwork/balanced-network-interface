@@ -12,7 +12,7 @@ import { Typography } from '@/app/theme';
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatSymbol, formatPrice } from '@/utils/formatter';
-import { useCoinGeckoProcessedChartData, useCoinGeckoPrice } from '@/queries/coingecko';
+import { useCoinGeckoProcessedChartData, useCoinGeckoPrice, useCoinGeckoOHLC } from '@/queries/coingecko';
 import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
 // Timeframe options
@@ -103,6 +103,7 @@ export default function SwapDescription() {
   const { currencies: XCurrencies } = useDerivedTradeInfo();
   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>('6m');
   const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
+  const [selectedChartType, setSelectedChartType] = useState<CHART_TYPES>(CHART_TYPES.CANDLE);
 
   const selectedCoinId = useMemo(
     () => (XCurrencies[selectedToken]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[selectedToken]?.symbol!] : null),
@@ -122,6 +123,13 @@ export default function SwapDescription() {
     !!selectedCoinId, // Only enable if coin ID exists
   );
 
+  const { data: ohlcData, isLoading: ohlcLoading } = useCoinGeckoOHLC(
+    selectedCoinId || '',
+    'usd',
+    TIMEFRAMES[selectedTimeframe].days,
+    !!selectedCoinId && selectedChartType === CHART_TYPES.CANDLE, // Only fetch OHLC for candlestick charts
+  );
+
   // Convert CoinGecko data to TradingView format
   const convertToTradingViewFormat = useCallback((coinGeckoData: any) => {
     if (!coinGeckoData?.prices) return [];
@@ -132,10 +140,26 @@ export default function SwapDescription() {
     }));
   }, []);
 
-  const chartData = useMemo(
-    () => convertToTradingViewFormat(chartDataForSelected),
-    [chartDataForSelected, convertToTradingViewFormat],
-  );
+  // Convert OHLC data to TradingView candlestick format
+  const convertOHLCToTradingViewFormat = useCallback((ohlcData: number[][]) => {
+    if (!ohlcData) return [];
+
+    return ohlcData.map((candle: number[]) => ({
+      time: Math.floor(candle[0] / 1000) as any, // Convert timestamp to seconds
+      open: candle[1],
+      high: candle[2],
+      low: candle[3],
+      close: candle[4],
+    }));
+  }, []);
+
+  const chartData = useMemo(() => {
+    if (selectedChartType === CHART_TYPES.CANDLE) {
+      return convertOHLCToTradingViewFormat(ohlcData || []);
+    } else {
+      return convertToTradingViewFormat(chartDataForSelected);
+    }
+  }, [chartDataForSelected, ohlcData, selectedChartType, convertToTradingViewFormat, convertOHLCToTradingViewFormat]);
 
   const [ref, width] = useStableWidth();
 
@@ -169,15 +193,20 @@ export default function SwapDescription() {
     setSelectedToken(token);
   }, []);
 
+  // Handle chart type change
+  const handleChartTypeChange = useCallback((chartType: CHART_TYPES) => {
+    setSelectedChartType(chartType);
+  }, []);
+
   // Memoize chart props to prevent unnecessary re-renders
   const chartProps = useMemo(
     () => ({
-      type: CHART_TYPES.AREA,
+      type: selectedChartType,
       data: chartData,
       volumeData: [] as any[],
       width: width,
     }),
-    [chartData, width],
+    [chartData, width, selectedChartType],
   );
 
   return (
@@ -214,18 +243,37 @@ export default function SwapDescription() {
             </Box>
           )}
         </Box>
-        <ChartControlGroup py={'3px'}>
-          {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
+        <Flex flexDirection="column" alignItems="flex-end">
+          <ChartControlGroup pt={'3px'} mb={2}>
+            {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
+              <ChartControlButton
+                key={key}
+                type="button"
+                onClick={() => handleTimeframeChange(key as TimeframeKey)}
+                $active={selectedTimeframe === key}
+              >
+                <Typography fontSize={12}>{timeframe.label}</Typography>
+              </ChartControlButton>
+            ))}
+          </ChartControlGroup>
+
+          <ChartControlGroup pb={'3px'}>
             <ChartControlButton
-              key={key}
               type="button"
-              onClick={() => handleTimeframeChange(key as TimeframeKey)}
-              $active={selectedTimeframe === key}
+              onClick={() => handleChartTypeChange(CHART_TYPES.AREA)}
+              $active={selectedChartType === CHART_TYPES.AREA}
             >
-              <Typography fontSize={12}>{timeframe.label}</Typography>
+              <Typography fontSize={12}>Line</Typography>
             </ChartControlButton>
-          ))}
-        </ChartControlGroup>
+            <ChartControlButton
+              type="button"
+              onClick={() => handleChartTypeChange(CHART_TYPES.CANDLE)}
+              $active={selectedChartType === CHART_TYPES.CANDLE}
+            >
+              <Typography fontSize={12}>Candles</Typography>
+            </ChartControlButton>
+          </ChartControlGroup>
+        </Flex>
       </Flex>
 
       <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
@@ -238,7 +286,7 @@ export default function SwapDescription() {
                   <Trans>Chart not available for {selectedTokenSymbol}</Trans>
                 </Typography>
               </Flex>
-            ) : chartLoading ? (
+            ) : chartLoading || (selectedChartType === CHART_TYPES.CANDLE && ohlcLoading) ? (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Spinner />
               </Flex>

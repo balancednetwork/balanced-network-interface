@@ -4,6 +4,8 @@ import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 import { theme } from '@/app/theme';
+import { useCoinGeckoAnalytics } from '@/hooks/useCoinGeckoAnalytics';
+import { setSwapContext } from '@/utils/coingeckoAxios';
 
 import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Spinner from '@/app/components/Spinner';
@@ -22,10 +24,10 @@ import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 
 // Timeframe options
 const TIMEFRAMES = {
-  '7d': { label: '7D', days: 7 },
-  '1m': { label: '1M', days: 30 },
-  '6m': { label: '6M', days: 180 },
-  '1y': { label: '1Y', days: 365 },
+  '7d': { label: 'Week', days: 7 },
+  '1m': { label: 'Month', days: 30 },
+  '6m': { label: '6 Months', days: 180 },
+  '1y': { label: 'Year', days: 365 },
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;
@@ -110,6 +112,9 @@ export default function SwapDescription() {
   const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
   const [selectedChartType, setSelectedChartType] = useState<CHART_TYPES>(CHART_TYPES.CANDLE);
 
+  // Initialize CoinGecko analytics tracking
+  useCoinGeckoAnalytics();
+
   const selectedCoinId = useMemo(
     () => (XCurrencies[selectedToken]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[selectedToken]?.symbol!] : null),
     [XCurrencies, selectedToken],
@@ -129,20 +134,33 @@ export default function SwapDescription() {
     !!selectedCoinId && selectedChartType === CHART_TYPES.CANDLE, // Only fetch OHLC for candlestick charts
   );
 
-  // Get real-time price for both display and candlestick chart updates
+  // Get current prices for both input and output tokens
+  const inputCoinId = XCurrencies[Field.INPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.INPUT].symbol] : null;
+  const outputCoinId = XCurrencies[Field.OUTPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.OUTPUT].symbol] : null;
+  const allCoinIds = [inputCoinId, outputCoinId, selectedCoinId].filter(Boolean);
+
   const { data: realTimePriceData, isLoading: currentPriceLoading } = useCoinGeckoSimplePrice(
-    selectedCoinId ? [selectedCoinId] : [],
+    allCoinIds,
     ['usd'],
-    !!selectedCoinId, // Always fetch current price for display and candlestick updates
+    allCoinIds.length > 0, // Fetch prices for all tokens
   );
 
-  // Extract current price from the price data
-  const currentPrice = useMemo(() => {
-    if (realTimePriceData && selectedCoinId && realTimePriceData[selectedCoinId]?.usd) {
-      return realTimePriceData[selectedCoinId].usd;
+  // Extract current prices for both tokens
+  const currentPrices = useMemo(() => {
+    const prices: Record<string, number | null> = {};
+    if (realTimePriceData) {
+      if (inputCoinId && realTimePriceData[inputCoinId]?.usd) {
+        prices.input = realTimePriceData[inputCoinId].usd;
+      }
+      if (outputCoinId && realTimePriceData[outputCoinId]?.usd) {
+        prices.output = realTimePriceData[outputCoinId].usd;
+      }
+      if (selectedCoinId && realTimePriceData[selectedCoinId]?.usd) {
+        prices.selected = realTimePriceData[selectedCoinId].usd;
+      }
     }
-    return null;
-  }, [realTimePriceData, selectedCoinId]);
+    return prices;
+  }, [realTimePriceData, inputCoinId, outputCoinId, selectedCoinId]);
 
   const priceLoading = currentPriceLoading;
 
@@ -219,6 +237,13 @@ export default function SwapDescription() {
     [XCurrencies, selectedToken],
   );
 
+  // Set CoinGecko swap context for analytics tracking
+  useEffect(() => {
+    if (inputTokenSymbol && outputTokenSymbol) {
+      setSwapContext({ from: inputTokenSymbol, to: outputTokenSymbol });
+    }
+  }, [inputTokenSymbol, outputTokenSymbol]);
+
   // Handle timeframe change
   const handleTimeframeChange = useCallback((timeframe: TimeframeKey) => {
     setSelectedTimeframe(timeframe);
@@ -250,42 +275,45 @@ export default function SwapDescription() {
       <Flex
         mb={5}
         width="100%"
-        flexDirection={['column', 'row']}
         justifyContent="space-between"
-        alignItems={['flex-start', 'flex-start']}
+        flexDirection={['column', 'row', 'column', 'column', 'row']}
       >
         <Box>
-          <Flex alignItems="center" mb={2}>
+          {/* Price History Header */}
+          <Typography variant="h3" mb="7px">
+            Price history
+          </Typography>
+
+          {/* Token Prices */}
+          <Flex alignItems="center" mb={3}>
             <ClickableTokenSymbol
-              variant="h3"
+              variant="p"
+              color="text1"
               $isActive={selectedToken === Field.INPUT}
               onClick={() => handleTokenSelect(Field.INPUT)}
+              style={{ marginRight: '12px' }}
             >
-              {inputTokenSymbol}
+              {inputTokenSymbol}: {priceLoading ? '...' : currentPrices.input ? formatPrice(currentPrices.input) : '-'}
             </ClickableTokenSymbol>
-            <Typography variant="h3" style={{ marginRight: '8px' }}>
-              {' '}
-              /{' '}
+
+            <Typography variant="p" color="text1" mr="12px">
+              /
             </Typography>
+
             <ClickableTokenSymbol
-              variant="h3"
+              variant="p"
+              color="text1"
               $isActive={selectedToken === Field.OUTPUT}
               onClick={() => handleTokenSelect(Field.OUTPUT)}
             >
-              {outputTokenSymbol}
+              {outputTokenSymbol}:{' '}
+              {priceLoading ? '...' : currentPrices.output ? formatPrice(currentPrices.output) : '-'}
             </ClickableTokenSymbol>
           </Flex>
-
-          {/* Price Display */}
-          {selectedCoinId && (
-            <Box>
-              <Typography variant="p" color="text1">
-                {selectedTokenSymbol} price: {priceLoading ? '...' : currentPrice ? formatPrice(currentPrice) : '-'}
-              </Typography>
-            </Box>
-          )}
         </Box>
-        <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} mt={[3, 0]}>
+
+        {/* Chart Controls */}
+        <Flex flexDirection="column" alignItems={['flex-start', 'flex-end', 'flex-start', 'flex-start', 'flex-end']}>
           <ChartControlGroup pt={'3px'} mb={2}>
             {Object.entries(TIMEFRAMES).map(([key, timeframe]) => (
               <ChartControlButton

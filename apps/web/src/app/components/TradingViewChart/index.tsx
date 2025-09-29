@@ -54,6 +54,23 @@ const AreaOption: DeepPartial<ChartOptions> = {
   },
   timeScale: {
     borderColor: '#304a68',
+    rightOffset: 0,
+    barSpacing: 6,
+    lockVisibleTimeRangeOnResize: true,
+    rightBarStaysOnScroll: true,
+    timeVisible: true,
+    secondsVisible: false,
+  },
+  handleScroll: {
+    mouseWheel: false,
+    pressedMouseMove: false,
+    horzTouchDrag: false,
+    vertTouchDrag: false,
+  },
+  handleScale: {
+    axisPressedMouseMove: false,
+    mouseWheel: false,
+    pinch: false,
   },
   crosshair: {
     mode: CrosshairMode.Normal,
@@ -91,6 +108,23 @@ const CandleOption: DeepPartial<ChartOptions> = {
   },
   timeScale: {
     borderColor: '#304a68',
+    rightOffset: 0,
+    barSpacing: 6,
+    lockVisibleTimeRangeOnResize: true,
+    rightBarStaysOnScroll: true,
+    timeVisible: true,
+    secondsVisible: false,
+  },
+  handleScroll: {
+    mouseWheel: false,
+    pressedMouseMove: false,
+    horzTouchDrag: false,
+    vertTouchDrag: false,
+  },
+  handleScale: {
+    axisPressedMouseMove: false,
+    mouseWheel: false,
+    pinch: false,
   },
   crosshair: {
     mode: CrosshairMode.Normal,

@@ -137,7 +137,7 @@ export default function SwapDescription() {
   // Get current prices for both input and output tokens
   const inputCoinId = XCurrencies[Field.INPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.INPUT].symbol] : null;
   const outputCoinId = XCurrencies[Field.OUTPUT]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[Field.OUTPUT].symbol] : null;
-  const allCoinIds = [inputCoinId, outputCoinId, selectedCoinId].filter(Boolean);
+  const allCoinIds = [inputCoinId, outputCoinId].filter(Boolean);
 
   const { data: realTimePriceData, isLoading: currentPriceLoading } = useCoinGeckoSimplePrice(
     allCoinIds,
@@ -145,7 +145,7 @@ export default function SwapDescription() {
     allCoinIds.length > 0, // Fetch prices for all tokens
   );
 
-  // Extract current prices for both tokens
+  // Extract current prices for both tokens - always show the correct price regardless of chart selection
   const currentPrices = useMemo(() => {
     const prices: Record<string, number | null> = {};
     if (realTimePriceData) {
@@ -155,12 +155,9 @@ export default function SwapDescription() {
       if (outputCoinId && realTimePriceData[outputCoinId]?.usd) {
         prices.output = realTimePriceData[outputCoinId].usd;
       }
-      if (selectedCoinId && realTimePriceData[selectedCoinId]?.usd) {
-        prices.selected = realTimePriceData[selectedCoinId].usd;
-      }
     }
     return prices;
-  }, [realTimePriceData, inputCoinId, outputCoinId, selectedCoinId]);
+  }, [realTimePriceData, inputCoinId, outputCoinId]);
 
   const priceLoading = currentPriceLoading;
 

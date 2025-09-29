@@ -7,7 +7,7 @@ export const COINGECKO_API_KEY = import.meta.env.VITE_COINGECKO_API_KEY;
 export const COINGECKO_COIN_IDS = {
   ICX: 'icon',
   // sICX: 'staked-icon', // Not confirmed on CoinGecko
-  // bnUSD: '', // Not confirmed on CoinGecko
+  bnUSD: 'balanced-dollars',
   BALN: 'balanced-dao',
   // OMM: '', // Not confirmed on CoinGecko
   // CFT: '', // Not confirmed on CoinGecko

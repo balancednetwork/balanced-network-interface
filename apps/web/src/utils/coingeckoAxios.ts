@@ -133,6 +133,7 @@ const mapCoinGeckoIdToSymbol = (coinId: string): string => {
   const symbolMap: Record<string, string> = {
     icon: 'ICX',
     'balanced-dao': 'BALN',
+    'balanced-dollars': 'bnUSD',
     bitcoin: 'BTC',
     ethereum: 'ETH',
     'usd-coin': 'USDC',

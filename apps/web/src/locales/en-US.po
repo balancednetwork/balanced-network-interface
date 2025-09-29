@@ -97,8 +97,8 @@ msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "4H"
-msgstr "4H"
+#~ msgid "4H"
+#~ msgstr "4H"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Supplying {pair} liquidity..."
@@ -121,8 +121,8 @@ msgid "Rewards:"
 msgstr "Rewards:"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "15m"
-msgstr "15m"
+#~ msgid "15m"
+#~ msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
@@ -692,8 +692,8 @@ msgid "Withdrawing BALN..."
 msgstr "Withdrawing BALN..."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1D"
-msgstr "1D"
+#~ msgid "1D"
+#~ msgstr "1D"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Deposit sICX"
@@ -702,6 +702,10 @@ msgstr "1D"
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr "Lock up BALN and vote for this pool to receive bribes."
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "No chart data available for {selectedTokenSymbol}"
+msgstr "No chart data available for {selectedTokenSymbol}"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -1073,8 +1077,8 @@ msgstr "Locking BALN..."
 #~ msgstr "You'll also pay"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1H"
-msgstr "1H"
+#~ msgid "1H"
+#~ msgstr "1H"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Cross-chain transactions (24H)"
@@ -2665,8 +2669,8 @@ msgstr "Verifying contract calls..."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Chart not available for {0}"
-msgstr "Chart not available for {0}"
+#~ msgid "Chart not available for {0}"
+#~ msgstr "Chart not available for {0}"
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 msgid "Swap cancelled"
@@ -2952,16 +2956,16 @@ msgstr "You approved"
 #~ msgstr "Sign in with"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Line"
-msgstr "Line"
+#~ msgid "Line"
+#~ msgstr "Line"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "liquidity pool"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Candles"
-msgstr "Candles"
+#~ msgid "Candles"
+#~ msgstr "Candles"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Supplying liquidity..."
@@ -3061,8 +3065,8 @@ msgid "Switch to"
 msgstr "Switch to"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1W"
-msgstr "1W"
+#~ msgid "1W"
+#~ msgstr "1W"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Depositing..."
@@ -3131,8 +3135,8 @@ msgstr "If the {0} price reaches {1}, some of your collateral will be liquidated
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "No chart data available for {0}"
-msgstr "No chart data available for {0}"
+#~ msgid "No chart data available for {0}"
+#~ msgstr "No chart data available for {0}"
 
 #: src/store/transactions/hooks.tsx
 msgid "Learn how to resolve common transaction errors."
@@ -3353,6 +3357,10 @@ msgstr "Close"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"
 msgstr "The current {0} price is"
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "Chart not available for {selectedTokenSymbol}"
+msgstr "Chart not available for {selectedTokenSymbol}"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."

@@ -98,8 +98,8 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "4H"
-msgstr "4U"
+#~ msgid "4H"
+#~ msgstr "4U"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Supplying {pair} liquidity..."
@@ -122,8 +122,8 @@ msgid "Rewards:"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "15m"
-msgstr "15m"
+#~ msgid "15m"
+#~ msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
@@ -713,8 +713,8 @@ msgid "Withdrawing BALN..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1D"
-msgstr "1D"
+#~ msgid "1D"
+#~ msgstr "1D"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Deposit sICX"
@@ -722,6 +722,10 @@ msgstr "1D"
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Lock up BALN and vote for this pool to receive bribes."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "No chart data available for {selectedTokenSymbol}"
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -1108,8 +1112,8 @@ msgstr "BALN vergrendelen..."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1H"
-msgstr "1U"
+#~ msgid "1H"
+#~ msgstr "1U"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Cross-chain transactions (24H)"
@@ -2728,8 +2732,8 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Chart not available for {0}"
-msgstr ""
+#~ msgid "Chart not available for {0}"
+#~ msgstr ""
 
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 msgid "Swap cancelled"
@@ -3015,16 +3019,16 @@ msgstr "Je hebt goedgekeurd"
 #~ msgstr "Inloggen met"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Line"
-msgstr "Lijn"
+#~ msgid "Line"
+#~ msgstr "Lijn"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "liquiditeitspool"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Candles"
-msgstr "Kaarsen"
+#~ msgid "Candles"
+#~ msgstr "Kaarsen"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Supplying liquidity..."
@@ -3124,8 +3128,8 @@ msgid "Switch to"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1W"
-msgstr "1W"
+#~ msgid "1W"
+#~ msgstr "1W"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Depositing..."
@@ -3194,8 +3198,8 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "No chart data available for {0}"
-msgstr ""
+#~ msgid "No chart data available for {0}"
+#~ msgstr ""
 
 #: src/store/transactions/hooks.tsx
 msgid "Learn how to resolve common transaction errors."
@@ -3419,6 +3423,10 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "Chart not available for {selectedTokenSymbol}"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx

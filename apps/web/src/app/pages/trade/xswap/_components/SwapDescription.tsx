@@ -390,7 +390,7 @@ export default function SwapDescription() {
             {!selectedCoinId ? (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Typography>
-                  <Trans>Chart not available for {selectedTokenSymbol}</Trans>
+                  <Trans>Chart not available for {selectedTokenSymbol}.</Trans>
                 </Typography>
               </Flex>
             ) : chartLoading || (selectedChartType === CHART_TYPES.CANDLE && ohlcLoading) ? (
@@ -402,7 +402,7 @@ export default function SwapDescription() {
             ) : (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Typography>
-                  <Trans>No chart data available for {selectedTokenSymbol}</Trans>
+                  <Trans>No chart data available for {selectedTokenSymbol}.</Trans>
                 </Typography>
               </Flex>
             )}

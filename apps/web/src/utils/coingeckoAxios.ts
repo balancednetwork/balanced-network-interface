@@ -147,6 +147,12 @@ const mapCoinGeckoIdToSymbol = (coinId: string): string => {
     tbtc: 'tBTC',
     weth: 'WETH',
     solana: 'SOL',
+    'aftermath-staked-sui': 'afSUI',
+    'haedal-staked-sui': 'haSUI',
+    'volo-staked-sui': 'vSUI',
+    sonic: 'S',
+    'wrapped-eeth': 'weETH',
+    'wrapped-steth': 'wstETH',
   };
 
   return symbolMap[coinId] || coinId.toUpperCase();

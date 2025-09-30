@@ -27,19 +27,19 @@ export const COINGECKO_COIN_IDS = {
   // hyTB: '', // Not confirmed on CoinGecko
   SUI: 'sui',
   XLM: 'stellar',
-  tBTC: 'tbtc', // Need to verify
-  // wstETH: 'wrapped-steth', // Need to verify
-  // weETH: '', // Not confirmed on CoinGecko
+  tBTC: 'tbtc',
+  wstETH: 'wrapped-steth',
+  weETH: 'wrapped-eeth',
   WETH: 'weth',
   SOL: 'solana',
   // JitoSOL: 'jito-staked-sol', // Need to verify
   // SODA: '', // Not confirmed on CoinGecko
   // cbBTC: 'coinbase-wrapped-btc', // Need to verify
-  // vSUI: '', // Not confirmed on CoinGecko
-  // haSUI: '', // Not confirmed on CoinGecko
-  // afSUI: '', // Not confirmed on CoinGecko
+  vSUI: 'volo-staked-sui',
+  haSUI: 'haedal-staked-sui',
+  afSUI: 'aftermath-staked-sui',
   // mSUI: '', // Not confirmed on CoinGecko
-  // S: '', // Not confirmed on CoinGecko
+  S: 'sonic',
 } as const;
 
 // Chart time periods supported by CoinGecko

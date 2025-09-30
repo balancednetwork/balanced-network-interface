@@ -8,6 +8,7 @@ export const COINGECKO_COIN_IDS = {
   ICX: 'icon',
   // sICX: 'staked-icon', // Not confirmed on CoinGecko
   bnUSD: 'balanced-dollars',
+  'bnUSD(old)': 'balanced-dollars',
   BALN: 'balanced-dao',
   // OMM: '', // Not confirmed on CoinGecko
   // CFT: '', // Not confirmed on CoinGecko

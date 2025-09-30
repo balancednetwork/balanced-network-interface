@@ -12,6 +12,7 @@ export type AnalyticsEventName =
   | 'savings_withdrawal'
   | 'liquidity_deposit'
   | 'liquidity_withdrawal'
+  | 'swap_intent_v2'
   | 'wallet_connected';
 
 // Type for Plausible instance

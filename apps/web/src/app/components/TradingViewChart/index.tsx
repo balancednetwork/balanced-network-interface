@@ -64,7 +64,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
   handleScroll: {
     mouseWheel: false,
     pressedMouseMove: false,
-    horzTouchDrag: false,
+    horzTouchDrag: true, // Enable horizontal touch drag for crosshair
     vertTouchDrag: false,
   },
   handleScale: {
@@ -118,7 +118,7 @@ const CandleOption: DeepPartial<ChartOptions> = {
   handleScroll: {
     mouseWheel: false,
     pressedMouseMove: false,
-    horzTouchDrag: false,
+    horzTouchDrag: true, // Enable horizontal touch drag for crosshair
     vertTouchDrag: false,
   },
   handleScale: {

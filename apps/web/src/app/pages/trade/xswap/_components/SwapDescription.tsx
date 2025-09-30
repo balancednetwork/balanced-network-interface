@@ -14,6 +14,7 @@ import { Typography } from '@/app/theme';
 import { useDerivedTradeInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatSymbol, formatPrice } from '@/utils/formatter';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 import {
   useCoinGeckoProcessedChartData,
   useCoinGeckoPrice,
@@ -115,6 +116,9 @@ export default function SwapDescription() {
   // Initialize CoinGecko analytics tracking
   useCoinGeckoAnalytics();
 
+  // Get Pyth prices as backup
+  const pythPrices = useTokenPricesWithPyth();
+
   const selectedCoinId = useMemo(
     () => (XCurrencies[selectedToken]?.symbol ? COINGECKO_COIN_IDS[XCurrencies[selectedToken]?.symbol!] : null),
     [XCurrencies, selectedToken],
@@ -146,18 +150,28 @@ export default function SwapDescription() {
   );
 
   // Extract current prices for both tokens - always show the correct price regardless of chart selection
+  // Use CoinGecko first, fallback to Pyth if CoinGecko price is not available
   const currentPrices = useMemo(() => {
     const prices: Record<string, number | null> = {};
-    if (realTimePriceData) {
-      if (inputCoinId && realTimePriceData[inputCoinId]?.usd) {
-        prices.input = realTimePriceData[inputCoinId].usd;
-      }
-      if (outputCoinId && realTimePriceData[outputCoinId]?.usd) {
-        prices.output = realTimePriceData[outputCoinId].usd;
-      }
+
+    // Get input token price
+    if (inputCoinId && realTimePriceData?.[inputCoinId]?.usd) {
+      prices.input = realTimePriceData[inputCoinId].usd;
+    } else if (XCurrencies[Field.INPUT]?.symbol && pythPrices?.[XCurrencies[Field.INPUT].symbol]) {
+      // Fallback to Pyth price
+      prices.input = pythPrices[XCurrencies[Field.INPUT].symbol].toNumber();
     }
+
+    // Get output token price
+    if (outputCoinId && realTimePriceData?.[outputCoinId]?.usd) {
+      prices.output = realTimePriceData[outputCoinId].usd;
+    } else if (XCurrencies[Field.OUTPUT]?.symbol && pythPrices?.[XCurrencies[Field.OUTPUT].symbol]) {
+      // Fallback to Pyth price
+      prices.output = pythPrices[XCurrencies[Field.OUTPUT].symbol].toNumber();
+    }
+
     return prices;
-  }, [realTimePriceData, inputCoinId, outputCoinId]);
+  }, [realTimePriceData, inputCoinId, outputCoinId, pythPrices, XCurrencies]);
 
   const priceLoading = currentPriceLoading;
 

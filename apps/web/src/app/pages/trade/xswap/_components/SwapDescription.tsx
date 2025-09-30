@@ -234,6 +234,11 @@ export default function SwapDescription() {
     [XCurrencies, selectedToken],
   );
 
+  // Check if both input and output tokens are the same
+  const isSameToken = useMemo(() => {
+    return XCurrencies[Field.INPUT]?.symbol === XCurrencies[Field.OUTPUT]?.symbol;
+  }, [XCurrencies]);
+
   // Set CoinGecko swap context for analytics tracking
   useEffect(() => {
     if (inputTokenSymbol && outputTokenSymbol) {
@@ -250,6 +255,13 @@ export default function SwapDescription() {
   const handleTokenSelect = useCallback((token: Field) => {
     setSelectedToken(token);
   }, []);
+
+  // Auto-select input token when both tokens are the same
+  useEffect(() => {
+    if (isSameToken) {
+      setSelectedToken(Field.INPUT);
+    }
+  }, [isSameToken]);
 
   // Handle chart type change
   const handleChartTypeChange = useCallback((chartType: CHART_TYPES) => {
@@ -283,29 +295,41 @@ export default function SwapDescription() {
 
           {/* Token Prices */}
           <Flex alignItems="center" mb={3}>
-            <ClickableTokenSymbol
-              variant="p"
-              color="text1"
-              $isActive={selectedToken === Field.INPUT}
-              onClick={() => handleTokenSelect(Field.INPUT)}
-              style={{ marginRight: '12px' }}
-            >
-              {inputTokenSymbol}: {priceLoading ? '...' : currentPrices.input ? formatPrice(currentPrices.input) : '-'}
-            </ClickableTokenSymbol>
+            {isSameToken ? (
+              // Show only one token when both are the same
+              <Typography variant="p" color="text1">
+                {inputTokenSymbol}:{' '}
+                {priceLoading ? '...' : currentPrices.input ? formatPrice(currentPrices.input) : '-'}
+              </Typography>
+            ) : (
+              // Show both tokens when they are different
+              <>
+                <ClickableTokenSymbol
+                  variant="p"
+                  color="text1"
+                  $isActive={selectedToken === Field.INPUT}
+                  onClick={() => handleTokenSelect(Field.INPUT)}
+                  style={{ marginRight: '12px' }}
+                >
+                  {inputTokenSymbol}:{' '}
+                  {priceLoading ? '...' : currentPrices.input ? formatPrice(currentPrices.input) : '-'}
+                </ClickableTokenSymbol>
 
-            <Typography variant="p" color="text1" mr="12px">
-              /
-            </Typography>
+                <Typography variant="p" color="text1" mr="12px">
+                  /
+                </Typography>
 
-            <ClickableTokenSymbol
-              variant="p"
-              color="text1"
-              $isActive={selectedToken === Field.OUTPUT}
-              onClick={() => handleTokenSelect(Field.OUTPUT)}
-            >
-              {outputTokenSymbol}:{' '}
-              {priceLoading ? '...' : currentPrices.output ? formatPrice(currentPrices.output) : '-'}
-            </ClickableTokenSymbol>
+                <ClickableTokenSymbol
+                  variant="p"
+                  color="text1"
+                  $isActive={selectedToken === Field.OUTPUT}
+                  onClick={() => handleTokenSelect(Field.OUTPUT)}
+                >
+                  {outputTokenSymbol}:{' '}
+                  {priceLoading ? '...' : currentPrices.output ? formatPrice(currentPrices.output) : '-'}
+                </ClickableTokenSymbol>
+              </>
+            )}
           </Flex>
         </Box>
 

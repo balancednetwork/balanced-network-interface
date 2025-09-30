@@ -327,17 +327,17 @@ export default function SwapDescription() {
           <ChartControlGroup pb={'3px'}>
             <ChartControlButton
               type="button"
-              onClick={() => handleChartTypeChange(CHART_TYPES.AREA)}
-              $active={selectedChartType === CHART_TYPES.AREA}
-            >
-              <Typography fontSize={12}>Line</Typography>
-            </ChartControlButton>
-            <ChartControlButton
-              type="button"
               onClick={() => handleChartTypeChange(CHART_TYPES.CANDLE)}
               $active={selectedChartType === CHART_TYPES.CANDLE}
             >
               <Typography fontSize={12}>Candles</Typography>
+            </ChartControlButton>
+            <ChartControlButton
+              type="button"
+              onClick={() => handleChartTypeChange(CHART_TYPES.AREA)}
+              $active={selectedChartType === CHART_TYPES.AREA}
+            >
+              <Typography fontSize={12}>Line</Typography>
             </ChartControlButton>
           </ChartControlGroup>
         </Flex>

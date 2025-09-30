@@ -220,17 +220,17 @@ export default function SwapDescription() {
   );
 
   const inputTokenSymbol = useMemo(
-    () => formatSymbol(XCurrencies[Field.INPUT]?.symbol),
+    () => formatSymbol(XCurrencies[Field.INPUT]?.symbol).replace('(old)', ''),
     [XCurrencies[Field.INPUT]?.symbol],
   );
 
   const outputTokenSymbol = useMemo(
-    () => formatSymbol(XCurrencies[Field.OUTPUT]?.symbol),
+    () => formatSymbol(XCurrencies[Field.OUTPUT]?.symbol).replace('(old)', ''),
     [XCurrencies[Field.OUTPUT]?.symbol],
   );
 
   const selectedTokenSymbol = useMemo(
-    () => formatSymbol(XCurrencies[selectedToken]?.symbol),
+    () => formatSymbol(XCurrencies[selectedToken]?.symbol).replace('(old)', ''),
     [XCurrencies, selectedToken],
   );
 

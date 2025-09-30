@@ -236,7 +236,9 @@ export default function SwapDescription() {
 
   // Check if both input and output tokens are the same
   const isSameToken = useMemo(() => {
-    return XCurrencies[Field.INPUT]?.symbol === XCurrencies[Field.OUTPUT]?.symbol;
+    return (
+      XCurrencies[Field.INPUT]?.symbol?.replace('(old)', '') === XCurrencies[Field.OUTPUT]?.symbol?.replace('(old)', '')
+    );
   }, [XCurrencies]);
 
   // Set CoinGecko swap context for analytics tracking

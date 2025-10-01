@@ -1,16 +1,16 @@
-import axios from 'axios';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { coinGeckoAxios } from '@/utils/coingeckoAxios';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-import { COINGECKO_API_BASE_URL, COINGECKO_API_KEY, COINGECKO_CURRENCIES } from '@/constants/coingecko';
+import { COINGECKO_API_BASE_URL, COINGECKO_CURRENCIES } from '@/constants/coingecko';
 import { QUERY_KEYS } from '@/queries/queryKeys';
 import {
-  CoinGeckoSimplePrice,
-  CoinGeckoMarketChartData,
+  ChartDataPoint,
   CoinGeckoCoinDetails,
   CoinGeckoCoinInfo,
+  CoinGeckoMarketChartData,
+  CoinGeckoSimplePrice,
   ProcessedChartData,
-  ChartDataPoint,
 } from '@/types/coingecko';
 
 // Simple price query - get current prices for multiple coins
@@ -26,7 +26,6 @@ export const useCoinGeckoSimplePrice = (coinIds: string[], currencies: string[] 
           include_24hr_vol: true,
           include_24hr_change: true,
           include_last_updated_at: true,
-          ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
         },
       });
       return data;
@@ -55,7 +54,6 @@ export const useCoinGeckoMarketChart = (
             vs_currency: currency,
             days,
             interval: days === 1 ? 'hourly' : 'daily',
-            ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
           },
         },
       );
@@ -85,7 +83,6 @@ export const useCoinGeckoProcessedChartData = (
             vs_currency: currency,
             days,
             interval: days === 1 ? 'hourly' : 'daily',
-            ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
           },
         },
       );
@@ -125,7 +122,6 @@ export const useCoinGeckoCoinDetails = (coinId: string, enabled: boolean = true)
           community_data: true,
           developer_data: true,
           sparkline: false,
-          ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
         },
       });
       return data;
@@ -150,7 +146,6 @@ export const useCoinGeckoMarketData = (coinIds: string[], currency: string = 'us
           page: 1,
           sparkline: false,
           price_change_percentage: '1h,24h,7d,14d,30d,200d,1y',
-          ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
         },
       });
       return data;
@@ -225,7 +220,6 @@ export const useCoinGeckoOHLC = (
         params: {
           vs_currency: currency,
           days,
-          ...(COINGECKO_API_KEY && { x_cg_demo_api_key: COINGECKO_API_KEY }),
         },
       });
       return data;

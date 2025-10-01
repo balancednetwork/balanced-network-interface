@@ -704,8 +704,8 @@ msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr "Lock up BALN and vote for this pool to receive bribes."
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "No chart data available for {selectedTokenSymbol}"
-msgstr "No chart data available for {selectedTokenSymbol}"
+#~ msgid "No chart data available for {selectedTokenSymbol}"
+#~ msgstr "No chart data available for {selectedTokenSymbol}"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -2036,6 +2036,10 @@ msgstr "Price"
 msgid "Transferring"
 msgstr "Transferring"
 
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "Chart not available for {selectedTokenSymbol}."
+msgstr "Chart not available for {selectedTokenSymbol}."
+
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #~ msgid "Transfer in progress"
 #~ msgstr "Transfer in progress"
@@ -2452,6 +2456,10 @@ msgstr "Executed."
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
 msgid "Approving"
 msgstr "Approving"
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+msgid "No chart data available for {selectedTokenSymbol}."
+msgstr "No chart data available for {selectedTokenSymbol}."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocked {0} BALN."
@@ -3359,8 +3367,8 @@ msgid "The current {0} price is"
 msgstr "The current {0} price is"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Chart not available for {selectedTokenSymbol}"
-msgstr "Chart not available for {selectedTokenSymbol}"
+#~ msgid "Chart not available for {selectedTokenSymbol}"
+#~ msgstr "Chart not available for {selectedTokenSymbol}"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."

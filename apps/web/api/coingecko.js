@@ -18,6 +18,57 @@ module.exports = async function handler(req, res) {
     const { path } = req.query;
     const apiPath = Array.isArray(path) ? path.join('/') : path || '';
 
+    // Build cache key from request parameters
+    const cacheKey = `${apiPath}_${JSON.stringify(req.query)}`;
+
+    // Simple in-memory cache (in production, consider Redis or similar)
+    if (!global.coingeckoCache) {
+      global.coingeckoCache = new Map();
+    }
+
+    // Determine cache duration based on endpoint type
+    const getCacheDuration = path => {
+      if (path.includes('simple/price')) return 60000; // 1 minute for prices
+      if (path.includes('market_chart')) return 300000; // 5 minutes for charts
+      if (path.includes('coins/') && !path.includes('market_chart')) return 600000; // 10 minutes for coin details
+      if (path.includes('coins/markets')) return 60000; // 1 minute for market data
+      if (path.includes('ohlc')) return 300000; // 5 minutes for OHLC data
+      return 300000; // Default 5 minutes
+    };
+
+    const cacheDuration = getCacheDuration(apiPath);
+    const now = Date.now();
+
+    // Check if we have cached data that's still valid
+    const cachedData = global.coingeckoCache.get(cacheKey);
+    if (cachedData && now - cachedData.timestamp < cacheDuration) {
+      console.log(`Cache hit for ${cacheKey}`);
+
+      // Set CORS headers
+      const origin = req.headers.origin;
+      const allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://app.balanced.network',
+        'https://balanced.network',
+        'https://www.balanced.network',
+      ];
+
+      const isAllowedOrigin =
+        allowedOrigins.includes(origin) ||
+        (origin && origin.match(/^https:\/\/balanced-network-interface-[a-z0-9]+-balanced-defi\.vercel\.app$/));
+
+      if (isAllowedOrigin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+      }
+      res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      res.setHeader('X-Cache', 'HIT');
+      res.setHeader('X-Cache-Age', Math.floor((now - cachedData.timestamp) / 1000));
+
+      return res.status(200).json(cachedData.data);
+    }
+
     // Build the CoinGecko API URL
     const apiUrl = `https://api.coingecko.com/api/v3/${apiPath}`;
 
@@ -43,6 +94,8 @@ module.exports = async function handler(req, res) {
     // Build the final URL
     const finalUrl = queryParams.toString() ? `${apiUrl}?${queryParams.toString()}` : apiUrl;
 
+    console.log(`Cache miss for ${cacheKey}, fetching from CoinGecko`);
+
     // Make the request to CoinGecko API
     const response = await fetch(finalUrl, {
       method: 'GET',
@@ -67,7 +120,24 @@ module.exports = async function handler(req, res) {
     // Get the response data
     const data = await response.json();
 
-    // Set CORS headers with origin restriction
+    // Cache the response
+    global.coingeckoCache.set(cacheKey, {
+      data: data,
+      timestamp: now,
+    });
+
+    // Clean up old cache entries (keep only last 100 entries)
+    if (global.coingeckoCache.size > 100) {
+      const entries = Array.from(global.coingeckoCache.entries());
+      entries.sort((a, b) => b[1].timestamp - a[1].timestamp);
+      global.coingeckoCache.clear();
+      entries.slice(0, 100).forEach(([key, value]) => {
+        global.coingeckoCache.set(key, value);
+      });
+    }
+
+    // Set CORS headers
+    const origin = req.headers.origin;
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
@@ -76,9 +146,6 @@ module.exports = async function handler(req, res) {
       'https://www.balanced.network',
     ];
 
-    const origin = req.headers.origin;
-
-    // Check if origin is allowed (exact match or Vercel deployment)
     const isAllowedOrigin =
       allowedOrigins.includes(origin) ||
       (origin && origin.match(/^https:\/\/balanced-network-interface-[a-z0-9]+-balanced-defi\.vercel\.app$/));
@@ -88,6 +155,8 @@ module.exports = async function handler(req, res) {
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('X-Cache', 'MISS');
+    res.setHeader('X-Cache-TTL', Math.floor(cacheDuration / 1000));
 
     // Return the data
     res.status(200).json(data);

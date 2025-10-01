@@ -67,8 +67,25 @@ module.exports = async function handler(req, res) {
     // Get the response data
     const data = await response.json();
 
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Set CORS headers with origin restriction
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://app.balanced.network',
+      'https://balanced.network',
+      'https://www.balanced.network',
+    ];
+
+    const origin = req.headers.origin;
+
+    // Check if origin is allowed (exact match or Vercel deployment)
+    const isAllowedOrigin =
+      allowedOrigins.includes(origin) ||
+      (origin && origin.match(/^https:\/\/balanced-network-interface-[a-z0-9]+-balanced-defi\.vercel\.app$/));
+
+    if (isAllowedOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 

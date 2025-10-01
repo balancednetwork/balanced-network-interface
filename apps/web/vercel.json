@@ -40,6 +40,9 @@
       "source": "/api/analytics/:path*",
       "destination": "https://plausible.io/api/:path*"
     },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }

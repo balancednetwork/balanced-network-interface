@@ -27769,7 +27769,7 @@ snapshots:
       metro-babel-transformer: 0.80.8
       metro-cache: 0.80.8
       metro-cache-key: 0.80.8
-      metro-config: 0.80.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      metro-config: 0.80.8(bufferutil@4.0.8)(utf-8-validate@6.0.5)
       metro-core: 0.80.8
       metro-file-map: 0.80.8
       metro-resolver: 0.80.8

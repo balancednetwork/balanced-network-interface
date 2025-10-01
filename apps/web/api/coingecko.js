@@ -1,9 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3';
-const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -17,12 +12,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
+
     // Extract the path from the request
     const { path } = req.query;
     const apiPath = Array.isArray(path) ? path.join('/') : path || '';
 
     // Build the CoinGecko API URL
-    const apiUrl = `${COINGECKO_API_BASE_URL}/${apiPath}`;
+    const apiUrl = `https://api.coingecko.com/api/v3/${apiPath}`;
 
     // Prepare query parameters
     const queryParams = new URLSearchParams();
@@ -84,4 +81,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
-}
+};

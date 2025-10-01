@@ -29,3 +29,4 @@ template
 
 .idea
 tsconfig.tsbuildinfo
+.vercel

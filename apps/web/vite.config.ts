@@ -61,6 +61,13 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
       open: true,
       // this sets a default port to 3000
       port: 3000,
+      proxy: {
+        '/api/coingecko': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
     define: {
       'process.env': env,

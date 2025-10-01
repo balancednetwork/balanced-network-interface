@@ -18,7 +18,7 @@ export const useCoinGeckoSimplePrice = (coinIds: string[], currencies: string[] 
   return useQuery<CoinGeckoSimplePrice>({
     queryKey: QUERY_KEYS.CoinGecko.SimplePrice(coinIds, currencies),
     queryFn: async () => {
-      const { data } = await coinGeckoAxios.get<CoinGeckoSimplePrice>(`${COINGECKO_API_BASE_URL}/simple/price`, {
+      const { data } = await coinGeckoAxios.get<CoinGeckoSimplePrice>(`${COINGECKO_API_BASE_URL}?path=simple/price`, {
         params: {
           ids: coinIds.join(','),
           vs_currencies: currencies.join(','),
@@ -48,7 +48,7 @@ export const useCoinGeckoMarketChart = (
     queryKey: QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days),
     queryFn: async () => {
       const { data } = await coinGeckoAxios.get<CoinGeckoMarketChartData>(
-        `${COINGECKO_API_BASE_URL}/coins/${coinId}/market_chart`,
+        `${COINGECKO_API_BASE_URL}?path=coins/${coinId}/market_chart`,
         {
           params: {
             vs_currency: currency,
@@ -77,7 +77,7 @@ export const useCoinGeckoProcessedChartData = (
     queryKey: [...QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days), 'processed'],
     queryFn: async () => {
       const { data } = await coinGeckoAxios.get<CoinGeckoMarketChartData>(
-        `${COINGECKO_API_BASE_URL}/coins/${coinId}/market_chart`,
+        `${COINGECKO_API_BASE_URL}?path=coins/${coinId}/market_chart`,
         {
           params: {
             vs_currency: currency,
@@ -114,16 +114,19 @@ export const useCoinGeckoCoinDetails = (coinId: string, enabled: boolean = true)
   return useQuery<CoinGeckoCoinDetails>({
     queryKey: QUERY_KEYS.CoinGecko.CoinDetails(coinId),
     queryFn: async () => {
-      const { data } = await coinGeckoAxios.get<CoinGeckoCoinDetails>(`${COINGECKO_API_BASE_URL}/coins/${coinId}`, {
-        params: {
-          localization: false,
-          tickers: false,
-          market_data: true,
-          community_data: true,
-          developer_data: true,
-          sparkline: false,
+      const { data } = await coinGeckoAxios.get<CoinGeckoCoinDetails>(
+        `${COINGECKO_API_BASE_URL}?path=coins/${coinId}`,
+        {
+          params: {
+            localization: false,
+            tickers: false,
+            market_data: true,
+            community_data: true,
+            developer_data: true,
+            sparkline: false,
+          },
         },
-      });
+      );
       return data;
     },
     enabled: enabled && !!coinId,
@@ -137,7 +140,7 @@ export const useCoinGeckoMarketData = (coinIds: string[], currency: string = 'us
   return useQuery<CoinGeckoCoinInfo[]>({
     queryKey: QUERY_KEYS.CoinGecko.MarketData(coinIds, currency),
     queryFn: async () => {
-      const { data } = await coinGeckoAxios.get<CoinGeckoCoinInfo[]>(`${COINGECKO_API_BASE_URL}/coins/markets`, {
+      const { data } = await coinGeckoAxios.get<CoinGeckoCoinInfo[]>(`${COINGECKO_API_BASE_URL}?path=coins/markets`, {
         params: {
           vs_currency: currency,
           ids: coinIds.join(','),
@@ -216,7 +219,7 @@ export const useCoinGeckoOHLC = (
   return useQuery<number[][]>({
     queryKey: [...QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days), 'ohlc'],
     queryFn: async () => {
-      const { data } = await coinGeckoAxios.get<number[][]>(`${COINGECKO_API_BASE_URL}/coins/${coinId}/ohlc`, {
+      const { data } = await coinGeckoAxios.get<number[][]>(`${COINGECKO_API_BASE_URL}?path=coins/${coinId}/ohlc`, {
         params: {
           vs_currency: currency,
           days,

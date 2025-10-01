@@ -1,6 +1,5 @@
 // CoinGecko API Configuration
-export const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3';
-export const COINGECKO_API_KEY = import.meta.env.VITE_COINGECKO_API_KEY;
+export const COINGECKO_API_BASE_URL = '/api/coingecko';
 
 // Supported Cryptocurrency IDs for CoinGecko API
 // Only includes tokens with chainId: 1 from tokenlist.json with verified CoinGecko IDs

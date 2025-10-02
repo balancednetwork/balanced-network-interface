@@ -38,7 +38,7 @@ export const COINGECKO_COIN_IDS = {
   haSUI: 'haedal-staked-sui',
   afSUI: 'aftermath-staked-sui',
   // mSUI: '', // Not confirmed on CoinGecko
-  S: 'sonic',
+  // S: 'sonic', // Sonic Labs blockchain (formerly Fantom) native token - Chain ID 146
 } as const;
 
 // Chart time periods supported by CoinGecko

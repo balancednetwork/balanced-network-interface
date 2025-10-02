@@ -35,14 +35,14 @@ const isCoinGeckoRateLimitError = (error: AxiosError): boolean => {
   if (response.status === 429) {
     // Check if it's coming from CoinGecko API
     const url = error.config?.url || '';
-    return url.includes('api.coingecko.com');
+    return url.includes('pro-api.coingecko.com');
   }
 
   // Some CoinGecko endpoints might return different error codes for rate limiting
   // Check for CoinGecko-specific error messages
   if (response.status >= 400 && response.status < 500) {
     const url = error.config?.url || '';
-    if (url.includes('api.coingecko.com')) {
+    if (url.includes('pro-api.coingecko.com')) {
       const errorMessage = (response.data as any)?.error || '';
       return (
         errorMessage.toLowerCase().includes('rate limit') || errorMessage.toLowerCase().includes('too many requests')

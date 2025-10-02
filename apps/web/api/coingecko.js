@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
+    const { COINGECKO_API_KEY } = process.env;
 
     // Extract the path from the request
     const { path } = req.query;
@@ -70,7 +70,7 @@ module.exports = async function handler(req, res) {
     }
 
     // Build the CoinGecko API URL
-    const apiUrl = `https://api.coingecko.com/api/v3/${apiPath}`;
+    const apiUrl = `https://pro-api.coingecko.com/api/v3/${apiPath}`;
 
     // Prepare query parameters
     const queryParams = new URLSearchParams();
@@ -88,7 +88,7 @@ module.exports = async function handler(req, res) {
 
     // Add API key if available
     if (COINGECKO_API_KEY) {
-      queryParams.append('x_cg_demo_api_key', COINGECKO_API_KEY);
+      queryParams.append('x_cg_pro_api_key', COINGECKO_API_KEY);
     }
 
     // Build the final URL

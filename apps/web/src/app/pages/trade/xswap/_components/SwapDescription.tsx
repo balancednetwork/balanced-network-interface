@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { theme } from '@/app/theme';
 import { useCoinGeckoAnalytics } from '@/hooks/useCoinGeckoAnalytics';
 import { setSwapContext } from '@/utils/coingeckoAxios';
@@ -31,6 +31,23 @@ const TIMEFRAMES = {
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;
+
+// Animation keyframes
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+// Styled component for animated chart container
+const AnimatedChartContainer = styled.div`
+  animation: ${fadeIn} 0.3s ease-out;
+`;
 
 // Styled component for clickable token symbols with animated border
 const ClickableTokenSymbol = styled(Typography)<{ $isActive: boolean }>`
@@ -405,7 +422,9 @@ export default function SwapDescription() {
                 <Spinner />
               </Flex>
             ) : chartData.length > 0 ? (
-              <MemoizedTradingViewChart {...chartProps} />
+              <AnimatedChartContainer>
+                <MemoizedTradingViewChart {...chartProps} />
+              </AnimatedChartContainer>
             ) : (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Typography>

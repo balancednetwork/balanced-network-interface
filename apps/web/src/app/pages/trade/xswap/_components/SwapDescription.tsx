@@ -36,7 +36,7 @@ type TimeframeKey = keyof typeof TIMEFRAMES;
 const fadeIn = keyframes`
   from {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -44,9 +44,20 @@ const fadeIn = keyframes`
   }
 `;
 
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+`;
+
 // Styled component for animated chart container
-const AnimatedChartContainer = styled.div`
-  animation: ${fadeIn} 0.3s ease-out;
+const AnimatedChartContainer = styled.div<{ $isExiting?: boolean }>`
+  animation: ${props => (props.$isExiting ? fadeOut : fadeIn)} 0.3s ease-out;
 `;
 
 // Styled component for clickable token symbols with animated border
@@ -128,6 +139,7 @@ export default function SwapDescription() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeKey>('6m');
   const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
   const [selectedChartType, setSelectedChartType] = useState<CHART_TYPES>(CHART_TYPES.CANDLE);
+  const [isChartExiting, setIsChartExiting] = useState(false);
 
   // Initialize CoinGecko analytics tracking
   useCoinGeckoAnalytics();
@@ -287,9 +299,18 @@ export default function SwapDescription() {
   }, [inputTokenSymbol, outputTokenSymbol]);
 
   // Handle timeframe change
-  const handleTimeframeChange = useCallback((timeframe: TimeframeKey) => {
-    setSelectedTimeframe(timeframe);
-  }, []);
+  const handleTimeframeChange = useCallback(
+    (timeframe: TimeframeKey) => {
+      if (timeframe !== selectedTimeframe) {
+        setIsChartExiting(true);
+        setTimeout(() => {
+          setSelectedTimeframe(timeframe);
+          setIsChartExiting(false);
+        }, 300); // Match animation duration
+      }
+    },
+    [selectedTimeframe],
+  );
 
   // Handle token selection
   const handleTokenSelect = useCallback((token: Field) => {
@@ -304,9 +325,18 @@ export default function SwapDescription() {
   }, [isSameToken]);
 
   // Handle chart type change
-  const handleChartTypeChange = useCallback((chartType: CHART_TYPES) => {
-    setSelectedChartType(chartType);
-  }, []);
+  const handleChartTypeChange = useCallback(
+    (chartType: CHART_TYPES) => {
+      if (chartType !== selectedChartType) {
+        setIsChartExiting(true);
+        setTimeout(() => {
+          setSelectedChartType(chartType);
+          setIsChartExiting(false);
+        }, 300); // Match animation duration
+      }
+    },
+    [selectedChartType],
+  );
 
   // Memoize chart props to prevent unnecessary re-renders
   const chartProps = useMemo(
@@ -422,7 +452,7 @@ export default function SwapDescription() {
                 <Spinner />
               </Flex>
             ) : chartData.length > 0 ? (
-              <AnimatedChartContainer>
+              <AnimatedChartContainer $isExiting={isChartExiting}>
                 <MemoizedTradingViewChart {...chartProps} />
               </AnimatedChartContainer>
             ) : (

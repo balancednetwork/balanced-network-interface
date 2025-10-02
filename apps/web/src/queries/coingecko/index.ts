@@ -58,7 +58,8 @@ export const useCoinGeckoMarketChart = (
           params: {
             vs_currency: currency,
             days,
-            interval: days === 1 ? 'hourly' : 'daily',
+            // Note: market_chart endpoint doesn't support interval parameter
+            // Granularity is automatically determined by the days parameter
           },
         },
       );
@@ -87,7 +88,8 @@ export const useCoinGeckoProcessedChartData = (
           params: {
             vs_currency: currency,
             days,
-            interval: days === 1 ? 'hourly' : 'daily',
+            // Note: market_chart endpoint doesn't support interval parameter
+            // Granularity is automatically determined by the days parameter
           },
         },
       );

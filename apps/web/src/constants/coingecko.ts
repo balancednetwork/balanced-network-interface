@@ -67,6 +67,12 @@ export const COINGECKO_OHLC_AGGREGATION = {
   '180d': 2, // 6 months: aggregate 2 daily candles to make 2d candles
 } as const;
 
+// Note: market_chart endpoint doesn't support interval parameter
+// Granularity is automatically determined by the days parameter:
+// - 1-7 days: hourly data
+// - 8-90 days: daily data
+// - 90+ days: daily data
+
 // Currency codes supported by CoinGecko
 export const COINGECKO_CURRENCIES = {
   USD: 'usd',

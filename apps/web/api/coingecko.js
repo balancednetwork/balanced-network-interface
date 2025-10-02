@@ -1,3 +1,32 @@
+// Load environment variables from .env.local for local development
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const envPath = path.join(process.cwd(), '.env.local');
+
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      const envLines = envContent.split('\n');
+
+      envLines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine && !trimmedLine.startsWith('#')) {
+          const [key, ...valueParts] = trimmedLine.split('=');
+          if (key && valueParts.length > 0) {
+            const value = valueParts.join('=');
+            if (!process.env[key]) {
+              process.env[key] = value;
+            }
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.warn('Failed to load .env.local:', error.message);
+  }
+}
+
 module.exports = async function handler(req, res) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -13,6 +42,11 @@ module.exports = async function handler(req, res) {
 
   try {
     const { COINGECKO_API_KEY } = process.env;
+
+    // Debug logging for local development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('COINGECKO_API_KEY loaded:', COINGECKO_API_KEY ? 'Yes' : 'No');
+    }
 
     // Extract the path from the request
     const { path } = req.query;

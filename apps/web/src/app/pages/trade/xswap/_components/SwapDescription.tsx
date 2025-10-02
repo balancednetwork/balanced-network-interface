@@ -123,14 +123,22 @@ export default function SwapDescription() {
     [XCurrencies, selectedToken],
   );
 
-  const { data: chartDataForSelected, isLoading: chartLoading } = useCoinGeckoProcessedChartData(
+  const {
+    data: chartDataForSelected,
+    isLoading: chartLoading,
+    isFetching: chartFetching,
+  } = useCoinGeckoProcessedChartData(
     selectedCoinId || '',
     'usd',
     TIMEFRAMES[selectedTimeframe].days,
     !!selectedCoinId && selectedChartType === CHART_TYPES.AREA, // Only fetch line chart data when area chart is selected
   );
 
-  const { data: ohlcData, isLoading: ohlcLoading } = useCoinGeckoOHLC(
+  const {
+    data: ohlcData,
+    isLoading: ohlcLoading,
+    isFetching: ohlcFetching,
+  } = useCoinGeckoOHLC(
     selectedCoinId || '',
     'usd',
     TIMEFRAMES[selectedTimeframe].days,
@@ -392,7 +400,7 @@ export default function SwapDescription() {
                   <Trans>Chart not available for {selectedTokenSymbol}.</Trans>
                 </Typography>
               </Flex>
-            ) : chartLoading || (selectedChartType === CHART_TYPES.CANDLE && ohlcLoading) ? (
+            ) : chartLoading || ohlcLoading || chartFetching || ohlcFetching ? (
               <Flex justifyContent="center" alignItems="center" height="300px">
                 <Spinner />
               </Flex>

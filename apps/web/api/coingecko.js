@@ -64,7 +64,7 @@ module.exports = async function handler(req, res) {
     const getCacheDuration = path => {
       if (path.includes('simple/price')) return 60000; // 1 minute for prices
       if (path.includes('market_chart')) return 300000; // 5 minutes for charts
-      if (path.includes('coins/') && !path.includes('market_chart')) return 600000; // 10 minutes for coin details
+      if (path.includes('coins/') && !path.includes('market_chart') && !path.includes('ohlc')) return 600000; // 10 minutes for coin details
       if (path.includes('coins/markets')) return 60000; // 1 minute for market data
       if (path.includes('ohlc')) return 300000; // 5 minutes for OHLC data
       return 300000; // Default 5 minutes
@@ -115,6 +115,7 @@ module.exports = async function handler(req, res) {
         if (Array.isArray(value)) {
           value.forEach(v => queryParams.append(key, v));
         } else {
+          // For OHLC range endpoint, we don't need to map parameters
           queryParams.append(key, value);
         }
       }

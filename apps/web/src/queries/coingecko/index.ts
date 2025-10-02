@@ -2,7 +2,12 @@ import { coinGeckoAxios } from '@/utils/coingeckoAxios';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { COINGECKO_API_BASE_URL, COINGECKO_CURRENCIES } from '@/constants/coingecko';
+import {
+  COINGECKO_API_BASE_URL,
+  COINGECKO_CURRENCIES,
+  COINGECKO_OHLC_PERIODS,
+  COINGECKO_OHLC_AGGREGATION,
+} from '@/constants/coingecko';
 import { QUERY_KEYS } from '@/queries/queryKeys';
 import {
   ChartDataPoint,
@@ -209,6 +214,28 @@ export const useCoinGeckoPrices = (coinIds: string[], currency: string = 'usd', 
   };
 };
 
+// Helper function to aggregate OHLC data
+const aggregateOHLCData = (data: number[][], aggregationFactor: number): number[][] => {
+  if (aggregationFactor <= 1) return data;
+
+  const aggregated: number[][] = [];
+
+  for (let i = 0; i < data.length; i += aggregationFactor) {
+    const group = data.slice(i, i + aggregationFactor);
+    if (group.length === 0) continue;
+
+    const timestamp = group[0][0]; // Use timestamp from first candle
+    const open = group[0][1]; // Open from first candle
+    const high = Math.max(...group.map(candle => candle[2])); // Highest high
+    const low = Math.min(...group.map(candle => candle[3])); // Lowest low
+    const close = group[group.length - 1][4]; // Close from last candle
+
+    aggregated.push([timestamp, open, high, low, close]);
+  }
+
+  return aggregated;
+};
+
 // OHLC data for candlestick charts
 export const useCoinGeckoOHLC = (
   coinId: string,
@@ -219,13 +246,40 @@ export const useCoinGeckoOHLC = (
   return useQuery<number[][]>({
     queryKey: [...QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days), 'ohlc'],
     queryFn: async () => {
-      const { data } = await coinGeckoAxios.get<number[][]>(`${COINGECKO_API_BASE_URL}?path=coins/${coinId}/ohlc`, {
-        params: {
-          vs_currency: currency,
-          days,
+      // Map days to the appropriate OHLC interval for CoinGecko Pro API
+      const getOHLCInterval = (days: number): string => {
+        if (days <= 7) return COINGECKO_OHLC_PERIODS['7d']; // Week: hourly
+        if (days <= 30) return COINGECKO_OHLC_PERIODS['30d']; // Month: hourly
+        return COINGECKO_OHLC_PERIODS['180d']; // 6 months: daily
+      };
+
+      // Map days to aggregation factor
+      const getAggregationFactor = (days: number): number => {
+        if (days <= 7) return COINGECKO_OHLC_AGGREGATION['7d']; // Week: 2h
+        if (days <= 30) return COINGECKO_OHLC_AGGREGATION['30d']; // Month: 8h
+        return COINGECKO_OHLC_AGGREGATION['180d']; // 6 months: 2d
+      };
+
+      // Calculate date range
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
+
+      const { data } = await coinGeckoAxios.get<number[][]>(
+        `${COINGECKO_API_BASE_URL}?path=coins/${coinId}/ohlc/range`,
+        {
+          params: {
+            vs_currency: currency,
+            from: Math.floor(startDate.getTime() / 1000), // UNIX timestamp
+            to: Math.floor(endDate.getTime() / 1000), // UNIX timestamp
+            interval: getOHLCInterval(days),
+          },
         },
-      });
-      return data;
+      );
+
+      // Aggregate the data to achieve the desired candle periods
+      const aggregationFactor = getAggregationFactor(days);
+      return aggregateOHLCData(data, aggregationFactor);
     },
     enabled: enabled && !!coinId,
     staleTime: 300000, // 5 minutes

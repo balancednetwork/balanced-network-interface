@@ -53,6 +53,20 @@ export const COINGECKO_CHART_PERIODS = {
   max: 'max',
 } as const;
 
+// OHLC candle periods for CoinGecko Pro API
+export const COINGECKO_OHLC_PERIODS = {
+  '7d': 'hourly', // Week: fetch hourly, aggregate to 2h
+  '30d': 'hourly', // Month: fetch hourly, aggregate to 8h
+  '180d': 'daily', // 6 months: fetch daily, aggregate to 2d
+} as const;
+
+// Aggregation settings for custom candle periods
+export const COINGECKO_OHLC_AGGREGATION = {
+  '7d': 2, // Week: aggregate 2 hourly candles to make 2h candles
+  '30d': 8, // Month: aggregate 8 hourly candles to make 8h candles
+  '180d': 2, // 6 months: aggregate 2 daily candles to make 2d candles
+} as const;
+
 // Currency codes supported by CoinGecko
 export const COINGECKO_CURRENCIES = {
   USD: 'usd',
@@ -62,4 +76,6 @@ export const COINGECKO_CURRENCIES = {
 
 export type CoinGeckoCoinId = keyof typeof COINGECKO_COIN_IDS;
 export type CoinGeckoChartPeriod = keyof typeof COINGECKO_CHART_PERIODS;
+export type CoinGeckoOHLCPeriod = keyof typeof COINGECKO_OHLC_PERIODS;
+export type CoinGeckoOHLCAggregation = keyof typeof COINGECKO_OHLC_AGGREGATION;
 export type CoinGeckoCurrency = keyof typeof COINGECKO_CURRENCIES;

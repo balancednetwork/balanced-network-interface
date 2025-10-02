@@ -28,7 +28,6 @@ const TIMEFRAMES = {
   '7d': { label: 'Week', days: 7 },
   '1m': { label: 'Month', days: 30 },
   '6m': { label: '6 Months', days: 180 },
-  '1y': { label: 'Year', days: 365 },
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;

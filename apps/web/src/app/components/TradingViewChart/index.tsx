@@ -31,8 +31,6 @@ export enum CHART_TYPES {
 
 const Wrapper = styled.div`
   position: relative;
-  touch-action: pan-x; /* Allow horizontal panning for chart scrolling */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 `;
 
 // constant height for charts
@@ -67,7 +65,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
   handleScroll: {
     mouseWheel: false,
     pressedMouseMove: false,
-    horzTouchDrag: true, // Enable horizontal touch drag for crosshair and scrolling
+    horzTouchDrag: true, // Enable horizontal touch drag for crosshair
     vertTouchDrag: false,
   },
   handleScale: {
@@ -77,20 +75,6 @@ const AreaOption: DeepPartial<ChartOptions> = {
   },
   crosshair: {
     mode: CrosshairMode.Normal,
-    vertLine: {
-      color: '#758696',
-      width: 1,
-      style: 0, // Solid line
-      labelBackgroundColor: '#758696',
-      visible: false, // Hide by default, show only on touch
-    },
-    horzLine: {
-      color: '#758696',
-      width: 1,
-      style: 0, // Solid line
-      labelBackgroundColor: '#758696',
-      visible: false, // Hide by default, show only on touch
-    },
   },
   localization: {
     timeFormatter: (time: BusinessDay | UTCTimestamp) => {
@@ -135,7 +119,7 @@ const CandleOption: DeepPartial<ChartOptions> = {
   handleScroll: {
     mouseWheel: false,
     pressedMouseMove: false,
-    horzTouchDrag: true, // Enable horizontal touch drag for crosshair and scrolling
+    horzTouchDrag: true, // Enable horizontal touch drag for crosshair
     vertTouchDrag: false,
   },
   handleScale: {
@@ -145,20 +129,6 @@ const CandleOption: DeepPartial<ChartOptions> = {
   },
   crosshair: {
     mode: CrosshairMode.Normal,
-    vertLine: {
-      color: '#758696',
-      width: 1,
-      style: 0, // Solid line
-      labelBackgroundColor: '#758696',
-      visible: false, // Hide by default, show only on touch
-    },
-    horzLine: {
-      color: '#758696',
-      width: 1,
-      style: 0, // Solid line
-      labelBackgroundColor: '#758696',
-      visible: false, // Hide by default, show only on touch
-    },
   },
   localization: {
     timeFormatter: (time: BusinessDay | UTCTimestamp) => {
@@ -185,11 +155,6 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
   const lastFormattedPrice = useRef<string>('');
   const isCrosshairPrice = useRef<boolean>(false);
 
-  // Touch interaction state
-  const touchStartX = useRef<number>(0);
-  const touchStartY = useRef<number>(0);
-  const isTouchDragging = useRef<boolean>(false);
-
   // Custom price formatter that detects crosshair vs regular ticks
   const priceFormatter = useCallback((price: number) => {
     const formatted = formatPrice(price);
@@ -205,72 +170,6 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
     isCrosshairPrice.current = false;
     return formatted.padEnd(10, ' '); // Pad regular ticks
   }, []);
-
-  // Touch event handlers for enhanced crosshair interaction
-  const handleTouchStart = useCallback(
-    (e: TouchEvent) => {
-      if (e.touches.length === 1 && chartCreated) {
-        const touch = e.touches[0];
-        touchStartX.current = touch.clientX;
-        touchStartY.current = touch.clientY;
-        isTouchDragging.current = false;
-
-        // Show crosshair on touch start
-        chartCreated.applyOptions({
-          crosshair: {
-            vertLine: {
-              visible: true,
-            },
-            horzLine: {
-              visible: true,
-            },
-          },
-        });
-      }
-    },
-    [chartCreated],
-  );
-
-  const handleTouchMove = useCallback(
-    (e: TouchEvent) => {
-      if (e.touches.length === 1 && chartCreated) {
-        const touch = e.touches[0];
-        const deltaX = Math.abs(touch.clientX - touchStartX.current);
-        const deltaY = Math.abs(touch.clientY - touchStartY.current);
-
-        // If horizontal movement is greater than vertical, enable crosshair dragging
-        if (deltaX > deltaY && deltaX > 10) {
-          isTouchDragging.current = true;
-          // Prevent default scrolling behavior
-          e.preventDefault();
-        }
-      }
-    },
-    [chartCreated],
-  );
-
-  const handleTouchEnd = useCallback(
-    (e: TouchEvent) => {
-      if (chartCreated) {
-        isTouchDragging.current = false;
-
-        // Hide crosshair after touch ends with a small delay
-        setTimeout(() => {
-          chartCreated.applyOptions({
-            crosshair: {
-              vertLine: {
-                visible: false,
-              },
-              horzLine: {
-                visible: false,
-              },
-            },
-          });
-        }, 200); // Delay to allow user to see the final crosshair position
-      }
-    },
-    [chartCreated],
-  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -341,64 +240,16 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
       chart.timeScale().fitContent();
 
-      // Add touch event listeners for enhanced crosshair interaction
-      const chartContainer = ref.current;
-      if (chartContainer) {
-        chartContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
-        chartContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-        chartContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-        // Disable mouse hover crosshair by preventing mouse events
-        const handleMouseMove = () => {
-          chart.applyOptions({
-            crosshair: {
-              vertLine: {
-                visible: false,
-              },
-              horzLine: {
-                visible: false,
-              },
-            },
-          });
-        };
-
-        chartContainer.addEventListener('mousemove', handleMouseMove);
-        chartContainer.addEventListener('mouseenter', handleMouseMove);
-      }
-
       setChartCreated(chart);
 
       return () => {
-        // Remove touch event listeners
-        if (chartContainer) {
-          chartContainer.removeEventListener('touchstart', handleTouchStart);
-          chartContainer.removeEventListener('touchmove', handleTouchMove);
-          chartContainer.removeEventListener('touchend', handleTouchEnd);
-
-          // Remove mouse event listeners
-          const handleMouseMove = () => {
-            chart.applyOptions({
-              crosshair: {
-                vertLine: {
-                  visible: false,
-                },
-                horzLine: {
-                  visible: false,
-                },
-              },
-            });
-          };
-          chartContainer.removeEventListener('mousemove', handleMouseMove);
-          chartContainer.removeEventListener('mouseenter', handleMouseMove);
-        }
-
         // destroy chart
         chart.resize(0, 0);
         chart.remove();
         setChartCreated(null);
       };
     }
-  }, [data, type, width, volumeData, priceFormatter, handleTouchStart, handleTouchMove, handleTouchEnd]);
+  }, [data, type, width, volumeData, priceFormatter]);
 
   // responsiveness
   useEffect(() => {

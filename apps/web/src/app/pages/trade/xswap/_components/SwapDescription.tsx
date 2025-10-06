@@ -1,33 +1,34 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 
-import { Trans } from '@lingui/macro';
-import { Box, Flex } from 'rebass/styled-components';
-import styled, { keyframes } from 'styled-components';
 import { theme } from '@/app/theme';
 import { useCoinGeckoAnalytics } from '@/hooks/useCoinGeckoAnalytics';
 import { setSwapContext } from '@/utils/coingeckoAxios';
+import { Trans } from '@lingui/macro';
+import { Box, Flex } from 'rebass/styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Spinner from '@/app/components/Spinner';
 import TradingViewChart, { CHART_TYPES } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
-import { useDerivedTradeInfo } from '@/store/swap/hooks';
-import { Field } from '@/store/swap/reducer';
-import { formatSymbol, formatPrice } from '@/utils/formatter';
+import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
 import { useTokenPricesWithPyth } from '@/queries/backendv2';
 import {
-  useCoinGeckoProcessedChartData,
-  useCoinGeckoPrice,
   useCoinGeckoOHLC,
+  useCoinGeckoPrice,
+  useCoinGeckoProcessedChartData,
   useCoinGeckoSimplePrice,
 } from '@/queries/coingecko';
-import { COINGECKO_COIN_IDS } from '@/constants/coingecko';
+import { useDerivedTradeInfo } from '@/store/swap/hooks';
+import { Field } from '@/store/swap/reducer';
+import { formatPrice, formatSymbol } from '@/utils/formatter';
 
 // Timeframe options
 const TIMEFRAMES = {
   '7d': { label: 'Week', days: 7 },
   '1m': { label: 'Month', days: 30 },
   '6m': { label: '6 Months', days: 180 },
+  max: { label: 'Max', days: 'max' },
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;

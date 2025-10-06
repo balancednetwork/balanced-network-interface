@@ -5,8 +5,8 @@ import axios from 'axios';
 import {
   COINGECKO_API_BASE_URL,
   COINGECKO_CURRENCIES,
-  COINGECKO_OHLC_PERIODS,
   COINGECKO_OHLC_AGGREGATION,
+  COINGECKO_OHLC_PERIODS,
 } from '@/constants/coingecko';
 import { QUERY_KEYS } from '@/queries/queryKeys';
 import {
@@ -242,12 +242,67 @@ const aggregateOHLCData = (data: number[][], aggregationFactor: number): number[
 export const useCoinGeckoOHLC = (
   coinId: string,
   currency: string = 'usd',
-  days: number = 30,
+  days: number | string = 30,
   enabled: boolean = true,
 ) => {
   return useQuery<number[][]>({
     queryKey: [...QUERY_KEYS.CoinGecko.MarketChart(coinId, currency, days), 'ohlc'],
     queryFn: async () => {
+      // Handle 'max' case - use market_chart endpoint instead of OHLC range
+      if (days === 'max') {
+        const { data: marketData } = await coinGeckoAxios.get<CoinGeckoMarketChartData>(
+          `${COINGECKO_API_BASE_URL}?path=coins/${coinId}/market_chart`,
+          {
+            params: {
+              vs_currency: currency,
+              days: 'max',
+            },
+          },
+        );
+
+        // Convert market chart data to OHLC format
+        // For max data, we'll create monthly candles from the price data to make it readable
+        const ohlcData: number[][] = [];
+        const prices = marketData.prices;
+
+        // Group prices by month and create OHLC candles
+        const monthlyGroups: { [key: string]: { prices: number[]; timestamps: number[] } } = {};
+
+        prices.forEach(([timestamp, price]) => {
+          const date = new Date(timestamp);
+          // Get the start of the month
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+          if (!monthlyGroups[monthKey]) {
+            monthlyGroups[monthKey] = { prices: [], timestamps: [] };
+          }
+          monthlyGroups[monthKey].prices.push(price);
+          monthlyGroups[monthKey].timestamps.push(timestamp);
+        });
+
+        // Create OHLC candles for each month
+        Object.entries(monthlyGroups).forEach(([monthKey, monthData]) => {
+          if (monthData.prices.length > 0) {
+            // Use the timestamp of the first price point of the month (month start)
+            const timestamp = monthData.timestamps[0];
+            const open = monthData.prices[0];
+            const close = monthData.prices[monthData.prices.length - 1];
+            const high = Math.max(...monthData.prices);
+            const low = Math.min(...monthData.prices);
+
+            ohlcData.push([timestamp, open, high, low, close]);
+          }
+        });
+
+        // Sort by timestamp
+        ohlcData.sort((a, b) => a[0] - b[0]);
+
+        return ohlcData;
+      }
+
+      // Ensure days is a number for the rest of the logic
+      const numericDays = typeof days === 'string' ? 365 : days; // Default to 1 year for non-numeric values
+
       // Map days to the appropriate OHLC interval for CoinGecko Pro API
       const getOHLCInterval = (days: number): string => {
         if (days <= 7) return COINGECKO_OHLC_PERIODS['7d']; // Week: hourly
@@ -265,7 +320,7 @@ export const useCoinGeckoOHLC = (
       // Calculate date range
       const endDate = new Date();
       const startDate = new Date();
-      startDate.setDate(endDate.getDate() - days);
+      startDate.setDate(endDate.getDate() - numericDays);
 
       const { data } = await coinGeckoAxios.get<number[][]>(
         `${COINGECKO_API_BASE_URL}?path=coins/${coinId}/ohlc/range`,
@@ -274,13 +329,13 @@ export const useCoinGeckoOHLC = (
             vs_currency: currency,
             from: Math.floor(startDate.getTime() / 1000), // UNIX timestamp
             to: Math.floor(endDate.getTime() / 1000), // UNIX timestamp
-            interval: getOHLCInterval(days),
+            interval: getOHLCInterval(numericDays),
           },
         },
       );
 
       // Aggregate the data to achieve the desired candle periods
-      const aggregationFactor = getAggregationFactor(days);
+      const aggregationFactor = getAggregationFactor(numericDays);
       return aggregateOHLCData(data, aggregationFactor);
     },
     enabled: enabled && !!coinId,

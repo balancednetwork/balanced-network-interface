@@ -28,7 +28,7 @@ const TIMEFRAMES = {
   '7d': { label: 'Week', days: 7 },
   '1m': { label: 'Month', days: 30 },
   '6m': { label: '6 Months', days: 180 },
-  max: { label: 'Max', days: 'max' },
+  max: { label: 'All time', days: 'max' },
 } as const;
 
 type TimeframeKey = keyof typeof TIMEFRAMES;

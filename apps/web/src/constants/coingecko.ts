@@ -14,6 +14,7 @@ export const COINGECKO_COIN_IDS = {
   // BTCB: '', // Not confirmed on CoinGecko
   BTC: 'bitcoin',
   BTCB: 'bitcoin',
+  WBTC: 'wrapped-bitcoin',
   ETH: 'ethereum',
   // sARCH: '', // Not confirmed on CoinGecko
   USDC: 'usd-coin',

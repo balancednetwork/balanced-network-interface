@@ -172,7 +172,7 @@ export default function SwapDescription() {
     selectedCoinId || '',
     'usd',
     TIMEFRAMES[selectedTimeframe].days,
-    !!selectedCoinId && selectedChartType === CHART_TYPES.CANDLE, // Only fetch OHLC for candlestick charts
+    !!selectedCoinId && (selectedChartType === CHART_TYPES.CANDLE || TIMEFRAMES[selectedTimeframe].days === 'max'), // Fetch OHLC for candlestick charts OR when timeframe is 'max'
   );
 
   // Get current prices for both input and output tokens
@@ -222,6 +222,16 @@ export default function SwapDescription() {
     }));
   }, []);
 
+  // Convert OHLC data to TradingView line format (for 'max' timeframe)
+  const convertOHLCToLineFormat = useCallback((ohlcData: number[][]) => {
+    if (!ohlcData) return [];
+
+    return ohlcData.map((candle: number[]) => ({
+      time: Math.floor(candle[0] / 1000) as any, // Convert timestamp to seconds
+      value: candle[4], // Use close price for line chart
+    }));
+  }, []);
+
   // Convert OHLC data to TradingView candlestick format, updating the latest candle with real-time price
   const convertOHLCToTradingViewFormat = useCallback(
     (ohlcData: number[][]) => {
@@ -259,9 +269,22 @@ export default function SwapDescription() {
     if (selectedChartType === CHART_TYPES.CANDLE) {
       return convertOHLCToTradingViewFormat(ohlcData || []);
     } else {
-      return convertToTradingViewFormat(chartDataForSelected);
+      // For line charts, use OHLC data when timeframe is 'max' to get full historical data
+      if (TIMEFRAMES[selectedTimeframe].days === 'max') {
+        return convertOHLCToLineFormat(ohlcData || []);
+      } else {
+        return convertToTradingViewFormat(chartDataForSelected);
+      }
     }
-  }, [chartDataForSelected, ohlcData, selectedChartType, convertToTradingViewFormat, convertOHLCToTradingViewFormat]);
+  }, [
+    chartDataForSelected,
+    ohlcData,
+    selectedChartType,
+    selectedTimeframe,
+    convertToTradingViewFormat,
+    convertOHLCToTradingViewFormat,
+    convertOHLCToLineFormat,
+  ]);
 
   const [ref, width] = useStableWidth();
 

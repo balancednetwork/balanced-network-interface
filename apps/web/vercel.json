@@ -37,9 +37,12 @@
       "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
     },
     {
-      "source": "/api/:path*",
+      "source": "/api/analytics/:path*",
       "destination": "https://plausible.io/api/:path*"
     },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }

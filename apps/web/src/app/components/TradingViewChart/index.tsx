@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -14,6 +14,7 @@ import {
 } from 'lightweight-charts';
 import { usePrevious } from 'react-use';
 import styled from 'styled-components';
+import { formatPrice } from '../../../utils/formatter';
 
 export enum CHART_PERIODS {
   '15m' = '15m',
@@ -33,7 +34,7 @@ const Wrapper = styled.div`
 `;
 
 // constant height for charts
-export const HEIGHT = 260;
+export const HEIGHT = 320;
 
 const AreaOption: DeepPartial<ChartOptions> = {
   height: HEIGHT,
@@ -54,9 +55,26 @@ const AreaOption: DeepPartial<ChartOptions> = {
   },
   timeScale: {
     borderColor: '#304a68',
+    rightOffset: 0,
+    barSpacing: 6,
+    lockVisibleTimeRangeOnResize: true,
+    rightBarStaysOnScroll: true,
+    timeVisible: true,
+    secondsVisible: false,
+  },
+  handleScroll: {
+    mouseWheel: false,
+    pressedMouseMove: false,
+    horzTouchDrag: false, // Disable horizontal touch drag to prevent mobile scrolling
+    vertTouchDrag: false,
+  },
+  handleScale: {
+    axisPressedMouseMove: false,
+    mouseWheel: false,
+    pinch: false,
   },
   crosshair: {
-    mode: CrosshairMode.Magnet,
+    mode: CrosshairMode.Normal,
   },
   localization: {
     timeFormatter: (time: BusinessDay | UTCTimestamp) => {
@@ -66,7 +84,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
 
       return dayjs(time * 1000).format('DD MMM YY hh:mma');
     },
-    priceFormatter: price => new BigNumber(price).dp(4).toFormat(),
+    priceFormatter: price => formatPrice(price),
   },
 };
 
@@ -91,6 +109,23 @@ const CandleOption: DeepPartial<ChartOptions> = {
   },
   timeScale: {
     borderColor: '#304a68',
+    rightOffset: 0,
+    barSpacing: 6,
+    lockVisibleTimeRangeOnResize: true,
+    rightBarStaysOnScroll: true,
+    timeVisible: true,
+    secondsVisible: false,
+  },
+  handleScroll: {
+    mouseWheel: false,
+    pressedMouseMove: false,
+    horzTouchDrag: false, // Disable horizontal touch drag to prevent mobile scrolling
+    vertTouchDrag: false,
+  },
+  handleScale: {
+    axisPressedMouseMove: false,
+    mouseWheel: false,
+    pinch: false,
   },
   crosshair: {
     mode: CrosshairMode.Normal,
@@ -103,7 +138,7 @@ const CandleOption: DeepPartial<ChartOptions> = {
 
       return dayjs(time * 1000).format('DD MMM YY hh:mm a');
     },
-    priceFormatter: price => new BigNumber(price).dp(4).toFormat(),
+    priceFormatter: price => formatPrice(price),
   },
 };
 
@@ -115,6 +150,26 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
   const [chartCreated, setChartCreated] = useState<IChartApi | null>(null);
 
   const dataPrev = usePrevious(data);
+
+  // Track the last formatted price to detect crosshair vs regular ticks
+  const lastFormattedPrice = useRef<string>('');
+  const isCrosshairPrice = useRef<boolean>(false);
+
+  // Custom price formatter that detects crosshair vs regular ticks
+  const priceFormatter = useCallback((price: number) => {
+    const formatted = formatPrice(price);
+
+    // If this is the same price as last time, it's likely a crosshair update
+    if (lastFormattedPrice.current === formatted) {
+      isCrosshairPrice.current = true;
+      return formatted; // Don't pad crosshair prices
+    }
+
+    // Different price, likely a regular tick
+    lastFormattedPrice.current = formatted;
+    isCrosshairPrice.current = false;
+    return formatted.padEnd(10, ' '); // Pad regular ticks
+  }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -132,10 +187,16 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
     if (data && ref.current) {
-      const chart = createChart(
-        ref.current,
-        type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
-      );
+      const chartOptions =
+        type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption };
+
+      // Override the priceFormatter with our custom one
+      chartOptions.localization = {
+        ...chartOptions.localization,
+        priceFormatter: priceFormatter,
+      };
+
+      const chart = createChart(ref.current, chartOptions);
 
       if (type === CHART_TYPES.CANDLE) {
         const candleSeries = chart.addCandlestickSeries({
@@ -145,6 +206,8 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
           borderUpColor: 'rgba(44, 169, 183, 1)',
           wickDownColor: '#fb6a6a',
           wickUpColor: 'rgba(44, 169, 183, 1)',
+          priceLineVisible: false,
+          lastValueVisible: true,
         });
 
         candleSeries.setData(data);
@@ -169,6 +232,8 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
           bottomColor: 'rgba(44, 169, 183, 0.04)',
           lineColor: 'rgba(44, 169, 183, 1)',
           lineWidth: 2,
+          priceLineVisible: false,
+          lastValueVisible: true,
         });
         series.setData(data);
       }
@@ -184,7 +249,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
         setChartCreated(null);
       };
     }
-  }, [data, type, width, volumeData]);
+  }, [data, type, width, volumeData, priceFormatter]);
 
   // responsiveness
   useEffect(() => {

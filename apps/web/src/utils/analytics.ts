@@ -12,8 +12,9 @@ export type AnalyticsEventName =
   | 'savings_withdrawal'
   | 'liquidity_deposit'
   | 'liquidity_withdrawal'
-  | 'swap_intent_v2'
-  | 'wallet_connected';
+  | 'wallet_connected'
+  | 'coingecko_limit_hit'
+  | 'swap_intent_v2';
 
 // Type for Plausible instance
 export type PlausibleInstance = ReturnType<typeof Plausible>;

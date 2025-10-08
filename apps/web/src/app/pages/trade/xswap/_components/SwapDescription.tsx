@@ -25,9 +25,9 @@ import { formatPrice, formatSymbol } from '@/utils/formatter';
 
 // Timeframe options
 const TIMEFRAMES = {
-  '7d': { label: 'Week', days: 7 },
-  '1m': { label: 'Month', days: 30 },
-  '6m': { label: '6 Months', days: 180 },
+  '7d': { label: '1 week', days: 7 },
+  '1m': { label: '1 month', days: 30 },
+  '6m': { label: '6 months', days: 180 },
   max: { label: 'All time', days: 'max' },
 } as const;
 

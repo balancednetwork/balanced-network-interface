@@ -222,14 +222,14 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   },
   {
     symbol: 'cbBTC',
-    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+    pythId: '2817d7bfe5c64b8ea956e9a26f573ef64e72e4d7891f2d6af9bcc93f7aff9a97',
   },
   {
     symbol: 'tBTC',
     pythId: '56a3121958b01f99fdc4e1fd01e81050602c7ace3a571918bb55c6a96657cca9',
   },
   {
-    symbol: 'wBTC',
+    symbol: 'WBTC',
     pythId: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
   },
   {

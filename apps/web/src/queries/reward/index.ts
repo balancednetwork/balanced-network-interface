@@ -188,7 +188,7 @@ export const useRatesWithOracle = () => {
     });
 
     // add WBTC price
-    combinedRates['WBTC'] = combinedRates['BTC'];
+    // combinedRates['WBTC'] = combinedRates['BTC'];
 
     if (combinedRates['bnUSD(old)'] && !combinedRates['bnUSD']) {
       combinedRates['bnUSD'] = combinedRates['bnUSD(old)'];

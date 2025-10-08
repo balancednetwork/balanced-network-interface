@@ -35,7 +35,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },
     {
-      "address": "cx0000000000000000000000000000000000000011",
+      "address": "cx0000000000000000000000000000000000000088",
       "chainId": 1,
       "name": "Balanced Dollar",
       "symbol": "bnUSD",
@@ -281,6 +281,14 @@
       "symbol": "tBTC",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tbtc.png"
+    },
+    {
+      "address": "cx0000000000000000000000000000000000000033",
+      "chainId": 1,
+      "name": "Wrapped BTC",
+      "symbol": "WBTC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/wbtc.png"
     },
     {
       "address": "cxb940dbfbc45c92f3a0cde464c4331102e7a84da8",

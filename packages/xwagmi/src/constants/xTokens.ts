@@ -222,7 +222,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x2105.base', 8453, '0xAcfab3F31C0a18559D78556BBf297EC29c6cf8aa', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x2105.base', 8453, '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0x2105.base', 8453, '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452', 18, 'wstETH', 'Wrapped stETH'),
-    new XToken('0x2105.base', 8453, '0x2803a23a3BA6b09e57D1c71deC0D9eFdBB00A27F', 8, 'cbBTC', 'Coinbase BTC'),
+    new XToken('0x2105.base', 8453, '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf', 8, 'cbBTC', 'Coinbase BTC'),
     new XToken(
       '0x2105.base',
       8453,

@@ -34,7 +34,7 @@ export const COINGECKO_COIN_IDS = {
   SOL: 'solana',
   // JitoSOL: 'jito-staked-sol', // Need to verify
   // SODA: '', // Not confirmed on CoinGecko
-  // cbBTC: 'coinbase-wrapped-btc', // Need to verify
+  cbBTC: 'coinbase-wrapped-btc',
   vSUI: 'volo-staked-sui',
   haSUI: 'haedal-staked-sui',
   afSUI: 'aftermath-staked-sui',

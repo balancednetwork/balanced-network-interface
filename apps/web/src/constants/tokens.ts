@@ -222,7 +222,7 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   },
   {
     symbol: 'cbBTC',
-    pythId: 'e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+    pythId: '2817d7bfe5c64b8ea956e9a26f573ef64e72e4d7891f2d6af9bcc93f7aff9a97',
   },
   {
     symbol: 'tBTC',

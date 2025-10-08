@@ -229,7 +229,7 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
     pythId: '56a3121958b01f99fdc4e1fd01e81050602c7ace3a571918bb55c6a96657cca9',
   },
   {
-    symbol: 'wBTC',
+    symbol: 'WBTC',
     pythId: 'c9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
   },
   {

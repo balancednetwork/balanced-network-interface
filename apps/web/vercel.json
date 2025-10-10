@@ -37,6 +37,10 @@
       "destination": "/api/coingecko.js"
     },
     {
+      "source": "/api",
+      "destination": "https://plausible.io/api"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://plausible.io/api/:path*"
     },

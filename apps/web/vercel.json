@@ -33,11 +33,15 @@
   ],
   "rewrites": [
     {
-      "source": "/js/script.pageview-props.tagged-events.js",
-      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
+      "source": "/api/coingecko",
+      "destination": "/api/coingecko.js"
     },
     {
-      "source": "/api/analytics/:path*",
+      "source": "/api",
+      "destination": "https://plausible.io/api"
+    },
+    {
+      "source": "/api/:path*",
       "destination": "https://plausible.io/api/:path*"
     },
     {

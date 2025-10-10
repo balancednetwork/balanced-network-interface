@@ -67,6 +67,17 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
           changeOrigin: true,
           secure: false,
         },
+        '/api/analytics': {
+          target: 'https://plausible.io',
+          changeOrigin: true,
+          secure: true,
+          rewrite: path => path.replace(/^\/api\/analytics/, '/api'),
+        },
+        '/js/script.pageview-props.tagged-events.js': {
+          target: 'https://plausible.io',
+          changeOrigin: true,
+          secure: true,
+        },
       },
     },
     define: {

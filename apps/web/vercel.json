@@ -33,12 +33,12 @@
   ],
   "rewrites": [
     {
-      "source": "/api/analytics/:path*",
-      "destination": "https://plausible.io/api/:path*"
-    },
-    {
       "source": "/api/coingecko",
       "destination": "/api/coingecko.js"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://plausible.io/api/:path*"
     },
     {
       "source": "/((?!api/).*)",

@@ -33,10 +33,6 @@
   ],
   "rewrites": [
     {
-      "source": "/js/script.pageview-props.tagged-events.js",
-      "destination": "https://plausible.io/js/script.pageview-props.tagged-events.js"
-    },
-    {
       "source": "/api/analytics/:path*",
       "destination": "https://plausible.io/api/:path*"
     },

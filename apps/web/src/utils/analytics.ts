@@ -23,6 +23,6 @@ export type PlausibleInstance = ReturnType<typeof Plausible>;
 export const createPlausibleInstance = (domain: string) => {
   return Plausible({
     domain,
-    apiHost: window.location.origin + '/api', // Use the proxy path for analytics
+    apiHost: window.location.origin + '/api/analytics', // Use the proxy path for analytics
   });
 };

@@ -42,7 +42,7 @@ type MigrationModalProps = {
   outputCurrency?: Currency;
   inputAmount?: string;
   outputAmount?: string;
-  migrationType?: 'bnUSD' | 'ICX';
+  migrationType?: 'bnUSD' | 'ICX' | 'BALN';
   sourceChain?: XChainId;
   receiverChain?: XChainId;
   revert: boolean;
@@ -188,6 +188,12 @@ const MigrationModal = ({
     if (migrationType === 'bnUSD') {
       return createBnUSDMigrationParams(true, inputAmount, inputCurrency, accountReceiver.address);
     }
+
+    if (migrationType === 'BALN') {
+      // For BALN migration, we'll need to implement the BALN-specific logic
+      // This is a placeholder for now
+      return undefined;
+    }
   }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, createBnUSDMigrationParams]);
 
   // Use allowance hook for ICX revert migration
@@ -270,6 +276,10 @@ const MigrationModal = ({
             throw result.error;
           }
         }
+      } else if (migrationType === 'BALN') {
+        // BALN migration logic - placeholder for now
+        // This would need to be implemented with the actual BALN migration SDK call
+        throw new Error('BALN migration not yet implemented');
       }
 
       setMigrationStatus(MigrationStatus.Success);

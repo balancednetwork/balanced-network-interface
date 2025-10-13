@@ -68,7 +68,7 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarValue: boolean }>`
+const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarValue: boolean; disabled?: boolean }>`
   flex: 1;
   width: 100%;
   height: ${({ $showDollarValue }) => ($showDollarValue ? '50px' : '43px')};
@@ -116,6 +116,7 @@ interface CurrencyInputPanelProps {
   showCommunityListControl?: boolean;
   showDollarValue?: boolean;
   showWarning?: boolean;
+  disabled?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -141,6 +142,7 @@ export default function CurrencyInputPanel({
   showCommunityListControl = true,
   showDollarValue = true,
   showWarning = false,
+  disabled = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -281,6 +283,7 @@ export default function CurrencyInputPanel({
           onChange={event => {
             enforcer(event.target.value.replace(/,/g, '.'));
           }}
+          disabled={disabled}
           // universal input options
           inputMode="decimal"
           title="Token Amount"

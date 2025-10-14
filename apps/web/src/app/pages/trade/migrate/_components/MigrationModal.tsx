@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
@@ -311,6 +311,8 @@ const MigrationModal = ({
           lockupPeriod,
         );
 
+        console.log('migrationParams', migrationParams);
+
         const result = await sodax.migration.migrateBaln(
           migrationParams,
           sourceSpokeProvider as IconSpokeProvider,
@@ -345,7 +347,23 @@ const MigrationModal = ({
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
-          {1} {inputCurrency?.symbol} = {1} {outputCurrency?.symbol}
+          {migrationType === 'BALN' && lockupPeriod !== undefined
+            ? (() => {
+                // Calculate the multiplier based on lockup period
+                let multiplier = 0.75; // Default 6 months
+                if (lockupPeriod === 0)
+                  multiplier = 0.5; // No lockup
+                else if (lockupPeriod === 6 * 30 * 24 * 60 * 60)
+                  multiplier = 0.75; // 6 months
+                else if (lockupPeriod === 12 * 30 * 24 * 60 * 60)
+                  multiplier = 1.0; // 12 months
+                else if (lockupPeriod === 18 * 30 * 24 * 60 * 60)
+                  multiplier = 1.25; // 18 months
+                else if (lockupPeriod === 24 * 30 * 24 * 60 * 60) multiplier = 1.5; // 24 months
+
+                return `1 ${inputCurrency?.symbol} = ${multiplier} ${outputCurrency?.symbol}`;
+              })()
+            : `1 ${inputCurrency?.symbol} = 1 ${outputCurrency?.symbol}`}
         </Typography>
 
         <Flex mt={4}>
@@ -379,6 +397,22 @@ const MigrationModal = ({
             </Typography>
           </Box>
         </Flex>
+
+        {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
+          <Box mt={4}>
+            <Typography textAlign="center" color="text2">
+              {t`Your SODA will be unlocked on ${(() => {
+                const now = new Date();
+                const unlockTime = new Date(now.getTime() + lockupPeriod * 1000);
+                return unlockTime.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                });
+              })()}`}
+            </Typography>
+          </Box>
+        )}
 
         {showSolanaWarning && (
           <Typography textAlign="center" mt="30px">

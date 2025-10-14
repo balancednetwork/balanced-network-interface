@@ -737,10 +737,9 @@ function MigrateDescription({
       case 'BALN':
         return {
           title: 'BALN <> SODA',
-          equivalence: currentLockupOption
-            ? `1 BALN = ${(currentLockupOption.multiplier / 10000).toFixed(2)} SODA`
-            : '1 BALN = 0.75 - 1.5 SODA',
+          equivalence: '1 BALN = 0.5 - 1.5 SODA',
           description: <>Migrate BALN to SODA and lock it for up to 2 years to increase your exchange rate.</>,
+          pendingMigrations: [],
         };
       default:
         return {
@@ -780,6 +779,28 @@ function MigrateDescription({
           <Typography variant="p" color="text2" mt={3}>
             {content.importantNote}
           </Typography>
+        )}
+        {content.pendingMigrations && (
+          <Box mt={4}>
+            {/* <Typography variant="h4" mb={3} textAlign="center" fontWeight="bold">
+              Pending BALN &gt; SODA migrations
+            </Typography> */}
+            {/* {content.pendingMigrations.map((migration, index) => (
+              <Flex key={index} alignItems="center" justifyContent="space-between" mb={2}>
+                <Box>
+                  <Typography variant="p" color="text2">
+                    {migration.balnAmount} BALN for {migration.sodaAmount} SODA
+                  </Typography>
+                  <Typography variant="p" color="text2" fontSize="12px">
+                    + {migration.stakingRewards} SODA from staking rewards
+                  </Typography>
+                </Box>
+                <Typography variant="p" color="text2" fontSize="12px">
+                  Unlocks {migration.unlockDate}
+                </Typography>
+              </Flex>
+            ))} */}
+          </Box>
         )}
       </Box>
     </Flex>
@@ -847,6 +868,7 @@ export function MigratePage() {
         receiverChain={migrationState.outputChain}
         revert={migrationState.revert}
         showSolanaWarning={showSolanaWarning}
+        lockupPeriod={migrationState.migrationType === 'BALN' ? migrationState.lockupPeriod : undefined}
       />
     </>
   );

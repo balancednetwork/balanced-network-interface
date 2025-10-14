@@ -33,6 +33,7 @@ import {
   SonicSpokeProvider,
   SpokeChainId,
   UnifiedBnUSDMigrateParams,
+  BalnMigrateParams,
 } from '@sodax/sdk';
 import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 
@@ -47,6 +48,7 @@ type MigrationModalProps = {
   receiverChain?: XChainId;
   revert: boolean;
   showSolanaWarning?: boolean;
+  lockupPeriod?: number; // Lockup period in seconds for BALN migration
 };
 
 enum MigrationStatus {
@@ -67,6 +69,7 @@ const MigrationModal = ({
   migrationType = 'bnUSD',
   revert,
   showSolanaWarning = false,
+  lockupPeriod,
 }: MigrationModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
@@ -167,6 +170,26 @@ const MigrationModal = ({
         address: 'cx0000000000000000000000000000000000000000' as IcxTokenType,
         amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
         to: toAddress as `0x${string}`,
+      };
+    },
+    [],
+  );
+
+  /**
+   * Helper function to create BALN migration parameters
+   * @param amount - Amount to migrate as string
+   * @param currency - Currency object containing decimals
+   * @param toAddress - Destination address
+   * @param lockupPeriodSeconds - Lockup period in seconds
+   * @returns BalnMigrateParams object
+   */
+  const createBalnMigrationParams = useCallback(
+    (amount: string, currency: Currency, toAddress: string, lockupPeriodSeconds: number): BalnMigrateParams => {
+      return {
+        amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
+        lockupPeriod: lockupPeriodSeconds, // Use seconds directly
+        to: toAddress as `0x${string}`,
+        stake: lockupPeriodSeconds !== 0,
       };
     },
     [],
@@ -277,9 +300,28 @@ const MigrationModal = ({
           }
         }
       } else if (migrationType === 'BALN') {
-        // BALN migration logic - placeholder for now
-        // This would need to be implemented with the actual BALN migration SDK call
-        throw new Error('BALN migration not yet implemented');
+        if (!lockupPeriod && lockupPeriod !== 0) {
+          throw new Error('Lockup period is required for BALN migration');
+        }
+
+        const migrationParams = createBalnMigrationParams(
+          inputAmount,
+          inputCurrency,
+          accountReceiver.address,
+          lockupPeriod,
+        );
+
+        const result = await sodax.migration.migrateBaln(
+          migrationParams,
+          sourceSpokeProvider as IconSpokeProvider,
+          30000, // 30 second timeout
+        );
+
+        if (result.ok) {
+          console.log('BALN migration successful!');
+        } else {
+          throw result.error;
+        }
       }
 
       setMigrationStatus(MigrationStatus.Success);

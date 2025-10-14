@@ -3,6 +3,7 @@ import React from 'react';
 import { Currency, CurrencyAmount, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
+import { useSearchParams } from 'react-router-dom';
 
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
@@ -87,13 +88,20 @@ const StyledUnderlineText = styled(UnderlineText)`
 `;
 
 function useMigrationState() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [inputValue, setInputValue] = React.useState('');
   const ICX = useICX();
+
+  // Get migration type from URL or default to 'bnUSD'
+  const urlMigrationType = searchParams.get('type') as MigrationType;
+  const initialMigrationType =
+    urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) ? urlMigrationType : 'bnUSD';
+
   const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[0]);
   const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD_new[0]);
   const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
   const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
-  const [migrationType, setMigrationType] = React.useState<MigrationType>('bnUSD');
+  const [migrationType, setMigrationType] = React.useState<MigrationType>(initialMigrationType);
   const [revert, setRevert] = React.useState<boolean>(false);
   const [currencySelectionInput, setCurrencySelectionInput] = React.useState<CurrencySelectionType>(
     CurrencySelectionType.MIGRATE_BNUSD_OLD,
@@ -130,6 +138,17 @@ function useMigrationState() {
     [inputPercent],
   );
 
+  const setMigrationTypeCB = React.useCallback(
+    (type: MigrationType) => {
+      setMigrationType(type);
+      // Update URL with the new migration type
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('type', type);
+      setSearchParams(newSearchParams, { replace: true });
+    },
+    [searchParams, setSearchParams],
+  );
+
   const onTokenSwitch = React.useCallback(() => {
     const prevInputCurrency = inputCurrency;
     const prevInputChain = inputChain;
@@ -147,6 +166,14 @@ function useMigrationState() {
   const onInputPercentSelect = React.useCallback((percent: number) => {
     setInputPercent(percent);
   }, []);
+
+  // Handle URL changes to update migration type
+  React.useEffect(() => {
+    const urlMigrationType = searchParams.get('type') as MigrationType;
+    if (urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) && urlMigrationType !== migrationType) {
+      setMigrationType(urlMigrationType);
+    }
+  }, [searchParams, migrationType]);
 
   React.useEffect(() => {
     if (migrationType === 'bnUSD') {
@@ -184,7 +211,7 @@ function useMigrationState() {
     inputValue,
     setInputValue: setInputValueCB,
     migrationType,
-    setMigrationType,
+    setMigrationType: setMigrationTypeCB,
     onTokenSwitch,
     onInputPercentSelect,
     inputPercent,

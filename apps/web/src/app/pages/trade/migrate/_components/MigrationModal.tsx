@@ -311,8 +311,6 @@ const MigrationModal = ({
           lockupPeriod,
         );
 
-        console.log('migrationParams', migrationParams);
-
         const result = await sodax.migration.migrateBaln(
           migrationParams,
           sourceSpokeProvider as IconSpokeProvider,
@@ -366,6 +364,19 @@ const MigrationModal = ({
             : `1 ${inputCurrency?.symbol} = 1 ${outputCurrency?.symbol}`}
         </Typography>
 
+        {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
+          <Typography textAlign="center" color="text2" mt={'1px'}>
+            {t`Lock-up time: ${(() => {
+              if (lockupPeriod === 0) return 'No lock-up';
+              else if (lockupPeriod === 6 * 30 * 24 * 60 * 60) return '6 months';
+              else if (lockupPeriod === 12 * 30 * 24 * 60 * 60) return '12 months';
+              else if (lockupPeriod === 18 * 30 * 24 * 60 * 60) return '18 months';
+              else if (lockupPeriod === 24 * 30 * 24 * 60 * 60) return '24 months';
+              else return '6 months'; // Default fallback
+            })()}`}
+          </Typography>
+        )}
+
         <Flex mt={4}>
           <Box width={1 / 2} className="border-right">
             <Typography textAlign="center">
@@ -401,7 +412,7 @@ const MigrationModal = ({
         {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
           <Box mt={4}>
             <Typography textAlign="center" color="text2">
-              {t`Your SODA will be unlocked on ${(() => {
+              {t`You'll receive your SODA tokens on ${(() => {
                 const now = new Date();
                 const unlockTime = new Date(now.getTime() + lockupPeriod * 1000);
                 return unlockTime.toLocaleDateString('en-US', {

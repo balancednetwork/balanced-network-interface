@@ -734,7 +734,7 @@ function MigrateDescription({
           importantNote: (
             <>
               If you hold bnUSD(old) on a chain other than ICON, Stellar, or Sui, you'll need to transfer it via the{' '}
-              <a href="/trade-legacy" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
+              <a href="/trade-legacy/bridge" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
                 <StyledUnderlineText>legacy exchange</StyledUnderlineText>
               </a>{' '}
               before you can migrate.

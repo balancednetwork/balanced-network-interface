@@ -40,7 +40,7 @@ import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 
 export type MigrationType = 'bnUSD' | 'ICX' | 'BALN';
 
-const MIGRATION_TYPES: MigrationType[] = ['bnUSD', 'ICX', 'BALN'];
+const MIGRATION_TYPES: MigrationType[] = ['BALN', 'bnUSD', 'ICX'];
 
 // Lockup multiplier constants (from sodax/sdk)
 enum LockupMultiplier {
@@ -76,9 +76,9 @@ function findTokenBySymbol(symbol: string): Currency | undefined {
 }
 
 const MIGRATION_LABELS: Record<MigrationType, string> = {
+  BALN: 'BALN > SODA',
   bnUSD: 'bnUSD (old <> new)',
   ICX: 'ICX <> SODA',
-  BALN: 'BALN <> SODA',
 };
 
 const StyledUnderlineText = styled(UnderlineText)`
@@ -95,7 +95,7 @@ function useMigrationState() {
   // Get migration type from URL or default to 'bnUSD'
   const urlMigrationType = searchParams.get('type') as MigrationType;
   const initialMigrationType =
-    urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) ? urlMigrationType : 'bnUSD';
+    urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) ? urlMigrationType : 'BALN';
 
   const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[0]);
   const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD_new[0]);

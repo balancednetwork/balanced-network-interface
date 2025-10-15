@@ -763,10 +763,48 @@ function MigrateDescription({
         };
       case 'BALN':
         return {
-          title: 'BALN <> SODA',
+          title: 'BALN > SODA',
           equivalence: '1 BALN = 0.5 - 1.5 SODA',
-          description: <>Migrate BALN to SODA and lock it for up to 2 years to increase your exchange rate.</>,
-          pendingMigrations: [],
+          description: (
+            <>
+              <Typography variant="p" color="text2" mb={2}>
+                Balanced is transitioning to a new technology stack, powered by{' '}
+                <a
+                  href="https://www.sodax.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: theme.colors.primary }}
+                >
+                  <StyledUnderlineText>SODAX</StyledUnderlineText>
+                </a>
+                .
+              </Typography>
+              <Typography variant="p" color="text2" mb={2}>
+                <a
+                  href="https://blog.balanced.network/governance-retirement/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: theme.colors.primary }}
+                >
+                  <StyledUnderlineText>Governance has been removed</StyledUnderlineText>
+                </a>{' '}
+                and BALN will be retired, so you can now migrate your BALN to SODA (rate varies based on the lock-up
+                time).
+              </Typography>
+              <Typography variant="p" color="text2" mb={2}>
+                If you lock up SODA, you'll also receive a share of the Balanced DAO Fund and earn SODA staking rewards.
+              </Typography>
+            </>
+          ),
+          importantNote: (
+            <>
+              BALN not on ICON, Stellar, or Sui? Use the{' '}
+              <a href="/trade-legacy" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
+                <StyledUnderlineText>legacy exchange</StyledUnderlineText>
+              </a>{' '}
+              to transfer it.
+            </>
+          ),
         };
       default:
         return {
@@ -806,28 +844,6 @@ function MigrateDescription({
           <Typography variant="p" color="text2" mt={3}>
             {content.importantNote}
           </Typography>
-        )}
-        {content.pendingMigrations && (
-          <Box mt={4}>
-            {/* <Typography variant="h4" mb={3} textAlign="center" fontWeight="bold">
-              Pending BALN &gt; SODA migrations
-            </Typography> */}
-            {/* {content.pendingMigrations.map((migration, index) => (
-              <Flex key={index} alignItems="center" justifyContent="space-between" mb={2}>
-                <Box>
-                  <Typography variant="p" color="text2">
-                    {migration.balnAmount} BALN for {migration.sodaAmount} SODA
-                  </Typography>
-                  <Typography variant="p" color="text2" fontSize="12px">
-                    + {migration.stakingRewards} SODA from staking rewards
-                  </Typography>
-                </Box>
-                <Typography variant="p" color="text2" fontSize="12px">
-                  Unlocks {migration.unlockDate}
-                </Typography>
-              </Flex>
-            ))} */}
-          </Box>
         )}
       </Box>
     </Flex>

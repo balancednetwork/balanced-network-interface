@@ -502,6 +502,10 @@ msgstr ""
 #~ msgid "Claiming Balanced incentives..."
 #~ msgstr ""
 
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Unlock date:"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
 msgstr ""
@@ -1085,6 +1089,10 @@ msgstr ""
 #~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 #~ msgstr ""
 
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Lock-up time:"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
 msgstr ""
@@ -1499,6 +1507,10 @@ msgstr ""
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "No assets available."
 #~ msgstr ""
+
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Exchange rate:"
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Fee"
@@ -2155,6 +2167,10 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be converted to sICX (Staked ICX)."
+msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "You'll receive your SODA tokens on {0}"
 msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -3131,6 +3147,10 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Lock-up time: {0}"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx

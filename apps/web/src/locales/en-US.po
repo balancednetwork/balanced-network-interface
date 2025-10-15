@@ -504,6 +504,10 @@ msgstr "Confirm"
 #~ msgid "Claiming Balanced incentives..."
 #~ msgstr "Claiming Balanced incentives..."
 
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Unlock date:"
+msgstr "Unlock date:"
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
 msgstr "Approved"
@@ -1089,6 +1093,10 @@ msgstr "Cross-chain transactions (24H)"
 #~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 #~ msgstr "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Lock-up time:"
+msgstr "Lock-up time:"
+
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
 msgstr "Supply liquidity?"
@@ -1503,6 +1511,10 @@ msgstr "Check that your contract calls are set up correctly before you submit th
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "No assets available."
 #~ msgstr "No assets available."
+
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Exchange rate:"
+msgstr "Exchange rate:"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Fee"
@@ -2162,6 +2174,10 @@ msgstr "Sending {0}..."
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr "Your ICX will be converted to sICX (Staked ICX)."
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "You'll receive your SODA tokens on {0}"
+msgstr "You'll receive your SODA tokens on {0}"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
@@ -3140,6 +3156,10 @@ msgstr "All collateral locked"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
 msgstr "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Lock-up time: {0}"
+msgstr "Lock-up time: {0}"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx

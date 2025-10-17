@@ -26,7 +26,7 @@ import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { FlipButton } from '../xswap/_components/SwapPanel';
-import { MigrationModal } from './_components';
+import { MigrationModal, PendingMigrations } from './_components';
 import {
   getXChainType,
   useValidateStellarAccount,
@@ -846,6 +846,9 @@ function MigrateDescription({
           </Typography>
         )}
       </Box>
+
+      {/* Show pending migrations for BALN migration type */}
+      {migrationType === 'BALN' && <PendingMigrations />}
     </Flex>
   );
 }

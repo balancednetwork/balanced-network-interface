@@ -193,7 +193,7 @@ function useMigrationState() {
       setOutputChain('sonic');
       setRevert(false);
     } else if (migrationType === 'BALN') {
-      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_BNUSD_OLD); // We'll need to add BALN specific types
+      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_ICX); // We'll need to add BALN specific types
       setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_SODAX);
       setInputCurrency(BALN[1]);
       setInputChain('0x1.icon');
@@ -798,7 +798,7 @@ function MigrateDescription({
           ),
           importantNote: (
             <>
-              BALN not on ICON, Stellar, or Sui? Use the{' '}
+              BALN not on ICON? Use the{' '}
               <a href="/trade-legacy" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
                 <StyledUnderlineText>legacy exchange</StyledUnderlineText>
               </a>{' '}

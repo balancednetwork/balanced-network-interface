@@ -28,13 +28,20 @@ export function usePendingMigrations(userAddress?: string): UseQueryResult<reado
   );
 
   const address = userAddress || evmAccount?.address;
+  const isSignedIn = !!evmAccount?.address;
 
   return useQuery({
-    queryKey: ['pendingMigrations', address],
-    queryFn: () => fetchPendingMigrations(address!),
-    enabled: !!address && !!publicClient,
+    queryKey: ['pendingMigrations', address, isSignedIn],
+    queryFn: () => {
+      // If not signed in or no address, return empty array
+      if (!isSignedIn || !address) {
+        return Promise.resolve([]);
+      }
+      return fetchPendingMigrations(address);
+    },
+    enabled: !!address && !!publicClient && isSignedIn,
     refetchInterval: 2000, // Refetch every 2 seconds
-    placeholderData: keepPreviousData,
+    placeholderData: isSignedIn ? keepPreviousData : undefined,
     staleTime: 1000, // Consider data stale after 1 second
   });
 }

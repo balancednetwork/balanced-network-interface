@@ -4,16 +4,35 @@ import { Typography } from '@/app/theme';
 import styled from 'styled-components';
 import Divider from '@/app/components/Divider';
 import { usePendingMigrations } from '@/hooks/usePendingMigrations';
+import { useXAccount } from '@balancednetwork/xwagmi';
 
 const Migrations = styled(Box)`
   max-height: 125px;
   overflow-y: auto;
+  
+  @media (max-width: 550px) {
+    max-height: 500px;
+  }
 `;
 
 const MigrationItem = styled(Flex)`
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
+  .unlock-date {
+    text-align: right;
+    padding-left: 20px;
+  }
+
+  @media (max-width: 550px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    .unlock-date {
+      text-align: left;
+      padding-left: 0;
+    }
+  }
 `;
 
 interface PendingMigrationsProps {
@@ -21,7 +40,13 @@ interface PendingMigrationsProps {
 }
 
 const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) => {
+  const evmAccount = useXAccount('EVM');
   const { data: pendingMigrations = [], isLoading: loading, error } = usePendingMigrations(userAddress);
+
+  // If user is not signed in, don't show anything
+  if (!evmAccount?.address) {
+    return null;
+  }
 
   const formatUnlockDate = (unlockTime: number | string | bigint) => {
     try {
@@ -106,10 +131,10 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
         {pendingMigrations.map((migration, index) => {
           return (
             <MigrationItem key={index}>
-              <Typography color="text" fontSize={16}>
+              <Typography color="text" fontSize={16} textAlign="left">
                 {formatAmount(migration.balnAmount)} BALN for {formatAmount(migration.stakedSodaAmount)} SODA
               </Typography>
-              <Typography color="text2" fontSize={14}>
+              <Typography color="text2" fontSize={14} textAlign="left" className="unlock-date">
                 Unlocks {formatUnlockDate(migration.unlockTime)}
               </Typography>
             </MigrationItem>

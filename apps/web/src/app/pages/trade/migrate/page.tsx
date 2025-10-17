@@ -799,7 +799,7 @@ function MigrateDescription({
           importantNote: (
             <>
               BALN not on ICON? Use the{' '}
-              <a href="/trade-legacy" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
+              <a href="/trade-legacy/bridge" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
                 <StyledUnderlineText>legacy exchange</StyledUnderlineText>
               </a>{' '}
               to transfer it.

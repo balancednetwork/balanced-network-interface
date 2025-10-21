@@ -132,7 +132,8 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
           return (
             <MigrationItem key={index}>
               <Typography color="text" fontSize={16} textAlign="left">
-                {formatAmount(migration.balnAmount)} BALN for {formatAmount(migration.stakedSodaAmount)} SODA
+                {formatAmount(migration.balnAmount)} BALN for{' '}
+                {formatAmount(migration.stakedSodaAmount || migration.sodaAmount)} SODA
               </Typography>
               <Typography color="text2" fontSize={14} textAlign="left" className="unlock-date">
                 Unlocks {formatUnlockDate(migration.unlockTime)}

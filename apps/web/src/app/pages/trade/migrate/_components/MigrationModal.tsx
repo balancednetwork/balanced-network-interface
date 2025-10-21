@@ -189,7 +189,7 @@ const MigrationModal = ({
         amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
         lockupPeriod: lockupPeriodSeconds, // Use seconds directly
         to: toAddress as `0x${string}`,
-        stake: lockupPeriodSeconds !== 0,
+        stake: false,
       };
     },
     [],

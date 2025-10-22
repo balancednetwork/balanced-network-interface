@@ -80,7 +80,7 @@ export default function BALNWithdrawalNotice({ variant = 'hp' }: { variant?: 'hp
             flexDirection={['column', 'column', 'row']}
           >
             <UnderlineText>
-              <Link href="https://blog.balanced.network/" target="_blank" rel="noreferrer">
+              <Link href="https://blog.balanced.network/governance-retirement/" target="_blank" rel="noreferrer">
                 Learn more
               </Link>
             </UnderlineText>

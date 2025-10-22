@@ -794,13 +794,6 @@ function MigrateDescription({
                 Locked SODA holders will receive a share of the DAO Fund in April 2026. You can also stake SODA to earn
                 rewards, but it takes 6 months to unstake.
               </Typography>
-              <Typography variant="p" color="text2" mb={2}>
-                BALN not on ICON? Use the{' '}
-                <a href="/trade-legacy/bridge" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
-                  <StyledUnderlineText>legacy exchange</StyledUnderlineText>
-                </a>{' '}
-                to transfer it.
-              </Typography>
             </>
           ),
           importantNote: (

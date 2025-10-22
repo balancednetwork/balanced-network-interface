@@ -786,13 +786,20 @@ function MigrateDescription({
                   rel="noopener noreferrer"
                   style={{ color: theme.colors.primary }}
                 >
-                  <StyledUnderlineText>Governance has been removed</StyledUnderlineText>
+                  <StyledUnderlineText>Governance has been retired</StyledUnderlineText>
                 </a>{' '}
-                and BALN will be retired, so you can now migrate your BALN to SODA (rate varies based on the lock-up
-                time).
+                so you can now migrate BALN to SODA. Lock it for up to 2 years to get a better rate.
               </Typography>
               <Typography variant="p" color="text2" mb={2}>
-                If you lock up SODA, you'll also receive a share of the Balanced DAO Fund and earn SODA staking rewards.
+                Locked SODA holders will receive a share of the DAO Fund in April 2026. You can also stake SODA to earn
+                rewards, but it takes 6 months to unstake.
+              </Typography>
+              <Typography variant="p" color="text2" mb={2}>
+                BALN not on ICON? Use the{' '}
+                <a href="/trade-legacy/bridge" rel="noopener noreferrer" style={{ color: theme.colors.primary }}>
+                  <StyledUnderlineText>legacy exchange</StyledUnderlineText>
+                </a>{' '}
+                to transfer it.
               </Typography>
             </>
           ),

@@ -21,6 +21,7 @@ import SavingsChainSelector from '../_components/SavingsChainSelector';
 import LPRewards from './LPRewards';
 import NetworkFeesReward from './NetworkFeesRewards';
 import SavingsRewards from './SavingsRewards';
+import BALNWithdrawalNotice from './BALNWithdrawalNotice';
 
 export const StyledBoxPanel = styled(BoxPanel)`
   ${({ theme }) => theme.mediaWidth.upMedium`
@@ -82,15 +83,7 @@ const RewardsPanel = () => {
         </SliderWrap>
         {isMedium ? <Divider my="30px" /> : <VerticalDivider $margin={'3px 50px'} />}
         <SliderWrap>
-          <BBalnSlider
-            title={t`Earning potential`}
-            titleVariant="h4"
-            showMaxRewardsNotice
-            sliderMargin="20px 0 0"
-            simple
-            showGlobalTooltip={showGlobalTooltip}
-            setGlobalTooltip={handleSetGlobalTooltip}
-          />
+          <BALNWithdrawalNotice />
         </SliderWrap>
       </Flex>
       <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">

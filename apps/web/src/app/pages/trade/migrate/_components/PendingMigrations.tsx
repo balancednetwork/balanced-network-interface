@@ -10,6 +10,8 @@ import MigrationItem from './MigrationItem';
 const Migrations = styled(Box)`
   max-height: 125px;
   overflow-y: auto;
+  padding: 0 20px;
+  margin: 0 -20px;
   
   @media (max-width: 550px) {
     max-height: 500px;
@@ -70,7 +72,13 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
 
       <Migrations>
         {pendingMigrations.map((migration, index) => {
-          return <MigrationItem key={index} migration={migration} />;
+          const isLast = index === pendingMigrations.length - 1;
+          return (
+            <React.Fragment key={index}>
+              <MigrationItem migration={migration} />
+              {!isLast && <Divider my={3} />}
+            </React.Fragment>
+          );
         })}
       </Migrations>
     </>

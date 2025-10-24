@@ -4,6 +4,8 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
+import CrossIcon from '@/assets/icons/failure.svg';
+import TickIcon from '@/assets/icons/tick.svg';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
@@ -12,12 +14,20 @@ import { useXAccount } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState, useCallback } from 'react';
 import { Flex } from 'rebass/styled-components';
 import { Flex as FlexBox } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 const UNSTAKE_TIME = 180 * 24 * 60 * 60; // 180 days
+
+enum MigrationStatus {
+  None,
+  Migrating,
+  Success,
+  Failure,
+}
 
 const StyledMigrationItem = styled(Flex)`
   justify-content: space-between;
@@ -260,8 +270,22 @@ const StakeSodaModal: React.FC<{
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
-  const [isLoading, setIsLoading] = useState(false);
+  const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      setMigrationStatus(MigrationStatus.None);
+      setError(null);
+    }, 500);
+  }, [onClose]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 3000);
+  }, [handleDismiss]);
 
   const formatAmount = (amount: string | number | bigint) => {
     try {
@@ -293,7 +317,7 @@ const StakeSodaModal: React.FC<{
       return;
     }
 
-    setIsLoading(true);
+    setMigrationStatus(MigrationStatus.Migrating);
     setError(null);
 
     try {
@@ -312,21 +336,23 @@ const StakeSodaModal: React.FC<{
       }
 
       if (result) {
-        onClose();
+        setMigrationStatus(MigrationStatus.Success);
+        slowDismiss();
       }
     } catch (err) {
       console.error('Staking error:', err);
       setError(err instanceof Error ? err.message : 'Staking failed');
-    } finally {
-      setIsLoading(false);
+      setMigrationStatus(MigrationStatus.Failure);
     }
   };
 
   const handleCancel = () => {
-    if (!isLoading) {
-      onClose();
+    if (migrationStatus !== MigrationStatus.Migrating) {
+      handleDismiss();
     }
   };
+
+  const isProcessing = migrationStatus === MigrationStatus.Migrating;
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
@@ -343,27 +369,70 @@ const StakeSodaModal: React.FC<{
           You'll earn rewards, but unstaking takes 6 months unless you pay a large penalty fee.
         </Typography>
 
-        {error && (
-          <Typography textAlign="center" fontSize={14} mb={3} color="red">
-            Error: {error}
-          </Typography>
-        )}
-
-        <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={handleCancel} fontSize={14} disabled={isLoading}>
-            Cancel
-          </TextButton>
-
-          {isWrongChain ? (
-            <StyledButton onClick={handleSwitchChain} fontSize={14}>
-              Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
-            </StyledButton>
-          ) : (
-            <StyledButton onClick={handleStake} fontSize={14} disabled={isLoading}>
-              {isLoading ? 'Staking...' : 'Stake'}
-            </StyledButton>
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Failure && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Staking failed</Typography>
+                {error ? (
+                  <Typography maxWidth="320px" color="alert" textAlign="center">
+                    {error}
+                  </Typography>
+                ) : (
+                  <CrossIcon width={20} height={20} />
+                )}
+              </FlexBox>
+            </motion.div>
           )}
-        </FlexBox>
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus !== MigrationStatus.Success && (
+            <motion.div
+              key={'stake-actions'}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={handleCancel} fontSize={14}>
+                  {isProcessing || migrationStatus === MigrationStatus.Failure ? 'Close' : 'Cancel'}
+                </TextButton>
+
+                {migrationStatus !== MigrationStatus.Failure &&
+                  (isWrongChain ? (
+                    <StyledButton onClick={handleSwitchChain} fontSize={14}>
+                      Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton onClick={handleStake} fontSize={14} $loading={isProcessing} disabled={isProcessing}>
+                      {isProcessing ? 'Staking...' : 'Stake'}
+                    </StyledButton>
+                  ))}
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Success && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Staking completed</Typography>
+                <TickIcon width={20} height={20} />
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </ModalContent>
     </Modal>
   );
@@ -379,8 +448,22 @@ const UnstakeSodaModal: React.FC<{
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
-  const [isLoading, setIsLoading] = useState(false);
+  const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      setMigrationStatus(MigrationStatus.None);
+      setError(null);
+    }, 500);
+  }, [onClose]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 3000);
+  }, [handleDismiss]);
 
   const formatAmount = (amount: string | number | bigint) => {
     try {
@@ -433,7 +516,7 @@ const UnstakeSodaModal: React.FC<{
       return;
     }
 
-    setIsLoading(true);
+    setMigrationStatus(MigrationStatus.Migrating);
     setError(null);
 
     try {
@@ -452,21 +535,23 @@ const UnstakeSodaModal: React.FC<{
 
       console.log(result);
       if (result) {
-        onClose();
+        setMigrationStatus(MigrationStatus.Success);
+        slowDismiss();
       }
     } catch (err) {
       console.error('Unstaking error:', err);
       setError(err instanceof Error ? err.message : 'Unstaking failed');
-    } finally {
-      setIsLoading(false);
+      setMigrationStatus(MigrationStatus.Failure);
     }
   };
 
   const handleCancel = () => {
-    if (!isLoading) {
-      onClose();
+    if (migrationStatus !== MigrationStatus.Migrating) {
+      handleDismiss();
     }
   };
+
+  const isProcessing = migrationStatus === MigrationStatus.Migrating;
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
@@ -484,27 +569,70 @@ const UnstakeSodaModal: React.FC<{
           <strong style={{ color: 'white' }}>{formatUnlockDate(Math.floor(Date.now() / 1000) + UNSTAKE_TIME)}</strong>.
         </Typography>
 
-        {error && (
-          <Typography textAlign="center" fontSize={14} mb={3} color="red">
-            Error: {error}
-          </Typography>
-        )}
-
-        <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={handleCancel} fontSize={14} disabled={isLoading}>
-            Cancel
-          </TextButton>
-
-          {isWrongChain ? (
-            <StyledButton onClick={handleSwitchChain} fontSize={14}>
-              Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
-            </StyledButton>
-          ) : (
-            <StyledButton onClick={handleUnstake} fontSize={14} disabled={isLoading}>
-              {isLoading ? 'Unstaking...' : 'Unstake'}
-            </StyledButton>
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Failure && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Unstaking failed</Typography>
+                {error ? (
+                  <Typography maxWidth="320px" color="alert" textAlign="center">
+                    {error}
+                  </Typography>
+                ) : (
+                  <CrossIcon width={20} height={20} />
+                )}
+              </FlexBox>
+            </motion.div>
           )}
-        </FlexBox>
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus !== MigrationStatus.Success && (
+            <motion.div
+              key={'unstake-actions'}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={handleCancel} fontSize={14}>
+                  {isProcessing || migrationStatus === MigrationStatus.Failure ? 'Close' : 'Cancel'}
+                </TextButton>
+
+                {migrationStatus !== MigrationStatus.Failure &&
+                  (isWrongChain ? (
+                    <StyledButton onClick={handleSwitchChain} fontSize={14}>
+                      Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton onClick={handleUnstake} fontSize={14} $loading={isProcessing} disabled={isProcessing}>
+                      {isProcessing ? 'Unstaking...' : 'Unstake'}
+                    </StyledButton>
+                  ))}
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Success && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Unstaking completed</Typography>
+                <TickIcon width={20} height={20} />
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </ModalContent>
     </Modal>
   );

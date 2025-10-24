@@ -2182,8 +2182,8 @@ msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr "Your ICX will be converted to sICX (Staked ICX)."
 
 #: src/app/pages/trade/migrate/_components/MigrationModal.tsx
-msgid "You'll receive your SODA tokens on {0}"
-msgstr "You'll receive your SODA tokens on {0}"
+#~ msgid "You'll receive your SODA tokens on {0}"
+#~ msgstr "You'll receive your SODA tokens on {0}"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
@@ -3109,6 +3109,10 @@ msgstr "Position details"
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Deposit bnUSD"
 msgstr "Deposit bnUSD"
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "You'll receive your SODA tokens on"
+msgstr "You'll receive your SODA tokens on"
 
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust allocation"

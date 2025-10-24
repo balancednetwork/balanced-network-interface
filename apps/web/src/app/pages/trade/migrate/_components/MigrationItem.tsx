@@ -4,14 +4,14 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
+import { sodax } from '@/lib/sodax';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXAccount } from '@balancednetwork/xwagmi';
-import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
-import { sodax } from '@/lib/sodax';
-import { useSpokeProvider } from '@/hooks/useSpokeProvider';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 import { xChainMap } from '@balancednetwork/xwagmi';
+import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
+import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 import React, { useState } from 'react';
 import { Flex } from 'rebass/styled-components';
 import { Flex as FlexBox } from 'rebass/styled-components';
@@ -66,8 +66,6 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
   const isStaked = migration.stakedSodaAmount > 0;
   const isLocked = migration.unlockTime > Date.now() / 1000; // Fixed logic - locked means unlockTime is in the future
   const isUnstaking = migration.unstakeRequest.amount > 0;
-
-  console.log(`index: ${index}`, migration);
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -226,8 +224,9 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
               {isUnstaking ? (
                 <span>{`Unstakes ${formatUnlockDate(Number(migration.unstakeRequest.startTime) + UNSTAKE_TIME)}`}</span>
               ) : (
-                <span>{getActionButton()}</span>
+                ''
               )}
+              <span style={{ display: 'inline-block', marginLeft: '7px' }}>{getActionButton()}</span>
             </Typography>
           </div>
         </div>
@@ -298,15 +297,19 @@ const StakeSodaModal: React.FC<{
     setError(null);
 
     try {
-      const result = await sodax.migration.balnSwapService.stake(
-        { lockId: BigInt(index) },
-        spokeProvider as SonicSpokeProvider,
-      );
-      // if (isUnstaking) {
-      //   result = await sodax.migration.balnSwapService.cancelUnstake({lockId: BigInt(index)}, spokeProvider as SonicSpokeProvider)
-      // } else {
-      //   result = await sodax.migration.balnSwapService.stake({lockId: BigInt(index)}, spokeProvider as SonicSpokeProvider)
-      // }
+      let result: string | undefined;
+
+      if (isUnstaking) {
+        result = await sodax.migration.balnSwapService.cancelUnstake(
+          { lockId: BigInt(index) },
+          spokeProvider as SonicSpokeProvider,
+        );
+      } else {
+        result = await sodax.migration.balnSwapService.stake(
+          { lockId: BigInt(index) },
+          spokeProvider as SonicSpokeProvider,
+        );
+      }
 
       if (result) {
         onClose();
@@ -327,13 +330,13 @@ const StakeSodaModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
-      <ModalContent>
+      <ModalContent noMessages>
         <Typography textAlign="center" mb={2}>
           Stake SODA?
         </Typography>
 
         <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={3}>
-          {formatAmount(migration.sodaAmount)} SODA
+          {formatAmount(isUnstaking ? migration.unstakeRequest.amount : migration.sodaAmount)} SODA
         </Typography>
 
         <Typography textAlign="center" fontSize={14} mb={4}>
@@ -467,7 +470,7 @@ const UnstakeSodaModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
-      <ModalContent>
+      <ModalContent noMessages>
         <Typography textAlign="center" mb={2}>
           Unstake SODA?
         </Typography>

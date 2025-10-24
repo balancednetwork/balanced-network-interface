@@ -53,6 +53,7 @@ const StyledMigrationItem = styled(Flex)`
     flex-direction: column;
     gap: 4px;
     text-align: right;
+    padding-left: 20px;
   }
 
   @media (max-width: 550px) {
@@ -63,6 +64,15 @@ const StyledMigrationItem = styled(Flex)`
     
     .right-content {
       text-align: left;
+      padding-left: 0;
+    }
+
+    .staking-button-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content:center;
+      gap: 4px;
     }
   }
 `;
@@ -230,7 +240,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
                 Unstakes {formatUnlockDate(migration.unlockTime)}
               </Typography>
             )}
-            <Typography color="text2" fontSize={14} textAlign="right">
+            <Typography className="staking-button-wrap" color="text2" fontSize={14} textAlign="right">
               {isUnstaking ? (
                 <span>{`Unstakes ${formatUnlockDate(Number(migration.unstakeRequest.startTime) + UNSTAKE_TIME)}`}</span>
               ) : (

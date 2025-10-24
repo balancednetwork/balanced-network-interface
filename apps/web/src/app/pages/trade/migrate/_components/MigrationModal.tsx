@@ -412,16 +412,24 @@ const MigrationModal = ({
         {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
           <Box mt={4}>
             <Typography textAlign="center" color="text2">
-              {t`You'll receive your SODA tokens on ${(() => {
-                const now = new Date();
-                const unlockTime = new Date(now.getTime() + lockupPeriod * 1000);
-                return unlockTime.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                });
-              })()}`}
+              {t`You'll receive your SODA tokens on `}
+              <strong style={{ color: 'white', paddingLeft: '5px' }}>
+                {(() => {
+                  const now = new Date();
+                  const unlockTime = new Date(now.getTime() + lockupPeriod * 1000);
+                  return unlockTime.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  });
+                })()}
+              </strong>
             </Typography>
+            {lockupPeriod !== 0 && (
+              <Typography mt={4} textAlign="center" color="text2">
+                After you migrate, you can stake your locked SODA to earn rewards while you wait.
+              </Typography>
+            )}
           </Box>
         )}
 

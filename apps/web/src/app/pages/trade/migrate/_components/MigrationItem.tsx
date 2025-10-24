@@ -1,15 +1,23 @@
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXAccount } from '@balancednetwork/xwagmi';
-import { DetailedLock } from '@sodax/sdk';
+import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
+import { sodax } from '@/lib/sodax';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
+import { xChainMap } from '@balancednetwork/xwagmi';
 import React, { useState } from 'react';
 import { Flex } from 'rebass/styled-components';
 import { Flex as FlexBox } from 'rebass/styled-components';
 import styled from 'styled-components';
+
+const UNSTAKE_TIME = 180 * 24 * 60 * 60; // 180 days
 
 const StyledMigrationItem = styled(Flex)`
   justify-content: space-between;
@@ -51,11 +59,15 @@ const StyledMigrationItem = styled(Flex)`
 
 interface MigrationItemProps {
   migration: DetailedLock;
+  index: number;
 }
 
-const MigrationItem: React.FC<MigrationItemProps> = ({ migration }) => {
+const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
   const isStaked = migration.stakedSodaAmount > 0;
   const isLocked = migration.unlockTime > Date.now() / 1000; // Fixed logic - locked means unlockTime is in the future
+  const isUnstaking = migration.unstakeRequest.amount > 0;
+
+  console.log(`index: ${index}`, migration);
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -184,7 +196,14 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration }) => {
           <div className="left-content">
             <Typography color="text" fontSize={16} textAlign="left">
               {formatAmount(migration.balnAmount)} BALN for{' '}
-              {formatAmount(isStaked ? migration.stakedSodaAmount : migration.sodaAmount)} SODA
+              {formatAmount(
+                isUnstaking
+                  ? migration.unstakeRequest.amount
+                  : isStaked
+                    ? migration.stakedSodaAmount
+                    : migration.sodaAmount,
+              )}{' '}
+              SODA
             </Typography>
             {/* {getStakingRewards()} */}
           </div>
@@ -203,13 +222,30 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration }) => {
                 Unstakes {formatUnlockDate(migration.unlockTime)}
               </Typography>
             )}
-            <span>{getActionButton()}</span>
+            <Typography color="text2" fontSize={14} textAlign="right">
+              {isUnstaking ? (
+                <span>{`Unstakes ${formatUnlockDate(Number(migration.unstakeRequest.startTime) + UNSTAKE_TIME)}`}</span>
+              ) : (
+                <span>{getActionButton()}</span>
+              )}
+            </Typography>
           </div>
         </div>
       </StyledMigrationItem>
 
-      <StakeSodaModal migration={migration} isOpen={stakeModalOpen} onClose={() => setStakeModalOpen(false)} />
-      <UnstakeSodaModal migration={migration} isOpen={unstakeModalOpen} onClose={() => setUnstakeModalOpen(false)} />
+      <StakeSodaModal
+        migration={migration}
+        index={index}
+        isOpen={stakeModalOpen}
+        onClose={() => setStakeModalOpen(false)}
+        isUnstaking={isUnstaking}
+      />
+      <UnstakeSodaModal
+        migration={migration}
+        index={index}
+        isOpen={unstakeModalOpen}
+        onClose={() => setUnstakeModalOpen(false)}
+      />
     </>
   );
 };
@@ -217,9 +253,17 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration }) => {
 // Stake SODA Modal Component
 const StakeSodaModal: React.FC<{
   migration: DetailedLock;
+  index: number;
   isOpen: boolean;
+  isUnstaking: boolean;
   onClose: () => void;
-}> = ({ migration, isOpen, onClose }) => {
+}> = ({ migration, isOpen, onClose, index, isUnstaking }) => {
+  const evmAccount = useXAccount('EVM');
+  const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const formatAmount = (amount: string | number | bigint) => {
     try {
       let amountBN: number;
@@ -239,19 +283,52 @@ const StakeSodaModal: React.FC<{
     }
   };
 
-  const handleStake = () => {
-    // TODO: Implement actual staking logic
-    onClose();
+  const handleStake = async () => {
+    if (!evmAccount?.address || !spokeProvider) {
+      setError('Wallet not connected');
+      return;
+    }
+
+    if (isWrongChain) {
+      setError('Please switch to the correct chain first');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await sodax.migration.balnSwapService.stake(
+        { lockId: BigInt(index) },
+        spokeProvider as SonicSpokeProvider,
+      );
+      // if (isUnstaking) {
+      //   result = await sodax.migration.balnSwapService.cancelUnstake({lockId: BigInt(index)}, spokeProvider as SonicSpokeProvider)
+      // } else {
+      //   result = await sodax.migration.balnSwapService.stake({lockId: BigInt(index)}, spokeProvider as SonicSpokeProvider)
+      // }
+
+      if (result) {
+        onClose();
+      }
+    } catch (err) {
+      console.error('Staking error:', err);
+      setError(err instanceof Error ? err.message : 'Staking failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    onClose();
+    if (!isLoading) {
+      onClose();
+    }
   };
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
       <ModalContent>
-        <Typography textAlign="center" mb={3} fontSize={18} fontWeight="bold">
+        <Typography textAlign="center" mb={2}>
           Stake SODA?
         </Typography>
 
@@ -263,13 +340,26 @@ const StakeSodaModal: React.FC<{
           You'll earn rewards, but unstaking takes 6 months unless you pay a large penalty fee.
         </Typography>
 
+        {error && (
+          <Typography textAlign="center" fontSize={14} mb={3} color="red">
+            Error: {error}
+          </Typography>
+        )}
+
         <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={handleCancel} fontSize={14}>
+          <TextButton onClick={handleCancel} fontSize={14} disabled={isLoading}>
             Cancel
           </TextButton>
-          <Button onClick={handleStake} fontSize={14}>
-            Stake
-          </Button>
+
+          {isWrongChain ? (
+            <StyledButton onClick={handleSwitchChain} fontSize={14}>
+              Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
+            </StyledButton>
+          ) : (
+            <StyledButton onClick={handleStake} fontSize={14} disabled={isLoading}>
+              {isLoading ? 'Staking...' : 'Stake'}
+            </StyledButton>
+          )}
         </FlexBox>
       </ModalContent>
     </Modal>
@@ -279,9 +369,16 @@ const StakeSodaModal: React.FC<{
 // Unstake SODA Modal Component
 const UnstakeSodaModal: React.FC<{
   migration: DetailedLock;
+  index: number;
   isOpen: boolean;
   onClose: () => void;
-}> = ({ migration, isOpen, onClose }) => {
+}> = ({ migration, isOpen, onClose, index }) => {
+  const evmAccount = useXAccount('EVM');
+  const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const formatAmount = (amount: string | number | bigint) => {
     try {
       let amountBN: number;
@@ -322,19 +419,56 @@ const UnstakeSodaModal: React.FC<{
     }
   };
 
-  const handleUnstake = () => {
-    // TODO: Implement actual unstaking logic
-    onClose();
+  const handleUnstake = async () => {
+    if (!evmAccount?.address || !spokeProvider) {
+      setError('Wallet not connected');
+      return;
+    }
+
+    if (isWrongChain) {
+      setError('Please switch to the correct chain first');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // TODO: SODAX SDK staking methods are not yet available in the current version
+      // This is a placeholder implementation that will be updated when the staking API is available
+
+      // Convert staked SODA amount to bigint (assuming 18 decimals)
+      const stakedAmount = BigInt(migration.stakedSodaAmount);
+      console.log(migration);
+
+      // Simulate API call delay
+      const result = await sodax.migration.balnSwapService.unstake(
+        { lockId: BigInt(index) },
+        spokeProvider as SonicSpokeProvider,
+      );
+
+      console.log(result);
+      if (result) {
+        onClose();
+      }
+    } catch (err) {
+      console.error('Unstaking error:', err);
+      setError(err instanceof Error ? err.message : 'Unstaking failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
-    onClose();
+    if (!isLoading) {
+      onClose();
+    }
   };
 
   return (
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
       <ModalContent>
-        <Typography textAlign="center" mb={3} fontSize={18} fontWeight="bold">
+        <Typography textAlign="center" mb={2}>
           Unstake SODA?
         </Typography>
 
@@ -343,16 +477,30 @@ const UnstakeSodaModal: React.FC<{
         </Typography>
 
         <Typography textAlign="center" fontSize={14} mb={4}>
-          Your SODA will unstake on {formatUnlockDate(migration.unlockTime)}.
+          Your SODA will unstake on{' '}
+          <strong style={{ color: 'white' }}>{formatUnlockDate(Math.floor(Date.now() / 1000) + UNSTAKE_TIME)}</strong>.
         </Typography>
 
+        {error && (
+          <Typography textAlign="center" fontSize={14} mb={3} color="red">
+            Error: {error}
+          </Typography>
+        )}
+
         <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={handleCancel} fontSize={14}>
+          <TextButton onClick={handleCancel} fontSize={14} disabled={isLoading}>
             Cancel
           </TextButton>
-          <Button onClick={handleUnstake} fontSize={14}>
-            Unstake
-          </Button>
+
+          {isWrongChain ? (
+            <StyledButton onClick={handleSwitchChain} fontSize={14}>
+              Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
+            </StyledButton>
+          ) : (
+            <StyledButton onClick={handleUnstake} fontSize={14} disabled={isLoading}>
+              {isLoading ? 'Unstaking...' : 'Unstake'}
+            </StyledButton>
+          )}
         </FlexBox>
       </ModalContent>
     </Modal>

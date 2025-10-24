@@ -75,7 +75,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
           const isLast = index === pendingMigrations.length - 1;
           return (
             <React.Fragment key={index}>
-              <MigrationItem migration={migration} />
+              <MigrationItem migration={migration} index={index} />
               {!isLast && <Divider my={3} />}
             </React.Fragment>
           );

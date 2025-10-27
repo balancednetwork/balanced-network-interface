@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
@@ -14,28 +14,28 @@ import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useMigrationAllowance } from '@/hooks/useMigrationAllowance';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
-import { AnimatePresence, motion } from 'framer-motion';
+import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 import {
-  getSupportedSolverTokens,
+  BalnMigrateParams,
+  IEvmWalletProvider,
   IconSpokeProvider,
   IcxCreateRevertMigrationParams,
   IcxMigrateParams,
   IcxTokenType,
-  IEvmWalletProvider,
   SonicSpokeProvider,
   SpokeChainId,
   UnifiedBnUSDMigrateParams,
-  BalnMigrateParams,
+  getSupportedSolverTokens,
 } from '@sodax/sdk';
-import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type MigrationModalProps = {
   modalId?: MODAL_ID;
@@ -424,6 +424,7 @@ const MigrationModal = ({
                   });
                 })()}
               </strong>
+              .
             </Typography>
             {lockupPeriod !== 0 && (
               <Typography mt={4} textAlign="center" color="text2">

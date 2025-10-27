@@ -1,14 +1,14 @@
-import React from 'react';
-import { Box } from 'rebass/styled-components';
-import { Typography } from '@/app/theme';
-import styled from 'styled-components';
 import Divider from '@/app/components/Divider';
+import { Typography } from '@/app/theme';
 import { usePendingMigrations } from '@/hooks/usePendingMigrations';
 import { useXAccount } from '@balancednetwork/xwagmi';
+import React from 'react';
+import { Box } from 'rebass/styled-components';
+import styled from 'styled-components';
 import MigrationItem from './MigrationItem';
 
 const Migrations = styled(Box)`
-  max-height: 125px;
+  max-height: 155px;
   overflow-y: auto;
   padding: 0 20px;
   margin: 0 -20px;

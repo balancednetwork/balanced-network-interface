@@ -385,6 +385,14 @@
       "symbol": "S",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/s.png"
+    },
+    {
+      "address": "cx3330000000000000000000000000000000000003",
+      "chainId": 1,
+      "name": "HYPE",
+      "symbol": "HYPE",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hype.png"
     }
   ]
 }

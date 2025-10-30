@@ -31,6 +31,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   JitoSOL: 'solana',
   mSUI: 'sui',
   WETH: 'sonic',
+  HYPE: 'hyper',
 };
 
 export const wICX = XToken.wICX;
@@ -414,6 +415,12 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('sonic', 146, '0x29219dd400f2Bf60E5a23d13Be72B486D4038894', 6, 'USDC', 'USD Coin'),
     new XToken('sonic', 146, '0x6047828dc181963ba44974801ff68e538da5eaf9', 6, 'USDT', 'USDT'),
     new XToken('sonic', 146, '0x50c42dEAcD8Fc9773493ED674b675bE577f2634b', 18, 'WETH', 'Wrapped Ether'),
+  ],
+  hyper: [
+    new XToken('hyper', 999, '0x0000000000000000000000000000000000000000', 18, 'HYPE', 'HYPE'),
+    new XToken('hyper', 999, '0xA28C70F92a1B2513edCdDD29c2E5195a4B785aB2', 18, 'SODA', 'SODA'),
+    new XToken('hyper', 999, '0x506Ba7C8d91dAdf7a91eE677a205D9687b751579', 18, 'bnUSD', 'bnUSD'),
+    new XToken('hyper', 999, '0xb88339CB7199b77E23DB6E890353E22632Ba630f', 6, 'USDC', 'USD Coin'),
   ],
 };
 

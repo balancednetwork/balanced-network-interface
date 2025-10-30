@@ -40,6 +40,7 @@ export const COINGECKO_COIN_IDS = {
   afSUI: 'aftermath-staked-sui',
   // mSUI: '', // Not confirmed on CoinGecko
   // S: 'sonic', // Sonic Labs blockchain (formerly Fantom) native token - Chain ID 146
+  HYPE: 'hyperliquid',
 } as const;
 
 // Chart time periods supported by CoinGecko

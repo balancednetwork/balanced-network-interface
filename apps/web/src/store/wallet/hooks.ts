@@ -27,10 +27,10 @@ import { XChainId } from '@balancednetwork/xwagmi';
 
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
 import { SUPPORTED_XCALL_CHAINS, stellar } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
-import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   const signedInWallets = useSignedInWallets();
@@ -163,7 +163,7 @@ export function useWalletFetchBalances() {
     optBalances && dispatch(changeBalances({ xChainId: '0xa.optimism', balances: optBalances }));
   }, [optBalances, dispatch]);
 
-  // fetch balances on op
+  // fetch balances on sonic
   const sonicTokens = useXTokens('sonic');
   const { data: sonicBalances } = useXBalances({
     xChainId: 'sonic',
@@ -173,6 +173,17 @@ export function useWalletFetchBalances() {
   useEffect(() => {
     sonicBalances && dispatch(changeBalances({ xChainId: 'sonic', balances: sonicBalances }));
   }, [sonicBalances, dispatch]);
+
+  // fetch balances on hyper
+  const hyperTokens = useXTokens('hyper');
+  const { data: hyperBalances } = useXBalances({
+    xChainId: 'hyper',
+    xTokens: hyperTokens,
+    address,
+  });
+  useEffect(() => {
+    hyperBalances && dispatch(changeBalances({ xChainId: 'hyper', balances: hyperBalances }));
+  }, [hyperBalances, dispatch]);
 
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');

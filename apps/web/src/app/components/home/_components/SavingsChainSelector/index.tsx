@@ -78,7 +78,11 @@ const SavingsChainSelector = ({
     if (signedWallets.length === 0) {
       return xChains
         .filter(
-          chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon' && chain.xChainId !== 'sonic',
+          chain =>
+            chain.xChainId !== 'archway-1' &&
+            chain.xChainId !== '0x100.icon' &&
+            chain.xChainId !== 'sonic' &&
+            chain.xChainId !== 'hyper',
         )
         .map(({ xChainId }) => ({
           xChainId,
@@ -90,7 +94,13 @@ const SavingsChainSelector = ({
     }
 
     return xChains
-      .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon' && chain.xChainId !== 'sonic')
+      .filter(
+        chain =>
+          chain.xChainId !== 'archway-1' &&
+          chain.xChainId !== '0x100.icon' &&
+          chain.xChainId !== 'sonic' &&
+          chain.xChainId !== 'hyper',
+      )
       .map(({ xChainId }) => {
         const isWalletConnected = signedWallets.some(wallet => wallet.xChainId === xChainId);
         const lockedAmount = lockedAmounts?.[xChainId]

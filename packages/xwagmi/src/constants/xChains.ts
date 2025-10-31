@@ -291,7 +291,7 @@ export const base: XChain = {
 
 export const hyper: XChain = {
   id: 999,
-  name: 'HyperEVM',
+  name: 'Hyperliquid',
   xChainId: 'hyper',
   xChainType: 'EVM',
   tracker: { tx: 'https://hyperevmscan.io/tx' },

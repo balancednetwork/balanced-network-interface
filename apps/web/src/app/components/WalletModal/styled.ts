@@ -175,11 +175,11 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
   `};
 
   img {
-    margin: 5px 7px;
+    margin: 5px;
   }
 
   @media screen and (min-width: ${mobileWalletBreakpoint}) {
-    max-width: 197px;
+    max-width: 242px;
     margin-bottom: 0;
   }
 `;

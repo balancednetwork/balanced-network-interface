@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Currency, CurrencyAmount, ICX, Percent, XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { Box, Flex } from 'rebass/styled-components';
 import { useSearchParams } from 'react-router-dom';
+import { Box, Flex } from 'rebass/styled-components';
 
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
@@ -12,21 +12,19 @@ import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownTex
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
+import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
 import { SelectorWrap } from '@/app/components/home/_components/CollateralChainSelector';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { SODA, SUPPORTED_TOKENS_LIST, bnUSD, bnUSD_new, useICX, wICX, BALN } from '@/constants/tokens';
+import { BALN, SODA, SUPPORTED_TOKENS_LIST, bnUSD, bnUSD_new, useICX, wICX } from '@/constants/tokens';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { useWalletModalToggle } from '@/store/application/hooks';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { Trans } from '@lingui/macro';
-import ClickAwayListener from 'react-click-away-listener';
-import { FlipButton } from '../xswap/_components/SwapPanel';
-import { MigrationModal, PendingMigrations } from './_components';
 import {
   getXChainType,
   useValidateStellarAccount,
@@ -34,9 +32,11 @@ import {
   useXAccount,
   xTokenMap,
 } from '@balancednetwork/xwagmi';
+import { Trans } from '@lingui/macro';
+import ClickAwayListener from 'react-click-away-listener';
 import styled, { useTheme } from 'styled-components';
-import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
-import StellarTrustlineModal from '@/app/components/StellarTrustlineModal';
+import { FlipButton } from '../xswap/_components/SwapPanel';
+import { MigrationModal, PendingMigrations } from './_components';
 
 export type MigrationType = 'bnUSD' | 'ICX' | 'BALN';
 
@@ -791,7 +791,7 @@ function MigrateDescription({
                 so you can now migrate BALN to SODA. Lock it for up to 2 years to get a better rate.
               </Typography>
               <Typography variant="p" color="text2" mb={2}>
-                Locked SODA holders will receive a share of the DAO Fund in April 2026. You can also stake SODA to earn
+                Locked SODA holders will receive a share of the DAO Fund in May 2026. You can also stake SODA to earn
                 rewards, but it takes 6 months to unstake.
               </Typography>
             </>

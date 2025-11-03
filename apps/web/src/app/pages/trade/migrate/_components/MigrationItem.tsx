@@ -15,7 +15,7 @@ import { xChainMap } from '@balancednetwork/xwagmi';
 import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Flex } from 'rebass/styled-components';
 import { Flex as FlexBox } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -80,9 +80,10 @@ const StyledMigrationItem = styled(Flex)`
 interface MigrationItemProps {
   migration: DetailedLock;
   index: number;
+  shouldAutoOpenStakeModal?: boolean;
 }
 
-const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
+const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldAutoOpenStakeModal = false }) => {
   const isStaked = migration.stakedSodaAmount > 0;
   const isLocked = migration.unlockTime > Date.now() / 1000; // Fixed logic - locked means unlockTime is in the future
   const isUnstaking = migration.unstakeRequest.amount > 0;
@@ -94,6 +95,35 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index }) => {
   // Local modal states
   const [stakeModalOpen, setStakeModalOpen] = useState(false);
   const [unstakeModalOpen, setUnstakeModalOpen] = useState(false);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-open staking modal when shouldAutoOpenStakeModal becomes true (only once per migration)
+  useEffect(() => {
+    if (shouldAutoOpenStakeModal) {
+      // Only auto-open if user is signed in with EVM wallet
+      if (evmAccount?.address) {
+        // Clear any existing timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        // Add 2 second delay before opening the modal
+        timeoutRef.current = setTimeout(() => {
+          setStakeModalOpen(true);
+          timeoutRef.current = null;
+        }, 2000);
+      }
+    }
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [shouldAutoOpenStakeModal, evmAccount?.address]);
 
   // Determine state based on staking and locking status
   const getState = () => {

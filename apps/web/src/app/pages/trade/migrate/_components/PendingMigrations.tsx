@@ -36,21 +36,35 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
   const prevMigrationsRef = React.useRef<readonly DetailedLock[]>([]);
   const autoOpenedMigrationIdsRef = React.useRef<Set<string>>(new Set());
   const hasInitializedRef = React.useRef<boolean>(false);
+  const currentAddressRef = React.useRef<string | undefined>(undefined);
   const [shouldAutoOpenIndex, setShouldAutoOpenIndex] = React.useState<number | null>(null);
+
+  // Reset tracking when address changes (user signs in/out or switches accounts)
+  React.useEffect(() => {
+    const currentAddress = evmAccount?.address;
+    if (currentAddressRef.current !== currentAddress) {
+      // Address changed, reset all tracking
+      hasInitializedRef.current = false;
+      prevMigrationsRef.current = [];
+      autoOpenedMigrationIdsRef.current.clear();
+      setShouldAutoOpenIndex(null);
+      currentAddressRef.current = currentAddress;
+    }
+  }, [evmAccount?.address]);
 
   // Mark as initialized once loading completes (to distinguish initial load from new migrations)
   React.useEffect(() => {
-    if (!loading && !hasInitializedRef.current) {
+    if (!loading && !hasInitializedRef.current && evmAccount?.address) {
       hasInitializedRef.current = true;
       // Set initial state of prevMigrationsRef after first load completes
       prevMigrationsRef.current = pendingMigrations;
     }
-  }, [loading, pendingMigrations]);
+  }, [loading, pendingMigrations, evmAccount?.address]);
 
-  // Detect when a new migration is added (only after initial load)
+  // Detect when a new migration is added (only after initial load for current address)
   React.useEffect(() => {
-    // Don't process until initial load is complete
-    if (!hasInitializedRef.current || loading) {
+    // Don't process until initial load is complete and user is signed in
+    if (!hasInitializedRef.current || loading || !evmAccount?.address) {
       return;
     }
 
@@ -76,7 +90,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
 
     // Update the previous migrations reference
     prevMigrationsRef.current = currentMigrations;
-  }, [pendingMigrations, getMigrationId, loading]);
+  }, [pendingMigrations, getMigrationId, loading, evmAccount?.address]);
 
   // Reset shouldAutoOpenIndex after it's been consumed
   React.useEffect(() => {

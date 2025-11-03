@@ -158,14 +158,14 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
             <RewardsGrid rewards={Object.values(rewards)} />
           ) : (
             <Typography fontSize={14} opacity={0.75} mb={5}>
-              Lock up BALN to earn fees from Balanced transactions.
+              You can no longer earn network fees.
             </Typography>
           )}
         </>
       )}
       {savingsXChainId !== '0x1.icon' && (
         <Typography fontSize={14} opacity={0.75} mb={5}>
-          Lock up BALN on ICON to earn fees from Balanced transactions.
+          You can no longer earn network fees.
         </Typography>
       )}
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>

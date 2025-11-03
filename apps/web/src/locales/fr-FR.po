@@ -256,8 +256,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
-msgid "Total voting power"
-msgstr ""
+#~ msgid "Total voting power"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -323,8 +323,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/index.tsx
-msgid "Earning potential"
-msgstr ""
+#~ msgid "Earning potential"
+#~ msgstr ""
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "Boost rewards"
@@ -361,8 +361,8 @@ msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Available since {0}"
-msgstr ""
+#~ msgid "Available since {0}"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 msgid "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
@@ -512,6 +512,10 @@ msgstr "Valider"
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claiming Balanced incentives..."
 #~ msgstr ""
+
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Unlock date:"
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
@@ -709,6 +713,7 @@ msgstr "Retirer sICX ?"
 #~ msgstr "Ajoutez vos sICX à la réserve de garanties."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/RewardsPanel/BALNWithdrawalNotice.tsx
 msgid "Withdrawing BALN..."
 msgstr ""
 
@@ -803,8 +808,8 @@ msgid "Go back"
 msgstr "Retour"
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
-msgid "Average lock-up time"
-msgstr ""
+#~ msgid "Average lock-up time"
+#~ msgstr ""
 
 #: src/app/components/StellarTrustlineModal/index.tsx
 msgid "Sign a transaction to activate {0} for your Stellar wallet."
@@ -885,7 +890,6 @@ msgstr "Adresse"
 #~ msgstr "Copier l'adresse"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your rewards."
 msgstr ""
 
@@ -947,6 +951,10 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/OrderModal.tsx
 #~ msgid "Creating order..."
 #~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/BALNWithdrawalNotice.tsx
+msgid "Withdraw Balance Tokens?"
+msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedOrderDetails.tsx
 msgid "SODAX Intent"
@@ -1123,6 +1131,10 @@ msgstr ""
 #: src/app/components/StabilityFund/index.tsx
 #~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 #~ msgstr "Le Fond de Stabilité vous permet de minter ou de brûler du bnUSD 1:1 contre des monnaies stables approuvées, moyennant des frais de 0,5%."
+
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Lock-up time:"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
@@ -1305,6 +1317,7 @@ msgid "Claiming"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/RewardsPanel/BALNWithdrawalNotice.tsx
 msgid "{0} BALN withdrawn."
 msgstr ""
 
@@ -1356,8 +1369,8 @@ msgid "Liquidated"
 msgstr "Liquidé"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
-msgstr ""
+#~ msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Title"
@@ -1379,8 +1392,8 @@ msgstr "Échanger {0} contre {1} ?"
 #~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
-msgstr ""
+#~ msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
+#~ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Supply {0} {1}"
@@ -1515,6 +1528,7 @@ msgstr "Retrait"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/RewardsPanel/BALNWithdrawalNotice.tsx
 msgid "Withdraw BALN"
 msgstr ""
 
@@ -1542,6 +1556,10 @@ msgstr ""
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "No assets available."
 #~ msgstr "Pas d'actifs disponibles."
+
+#: src/app/pages/trade/migrate/page.tsx
+msgid "Exchange rate:"
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Fee"
@@ -1848,8 +1866,8 @@ msgid "Repay Balanced Dollars?"
 msgstr "Rembourser Balanced Dollar ?"
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
-msgid "Total locked"
-msgstr ""
+#~ msgid "Total locked"
+#~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 #~ msgid "Search name or contract"
@@ -1956,8 +1974,8 @@ msgid "Create liquidity pool?"
 msgstr "Créer un pool de liquidité ?"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Locked until"
-msgstr ""
+#~ msgid "Locked until"
+#~ msgstr ""
 
 #: src/app/components/RewardsDisplay/RewardsDisplay.tsx
 msgid "Your BALN rate depends on your position size and the amount of bBALN you hold."
@@ -2220,6 +2238,10 @@ msgstr "Envoi en cours {0}..."
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+#~ msgid "You'll receive your SODA tokens on {0}"
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
@@ -3148,6 +3170,10 @@ msgstr "Détails de la position"
 msgid "Deposit bnUSD"
 msgstr ""
 
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "You'll receive your SODA tokens on"
+msgstr ""
+
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust allocation"
 msgstr ""
@@ -3199,6 +3225,10 @@ msgstr "Tout le collatéral verrouillé"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
+
+#: src/app/pages/trade/migrate/_components/MigrationModal.tsx
+msgid "Lock-up time: {0}"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
@@ -3363,8 +3393,8 @@ msgid "Liquidity is held on ICON, with varied availability on other blockchains:
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Pay a {0} BALN fee to unlock early."
-msgstr ""
+#~ msgid "Pay a {0} BALN fee to unlock early."
+#~ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/migrate/_components/MigrationModal.tsx

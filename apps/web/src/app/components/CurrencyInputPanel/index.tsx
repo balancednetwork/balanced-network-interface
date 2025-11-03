@@ -68,7 +68,7 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarValue: boolean; disabled?: boolean }>`
+const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarValue: boolean }>`
   flex: 1;
   width: 100%;
   height: ${({ $showDollarValue }) => ($showDollarValue ? '50px' : '43px')};
@@ -76,7 +76,7 @@ const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarVa
   border-radius: 0 10px 10px 0;
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  color: ${({ disabled, theme }) => (disabled ? theme.colors.text2 : '#ffffff')};
+  color: #ffffff;
   padding: ${({ $showDollarValue }) => ($showDollarValue ? '1px 15px 20px' : '7px 15px')}; 
   outline: none;
   transition: all 0.3s ease;
@@ -88,7 +88,7 @@ const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarVa
 
   &:hover,
   &:focus {
-    border: ${({ disabled }) => (disabled ? '2px solid transparent' : '2px solid #2ca9b7')};
+    border: 2px solid #2ca9b7;
   }
 
   ${({ $active }) => $active && 'border-bottom-right-radius: 0;'}
@@ -116,7 +116,6 @@ interface CurrencyInputPanelProps {
   showCommunityListControl?: boolean;
   showDollarValue?: boolean;
   showWarning?: boolean;
-  disabled?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -142,7 +141,6 @@ export default function CurrencyInputPanel({
   showCommunityListControl = true,
   showDollarValue = true,
   showWarning = false,
-  disabled = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -283,7 +281,6 @@ export default function CurrencyInputPanel({
           onChange={event => {
             enforcer(event.target.value.replace(/,/g, '.'));
           }}
-          disabled={disabled}
           // universal input options
           inputMode="decimal"
           title="Token Amount"

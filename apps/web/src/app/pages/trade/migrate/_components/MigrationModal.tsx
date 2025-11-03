@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
@@ -14,27 +14,28 @@ import TickIcon from '@/assets/icons/tick.svg';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useMigrationAllowance } from '@/hooks/useMigrationAllowance';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
-import { AnimatePresence, motion } from 'framer-motion';
+import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 import {
-  getSupportedSolverTokens,
+  BalnMigrateParams,
+  IEvmWalletProvider,
   IconSpokeProvider,
   IcxCreateRevertMigrationParams,
   IcxMigrateParams,
   IcxTokenType,
-  IEvmWalletProvider,
   SonicSpokeProvider,
   SpokeChainId,
   UnifiedBnUSDMigrateParams,
+  getSupportedSolverTokens,
 } from '@sodax/sdk';
-import { getXChainType, useXAccount, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type MigrationModalProps = {
   modalId?: MODAL_ID;
@@ -42,11 +43,12 @@ type MigrationModalProps = {
   outputCurrency?: Currency;
   inputAmount?: string;
   outputAmount?: string;
-  migrationType?: 'bnUSD' | 'ICX';
+  migrationType?: 'bnUSD' | 'ICX' | 'BALN';
   sourceChain?: XChainId;
   receiverChain?: XChainId;
   revert: boolean;
   showSolanaWarning?: boolean;
+  lockupPeriod?: number; // Lockup period in seconds for BALN migration
 };
 
 enum MigrationStatus {
@@ -67,6 +69,7 @@ const MigrationModal = ({
   migrationType = 'bnUSD',
   revert,
   showSolanaWarning = false,
+  lockupPeriod,
 }: MigrationModalProps) => {
   const modalOpen = useModalOpen(modalId);
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
@@ -172,6 +175,26 @@ const MigrationModal = ({
     [],
   );
 
+  /**
+   * Helper function to create BALN migration parameters
+   * @param amount - Amount to migrate as string
+   * @param currency - Currency object containing decimals
+   * @param toAddress - Destination address
+   * @param lockupPeriodSeconds - Lockup period in seconds
+   * @returns BalnMigrateParams object
+   */
+  const createBalnMigrationParams = useCallback(
+    (amount: string, currency: Currency, toAddress: string, lockupPeriodSeconds: number): BalnMigrateParams => {
+      return {
+        amount: BigInt(new BigNumber(amount).times(10 ** currency.decimals).toFixed()),
+        lockupPeriod: lockupPeriodSeconds, // Use seconds directly
+        to: toAddress as `0x${string}`,
+        stake: false,
+      };
+    },
+    [],
+  );
+
   // Create revert params for ICX revert migration
   const revertParams: IcxCreateRevertMigrationParams | UnifiedBnUSDMigrateParams | undefined = useMemo(() => {
     if (!revert || !inputAmount || !inputCurrency || !accountReceiver?.address) {
@@ -187,6 +210,12 @@ const MigrationModal = ({
 
     if (migrationType === 'bnUSD') {
       return createBnUSDMigrationParams(true, inputAmount, inputCurrency, accountReceiver.address);
+    }
+
+    if (migrationType === 'BALN') {
+      // For BALN migration, we'll need to implement the BALN-specific logic
+      // This is a placeholder for now
+      return undefined;
     }
   }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, createBnUSDMigrationParams]);
 
@@ -270,6 +299,29 @@ const MigrationModal = ({
             throw result.error;
           }
         }
+      } else if (migrationType === 'BALN') {
+        if (!lockupPeriod && lockupPeriod !== 0) {
+          throw new Error('Lockup period is required for BALN migration');
+        }
+
+        const migrationParams = createBalnMigrationParams(
+          inputAmount,
+          inputCurrency,
+          accountReceiver.address,
+          lockupPeriod,
+        );
+
+        const result = await sodax.migration.migrateBaln(
+          migrationParams,
+          sourceSpokeProvider as IconSpokeProvider,
+          30000, // 30 second timeout
+        );
+
+        if (result.ok) {
+          console.log('BALN migration successful!');
+        } else {
+          throw result.error;
+        }
       }
 
       setMigrationStatus(MigrationStatus.Success);
@@ -293,8 +345,37 @@ const MigrationModal = ({
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
-          {1} {inputCurrency?.symbol} = {1} {outputCurrency?.symbol}
+          {migrationType === 'BALN' && lockupPeriod !== undefined
+            ? (() => {
+                // Calculate the multiplier based on lockup period
+                let multiplier = 0.75; // Default 6 months
+                if (lockupPeriod === 0)
+                  multiplier = 0.5; // No lockup
+                else if (lockupPeriod === 6 * 30 * 24 * 60 * 60)
+                  multiplier = 0.75; // 6 months
+                else if (lockupPeriod === 12 * 30 * 24 * 60 * 60)
+                  multiplier = 1.0; // 12 months
+                else if (lockupPeriod === 18 * 30 * 24 * 60 * 60)
+                  multiplier = 1.25; // 18 months
+                else if (lockupPeriod === 24 * 30 * 24 * 60 * 60) multiplier = 1.5; // 24 months
+
+                return `1 ${inputCurrency?.symbol} = ${multiplier} ${outputCurrency?.symbol}`;
+              })()
+            : `1 ${inputCurrency?.symbol} = 1 ${outputCurrency?.symbol}`}
         </Typography>
+
+        {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
+          <Typography textAlign="center" color="text2" mt={'1px'}>
+            {t`Lock-up time: ${(() => {
+              if (lockupPeriod === 0) return 'No lock-up';
+              else if (lockupPeriod === 6 * 30 * 24 * 60 * 60) return '6 months';
+              else if (lockupPeriod === 12 * 30 * 24 * 60 * 60) return '12 months';
+              else if (lockupPeriod === 18 * 30 * 24 * 60 * 60) return '18 months';
+              else if (lockupPeriod === 24 * 30 * 24 * 60 * 60) return '24 months';
+              else return '6 months'; // Default fallback
+            })()}`}
+          </Typography>
+        )}
 
         <Flex mt={4}>
           <Box width={1 / 2} className="border-right">
@@ -327,6 +408,31 @@ const MigrationModal = ({
             </Typography>
           </Box>
         </Flex>
+
+        {migrationType === 'BALN' && lockupPeriod !== undefined && lockupPeriod > 0 && (
+          <Box mt={4}>
+            <Typography textAlign="center" color="text2">
+              {t`You'll receive your SODA tokens on `}
+              <strong style={{ color: 'white', paddingLeft: '5px' }}>
+                {(() => {
+                  const now = new Date();
+                  const unlockTime = new Date(now.getTime() + lockupPeriod * 1000);
+                  return unlockTime.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  });
+                })()}
+              </strong>
+              .
+            </Typography>
+            {lockupPeriod !== 0 && (
+              <Typography mt={4} textAlign="center" color="text2">
+                After you migrate, you can stake your locked SODA to earn rewards while you wait.
+              </Typography>
+            )}
+          </Box>
+        )}
 
         {showSolanaWarning && (
           <Typography textAlign="center" mt="30px">

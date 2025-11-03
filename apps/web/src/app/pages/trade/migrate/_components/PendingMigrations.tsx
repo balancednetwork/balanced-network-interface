@@ -35,15 +35,30 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
   // Track previous migrations to detect new ones
   const prevMigrationsRef = React.useRef<readonly DetailedLock[]>([]);
   const autoOpenedMigrationIdsRef = React.useRef<Set<string>>(new Set());
+  const hasInitializedRef = React.useRef<boolean>(false);
   const [shouldAutoOpenIndex, setShouldAutoOpenIndex] = React.useState<number | null>(null);
+
+  // Mark as initialized once loading completes (to distinguish initial load from new migrations)
+  React.useEffect(() => {
+    if (!loading && !hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      // Set initial state of prevMigrationsRef after first load completes
+      prevMigrationsRef.current = pendingMigrations;
+    }
+  }, [loading, pendingMigrations]);
 
   // Detect when a new migration is added (only after initial load)
   React.useEffect(() => {
+    // Don't process until initial load is complete
+    if (!hasInitializedRef.current || loading) {
+      return;
+    }
+
     const prevMigrations = prevMigrationsRef.current;
     const currentMigrations = pendingMigrations;
 
-    // Only proceed if we had migrations before (not initial load)
-    if (prevMigrations.length > 0 && currentMigrations.length > prevMigrations.length) {
+    // If count increased (handles 0->1, 1->2, etc.)
+    if (currentMigrations.length > prevMigrations.length) {
       // Find the newest migration(s) by comparing lists
       const prevIds = new Set(prevMigrations.map((m, i) => getMigrationId(m, i)));
 
@@ -61,7 +76,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
 
     // Update the previous migrations reference
     prevMigrationsRef.current = currentMigrations;
-  }, [pendingMigrations, getMigrationId]);
+  }, [pendingMigrations, getMigrationId, loading]);
 
   // Reset shouldAutoOpenIndex after it's been consumed
   React.useEffect(() => {

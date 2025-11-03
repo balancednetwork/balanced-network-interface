@@ -153,14 +153,21 @@ const Savings = () => {
             </Typography>
             <Flex>
               <Typography pt={isSmallScreen ? '5px' : '9px'} mr="5px" color="text1">
-                {savingsRate?.APR && `${savingsRate.percentAPRsICX.toFormat(2)}% APR`}
+                {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
               </Typography>
               <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
                 <QuestionHelper
                   width={220}
                   text={
                     <>
-                      {savingsRate && <Typography mr={1}>Paid in sICX.</Typography>}
+                      {savingsRate && (
+                        <Typography mr={1}>
+                          Paid in bnUSD{' '}
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</span>, sICX{' '}
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span>, and
+                          BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>.
+                        </Typography>
+                      )}
 
                       {savingsPastMonthPayout && (
                         <Flex>

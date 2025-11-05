@@ -204,7 +204,19 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
-export const UNTRADEABLE_TOKENS = ['JitoSOL', 'SOL', 'bnUSD', 'wBTC', 'tBTC', 'cbBTC', 'wETH', 'S', 'USDT', 'SODA'];
+export const UNTRADEABLE_TOKENS = [
+  'JitoSOL',
+  'SOL',
+  'bnUSD',
+  'wBTC',
+  'tBTC',
+  'cbBTC',
+  'wETH',
+  'S',
+  'USDT',
+  'HYPE',
+  'SODA',
+];
 
 //search for Pyth ID here https://hermes.pyth.network/docs/#/rest/price_feeds_metadata
 export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
@@ -295,6 +307,10 @@ export const PYTH_PRICED_TOKENS: { symbol: string; pythId: string }[] = [
   {
     symbol: 'vSUI',
     pythId: '57ff7100a282e4af0c91154679c5dae2e5dcacb93fd467ea9cb7e58afdcfde27',
+  },
+  {
+    symbol: 'HYPE',
+    pythId: '4279e31cc369bbcc2faf022b382b080e32a8e689ff20fbc530d2a603eb6cd98b',
   },
 ];
 

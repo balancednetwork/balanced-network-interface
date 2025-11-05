@@ -289,6 +289,32 @@ export const base: XChain = {
   useXCallScanner: true,
 };
 
+export const hyper: XChain = {
+  id: 999,
+  name: 'Hyperliquid',
+  xChainId: 'hyper',
+  xChainType: 'EVM',
+  tracker: { tx: 'https://hyperevmscan.io/tx' },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'HYPE',
+    symbol: 'HYPE',
+  },
+  rpc: {
+    http: 'https://rpc.hyperliquid.xyz/evm',
+  },
+  //contracts are redundant
+  contracts: {
+    xCall: '0x7fdde482956770D148E055f9d2893f84a1B6B00B',
+    assetManager: '0xDccd213951D8214fBACa720728474E2cEf9d247B',
+    bnUSD: '0x78b7CD9308287DEb724527d8703c889e2d6C3708',
+  },
+  autoExecution: true,
+  gasThreshold: 0.001,
+  testnet: false,
+  useXCallScanner: true,
+};
+
 export const injective: XChain = {
   id: 'injective-1',
   name: 'Injective',
@@ -463,6 +489,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   sui: sui,
   solana: solana,
   sonic: sonic,
+  hyper: hyper,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -485,6 +512,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   'archway-1': [],
   sonic: [],
+  hyper: [],
 };
 
 /** to other chain from icon sources */
@@ -503,4 +531,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   sonic: [],
   'archway-1': [],
+  hyper: [],
 };

@@ -296,7 +296,7 @@ export function CurrencySearch({
     ) {
       items = items.filter(item => balancedSupportedChains.includes(item as any));
     } else {
-      items = items.filter(item => item !== 'sonic');
+      items = items.filter(item => item !== 'sonic' && item !== 'hyper');
     }
     return items.sort((a, b) => {
       return xChainMap[a].name.localeCompare(xChainMap[b].name);

@@ -153,6 +153,7 @@ const mapCoinGeckoIdToSymbol = (coinId: string): string => {
     sonic: 'S',
     'wrapped-eeth': 'weETH',
     'wrapped-steth': 'wstETH',
+    hyperliquid: 'HYPE',
   };
 
   return symbolMap[coinId] || coinId.toUpperCase();

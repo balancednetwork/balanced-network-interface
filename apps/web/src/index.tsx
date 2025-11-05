@@ -9,7 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/app';
 import store from '@/store';
 import { XWagmiProviders } from '@balancednetwork/xwagmi';
-import { RpcConfig, SodaxProvider } from '@sodax/dapp-kit';
+import { SodaxProvider } from '@sodax/dapp-kit';
 import { LanguageProvider } from './i18n';
 import sodaxConfig from './lib/sodax';
 import { PlausibleProvider } from './providers/PlausibleProvider';
@@ -34,7 +34,7 @@ const fmt = {
   suffix: '',
 };
 
-const rpcConfig: RpcConfig = {
+const rpcConfig = {
   //solana
   solana: 'https://solana-mainnet.g.alchemy.com/v2/i3q5fE3cYSFBE4Lcg1kS5',
 };

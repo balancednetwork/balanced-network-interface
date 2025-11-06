@@ -172,6 +172,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'BTCB',
       'Binance-Peg BTCB Token',
       'BTC1',
+      'BTCB',
     ),
     new XToken('0x38.bsc', 56, '0xd94F0Aea6d6f14C012d992e8886C8C1736921e10', 18, 'sICX', 'Staked ICX'),
     new XToken('0x38.bsc', 56, '0x94cf269d63c4140eD481CB0b149daE03c4620cdF', 18, 'BALN', 'Balance Token'),

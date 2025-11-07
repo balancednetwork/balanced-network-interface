@@ -116,6 +116,9 @@ export const getTokenDataFromIntent = (
       ([key]) => key.toLowerCase() === intentData.outputToken.toLowerCase(),
     )?.[1];
 
+    mappedSrcToken = mappedSrcToken || intentData.inputToken;
+    mappedDstToken = mappedDstToken || intentData.outputToken;
+
     mappedSrcToken = mappedSrcToken?.replace(
       'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
       'cx0000000000000000000000000000000000000000',

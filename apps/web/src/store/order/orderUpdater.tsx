@@ -1,27 +1,27 @@
 import { useStatus } from '@sodax/dapp-kit';
 import {
   DEFAULT_RELAY_TX_TIMEOUT,
-  getIntentRelayChainId,
   Hex,
   IntentError,
   PacketData,
   Result,
   SpokeChainId,
+  getIntentRelayChainId,
   waitUntilIntentExecuted,
 } from '@sodax/sdk';
 import { SolverIntentStatusCode } from '@sodax/sdk';
 import React from 'react';
 import { toast } from 'react-toastify';
 
-import { UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
-import { NotificationSuccess, NotificationError } from '@/app/components/Notification/TransactionNotification';
-import { Order, useOrderStore } from './useOrderStore';
+import { NotificationError, NotificationSuccess } from '@/app/components/Notification/TransactionNotification';
 import { getTokenDataFromIntent } from '@/app/components/RecentActivity/transactions/IntentSwap';
+import { toBigIntSafe } from '@/app/components/RecentActivity/transactions/IntentSwap';
+import { UnifiedTransactionStatus } from '@/hooks/useCombinedTransactions';
+import sodaxConfig from '@/lib/sodax';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { toBigIntSafe } from '@/app/components/RecentActivity/transactions/IntentSwap';
-import sodaxConfig from '@/lib/sodax';
+import { Order, useOrderStore } from './useOrderStore';
 
 /**
  * Get the intent delivery info about solved intent from the Relayer API
@@ -91,51 +91,91 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
 
           // Show toast notification based on status
           if (newStatus === UnifiedTransactionStatus.success) {
-            // Format amounts for the notification
-            const inputAmount = CurrencyAmount.fromRawAmount(
-              tokensData?.srcToken!,
-              toBigIntSafe(order.intent.inputAmount),
-            );
-            const outputAmount = CurrencyAmount.fromRawAmount(
-              tokensData?.dstToken!,
-              toBigIntSafe(order.intent.minOutputAmount),
-            );
+            // Check if tokens are available before creating CurrencyAmount
+            if (tokensData?.srcToken && tokensData?.dstToken) {
+              // Format amounts for the notification
+              const inputAmount = CurrencyAmount.fromRawAmount(
+                tokensData.srcToken,
+                toBigIntSafe(order.intent.inputAmount),
+              );
+              const outputAmount = CurrencyAmount.fromRawAmount(
+                tokensData.dstToken,
+                toBigIntSafe(order.intent.minOutputAmount),
+              );
 
-            const inputAmountFormatted = formatBalance(
-              inputAmount.toFixed(),
-              prices?.[inputAmount.currency.symbol]?.toFixed() || 1,
-            );
-            const outputAmountFormatted = formatBalance(
-              outputAmount.toFixed(),
-              prices?.[outputAmount.currency.symbol]?.toFixed() || 1,
-            );
+              const inputAmountFormatted = formatBalance(
+                inputAmount.toFixed(),
+                prices?.[inputAmount.currency.symbol]?.toFixed() || 1,
+              );
+              const outputAmountFormatted = formatBalance(
+                outputAmount.toFixed(),
+                prices?.[outputAmount.currency.symbol]?.toFixed() || 1,
+              );
 
-            // if (status.value.fill_tx_hash) {
-            //   (async () => {
-            //     const intentDeliveryInfo = await getSolvedIntentPacket({
-            //       chainId: order.packet.dstChainId,
-            //       fillTxHash: status.value.fill_tx_hash as string,
-            //     });
+              // if (status.value.fill_tx_hash) {
+              //   (async () => {
+              //     const intentDeliveryInfo = await getSolvedIntentPacket({
+              //       chainId: order.packet.dstChainId,
+              //       fillTxHash: status.value.fill_tx_hash as string,
+              //     });
 
-            //     console.log('intentDeliveryInfo', intentDeliveryInfo);
-            //   })();
-            // }
+              //     console.log('intentDeliveryInfo', intentDeliveryInfo);
+              //   })();
+              // }
 
-            toast(
-              <NotificationSuccess
-                sonicScanLink={sonicScanLink}
-                summary={`Swapped ${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${outputAmountFormatted} ${formatSymbol(outputAmount.currency.spokeVersion || outputAmount.currency.symbol)}`}
-              />,
-              {
-                toastId: order.intentHash,
-                autoClose: 3000,
-                onClick: () => window.open(sonicScanLink, '_blank'),
-              },
-            );
+              toast(
+                <NotificationSuccess
+                  sonicScanLink={sonicScanLink}
+                  summary={`Swapped ${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${outputAmountFormatted} ${formatSymbol(outputAmount.currency.spokeVersion || outputAmount.currency.symbol)}`}
+                />,
+                {
+                  toastId: order.intentHash,
+                  autoClose: 3000,
+                  onClick: () => window.open(sonicScanLink, '_blank'),
+                },
+              );
+            } else {
+              console.warn('Tokens data not available for order:', order.intentHash);
+            }
           } else if (newStatus === UnifiedTransactionStatus.failed) {
-            // Format amounts for the failure notification
+            // Check if srcToken is available before creating CurrencyAmount
+            if (tokensData?.srcToken) {
+              // Format amounts for the failure notification
+              const inputAmount = CurrencyAmount.fromRawAmount(
+                tokensData.srcToken,
+                toBigIntSafe(order.intent.inputAmount),
+              );
+
+              const inputAmountFormatted = formatBalance(
+                inputAmount.toFixed(),
+                prices?.[inputAmount.currency.symbol]?.toFixed() || 1,
+              );
+
+              toast(
+                <NotificationError
+                  failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol || 'token'} order failed. `}
+                  sonicScanLink={sonicScanLink}
+                />,
+                {
+                  toastId: order.intentHash,
+                  autoClose: 3000,
+                },
+              );
+            } else {
+              console.warn('Source token data not available for order:', order.intentHash);
+            }
+          }
+        }
+      } else {
+        // Handle error case
+        if (order.status !== UnifiedTransactionStatus.failed) {
+          updateOrderStatus(order.intentHash, UnifiedTransactionStatus.failed);
+
+          // Check if srcToken is available before creating CurrencyAmount
+          if (tokensData?.srcToken) {
+            // Show failure toast
             const inputAmount = CurrencyAmount.fromRawAmount(
-              tokensData?.srcToken!,
+              tokensData.srcToken,
               toBigIntSafe(order.intent.inputAmount),
             );
 
@@ -146,7 +186,7 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
 
             toast(
               <NotificationError
-                failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
+                failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol || 'token'} order failed. `}
                 sonicScanLink={sonicScanLink}
               />,
               {
@@ -154,34 +194,9 @@ const OrderStatusUpdater: React.FC<{ order: Order }> = ({ order }) => {
                 autoClose: 3000,
               },
             );
+          } else {
+            console.warn('Source token data not available for order:', order.intentHash);
           }
-        }
-      } else {
-        // Handle error case
-        if (order.status !== UnifiedTransactionStatus.failed) {
-          updateOrderStatus(order.intentHash, UnifiedTransactionStatus.failed);
-
-          // Show failure toast
-          const inputAmount = CurrencyAmount.fromRawAmount(
-            tokensData?.srcToken!,
-            toBigIntSafe(order.intent.inputAmount),
-          );
-
-          const inputAmountFormatted = formatBalance(
-            inputAmount.toFixed(),
-            prices?.[inputAmount.currency.symbol]?.toFixed() || 1,
-          );
-
-          toast(
-            <NotificationError
-              failureReason={`${inputAmountFormatted} ${formatSymbol(inputAmount.currency.spokeVersion || inputAmount.currency.symbol)} for ${tokensData?.dstToken?.symbol} order failed. `}
-              sonicScanLink={sonicScanLink}
-            />,
-            {
-              toastId: order.intentHash,
-              autoClose: 3000,
-            },
-          );
         }
       }
     }

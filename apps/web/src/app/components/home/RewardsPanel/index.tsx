@@ -11,11 +11,11 @@ import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useWidth from '@/hooks/useWidth';
+import { useFetchUnclaimedDividends, useHasUnclaimedFees } from '@/store/fees/hooks';
 import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
 import { clearRewards } from '@/store/reward/reducer';
 import { useSavingsXChainId } from '@/store/savings/hooks';
 import { getNetworkDisplayName, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
-import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
 import SavingsChainSelector from '../_components/SavingsChainSelector';
 import BALNWithdrawalNotice from './BALNWithdrawalNotice';
@@ -39,6 +39,7 @@ const SliderWrap = styled(Flex)`
 `;
 
 const RewardsPanel = () => {
+  useFetchUnclaimedDividends();
   const [showGlobalTooltip, setGlobalTooltip] = React.useState(false);
   const isMedium = useMedia('(max-width: 1050px)');
   const isSmall = useMedia('(max-width: 800px)');
@@ -47,6 +48,7 @@ const RewardsPanel = () => {
   const savingsXChainId = useSavingsXChainId();
   const account = useXAccount(getXChainType(savingsXChainId));
   const hasAnyKindOfRewards = useHasAnyKindOfRewards(savingsXChainId);
+  const hasUnclaimedFees = useHasUnclaimedFees();
   const signedInWallets = useSignedInWallets();
 
   // Clear rewards when all wallets are disconnected
@@ -86,13 +88,13 @@ const RewardsPanel = () => {
           <BALNWithdrawalNotice />
         </SliderWrap>
       </Flex>
-      {hasAnyKindOfRewards && (
+      {(hasAnyKindOfRewards || (account.address && hasUnclaimedFees)) && (
         <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">
           {savingsXChainId === 'archway-1' || savingsXChainId === '0x100.icon' ? (
             <Typography textAlign="center" fontSize={14} opacity={0.75}>
               <Trans>No rewards available on {getNetworkDisplayName(savingsXChainId)}.</Trans>
             </Typography>
-          ) : account.address && hasAnyKindOfRewards ? (
+          ) : account.address && (hasAnyKindOfRewards || hasUnclaimedFees) ? (
             <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
               <SavingsRewards />
               {!isSmall ? (

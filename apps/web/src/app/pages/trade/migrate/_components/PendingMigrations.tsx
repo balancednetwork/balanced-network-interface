@@ -113,7 +113,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
       <>
         <Divider mt={5} />
         <Typography fontSize={16} color="text2" textAlign="center" mt={4} mb={2}>
-          Pending BALN &gt; SODA migrations
+          SODA migrated and locked
         </Typography>
         <Typography color="text2" textAlign="center">
           Loading...
@@ -127,7 +127,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
       <>
         <Divider mt={5} />
         <Typography fontSize={16} color="text2" textAlign="center" mt={4} mb={2}>
-          Pending BALN &gt; SODA migrations
+          SODA migrated and locked
         </Typography>
         <Typography color="alert" textAlign="center" mt={4}>
           {error?.message || 'Failed to fetch pending migrations'}
@@ -144,7 +144,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
     <>
       <Divider mt={5} />
       <Typography fontSize={16} color="text2" textAlign="center" mt={4} mb={3}>
-        Pending BALN &gt; SODA migrations
+        SODA migrated and locked
       </Typography>
 
       <Migrations>

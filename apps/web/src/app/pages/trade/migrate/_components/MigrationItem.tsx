@@ -99,20 +99,35 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-open staking modal when shouldAutoOpenStakeModal becomes true (only once per migration)
+  // Only prompt if lock-up time is 12 months or more
   useEffect(() => {
     if (shouldAutoOpenStakeModal) {
       // Only auto-open if user is signed in with EVM wallet
       if (evmAccount?.address) {
-        // Clear any existing timeout
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
+        // Check if lock-up time is 12 months or more (12 * 30 * 24 * 60 * 60 seconds)
+        const TWELVE_MONTHS_IN_SECONDS = 12 * 29 * 24 * 60 * 60;
+        const currentTime = Math.floor(Date.now() / 1000);
+        const unlockTime =
+          typeof migration.unlockTime === 'bigint'
+            ? Number(migration.unlockTime)
+            : typeof migration.unlockTime === 'string'
+              ? parseInt(migration.unlockTime)
+              : migration.unlockTime;
+        const remainingLockTime = unlockTime - currentTime;
 
-        // Add 2 second delay before opening the modal
-        timeoutRef.current = setTimeout(() => {
-          setStakeModalOpen(true);
-          timeoutRef.current = null;
-        }, 2000);
+        // Only auto-open if remaining lock time is 12 months or more
+        if (remainingLockTime >= TWELVE_MONTHS_IN_SECONDS) {
+          // Clear any existing timeout
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+
+          // Add 2 second delay before opening the modal
+          timeoutRef.current = setTimeout(() => {
+            setStakeModalOpen(true);
+            timeoutRef.current = null;
+          }, 2000);
+        }
       }
     }
 
@@ -123,7 +138,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
         timeoutRef.current = null;
       }
     };
-  }, [shouldAutoOpenStakeModal, evmAccount?.address]);
+  }, [shouldAutoOpenStakeModal, evmAccount?.address, migration.unlockTime]);
 
   // Determine state based on staking and locking status
   const getState = () => {

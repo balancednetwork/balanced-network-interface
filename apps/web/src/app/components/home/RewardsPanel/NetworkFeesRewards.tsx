@@ -20,7 +20,7 @@ import {
   usePastMonthFeesDistributed,
   useTotalSupply,
 } from '@/store/bbaln/hooks';
-import { useFetchUnclaimedDividends, useUnclaimedFees } from '@/store/fees/hooks';
+import { useUnclaimedFees } from '@/store/fees/hooks';
 import { useHasNetworkFees } from '@/store/reward/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
@@ -31,7 +31,6 @@ import { useSavingsXChainId } from '@/store/savings/hooks';
 import RewardsGrid from './RewardsGrid';
 
 const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
-  useFetchUnclaimedDividends();
   const rewards = useUnclaimedFees();
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();

@@ -34,8 +34,8 @@ export default function useSort(initialState: SortingType) {
     if (sortBy.order === 'DESC') {
       if (sortBy.key === 'apyTotal') {
         dataToSort.sort((a, b) => {
-          const aTotal = a['feesApy'] + (a['balnApy'] || 0) * 2.5 + (a['externalRewardsTotalAPR'] / 100 || 0);
-          const bTotal = b['feesApy'] + (b['balnApy'] || 0) * 2.5 + (b['externalRewardsTotalAPR'] / 100 || 0);
+          const aTotal = a['feesApy'] + (a['externalRewardsTotalAPR'] / 100 || 0);
+          const bTotal = b['feesApy'] + (b['externalRewardsTotalAPR'] / 100 || 0);
           if (aTotal > bTotal) return -1;
           if (aTotal < bTotal) return 1;
           return 0;
@@ -52,8 +52,8 @@ export default function useSort(initialState: SortingType) {
     } else {
       if (sortBy.key === 'apyTotal') {
         dataToSort.sort((a, b) => {
-          const aTotal = a['feesApy'] + (a['balnApy'] || 0) * 2.5 + (a['externalRewardsTotalAPR'] / 100 || 0);
-          const bTotal = b['feesApy'] + (b['balnApy'] || 0) * 2.5 + (b['externalRewardsTotalAPR'] / 100 || 0);
+          const aTotal = a['feesApy'] + (a['externalRewardsTotalAPR'] / 100 || 0);
+          const bTotal = b['feesApy'] + (b['externalRewardsTotalAPR'] / 100 || 0);
           if (aTotal < bTotal) return -1;
           if (aTotal > bTotal) return 1;
           return 0;

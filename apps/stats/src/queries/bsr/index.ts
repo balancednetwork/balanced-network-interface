@@ -92,7 +92,7 @@ export function useSavingsRateInfo(): UseQueryResult<
   const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
   const { data: tokenPrices } = useTokenPrices();
   const { data: totalLocked } = useTotalBnUSDLocked();
-  const { data: tokenList } = useTricklerAllowedTokens();
+  const tokenList = ['cx2609b924e33ef00b648a409245c7ea394c467824'];
   const { data: periodInBlocks } = useTricklerDistributionPeriod();
   const { data: collateralTokens } = useSupportedCollateralTokens();
 
@@ -163,25 +163,8 @@ export function useSavingsRateInfo(): UseQueryResult<
       const yearlyRatio = (60 * 60 * 24 * 365) / distributionPeriodInSeconds;
       const tricklerPayoutPerYear = tricklerBalance.times(yearlyRatio);
 
-      const rewardsFromInterests = await Promise.all(
-        Object.entries(collateralTokens).map(async ([symbol, address]) => {
-          const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-          if (!token) return new BigNumber(0);
-
-          const totalDebtRaw = await bnJs.Loans.getTotalCollateralDebt(symbol, 'bnUSD');
-          const interest = await bnJs.Loans.getInterestRate(symbol);
-          const rate = new BigNumber(interest ?? 0).div(10000);
-          const totalDebt = CurrencyAmount.fromRawAmount(token, totalDebtRaw);
-          return rate.times(new BigNumber(totalDebt.toFixed()));
-        }),
-      );
-
-      const interestPayoutPerYear = rewardsFromInterests.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
-      const dailyPayout = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(365);
-      const APR = tricklerPayoutPerYear
-        .plus(interestPayoutPerYear)
-        .div(new BigNumber(totalLocked.toFixed()))
-        .times(100);
+      const dailyPayout = tricklerPayoutPerYear.div(365);
+      const APR = tricklerPayoutPerYear.div(new BigNumber(totalLocked.toFixed())).times(100);
 
       return {
         totalLocked,

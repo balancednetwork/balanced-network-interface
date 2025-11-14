@@ -70,9 +70,8 @@ export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
 export function useEmissions() {
   return useQuery({
     queryKey: ['getEmissions'],
-    queryFn: async () => {
-      const data = await bnJs.Rewards.getEmission();
-      return new BigNumber(data).div(10 ** 18);
+    queryFn: () => {
+      return new BigNumber(0);
     },
     placeholderData: keepPreviousData,
     refetchOnReconnect: false,

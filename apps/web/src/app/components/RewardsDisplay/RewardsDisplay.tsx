@@ -1,8 +1,6 @@
-import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { APYItem } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { getRewardApr } from '@/app/pages/trade/supply/_components/utils';
 import { Typography } from '@/app/theme';
-import QuestionIcon from '@/assets/icons/question.svg';
 import { PairData } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
 import { Source } from '@/store/bbaln/hooks';
@@ -10,7 +8,7 @@ import { formatValue } from '@/utils/formatter';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment } from 'react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -84,15 +82,6 @@ const TooltipContent = ({
 const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost, xChainId }) => {
   const prices = useRatesWithOracle();
   const pairName = pair.name;
-  const isICON = xChainId === undefined || xChainId === '0x1.icon';
-  const pairBoost = useMemo(() => {
-    if (boost) {
-      const pairBoostData = boost[pairName];
-      return pairBoostData && pairBoostData.balance.isGreaterThan(0)
-        ? pairBoostData.workingBalance.dividedBy(pairBoostData.balance).toNumber()
-        : undefined;
-    }
-  }, [boost, pairName]);
 
   if (!prices) return null;
 
@@ -103,69 +92,16 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost, xChainId }
 
   if (totalApy <= 0) return null;
 
-  // If balnApy is 0, we don't need to show the balnApy, just show the external rewards
-  if (balnApy === 0) {
-    return (
-      <Wrapper>
-        {pair.externalRewards?.map((reward, index) => (
-          <APYItem key={index} ml="7px">
-            <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-              {reward.currency.symbol}:{' '}
-            </Typography>
-            {formatValue(
-              getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(),
-              false,
-            )}
-            %
-          </APYItem>
-        ))}
-      </Wrapper>
-    );
-  }
-
-  //if there is only baln APR, show the BALN APR and no tooltip
-  if (!pair.externalRewards || pair.externalRewards.length === 0) {
-    return (
-      <Wrapper>
-        <APYItem ml="7px">
-          <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-            <Trans>BALN:</Trans>
-          </Typography>
-          {isICON
-            ? pairBoost
-              ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
-              : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
-                  (balnApy * 2.5 + externalApy).toFixed(4),
-                  false,
-                )}%`
-            : `${formatValue((balnApy + externalApy).toFixed(4), false)}%`}
-        </APYItem>
-      </Wrapper>
-    );
-  }
-
-  // If there are external rewards, show the BALN APR and the external rewards
   return (
     <Wrapper>
-      <MouseoverTooltip
-        placement="top"
-        text={<TooltipContent balnApy={balnApy} externalApy={externalApy} pair={pair} prices={prices} />}
-        width={275}
-      >
-        <QuestionIcon width={14} style={{ marginLeft: '5px', cursor: 'pointer', opacity: 0.9 }} />
-      </MouseoverTooltip>
-      <APYItem ml="7px">
-        <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-          <Trans>Rewards:</Trans>
-        </Typography>
-        {/* Show boosted value instead of a range if user has a position */}
-        {pairBoost
-          ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
-          : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
-              (balnApy * 2.5 + externalApy).toFixed(4),
-              false,
-            )}%`}
-      </APYItem>
+      {pair.externalRewards?.map((reward, index) => (
+        <APYItem key={index} ml="7px">
+          <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+            {reward.currency.symbol}:{' '}
+          </Typography>
+          {formatValue(getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(), false)}%
+        </APYItem>
+      ))}
     </Wrapper>
   );
 };

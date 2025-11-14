@@ -91,7 +91,6 @@ export const PoolRecord = ({
   pool,
   pair,
   pairData,
-  balnReward,
   boostData,
   externalRewards,
 }: {
@@ -99,13 +98,13 @@ export const PoolRecord = ({
   pair: Pair;
   pairData?: PairData;
   poolId: number;
-  balnReward: BigNumber;
   externalRewards: CurrencyAmount<Token>[] | undefined;
   boostData: { [key in string]: Source } | undefined;
   apy: number | null;
 }) => {
   const { xChainId } = pool;
   const [baseAmount, quoteAmount] = usePoolTokenAmounts(pool);
+  const balnReward = new BigNumber(0);
 
   const upSmall = useMedia('(min-width: 800px)');
   const prices = useRatesWithOracle();

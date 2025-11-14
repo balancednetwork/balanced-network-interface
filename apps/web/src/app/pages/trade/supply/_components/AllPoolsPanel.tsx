@@ -188,7 +188,6 @@ export default function AllPoolsPanel({ query }: { query: string }) {
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection, onChainSelection } = useMintActionHandlers(noLiquidity);
-  const showAPRTooltip = useMedia('(min-width: 700px)');
   const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
@@ -268,32 +267,6 @@ export default function AllPoolsPanel({ query }: { query: string }) {
               })
             }
           >
-            {showAPRTooltip && (
-              <TooltipWrapper onClick={e => e.stopPropagation()}>
-                <MouseoverTooltip
-                  width={330}
-                  text={
-                    <>
-                      <Trans>
-                        Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a
-                        pool over the past 30 days.
-                      </Trans>
-                      <br />
-                      <br />
-                      <Trans>
-                        BALN rewards depend on your position size and bBALN holdings (boost available on ICON only).
-                      </Trans>
-                    </>
-                  }
-                  placement="top"
-                  strategy="absolute"
-                >
-                  <QuestionWrapper>
-                    <QuestionIcon className="header-tooltip" width={14} />
-                  </QuestionWrapper>
-                </MouseoverTooltip>
-              </TooltipWrapper>
-            )}
             <Trans>APR</Trans>
           </HeaderText>
           <HeaderText

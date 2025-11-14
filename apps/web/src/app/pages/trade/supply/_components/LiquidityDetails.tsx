@@ -86,29 +86,6 @@ export default function LiquidityDetails() {
             </HeaderText>
             {upSmall && (
               <HeaderText>
-                <MouseoverTooltip
-                  width={330}
-                  text={
-                    <>
-                      <Trans>
-                        Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a
-                        pool over the past 30 days.
-                      </Trans>
-                      <br />
-                      <br />
-                      <Trans>
-                        BALN rewards depend on your position size and bBALN holdings (boost available on ICON only).
-                      </Trans>
-                    </>
-                  }
-                  placement="top"
-                  strategy="absolute"
-                >
-                  <QuestionWrapper>
-                    <QuestionIcon className="header-tooltip" width={14} />
-                  </QuestionWrapper>
-                </MouseoverTooltip>
-
                 <Trans>APR</Trans>
               </HeaderText>
             )}
@@ -130,14 +107,6 @@ export default function LiquidityDetails() {
                       pool={pool}
                       pair={pairs[pool.poolId]}
                       pairData={allPairs && allPairs[pool.poolId]}
-                      //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
-                      balnReward={
-                        allPairs && allPairs[pool.poolId]
-                          ? rewards[
-                              allPairs[pool.poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[pool.poolId].name
-                            ]
-                          : new BigNumber(0)
-                      }
                       externalRewards={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].externalRewards : []}
                       boostData={sources}
                       apy={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].balnApy : 0}

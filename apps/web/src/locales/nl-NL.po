@@ -118,8 +118,8 @@ msgid "Withdraw Balance Tokens"
 msgstr ""
 
 #: src/app/components/RewardsDisplay/RewardsDisplay.tsx
-msgid "Rewards:"
-msgstr ""
+#~ msgid "Rewards:"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #~ msgid "15m"
@@ -523,8 +523,8 @@ msgstr "Goedgekeurd"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
-msgstr ""
+#~ msgid "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
+#~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Review the community token list on GitHub."
@@ -2708,8 +2708,8 @@ msgid "Swap fee (included): <0>{0} {1}</0>"
 msgstr ""
 
 #: src/app/components/RewardsDisplay/RewardsDisplay.tsx
-msgid "BALN:"
-msgstr ""
+#~ msgid "BALN:"
+#~ msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
@@ -2976,8 +2976,8 @@ msgstr "Wijzig"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
-msgstr ""
+#~ msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+#~ msgstr ""
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claiming fees..."

@@ -117,8 +117,8 @@ msgid "Withdraw Balance Tokens"
 msgstr "Withdraw Balance Tokens"
 
 #: src/app/components/RewardsDisplay/RewardsDisplay.tsx
-msgid "Rewards:"
-msgstr "Rewards:"
+#~ msgid "Rewards:"
+#~ msgstr "Rewards:"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #~ msgid "15m"
@@ -514,8 +514,8 @@ msgstr "Approved"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
-msgstr "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
+#~ msgid "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
+#~ msgstr "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Review the community token list on GitHub."
@@ -2645,8 +2645,8 @@ msgid "Swap fee (included): <0>{0} {1}</0>"
 msgstr "Swap fee (included): <0>{0} {1}</0>"
 
 #: src/app/components/RewardsDisplay/RewardsDisplay.tsx
-msgid "BALN:"
-msgstr "BALN:"
+#~ msgid "BALN:"
+#~ msgstr "BALN:"
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
@@ -2913,8 +2913,8 @@ msgstr "Adjust"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
-msgstr "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+#~ msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+#~ msgstr "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claiming fees..."

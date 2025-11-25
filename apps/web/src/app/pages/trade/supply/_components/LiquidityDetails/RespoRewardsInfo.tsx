@@ -48,11 +48,12 @@ export default function RespoRewardsInfo({ pool }: { pool: Pool }) {
   const totalAPR = useMemo(() => {
     let balnAndFeesAPR = new BigNumber(0);
     if (allPairs && sources) {
+      const feesApy = allPairs[poolId]?.feesApy || 0;
       balnAndFeesAPR = sources[sourceName].balance.isZero()
-        ? new BigNumber(allPairs[poolId].feesApy).times(100)
+        ? new BigNumber(feesApy).times(100)
         : new BigNumber(allPairs[pair.poolId!].balnApy)
             .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
-            .plus(allPairs[poolId].feesApy)
+            .plus(feesApy)
             .times(100);
     }
 

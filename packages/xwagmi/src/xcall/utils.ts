@@ -74,10 +74,21 @@ export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint
 };
 
 export const getSupportedXChainIdsForToken = (currency: Currency | XToken): XChainId[] => {
-  return Object.values(xTokenMap)
-    .flat()
-    .filter(t => t.symbol === currency?.symbol)
-    .map(t => t.xChainId);
+  const allTokens = Object.values(xTokenMap).flat();
+
+  // Find tokens matching by symbol
+  const matchingTokens = allTokens.filter(t => t.symbol === currency?.symbol);
+
+  // Get identifiers from matching tokens (for BTC-related tokens that share 'BTC1' identifier)
+  const matchingIdentifiers = new Set(matchingTokens.map(t => t.identifier));
+
+  // Also include tokens that share the same identifier (e.g., BTCB shares 'BTC1' with BTC)
+  const tokensByIdentifier = allTokens.filter(t => matchingIdentifiers.has(t.identifier));
+
+  // Combine both sets and get unique chain IDs
+  const chainIds = new Set(tokensByIdentifier.map(t => t.xChainId));
+
+  return Array.from(chainIds);
 };
 
 export const getSupportedXChainForToken = (currency?: Currency | XToken | null): XChain[] | undefined => {

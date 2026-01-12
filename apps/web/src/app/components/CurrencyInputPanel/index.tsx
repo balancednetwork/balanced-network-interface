@@ -76,7 +76,7 @@ const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarVa
   border-radius: 0 10px 10px 0;
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  color: ${({ disabled, theme }) => (disabled ? theme.colors.text2 : '#ffffff')};
+  color: #ffffff;
   padding: ${({ $showDollarValue }) => ($showDollarValue ? '1px 15px 20px' : '7px 15px')}; 
   outline: none;
   transition: all 0.3s ease;

@@ -10,17 +10,18 @@ import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
 import { getSupportedXChainForIntentToken } from '@/lib/sodax/utils';
+import { useTokenPricesWithPyth } from '@/queries/backendv2';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import {
   DEFAULT_TOKEN_CHAIN,
+  convertCurrency,
   getSupportedXChainForSwapToken,
   getSupportedXChainIdsForSwapToken,
   icon,
-  sui,
   stellar,
-  convertCurrency,
+  sui,
 } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
@@ -29,7 +30,6 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
-import { useTokenPricesWithPyth } from '@/queries/backendv2';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -76,7 +76,7 @@ const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarVa
   border-radius: 0 10px 10px 0;
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  color: ${({ disabled, theme }) => (disabled ? theme.colors.text2 : '#ffffff')};
+  color: #ffffff;
   padding: ${({ $showDollarValue }) => ($showDollarValue ? '1px 15px 20px' : '7px 15px')}; 
   outline: none;
   transition: all 0.3s ease;
@@ -277,11 +277,11 @@ export default function CurrencyInputPanel({
 
         <NumberInput
           placeholder={placeholder}
-          value={!percent ? value : price ? formatBalance(value, price.toFixed()) : value}
+          value={!percent ? value : price ? formatBalance(value, price.toFixed()).replace(/,/g, '') : value}
           onClick={() => setIsActive(!isActive)}
           onBlur={() => setIsActive(false)}
           onChange={event => {
-            enforcer(event.target.value.replace(/,/g, '.'));
+            enforcer(event.target.value.replace(/,/g, ''));
           }}
           disabled={disabled}
           // universal input options

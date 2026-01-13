@@ -210,6 +210,7 @@ export default function SwapPanel() {
               setManualAddress={setManualAddress}
               showWarning={false}
               currencySelectionType={CurrencySelectionType.SODAX_TRADE_OUT}
+              disabled={true}
             />
           </Flex>
         </AutoColumn>

@@ -119,7 +119,6 @@ const swapSlice = createSlice({
 
       return {
         ...state,
-        independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
         [Field.INPUT]: { ...state[Field.OUTPUT], currency: outputCurrency, percent: 0 },
         [Field.OUTPUT]: { ...state[Field.INPUT], currency: inputCurrency },
       };

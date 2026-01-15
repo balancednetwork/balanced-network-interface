@@ -33,9 +33,9 @@ import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import PendingOrders from './PendingOrders';
 import MMSwapCommitButton from './MMSwapCommitButton';
 import MMSwapInfo from './MMSwapInfo';
+import PendingOrders from './PendingOrders';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
@@ -165,6 +165,18 @@ export default function SwapPanel() {
     return formattedAmounts[Field.OUTPUT];
   }, [mmTrade.isMMBetter, mmTrade.trade?.outputAmount, formattedAmounts, independentField]);
 
+  const dependentField = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+  const dependentFieldValue = useMemo(() => {
+    if (dependentField === Field.OUTPUT) {
+      return swapOutputValue ?? '';
+    }
+    return swapInputValue ?? '';
+  }, [dependentField, swapInputValue, swapOutputValue]);
+
+  const handleSwitchTokens = useCallback(() => {
+    onSwitchTokens(dependentFieldValue);
+  }, [onSwitchTokens, dependentFieldValue]);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -200,7 +212,7 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" my={-1}>
-            <FlipButton onClick={onSwitchTokens}>
+            <FlipButton onClick={handleSwitchTokens}>
               <FlipIcon width={25} height={17} />
             </FlipButton>
           </Flex>

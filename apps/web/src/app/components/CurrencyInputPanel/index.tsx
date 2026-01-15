@@ -281,7 +281,7 @@ export default function CurrencyInputPanel({
           onClick={() => setIsActive(!isActive)}
           onBlur={() => setIsActive(false)}
           onChange={event => {
-            enforcer(event.target.value.replace(/,/g, ''));
+            enforcer(event.target.value.replace(/,/g, '.'));
           }}
           disabled={disabled}
           // universal input options

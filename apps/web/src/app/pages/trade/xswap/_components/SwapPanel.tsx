@@ -42,7 +42,7 @@ export default function SwapPanel() {
   } = useDerivedTradeInfo();
 
   const signedInWallets = useSignedInWallets();
-  const { recipient } = useSwapState();
+  const { recipient, independentField } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
@@ -124,6 +124,18 @@ export default function SwapPanel() {
     return formattedAmounts[Field.OUTPUT];
   }, [formattedAmounts]);
 
+  const dependentField = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+  const dependentFieldValue = useMemo(() => {
+    if (dependentField === Field.OUTPUT) {
+      return swapOutputValue ?? '';
+    }
+    return swapInputValue ?? '';
+  }, [dependentField, swapInputValue, swapOutputValue]);
+
+  const handleSwitchTokens = useCallback(() => {
+    onSwitchTokens(dependentFieldValue);
+  }, [onSwitchTokens, dependentFieldValue]);
+
   const showSolanaWarning = useMemo(() => {
     return (
       direction.to === 'solana' &&
@@ -167,7 +179,7 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" my={-1}>
-            <FlipButton onClick={onSwitchTokens}>
+            <FlipButton onClick={handleSwitchTokens}>
               <FlipIcon width={25} height={17} />
             </FlipButton>
           </Flex>

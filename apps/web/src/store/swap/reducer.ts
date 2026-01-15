@@ -113,16 +113,19 @@ const swapSlice = createSlice({
         };
       },
     ),
-    switchCurrencies: create.reducer<void>(state => {
-      const inputCurrency = state[Field.INPUT].currency;
-      const outputCurrency = state[Field.OUTPUT].currency;
+    switchCurrencies: create.reducer<{ dependentFieldValue?: string }>(
+      (state, { payload: { dependentFieldValue } }) => {
+        const inputCurrency = state[Field.INPUT].currency;
+        const outputCurrency = state[Field.OUTPUT].currency;
 
-      return {
-        ...state,
-        [Field.INPUT]: { ...state[Field.OUTPUT], currency: outputCurrency, percent: 0 },
-        [Field.OUTPUT]: { ...state[Field.INPUT], currency: inputCurrency },
-      };
-    }),
+        return {
+          ...state,
+          typedValue: dependentFieldValue ?? state.typedValue,
+          [Field.INPUT]: { ...state[Field.OUTPUT], currency: outputCurrency, percent: 0 },
+          [Field.OUTPUT]: { ...state[Field.INPUT], currency: inputCurrency },
+        };
+      },
+    ),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
       const previousChainId = state[field].currency?.xChainId;

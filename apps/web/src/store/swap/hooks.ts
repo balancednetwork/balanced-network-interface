@@ -87,9 +87,12 @@ export function useSwapActionHandlers() {
     [dispatch],
   );
 
-  const onSwitchTokens = useCallback(() => {
-    dispatch(switchCurrencies());
-  }, [dispatch]);
+  const onSwitchTokens = useCallback(
+    (dependentFieldValue?: string) => {
+      dispatch(switchCurrencies({ dependentFieldValue }));
+    },
+    [dispatch],
+  );
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {

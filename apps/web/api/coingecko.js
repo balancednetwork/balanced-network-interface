@@ -27,6 +27,14 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
+// Safety limits
+const MAX_QUERY_STRING_LENGTH = 2048;
+const MAX_PARAM_COUNT = 25;
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024; // 2MB
+const RATE_LIMIT_WINDOW_MS = 60000;
+const RATE_LIMIT_MAX_REQUESTS = 30;
+const MAX_CACHE_KEY_LENGTH = 1024;
+
 module.exports = async function handler(req, res) {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -41,6 +49,33 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // Query string limiting
+    const queryString = req.url?.includes('?') ? req.url.split('?')[1] : '';
+    if (queryString.length > MAX_QUERY_STRING_LENGTH) {
+      return res.status(413).json({ error: 'Query string too long' });
+    }
+    const paramCount = Object.keys(req.query || {}).length;
+    if (paramCount > MAX_PARAM_COUNT) {
+      return res.status(413).json({ error: 'Too many query parameters' });
+    }
+
+    // Rate limiting
+    const clientIP =
+      (req.headers['x-forwarded-for'] || '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+    if (!global.coingeckoRateLimit) {
+      global.coingeckoRateLimit = new Map();
+    }
+    const now = Date.now();
+    let rateWindow = global.coingeckoRateLimit.get(clientIP);
+    if (!rateWindow || now > rateWindow.resetAt) {
+      rateWindow = { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+      global.coingeckoRateLimit.set(clientIP, rateWindow);
+    }
+    rateWindow.count++;
+    if (rateWindow.count > RATE_LIMIT_MAX_REQUESTS) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+
     const { COINGECKO_API_KEY } = process.env;
 
     // Debug logging for local development
@@ -52,8 +87,27 @@ module.exports = async function handler(req, res) {
     const { path } = req.query;
     const apiPath = Array.isArray(path) ? path.join('/') : path || '';
 
-    // Build cache key from request parameters
-    const cacheKey = `${apiPath}_${JSON.stringify(req.query)}`;
+    // Prepare query parameters (before cache key, so we can derive it from validated params)
+    const queryParams = new URLSearchParams();
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (key !== 'path' && value !== undefined) {
+        if (Array.isArray(value)) {
+          value.forEach(v => queryParams.append(key, v));
+        } else {
+          queryParams.append(key, value);
+        }
+      }
+    });
+
+    // Build cache key from validated params (exclude API key)
+    const cacheKeyParams = new URLSearchParams(queryParams);
+    cacheKeyParams.delete('x_cg_pro_api_key');
+    const sortedParams = [...cacheKeyParams.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const paramsString = sortedParams.map(([k, v]) => `${k}=${v}`).join('&');
+    const cacheKey = `${apiPath}_${paramsString}`;
+    if (cacheKey.length > MAX_CACHE_KEY_LENGTH) {
+      return res.status(400).json({ error: 'Request too large' });
+    }
 
     // Simple in-memory cache (in production, consider Redis or similar)
     if (!global.coingeckoCache) {
@@ -71,7 +125,6 @@ module.exports = async function handler(req, res) {
     };
 
     const cacheDuration = getCacheDuration(apiPath);
-    const now = Date.now();
 
     // Check if we have cached data that's still valid
     const cachedData = global.coingeckoCache.get(cacheKey);
@@ -106,22 +159,7 @@ module.exports = async function handler(req, res) {
     // Build the CoinGecko API URL
     const apiUrl = `https://pro-api.coingecko.com/api/v3/${apiPath}`;
 
-    // Prepare query parameters
-    const queryParams = new URLSearchParams();
-
-    // Copy all query parameters except 'path'
-    Object.entries(req.query).forEach(([key, value]) => {
-      if (key !== 'path' && value !== undefined) {
-        if (Array.isArray(value)) {
-          value.forEach(v => queryParams.append(key, v));
-        } else {
-          // For OHLC range endpoint, we don't need to map parameters
-          queryParams.append(key, value);
-        }
-      }
-    });
-
-    // Add API key if available
+    // Add API key to query params for upstream request
     if (COINGECKO_API_KEY) {
       queryParams.append('x_cg_pro_api_key', COINGECKO_API_KEY);
     }
@@ -152,8 +190,33 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // Get the response data
-    const data = await response.json();
+    // Response size limiting
+    const contentLength = response.headers.get('content-length');
+    if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_BYTES) {
+      return res.status(413).json({ error: 'Response too large' });
+    }
+
+    let data;
+    if (contentLength) {
+      data = await response.json();
+    } else {
+      // No Content-Length: stream body with limit
+      const reader = response.body.getReader();
+      const chunks = [];
+      let totalSize = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalSize += value.length;
+        if (totalSize > MAX_RESPONSE_BYTES) {
+          reader.cancel();
+          return res.status(413).json({ error: 'Response too large' });
+        }
+        chunks.push(value);
+      }
+      const body = Buffer.concat(chunks);
+      data = JSON.parse(body.toString());
+    }
 
     // Cache the response
     global.coingeckoCache.set(cacheKey, {

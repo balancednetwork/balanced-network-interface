@@ -5,17 +5,13 @@ import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import BalnStakingIcon from '@/assets/icons/balnstaking.svg';
 import CoinsIcon from '@/assets/icons/coins.svg';
 import FeesIcon from '@/assets/icons/fees.svg';
-import QuestionIcon from '@/assets/icons/question.svg';
 import VaultIconURL from '@/assets/icons/vault.svg?url';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { BoxPanel } from '@/components/Panel';
-import { MouseoverTooltip } from '@/components/Tooltip';
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
-import BALNSection from '@/sections/BALNSection';
 import BSRSection from '@/sections/BSRSection';
 import CollateralAndLoanSection from '@/sections/CollateralAndLoanSection';
 import EnshrinementSection from '@/sections/EnshrinmentSection';
@@ -26,7 +22,6 @@ import TokenSection from '@/sections/TokenSection';
 import WithdrawalLimits from '@/sections/WithdrawalLimits';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
-import { isMobile } from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 
 export const Container = styled(Box)`
@@ -54,7 +49,7 @@ const StatsLayout = styled(Box)`
 
 export const Stats = styled(Flex)`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: none;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -193,7 +188,7 @@ export function StatsPage() {
               </StatsItemData>
             </StatsItem>
             {/* fees */}
-            <StatsItem border>
+            <StatsItem>
               <StatsItemIcon>
                 <FeesIcon width={53} height={55} />
               </StatsItemIcon>
@@ -205,54 +200,6 @@ export function StatsPage() {
                 <Typography>Earned past month</Typography>
               </StatsItemData>
             </StatsItem>
-            {/* Baln staking info */}
-            <StatsItem>
-              <StatsItemIcon>
-                <BalnStakingIcon width={55} height={55} />
-              </StatsItemIcon>
-
-              <StatsItemData>
-                <Flex alignItems="center" justifyContent={['center', 'center', 'start']}>
-                  <Typography fontWeight="normal" variant="h3" marginRight={'7px'}>
-                    {overviewInfo.bBALNAPY ? (
-                      getFormattedNumber(overviewInfo.bBALNAPY.toNumber(), 'percent2')
-                    ) : (
-                      <LoaderComponent />
-                    )}
-                  </Typography>
-                  {!isMobile && overviewInfo.monthlyFeesTotal ? (
-                    <MouseoverTooltip
-                      width={300}
-                      text={
-                        <>
-                          <Typography>
-                            Calculated from the network fees distributed to bBALN holders over the last 30 days (
-                            <strong>${overviewInfo.monthlyFeesTotal.toFormat(0)}</strong>). Assumes the price of 1 bBALN
-                            is equivalent to 1 BALN locked for 4 years
-                            {overviewInfo.balnPrice ? (
-                              <strong>{` ($${overviewInfo.balnPrice.toFormat(2)})`}</strong>
-                            ) : (
-                              ''
-                            )}
-                            .
-                          </Typography>
-                          {overviewInfo.previousChunk && (
-                            <Typography mt={2}>
-                              Over the past month, {getFormattedNumber(overviewInfo.previousChunkAmount, 'number')}{' '}
-                              bBALN would have received <strong>${overviewInfo.previousChunk.toPrecision(3)}</strong>.
-                            </Typography>
-                          )}
-                        </>
-                      }
-                      placement="top"
-                    >
-                      <QuestionIcon width={14} />
-                    </MouseoverTooltip>
-                  ) : null}
-                </Flex>
-                <Typography>bBALN APR</Typography>
-              </StatsItemData>
-            </StatsItem>
           </Stats>
         </BoxPanel>
 
@@ -262,7 +209,6 @@ export function StatsPage() {
         <PairSection />
         <EnshrinementSection />
         <GovernanceSection />
-        <BALNSection />
         <HoldingsOverviewSection />
         <WithdrawalLimits />
       </StatsLayout>

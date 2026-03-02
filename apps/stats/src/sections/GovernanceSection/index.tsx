@@ -21,6 +21,10 @@ import { getFormattedNumber } from '@/utils/formatter';
 import { ProposalStatusIcon } from './ProposalStatusLabel';
 import { getDateFromDay, normalizeContent } from './utils';
 
+const StyledStats = styled(Stats)`
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+`;
+
 const Grid = styled(Box)`
   display: grid;
   grid-gap: 35px;
@@ -129,7 +133,7 @@ const GovernanceSection = () => {
         Governance
       </Typography>
 
-      <Stats>
+      <StyledStats>
         <StatsItem border>
           <StatsItemIcon>
             <ActiveProposalsIcon height={55} />
@@ -194,7 +198,7 @@ const GovernanceSection = () => {
             <Typography>Eligible voters</Typography>
           </StatsItemData>
         </StatsItem>
-      </Stats>
+      </StyledStats>
       <Grid mt="30px">
         {latestProposals &&
           latestProposals.map(proposal => (

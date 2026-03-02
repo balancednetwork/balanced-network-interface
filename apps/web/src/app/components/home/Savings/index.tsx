@@ -11,28 +11,18 @@ import { inputRegex } from '@/app/components/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import {
   useSavingsRateInfo,
-  useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
   useSavingsXChainId,
 } from '@/store/savings/hooks';
 import { useXTokenBalances } from '@/store/wallet/hooks';
 import { escapeRegExp } from '@/utils';
-import {
-  XToken,
-  getNetworkDisplayName,
-  getXChainType,
-  useXAccount,
-  useXLockedBnUSDAmount,
-  xTokenMapBySymbol,
-} from '@balancednetwork/xwagmi';
+import { XToken, getXChainType, useXAccount, useXLockedBnUSDAmount, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
-import { formatValue } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useQueryClient } from '@tanstack/react-query';
-import { UnderlineText } from '../../DropdownText';
 import { handleConnectWallet } from '../../WalletModal/WalletItem';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 import SavingsModal from './SavingsModal';
@@ -58,7 +48,6 @@ const Savings = () => {
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRateInfo();
-  const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
 
   const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD(old)'];
   const [bnUSDBalance] = useXTokenBalances([bnUSD]);
@@ -88,16 +77,6 @@ const Savings = () => {
       return new BigNumber(0);
     }
   }, [bnUSDBalance, isAdjusting, lockedAmountBN, typedValueBN]);
-
-  const dynamicDailyAmountRate = React.useMemo(() => {
-    if (!savingsRate) return;
-    return savingsRate.dailyPayout.div(new BigNumber(savingsRate.totalLocked.toFixed()).plus(bnUSDDiff));
-  }, [bnUSDDiff, savingsRate]);
-
-  const staticDailyAmountRate = React.useMemo(() => {
-    if (!savingsRate) return;
-    return savingsRate.dailyPayout.div(savingsRate.totalLocked.toFixed());
-  }, [savingsRate]);
 
   React.useEffect(() => {
     if (lockedAmount && sliderInstance.current) {
@@ -153,34 +132,21 @@ const Savings = () => {
             </Typography>
             <Flex>
               <Typography pt={isSmallScreen ? '5px' : '9px'} mr="5px" color="text1">
-                {savingsRate?.APR && `${savingsRate.percentAPRsICX.toFormat(2)}% APR`}
+                {savingsRate?.APR && `${savingsRate.percentAPRsICX.toFormat(0)}% APR`}
               </Typography>
               <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
                 <QuestionHelper
                   width={220}
                   text={
-                    <>
-                      {savingsRate && <Typography mr={1}>Paid in sICX.</Typography>}
-
-                      {savingsPastMonthPayout && (
-                        <Flex>
-                          <Typography fontSize={14} mt={3}>
-                            <strong style={{ marginRight: '5px' }}>
-                              {formatValue(savingsPastMonthPayout.toString())}
-                            </strong>
-                            <span>
-                              <Trans>distributed over the last 30 days.</Trans>
-                            </span>
-                          </Typography>
-                        </Flex>
-                      )}
-                    </>
+                    <Typography fontSize={14}>
+                      As of March 2026, you can no longer earn Savings Rate rewards.
+                    </Typography>
                   }
                 />
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {xAccount.address && bnUSDCombinedTotal > 0 && (
+          {xAccount.address && lockedAmount?.greaterThan(0) && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -208,7 +174,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {xAccount.address && bnUSDCombinedTotal > 0 ? (
+        {xAccount.address && lockedAmount?.greaterThan(0) ? (
           <>
             <Box margin="30px 0 10px">
               <Nouislider
@@ -244,24 +210,11 @@ const Savings = () => {
                 )}
                 <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD(old)`}</Typography>
               </Flex>
-              {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && staticDailyAmountRate && (
-                <Typography fontSize={14}>{`~ $${typedValueBN
-                  .times(isAdjusting ? dynamicDailyAmountRate : staticDailyAmountRate)
-                  .times(7)
-                  .toFormat(2)} weekly`}</Typography>
-              )}
             </Flex>
           </>
-        ) : !xAccount.address ? (
-          <Typography mt={6} mb={5}>
-            <UnderlineText onClick={handleConnect} style={{ color: '#2fccdc' }}>
-              <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}</Trans>
-            </UnderlineText>
-            <Trans>, then deposit bnUSD to earn rewards.</Trans>
-          </Typography>
         ) : (
-          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Buy or borrow bnUSD(old), then deposit it here to earn rewards.</Trans>
+          <Typography mt={6} mb={5}>
+            <Trans>You can no longer earn Savings Rate rewards.</Trans>
           </Typography>
         )}
       </Box>

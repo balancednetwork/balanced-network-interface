@@ -39,6 +39,14 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "stats.balanced.network" }],
+      "destination": "https://app.balanced.network/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/coingecko",

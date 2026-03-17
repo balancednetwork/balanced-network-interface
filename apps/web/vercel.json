@@ -41,9 +41,15 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/",
       "has": [{ "type": "host", "value": "stats.balanced.network" }],
       "destination": "https://app.balanced.network/",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "stats.balanced.network" }],
+      "destination": "https://app.balanced.network/$1",
       "permanent": true
     }
   ],

@@ -12,6 +12,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useIncentivisedPairs } from '@/queries/reward';
@@ -45,6 +46,7 @@ interface ModalProps {
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies, onSuccess }: ModalProps) {
   const queryClient = useQueryClient();
   const { account, pair, lpXChainId } = useDerivedMintInfo();
+  const { track } = useAnalytics();
 
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
@@ -153,6 +155,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         setIsSigning(false);
         if (txHash) {
           setPendingTx(txHash);
+          track('liquidity_deposit', { from: xChainMap[lpXChainId].name });
         } else {
           setIsPending(false);
         }

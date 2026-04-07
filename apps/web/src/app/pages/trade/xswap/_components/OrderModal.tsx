@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -72,6 +73,7 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, showSol
 
   const { quote, formattedAmounts, minOutputAmount, sourceAddress, direction, currencies, exchangeRate, formattedFee } =
     cachedTradeInfo || derivedTradeInfo;
+  const { track } = useAnalytics();
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
   const { onUserInput } = useSwapActionHandlers();
@@ -258,6 +260,12 @@ const OrderModal = ({ modalId = MODAL_ID.ORDER_CONFIRM_MODAL, recipient, showSol
           hasHandledSuccessRef.current = true;
           currentOrderTxRef.current = response.intent_hash;
           clearInputs();
+
+          // Track swap intent v2 event
+          track('swap_intent_v2', {
+            from: sourceToken.symbol,
+            to: destToken.symbol,
+          });
 
           slowDismiss();
         } else {

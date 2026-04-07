@@ -13,6 +13,7 @@ import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { PRICE_IMPACT_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -53,6 +54,7 @@ const XSwapModal = ({
   recipient,
   clearInputs,
 }: XSwapModalProps) => {
+  const { track } = useAnalytics();
   const modalOpen = useModalOpen(modalId);
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
@@ -137,6 +139,11 @@ const XSwapModal = ({
     const xTransactionId = await sendXTransaction(xTransactionInput);
     setCurrentId(xTransactionId || null);
     cleanupSwap();
+
+    track('swap_standard', {
+      from: xChainMap[direction.from].name,
+      to: xChainMap[direction.to].name,
+    });
   };
 
   const gasChecker = useXCallGasChecker(direction.from, _inputAmount);

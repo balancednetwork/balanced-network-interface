@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useIntentProvider from '@/hooks/useIntentProvider';
@@ -65,6 +66,7 @@ const MMSwapModal = ({
   clearInputs,
 }: MMSwapModalProps) => {
   const modalOpen = useModalOpen(modalId);
+  const { track } = useAnalytics();
   const [intentId, setIntentId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
   const [error, setError] = useState<string | null>(null);
@@ -198,6 +200,10 @@ const MMSwapModal = ({
       if (executionResult.ok) {
         intentFromChainName === 'icon' && logMessage('Execution result', executionResult);
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
+        track('swap_intent', {
+          from: xChainMap[direction.from].name,
+          to: xChainMap[direction.to].name,
+        });
       } else {
         logError(new Error('Execution failed'), executionResult);
         setError(executionResult.error?.detail?.message || 'Failed to execute intent order');

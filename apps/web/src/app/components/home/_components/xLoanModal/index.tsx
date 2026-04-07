@@ -11,6 +11,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useWalletPrompting } from '@/hooks/useWalletPrompting';
@@ -56,6 +57,7 @@ const XLoanModal = ({
   storedModalValues,
 }: XLoanModalProps) => {
   const modalOpen = useModalOpen(modalId);
+  const { track } = useAnalytics();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
 
   const [currentId, setCurrentId] = useState<string | null>(null);
@@ -135,6 +137,11 @@ const XLoanModal = ({
     const xTransactionId = await sendXTransaction(xTransactionInput);
     cancelAdjusting();
     setCurrentId(xTransactionId || null);
+
+    track(storedModalValues.action === XLoanAction.BORROW ? 'borrow' : 'repay', {
+      from: xChainMap[sourceChain].name,
+      to: xChainMap[loanNetwork].name,
+    });
   };
 
   const gasChecker = useXCallGasChecker(activeChain, _inputAmount);

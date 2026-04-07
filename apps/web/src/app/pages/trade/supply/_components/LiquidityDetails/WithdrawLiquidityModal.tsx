@@ -13,6 +13,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Pool } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -51,6 +52,7 @@ export default function WithdrawLiquidityModal({
 }: ModalProps) {
   const queryClient = useQueryClient();
   const { pair } = pool;
+  const { track } = useAnalytics();
 
   const [isPending, setIsPending] = React.useState(false);
   const [isSigning, setIsSigning] = React.useState(false);
@@ -113,6 +115,7 @@ export default function WithdrawLiquidityModal({
       setIsSigning(false);
       if (txHash) {
         setPendingTx(txHash);
+        track('liquidity_withdrawal', { from: xChainMap[pool.xChainId].name });
       } else {
         setIsPending(false);
       }

@@ -11,7 +11,6 @@ import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
-import { useAnalytics } from '@/hooks/useAnalytics';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -40,7 +39,6 @@ const StyledXCallButton = styled(StyledButton)`
 
 function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
   const modalOpen = useModalOpen(modalId);
-  const { track } = useAnalytics();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -99,11 +97,6 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
       setWalletPrompting(true);
       const xTransactionId = await sendXTransaction(bridgeInfo);
       setCurrentId(xTransactionId || null);
-
-      track('bridge', {
-        from: xChainMap[direction.from].name,
-        to: xChainMap[direction.to].name,
-      });
     }
   };
 

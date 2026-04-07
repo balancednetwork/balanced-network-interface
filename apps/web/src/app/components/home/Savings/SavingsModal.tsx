@@ -8,7 +8,6 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import { useAnalytics } from '@/hooks/useAnalytics';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useWalletPrompting } from '@/hooks/useWalletPrompting';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -48,7 +47,6 @@ const SavingsModal = ({
 }) => {
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
-  const { track } = useAnalytics();
   const { isWalletPrompting, setWalletPrompting } = useWalletPrompting();
   const { onAdjust: adjust } = useSavingsSliderActionHandlers();
 
@@ -102,7 +100,6 @@ const SavingsModal = ({
             xAccount.address,
             CurrencyAmount.fromRawAmount<XToken>(bnUSD, BigInt(bnUSDDiff.multipliedBy(10 ** bnUSD.decimals).toFixed())),
           );
-          track('savings_deposit', { from: xChainMap[savingsXChainId].name });
         } else {
           txHash = await xUnlockBnUSD(
             xAccount.address,
@@ -116,7 +113,6 @@ const SavingsModal = ({
               ),
             ),
           );
-          track('savings_withdrawal', { from: xChainMap[savingsXChainId].name });
         }
         setWalletPrompting(false);
         setIsPending(true);

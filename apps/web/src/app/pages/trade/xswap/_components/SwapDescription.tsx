@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 
 import { theme } from '@/app/theme';
-import { useCoinGeckoAnalytics } from '@/hooks/useCoinGeckoAnalytics';
 import { setSwapContext } from '@/utils/coingeckoAxios';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -141,9 +140,6 @@ export default function SwapDescription() {
   const [selectedToken, setSelectedToken] = useState<Field>(Field.INPUT);
   const [selectedChartType, setSelectedChartType] = useState<CHART_TYPES>(CHART_TYPES.CANDLE);
   const [isChartExiting, setIsChartExiting] = useState(false);
-
-  // Initialize CoinGecko analytics tracking
-  useCoinGeckoAnalytics();
 
   // Get Pyth prices as backup
   const pythPrices = useTokenPricesWithPyth();

@@ -12,7 +12,6 @@ import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { SodaxProvider } from '@sodax/dapp-kit';
 import { LanguageProvider } from './i18n';
 import sodaxConfig from './lib/sodax';
-import { PlausibleProvider } from './providers/PlausibleProvider';
 import { initSentry, logError, logMessage } from './sentry';
 
 // Initialize Sentry
@@ -53,9 +52,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <QueryClientProvider client={queryClient}>
               <XWagmiProviders>
                 <LanguageProvider>
-                  <PlausibleProvider domain="app.balanced.network">
-                    <App />
-                  </PlausibleProvider>
+                  <App />
                 </LanguageProvider>
               </XWagmiProviders>
             </QueryClientProvider>

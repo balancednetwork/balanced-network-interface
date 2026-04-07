@@ -13,7 +13,6 @@ import ModalContent from '@/app/components/ModalContent';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { Typography } from '@/app/theme';
 import { PRICE_IMPACT_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { useAnalytics } from '@/hooks/useAnalytics';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
@@ -34,7 +33,6 @@ type SwapModalProps = {
 const SwapModal = (props: SwapModalProps) => {
   const { isOpen, onClose, executionTrade, currencies, account, recipient } = props;
   const showWarning = executionTrade?.priceImpact.greaterThan(PRICE_IMPACT_MODAL_WARNING_THRESHOLD);
-  const { track } = useAnalytics();
 
   const handleDismiss = (clearInputs = true) => {
     onClose?.(clearInputs);
@@ -73,7 +71,6 @@ const SwapModal = (props: SwapModalProps) => {
                 summary: message.successMessage,
               },
             );
-            track('swap_standard', { from: 'ICON', to: 'ICON' });
             handleDismiss();
           })
           .catch(e => {
@@ -101,7 +98,6 @@ const SwapModal = (props: SwapModalProps) => {
                 summary: message.successMessage,
               },
             );
-            track('swap_standard', { from: 'ICON', to: 'ICON' });
             handleDismiss();
           })
           .catch(e => {
@@ -133,7 +129,6 @@ const SwapModal = (props: SwapModalProps) => {
               summary: message.successMessage,
             },
           );
-          track('swap_standard', { from: 'ICON', to: 'ICON' });
           handleDismiss();
         })
         .catch(e => {

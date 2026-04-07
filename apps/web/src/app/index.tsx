@@ -53,14 +53,18 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        {false && (
-          <Banner messageID="solana-outage">
-            <Typography as="span">
-              Solana activities are temporarily unavailable. Functionality will be restored after an issue has been
-              resolved.
-            </Typography>
-          </Banner>
-        )}
+        <Banner messageID="legacy-offline-end-2026">
+          <Typography as="span">
+            <strong>Balanced v1 is a legacy app that will go offline at the end of 2026.</strong> Withdraw your funds
+            from the loan, Savings Rate, and liquidity pool features as soon as possible.
+            <br />
+            <br />
+            Can’t repay your loan?{' '}
+            <Link href="https://docs.balanced.network/move-loan" target="_blank" rel="noreferrer">
+              Learn how to move your loan to Balanced v2.
+            </Link>
+          </Typography>
+        </Banner>
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
         <RootRoutes />

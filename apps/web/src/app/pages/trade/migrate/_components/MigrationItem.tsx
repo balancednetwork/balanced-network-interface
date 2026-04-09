@@ -14,6 +14,7 @@ import { useXAccount } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Flex } from 'rebass/styled-components';
@@ -107,6 +108,20 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   const isStaked = migration.stakedSodaAmount > 0n;
   const isLocked = lockUnlockTimeSec > Date.now() / 1000;
   const isUnstaking = migration.unstakeRequest.amount > 0n;
+
+  const convertedAssetsQuery = useQuery({
+    queryKey: ['sodax', 'staking', 'convertedAssets', migration.xSodaAmount.toString()],
+    queryFn: async () => {
+      const res = await sodax.staking.getConvertedAssets(migration.xSodaAmount);
+      if (res.ok) return res.value;
+      throw res.error;
+    },
+    enabled: migration.xSodaAmount > 0n,
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+  });
+
+  const currentValueSoda = convertedAssetsQuery.data ?? migration.stakedSodaAmount;
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -292,10 +307,9 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
               )}{' '}
               SODA
             </Typography>
-            {(isStaked || isUnstaking) && (migration.xSodaAmount > 0n || migration.stakedSodaAmount > 0n) && (
+            {(isStaked || isUnstaking) && (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
               <Typography color="text2" fontSize={14} textAlign="left">
-                {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(migration.stakedSodaAmount)}{' '}
-                SODA
+                {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
               </Typography>
             )}
             {/* {getStakingRewards()} */}

@@ -56,6 +56,16 @@ const StyledMigrationItem = styled(Flex)`
     padding-left: 20px;
   }
 
+  .staking-button-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 7px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
   @media (max-width: 550px) {
     .content-section {
       flex-direction: column;
@@ -68,11 +78,11 @@ const StyledMigrationItem = styled(Flex)`
     }
 
     .staking-button-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content:center;
-      gap: 4px;
+      justify-content: flex-start;
+    }
+
+    p {
+      text-align: center;
     }
   }
 `;
@@ -84,9 +94,19 @@ interface MigrationItemProps {
 }
 
 const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldAutoOpenStakeModal = false }) => {
-  const isStaked = migration.stakedSodaAmount > 0;
-  const isLocked = migration.unlockTime > Date.now() / 1000; // Fixed logic - locked means unlockTime is in the future
-  const isUnstaking = migration.unstakeRequest.amount > 0;
+  const toNumber = (value: number | string | bigint): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return Number(value);
+    return Number(value);
+  };
+
+  const lockUnlockTimeSec = toNumber(migration.unlockTime);
+  const unstakeStartTimeSec = toNumber(migration.unstakeRequest.startTime);
+  const unstakeCompleteTimeSec = unstakeStartTimeSec + UNSTAKE_TIME;
+
+  const isStaked = migration.stakedSodaAmount > 0n;
+  const isLocked = lockUnlockTimeSec > Date.now() / 1000;
+  const isUnstaking = migration.unstakeRequest.amount > 0n;
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -181,9 +201,11 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
       } else {
         amountBN = amount;
       }
-      return (amountBN / 10 ** 18).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+      const value = amountBN / 10 ** 18;
+      const decimals = value >= 10 ? 0 : 2;
+      return value.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
       });
     } catch {
       return '0';
@@ -194,11 +216,13 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     switch (state) {
       case 'not-staked':
       case 'staked':
-        return `Unlocks ${formatUnlockDate(migration.unlockTime)}`;
+        return `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`;
       case 'unstaking':
-        return `Unstakes ${formatUnlockDate(migration.unlockTime)}`;
+        return `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
       case 'unlocked-unstaking':
-        return `Available since ${formatUnlockDate(migration.unlockTime)}`;
+        return isUnstaking
+          ? `Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`
+          : `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
       default:
         return '';
     }
@@ -268,6 +292,12 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
               )}{' '}
               SODA
             </Typography>
+            {(isStaked || isUnstaking) && (migration.xSodaAmount > 0n || migration.stakedSodaAmount > 0n) && (
+              <Typography color="text2" fontSize={14} textAlign="left">
+                {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(migration.stakedSodaAmount)}{' '}
+                SODA
+              </Typography>
+            )}
             {/* {getStakingRewards()} */}
           </div>
 
@@ -275,22 +305,10 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
             <Typography color="text1" fontSize={14} textAlign="right">
               {getDateText()}
             </Typography>
-            {state === 'unstaking' && (
-              <Typography color="text2" fontSize={14} textAlign="right">
-                Unstakes {formatUnlockDate(migration.unlockTime)}
-              </Typography>
-            )}
-            {state === 'unlocked-unstaking' && (
-              <Typography color="text2" fontSize={14} textAlign="right">
-                Unstakes {formatUnlockDate(migration.unlockTime)}
-              </Typography>
-            )}
             <Typography className="staking-button-wrap" color="text2" fontSize={14} textAlign="right">
-              {isUnstaking ? (
-                <span>{`Unstakes ${formatUnlockDate(Number(migration.unstakeRequest.startTime) + UNSTAKE_TIME)}`}</span>
-              ) : (
-                ''
-              )}
+              {isUnstaking && state !== 'unlocked-unstaking' ? (
+                <span>{`Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`}</span>
+              ) : null}
               <span style={{ display: 'inline-block', marginLeft: '7px' }}>{getActionButton()}</span>
             </Typography>
           </div>
@@ -352,9 +370,11 @@ const StakeSodaModal: React.FC<{
       } else {
         amountBN = amount;
       }
-      return (amountBN / 10 ** 18).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+      const value = amountBN / 10 ** 18;
+      const decimals = value >= 10 ? 0 : 2;
+      return value.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
       });
     } catch {
       return '0';
@@ -530,9 +550,11 @@ const UnstakeSodaModal: React.FC<{
       } else {
         amountBN = amount;
       }
-      return (amountBN / 10 ** 18).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+      const value = amountBN / 10 ** 18;
+      const decimals = value >= 10 ? 0 : 2;
+      return value.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
       });
     } catch {
       return '0';

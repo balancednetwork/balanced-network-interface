@@ -130,6 +130,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   // Local modal states
   const [stakeModalOpen, setStakeModalOpen] = useState(false);
   const [unstakeModalOpen, setUnstakeModalOpen] = useState(false);
+  const [claimModalOpen, setClaimModalOpen] = useState(false);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -243,7 +244,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     }
   };
 
-  const handleActionClick = (action: 'stake' | 'unstake') => {
+  const handleActionClick = (action: 'stake' | 'unstake' | 'claim') => {
     if (!evmAccount?.address) {
       // User not signed in, open wallet modal
       toggleWalletModal();
@@ -251,8 +252,10 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
       // User is signed in, open appropriate modal
       if (action === 'stake') {
         setStakeModalOpen(true);
-      } else {
+      } else if (action === 'unstake') {
         setUnstakeModalOpen(true);
+      } else {
+        setClaimModalOpen(true);
       }
     }
   };
@@ -273,7 +276,11 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
           </UnderlineText>
         );
       case 'unlocked-unstaking':
-        return null; // No action button for this state
+        return (
+          <UnderlineText onClick={() => handleActionClick('claim')}>
+            <Typography color="primaryBright">Claim</Typography>
+          </UnderlineText>
+        );
       default:
         return null;
     }
@@ -307,11 +314,13 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
               )}{' '}
               SODA
             </Typography>
-            {(isStaked || isUnstaking) && (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
-              <Typography color="text2" fontSize={14} textAlign="left">
-                {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
-              </Typography>
-            )}
+            {state !== 'unlocked-unstaking' &&
+              (isStaked || isUnstaking) &&
+              (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
+                <Typography color="text2" fontSize={14} textAlign="left">
+                  {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
+                </Typography>
+              )}
             {/* {getStakingRewards()} */}
           </div>
 
@@ -341,6 +350,12 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
         index={index}
         isOpen={unstakeModalOpen}
         onClose={() => setUnstakeModalOpen(false)}
+      />
+      <ClaimSodaModal
+        index={index}
+        migration={migration}
+        isOpen={claimModalOpen}
+        onClose={() => setClaimModalOpen(false)}
       />
     </>
   );
@@ -611,20 +626,11 @@ const UnstakeSodaModal: React.FC<{
     setError(null);
 
     try {
-      // TODO: SODAX SDK staking methods are not yet available in the current version
-      // This is a placeholder implementation that will be updated when the staking API is available
-
-      // Convert staked SODA amount to bigint (assuming 18 decimals)
-      const stakedAmount = BigInt(migration.stakedSodaAmount);
-      console.log(migration);
-
-      // Simulate API call delay
       const result = await sodax.migration.balnSwapService.unstake(
         { lockId: BigInt(index) },
         spokeProvider as SonicSpokeProvider,
       );
 
-      console.log(result);
       if (result) {
         setMigrationStatus(MigrationStatus.Success);
         slowDismiss();
@@ -719,6 +725,175 @@ const UnstakeSodaModal: React.FC<{
             >
               <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
                 <Typography mb={4}>Unstaking completed</Typography>
+                <TickIcon width={20} height={20} />
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+// Claim SODA Modal Component
+const ClaimSodaModal: React.FC<{
+  migration: DetailedLock;
+  index: number;
+  isOpen: boolean;
+  onClose: () => void;
+}> = ({ migration, isOpen, onClose, index }) => {
+  const evmAccount = useXAccount('EVM');
+  const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      setMigrationStatus(MigrationStatus.None);
+      setError(null);
+    }, 500);
+  }, [onClose]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 3000);
+  }, [handleDismiss]);
+
+  const formatAmount = (amount: string | number | bigint) => {
+    try {
+      let amountBN: number;
+      if (typeof amount === 'bigint') {
+        amountBN = Number(amount);
+      } else if (typeof amount === 'string') {
+        amountBN = parseFloat(amount);
+      } else {
+        amountBN = amount;
+      }
+      return (amountBN / 10 ** 18).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    } catch {
+      return '0';
+    }
+  };
+
+  const handleClaim = async () => {
+    if (!evmAccount?.address || !spokeProvider) {
+      setError('Wallet not connected');
+      return;
+    }
+
+    if (isWrongChain) {
+      setError('Please switch to the correct chain first');
+      return;
+    }
+
+    setMigrationStatus(MigrationStatus.Migrating);
+    setError(null);
+
+    try {
+      const result = await sodax.migration.balnSwapService.claim(
+        { lockId: BigInt(index) },
+        spokeProvider as SonicSpokeProvider,
+      );
+
+      if (result) {
+        setMigrationStatus(MigrationStatus.Success);
+        slowDismiss();
+      }
+    } catch (err) {
+      console.error('Claim error:', err);
+      setError(err instanceof Error ? err.message : 'Claim failed');
+      setMigrationStatus(MigrationStatus.Failure);
+    }
+  };
+
+  const handleCancel = () => {
+    if (migrationStatus !== MigrationStatus.Migrating) {
+      handleDismiss();
+    }
+  };
+
+  const isProcessing = migrationStatus === MigrationStatus.Migrating;
+
+  return (
+    <Modal isOpen={isOpen} onDismiss={handleCancel}>
+      <ModalContent noMessages>
+        <Typography textAlign="center" mb={2}>
+          Claim SODA?
+        </Typography>
+
+        <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={3}>
+          {formatAmount(migration.sodaAmount)} SODA
+        </Typography>
+
+        <Typography textAlign="center" fontSize={14} mb={4}>
+          Your migrated SODA is unlocked and can be claimed now.
+        </Typography>
+
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Failure && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Claim failed</Typography>
+                {error ? (
+                  <Typography maxWidth="320px" color="alert" textAlign="center">
+                    {error}
+                  </Typography>
+                ) : (
+                  <CrossIcon width={20} height={20} />
+                )}
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus !== MigrationStatus.Success && (
+            <motion.div
+              key={'claim-actions'}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <FlexBox justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={handleCancel} fontSize={14}>
+                  {isProcessing || migrationStatus === MigrationStatus.Failure ? 'Close' : 'Cancel'}
+                </TextButton>
+
+                {migrationStatus !== MigrationStatus.Failure &&
+                  (isWrongChain ? (
+                    <StyledButton onClick={handleSwitchChain} fontSize={14}>
+                      Switch to {xChainMap[SONIC_MAINNET_CHAIN_ID].name}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton onClick={handleClaim} fontSize={14} $loading={isProcessing} disabled={isProcessing}>
+                      {isProcessing ? 'Claiming...' : 'Claim'}
+                    </StyledButton>
+                  ))}
+              </FlexBox>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {migrationStatus === MigrationStatus.Success && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <FlexBox pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>Claim completed</Typography>
                 <TickIcon width={20} height={20} />
               </FlexBox>
             </motion.div>

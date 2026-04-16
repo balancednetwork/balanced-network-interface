@@ -5,6 +5,24 @@ import { DetailedLock } from '@sodax/sdk';
 import { EvmXService, useXAccount, useXService, XChainId } from '@balancednetwork/xwagmi';
 import { getWagmiChainId } from '@/hooks/useWalletProviderOptions';
 
+const toBigInt = (value: bigint | number | string | undefined): bigint => {
+  if (typeof value === 'bigint') return value;
+  if (typeof value === 'number') return BigInt(value);
+  if (typeof value === 'string') return BigInt(value);
+  return 0n;
+};
+
+const isClearedMigrationLock = (migration: DetailedLock): boolean => {
+  return (
+    toBigInt(migration.balnAmount) === 0n &&
+    toBigInt(migration.sodaAmount) === 0n &&
+    toBigInt(migration.unlockTime) === 0n &&
+    toBigInt(migration.stakedSodaAmount) === 0n &&
+    toBigInt(migration.xSodaAmount) === 0n &&
+    toBigInt(migration.unstakeRequest.amount) === 0n
+  );
+};
+
 export function usePendingMigrations(userAddress?: string): UseQueryResult<readonly DetailedLock[], Error> {
   const evmAccount = useXAccount('EVM');
   const evmXService = useXService('EVM') as EvmXService | undefined;
@@ -22,7 +40,7 @@ export function usePendingMigrations(userAddress?: string): UseQueryResult<reado
         address as `0x${string}`,
       );
 
-      return migrations || [];
+      return (migrations || []).filter(migration => !isClearedMigrationLock(migration));
     },
     [publicClient],
   );

@@ -176,12 +176,19 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     };
   }, [shouldAutoOpenStakeModal, evmAccount?.address, migration.unlockTime]);
 
-  // Determine state based on staking and locking status
+  const isClaimable = !isLocked && !isUnstaking;
+  const displayedSodaAmount = isUnstaking
+    ? migration.unstakeRequest.amount
+    : isStaked
+      ? migration.stakedSodaAmount
+      : migration.sodaAmount;
+
+  // Determine state based on staking, unstaking, and lock status
   const getState = () => {
-    if (!isStaked && isLocked) return 'not-staked';
-    if (isStaked && isLocked) return 'staked';
-    if (isStaked && !isLocked) return 'unstaking';
-    return 'unlocked-unstaking';
+    if (isUnstaking) return 'unstaking';
+    if (isClaimable) return 'claimable';
+    if (isStaked) return 'staked';
+    return 'not-staked';
   };
 
   const state = getState();
@@ -231,14 +238,15 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   const getDateText = () => {
     switch (state) {
       case 'not-staked':
-      case 'staked':
         return `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`;
-      case 'unstaking':
-        return `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
-      case 'unlocked-unstaking':
-        return isUnstaking
-          ? `Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`
+      case 'staked':
+        return isLocked
+          ? `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`
           : `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
+      case 'unstaking':
+        return `Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`;
+      case 'claimable':
+        return `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
       default:
         return '';
     }
@@ -263,6 +271,11 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   const getActionButton = () => {
     switch (state) {
       case 'not-staked':
+        return (
+          <UnderlineText onClick={() => handleActionClick('stake')}>
+            <Typography color="primaryBright">Stake</Typography>
+          </UnderlineText>
+        );
       case 'unstaking':
         return (
           <UnderlineText onClick={() => handleActionClick('stake')}>
@@ -275,7 +288,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
             <Typography color="primaryBright">Unstake</Typography>
           </UnderlineText>
         );
-      case 'unlocked-unstaking':
+      case 'claimable':
         return (
           <UnderlineText onClick={() => handleActionClick('claim')}>
             <Typography color="primaryBright">Claim</Typography>
@@ -287,7 +300,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   };
 
   const getStakingRewards = () => {
-    if (state === 'staked' || state === 'unstaking' || state === 'unlocked-unstaking') {
+    if (state === 'staked' || state === 'unstaking' || state === 'claimable') {
       const stakingRewards = 200; // This should be calculated from actual data
       return (
         <Typography color="text" fontSize={14} textAlign="left">
@@ -304,23 +317,13 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
         <div className="content-section">
           <div className="left-content">
             <Typography color="text" fontSize={16} textAlign="left">
-              {formatAmount(migration.balnAmount)} BALN for{' '}
-              {formatAmount(
-                isUnstaking
-                  ? migration.unstakeRequest.amount
-                  : isStaked
-                    ? migration.stakedSodaAmount
-                    : migration.sodaAmount,
-              )}{' '}
-              SODA
+              {formatAmount(migration.balnAmount)} BALN for {formatAmount(displayedSodaAmount)} SODA
             </Typography>
-            {state !== 'unlocked-unstaking' &&
-              (isStaked || isUnstaking) &&
-              (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
-                <Typography color="text2" fontSize={14} textAlign="left">
-                  {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
-                </Typography>
-              )}
+            {isLocked && (isStaked || isUnstaking) && (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
+              <Typography color="text2" fontSize={14} textAlign="left">
+                {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
+              </Typography>
+            )}
             {/* {getStakingRewards()} */}
           </div>
 
@@ -329,9 +332,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
               {getDateText()}
             </Typography>
             <Typography className="staking-button-wrap" color="text2" fontSize={14} textAlign="right">
-              {isUnstaking && state !== 'unlocked-unstaking' ? (
-                <span>{`Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`}</span>
-              ) : null}
+              {state === 'unstaking' ? <span>{`Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`}</span> : null}
               <span style={{ display: 'inline-block', marginLeft: '7px' }}>{getActionButton()}</span>
             </Typography>
           </div>
@@ -354,6 +355,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
       <ClaimSodaModal
         index={index}
         migration={migration}
+        claimAmount={displayedSodaAmount}
         isOpen={claimModalOpen}
         onClose={() => setClaimModalOpen(false)}
       />
@@ -739,9 +741,10 @@ const UnstakeSodaModal: React.FC<{
 const ClaimSodaModal: React.FC<{
   migration: DetailedLock;
   index: number;
+  claimAmount: string | number | bigint;
   isOpen: boolean;
   onClose: () => void;
-}> = ({ migration, isOpen, onClose, index }) => {
+}> = ({ migration, isOpen, onClose, index, claimAmount }) => {
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
@@ -828,7 +831,7 @@ const ClaimSodaModal: React.FC<{
         </Typography>
 
         <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={3}>
-          {formatAmount(migration.sodaAmount)} SODA
+          {formatAmount(claimAmount)} SODA
         </Typography>
 
         <Typography textAlign="center" fontSize={14} mb={4}>

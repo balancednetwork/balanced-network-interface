@@ -101,6 +101,12 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     return Number(value);
   };
 
+  const toBigInt = (value: number | string | bigint): bigint => {
+    if (typeof value === 'bigint') return value;
+    if (typeof value === 'number') return BigInt(value);
+    return BigInt(value);
+  };
+
   const lockUnlockTimeSec = toNumber(migration.unlockTime);
   const unstakeStartTimeSec = toNumber(migration.unstakeRequest.startTime);
   const unstakeCompleteTimeSec = unstakeStartTimeSec + UNSTAKE_TIME;
@@ -122,6 +128,11 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   });
 
   const currentValueSoda = convertedAssetsQuery.data ?? migration.stakedSodaAmount;
+  const baseDisplayedSodaAmount = isUnstaking ? migration.unstakeRequest.amount : migration.sodaAmount;
+  const displayedSodaAmount =
+    toBigInt(baseDisplayedSodaAmount) === 0n && toBigInt(currentValueSoda) > 0n
+      ? currentValueSoda
+      : baseDisplayedSodaAmount;
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -176,17 +187,15 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     };
   }, [shouldAutoOpenStakeModal, evmAccount?.address, migration.unlockTime]);
 
-  const isClaimable = !isLocked && !isUnstaking;
-  const displayedSodaAmount = isUnstaking
-    ? migration.unstakeRequest.amount
-    : isStaked
-      ? migration.stakedSodaAmount
-      : migration.sodaAmount;
+  const isClaimable = !isLocked;
+  const showCurrentValueRow = migration.xSodaAmount > 0n || currentValueSoda > 0n;
+  const claimAmount = migration.xSodaAmount > 0n ? migration.xSodaAmount : displayedSodaAmount;
+  const claimSymbol = migration.xSodaAmount > 0n ? 'xSODA' : 'SODA';
 
   // Determine state based on staking, unstaking, and lock status
   const getState = () => {
-    if (isUnstaking) return 'unstaking';
     if (isClaimable) return 'claimable';
+    if (isUnstaking) return 'unstaking';
     if (isStaked) return 'staked';
     return 'not-staked';
   };
@@ -319,7 +328,7 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
             <Typography color="text" fontSize={16} textAlign="left">
               {formatAmount(migration.balnAmount)} BALN for {formatAmount(displayedSodaAmount)} SODA
             </Typography>
-            {isLocked && (isStaked || isUnstaking) && (migration.xSodaAmount > 0n || currentValueSoda > 0n) && (
+            {showCurrentValueRow && (
               <Typography color="text2" fontSize={14} textAlign="left">
                 {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
               </Typography>
@@ -355,7 +364,8 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
       <ClaimSodaModal
         index={index}
         migration={migration}
-        claimAmount={displayedSodaAmount}
+        claimAmount={claimAmount}
+        claimSymbol={claimSymbol}
         isOpen={claimModalOpen}
         onClose={() => setClaimModalOpen(false)}
       />
@@ -742,9 +752,10 @@ const ClaimSodaModal: React.FC<{
   migration: DetailedLock;
   index: number;
   claimAmount: string | number | bigint;
+  claimSymbol: string;
   isOpen: boolean;
   onClose: () => void;
-}> = ({ migration, isOpen, onClose, index, claimAmount }) => {
+}> = ({ migration, isOpen, onClose, index, claimAmount, claimSymbol }) => {
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
@@ -827,15 +838,15 @@ const ClaimSodaModal: React.FC<{
     <Modal isOpen={isOpen} onDismiss={handleCancel}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb={2}>
-          Claim SODA?
+          Claim {claimSymbol}?
         </Typography>
 
         <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={3}>
-          {formatAmount(claimAmount)} SODA
+          {formatAmount(claimAmount)} {claimSymbol}
         </Typography>
 
         <Typography textAlign="center" fontSize={14} mb={4}>
-          Your migrated SODA is unlocked and can be claimed now.
+          Your migrated tokens are unlocked and can be claimed now.
         </Typography>
 
         <AnimatePresence>

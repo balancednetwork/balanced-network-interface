@@ -7,6 +7,7 @@ import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { PENDING_MIGRATIONS_QUERY_KEY, isClearedMigrationLock } from '@/hooks/usePendingMigrations';
 import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -14,7 +15,7 @@ import { useXAccount } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Flex } from 'rebass/styled-components';
@@ -111,9 +112,15 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   const unstakeStartTimeSec = toNumber(migration.unstakeRequest.startTime);
   const unstakeCompleteTimeSec = unstakeStartTimeSec + UNSTAKE_TIME;
 
-  const isStaked = migration.stakedSodaAmount > 0n;
+  // Migration lock is still locked when its unlock date is in the future.
   const isLocked = lockUnlockTimeSec > Date.now() / 1000;
-  const isUnstaking = migration.unstakeRequest.amount > 0n;
+  // "Unstaking" means the user has asked to unstake and is inside the 6-month
+  // cooldown (independent of the migration lock).
+  const isUnstaking = toBigInt(migration.unstakeRequest.amount) > 0n;
+  // "Staked" means there is active stake remaining. Treat either a non-zero
+  // stakedSodaAmount or a non-zero xSodaAmount as staked — once everything is
+  // moved into an unstakeRequest, stakedSodaAmount can drop to 0.
+  const isStaked = toBigInt(migration.stakedSodaAmount) > 0n || toBigInt(migration.xSodaAmount) > 0n;
 
   const convertedAssetsQuery = useQuery({
     queryKey: ['sodax', 'staking', 'convertedAssets', migration.xSodaAmount.toString()],
@@ -128,7 +135,16 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   });
 
   const currentValueSoda = convertedAssetsQuery.data ?? migration.stakedSodaAmount;
-  const baseDisplayedSodaAmount = isUnstaking ? migration.unstakeRequest.amount : migration.sodaAmount;
+  // Top-row title always shows the migrated SODA amount. For rows that have
+  // been fully moved into an unstake request, sodaAmount can be 0 — fall back
+  // to the unstake amount, and finally to the current staked value — so the
+  // heading never reads "0 SODA" when there's actually a balance to see.
+  const baseDisplayedSodaAmount =
+    toBigInt(migration.sodaAmount) > 0n
+      ? migration.sodaAmount
+      : toBigInt(migration.unstakeRequest.amount) > 0n
+        ? migration.unstakeRequest.amount
+        : migration.sodaAmount;
   const displayedSodaAmount =
     toBigInt(baseDisplayedSodaAmount) === 0n && toBigInt(currentValueSoda) > 0n
       ? currentValueSoda
@@ -244,21 +260,20 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     }
   };
 
+  // Top-row right side: always the migration-lock unlock status. The 6-month
+  // unstake countdown lives in the bottom row instead (see `getUnstakeText`).
   const getDateText = () => {
-    switch (state) {
-      case 'not-staked':
-        return `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`;
-      case 'staked':
-        return isLocked
-          ? `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`
-          : `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
-      case 'unstaking':
-        return `Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`;
-      case 'claimable':
-        return `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
-      default:
-        return '';
-    }
+    return isLocked
+      ? `Unlocks ${formatUnlockDate(lockUnlockTimeSec)}`
+      : `Available since ${formatUnlockDate(lockUnlockTimeSec)}`;
+  };
+
+  // Bottom-row right side prefix: only the 6-month unstake countdown, shown
+  // only while an unstake request is active and the lock hasn't already
+  // unlocked (claim takes priority once unlocked).
+  const getUnstakeText = () => {
+    if (state !== 'unstaking') return null;
+    return `Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`;
   };
 
   const handleActionClick = (action: 'stake' | 'unstake' | 'claim') => {
@@ -320,6 +335,15 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     return null;
   };
 
+  // Defensive: a cleared lock (e.g. post-claim) has all fields zeroed and
+  // should not render any UI, but it must stay in the underlying array so
+  // later locks keep their SDK index.
+  if (isClearedMigrationLock(migration)) {
+    return null;
+  }
+
+  const unstakeText = getUnstakeText();
+
   return (
     <>
       <StyledMigrationItem>
@@ -333,7 +357,6 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
                 {formatAmount(migration.xSodaAmount)} xSODA | Current value: {formatAmount(currentValueSoda)} SODA
               </Typography>
             )}
-            {/* {getStakingRewards()} */}
           </div>
 
           <div className="right-content">
@@ -341,8 +364,8 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
               {getDateText()}
             </Typography>
             <Typography className="staking-button-wrap" color="text2" fontSize={14} textAlign="right">
-              {state === 'unstaking' ? <span>{`Unstakes ${formatUnlockDate(unstakeCompleteTimeSec)}`}</span> : null}
-              <span style={{ display: 'inline-block', marginLeft: '7px' }}>{getActionButton()}</span>
+              {unstakeText ? <span>{unstakeText}</span> : null}
+              <span style={{ display: 'inline-block', marginLeft: unstakeText ? '7px' : 0 }}>{getActionButton()}</span>
             </Typography>
           </div>
         </div>
@@ -384,6 +407,7 @@ const StakeSodaModal: React.FC<{
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const queryClient = useQueryClient();
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
 
@@ -453,6 +477,7 @@ const StakeSodaModal: React.FC<{
 
       if (result) {
         setMigrationStatus(MigrationStatus.Success);
+        queryClient.invalidateQueries({ queryKey: [PENDING_MIGRATIONS_QUERY_KEY] });
         slowDismiss();
       }
     } catch (err) {
@@ -564,6 +589,7 @@ const UnstakeSodaModal: React.FC<{
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const queryClient = useQueryClient();
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
 
@@ -645,6 +671,7 @@ const UnstakeSodaModal: React.FC<{
 
       if (result) {
         setMigrationStatus(MigrationStatus.Success);
+        queryClient.invalidateQueries({ queryKey: [PENDING_MIGRATIONS_QUERY_KEY] });
         slowDismiss();
       }
     } catch (err) {
@@ -759,6 +786,7 @@ const ClaimSodaModal: React.FC<{
   const evmAccount = useXAccount('EVM');
   const spokeProvider = useSpokeProvider(SONIC_MAINNET_CHAIN_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(SONIC_MAINNET_CHAIN_ID);
+  const queryClient = useQueryClient();
   const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(MigrationStatus.None);
   const [error, setError] = useState<string | null>(null);
 
@@ -817,6 +845,7 @@ const ClaimSodaModal: React.FC<{
 
       if (result) {
         setMigrationStatus(MigrationStatus.Success);
+        queryClient.invalidateQueries({ queryKey: [PENDING_MIGRATIONS_QUERY_KEY] });
         slowDismiss();
       }
     } catch (err) {

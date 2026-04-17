@@ -823,6 +823,36 @@ const ClaimSodaModal: React.FC<{
     }
   };
 
+  const formatUnlockDate = (unlockTime: number | string | bigint) => {
+    try {
+      let timestamp: number;
+      if (typeof unlockTime === 'bigint') {
+        timestamp = Number(unlockTime);
+      } else if (typeof unlockTime === 'string') {
+        timestamp = parseInt(unlockTime);
+      } else {
+        timestamp = unlockTime;
+      }
+      return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch {
+      return 'Unknown date';
+    }
+  };
+
+  const isXSoda = claimSymbol === 'xSODA';
+  const isUnstaking = migration.unstakeRequest.amount > 0n;
+  const unstakeStartTimeSec =
+    typeof migration.unstakeRequest.startTime === 'bigint'
+      ? Number(migration.unstakeRequest.startTime)
+      : typeof migration.unstakeRequest.startTime === 'string'
+        ? parseInt(migration.unstakeRequest.startTime)
+        : migration.unstakeRequest.startTime;
+  const unstakeCompleteTimeSec = unstakeStartTimeSec + UNSTAKE_TIME;
+
   const handleClaim = async () => {
     if (!evmAccount?.address || !spokeProvider) {
       setError('Wallet not connected');
@@ -870,13 +900,23 @@ const ClaimSodaModal: React.FC<{
           Claim {claimSymbol}?
         </Typography>
 
-        <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={3}>
+        <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={isXSoda ? 3 : 0}>
           {formatAmount(claimAmount)} {claimSymbol}
         </Typography>
 
-        <Typography textAlign="center" fontSize={14} mb={4}>
-          Your migrated tokens are unlocked and can be claimed now.
-        </Typography>
+        {isXSoda && isUnstaking && (
+          <Typography textAlign="center" fontSize={14}>
+            Your xSODA will finish unstaking on{' '}
+            <strong style={{ color: 'white' }}>{formatUnlockDate(unstakeCompleteTimeSec)}</strong>. To unstake
+            instantly, restake, or swap, visit sodax.com.
+          </Typography>
+        )}
+
+        {isXSoda && !isUnstaking && (
+          <Typography textAlign="center" fontSize={14}>
+            Your xSODA is staked. After you claim, you can unstake or swap it from sodax.com.
+          </Typography>
+        )}
 
         <AnimatePresence>
           {migrationStatus === MigrationStatus.Failure && (

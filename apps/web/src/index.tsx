@@ -36,7 +36,7 @@ const fmt = {
 
 const rpcConfig = {
   //solana
-  solana: 'https://solana-mainnet.g.alchemy.com/v2/i3q5fE3cYSFBE4Lcg1kS5',
+  solana: 'https://solana-mainnet.g.alchemy.com/v2/5hHzlycXLEPf4NWvTgXNd',
 };
 
 BigInt.prototype['toJSON'] = function () {

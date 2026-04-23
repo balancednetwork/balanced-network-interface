@@ -203,7 +203,11 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
     };
   }, [shouldAutoOpenStakeModal, evmAccount?.address, migration.unlockTime]);
 
-  const isClaimable = !isLocked;
+  // A lock is claimable once the migration lock has expired and there is no
+  // pending unstake in progress. Staked locks are claimable (the user gets
+  // their xSODA out); a lock mid-unstake cooldown is not — the contract
+  // reverts with "Lock not unstaked" while unstakeRequest is active.
+  const isClaimable = !isLocked && !isUnstaking;
   const showCurrentValueRow = migration.xSodaAmount > 0n || currentValueSoda > 0n;
   const claimAmount = migration.xSodaAmount > 0n ? migration.xSodaAmount : displayedSodaAmount;
   const claimSymbol = migration.xSodaAmount > 0n ? 'xSODA' : 'SODA';

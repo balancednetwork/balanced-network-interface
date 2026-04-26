@@ -114,9 +114,12 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
 
   // Migration lock is still locked when its unlock date is in the future.
   const isLocked = lockUnlockTimeSec > Date.now() / 1000;
-  // "Unstaking" means the user has asked to unstake and is inside the 6-month
-  // cooldown (independent of the migration lock).
-  const isUnstaking = toBigInt(migration.unstakeRequest.amount) > 0n;
+  // "Unstaking" means the user has asked to unstake AND the 6-month cooldown
+  // is still in progress. The unstakeRequest amount stays positive after the
+  // cooldown ends (until the lock is claimed), so a pure amount check would
+  // leave the row stuck in 'unstaking' with a past-dated countdown when it
+  // should have flipped to 'claimable'.
+  const isUnstaking = toBigInt(migration.unstakeRequest.amount) > 0n && unstakeCompleteTimeSec > Date.now() / 1000;
   // "Staked" means there is active stake remaining. Treat either a non-zero
   // stakedSodaAmount or a non-zero xSodaAmount as staked — once everything is
   // moved into an unstakeRequest, stakedSodaAmount can drop to 0.
@@ -848,7 +851,7 @@ const ClaimSodaModal: React.FC<{
   };
 
   const isXSoda = claimSymbol === 'xSODA';
-  const isUnstaking = migration.unstakeRequest.amount > 0n;
+  const hasPendingUnstake = migration.unstakeRequest.amount > 0n;
   const unstakeStartTimeSec =
     typeof migration.unstakeRequest.startTime === 'bigint'
       ? Number(migration.unstakeRequest.startTime)
@@ -856,6 +859,8 @@ const ClaimSodaModal: React.FC<{
         ? parseInt(migration.unstakeRequest.startTime)
         : migration.unstakeRequest.startTime;
   const unstakeCompleteTimeSec = unstakeStartTimeSec + UNSTAKE_TIME;
+  const isUnstaking = hasPendingUnstake && unstakeCompleteTimeSec > Date.now() / 1000;
+  const unstakeFinished = hasPendingUnstake && !isUnstaking;
 
   const handleClaim = async () => {
     if (!evmAccount?.address || !spokeProvider) {
@@ -872,10 +877,16 @@ const ClaimSodaModal: React.FC<{
     setError(null);
 
     try {
-      const result = await sodax.migration.balnSwapService.claim(
-        { lockId: BigInt(index) },
-        spokeProvider as SonicSpokeProvider,
-      );
+      // Locks whose 6-month unstake cooldown has completed must be claimed
+      // via the contract's dedicated `claimUnstaked` entrypoint. Calling the
+      // plain `claim` on a matured unstake request reverts with
+      // "Lock not unstaked".
+      const result = unstakeFinished
+        ? await sodax.migration.balnSwapService.claimUnstaked(
+            { lockId: BigInt(index) },
+            spokeProvider as SonicSpokeProvider,
+          )
+        : await sodax.migration.balnSwapService.claim({ lockId: BigInt(index) }, spokeProvider as SonicSpokeProvider);
 
       if (result) {
         setMigrationStatus(MigrationStatus.Success);
@@ -904,7 +915,7 @@ const ClaimSodaModal: React.FC<{
           Claim {claimSymbol}?
         </Typography>
 
-        <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={isXSoda ? 3 : 0}>
+        <Typography textAlign="center" fontSize={24} fontWeight="bold" mb={isXSoda && !unstakeFinished ? 3 : 0}>
           {formatAmount(claimAmount)} {claimSymbol}
         </Typography>
 
@@ -916,7 +927,7 @@ const ClaimSodaModal: React.FC<{
           </Typography>
         )}
 
-        {isXSoda && !isUnstaking && (
+        {isXSoda && !hasPendingUnstake && (
           <Typography textAlign="center" fontSize={14}>
             Your xSODA is staked. After you claim, you can unstake or swap it from sodax.com.
           </Typography>

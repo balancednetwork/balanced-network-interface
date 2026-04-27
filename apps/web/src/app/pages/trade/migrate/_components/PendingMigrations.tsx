@@ -1,9 +1,9 @@
 import Divider from '@/app/components/Divider';
 import { Typography } from '@/app/theme';
-import { usePendingMigrations } from '@/hooks/usePendingMigrations';
+import { isClearedMigrationLock, usePendingMigrations } from '@/hooks/usePendingMigrations';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { DetailedLock } from '@sodax/sdk';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 import MigrationItem from './MigrationItem';
@@ -26,6 +26,16 @@ interface PendingMigrationsProps {
 const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) => {
   const evmAccount = useXAccount('EVM');
   const { data: pendingMigrations = [], isLoading: loading, error } = usePendingMigrations(userAddress);
+
+  // Keep the SDK-assigned index (the lock id used by transactions) while
+  // hiding fully claimed/drained locks from the UI.
+  const visibleMigrations = useMemo(
+    () =>
+      pendingMigrations
+        .map((migration, originalIndex) => ({ migration, originalIndex }))
+        .filter(({ migration }) => !isClearedMigrationLock(migration)),
+    [pendingMigrations],
+  );
 
   // Create unique IDs for migrations using their properties
   const getMigrationId = useCallback((migration: DetailedLock, index: number) => {
@@ -136,7 +146,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
     );
   }
 
-  if (pendingMigrations.length === 0) {
+  if (visibleMigrations.length === 0) {
     return null;
   }
 
@@ -148,12 +158,16 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
       </Typography>
 
       <Migrations>
-        {pendingMigrations.map((migration, index) => {
-          const isLast = index === pendingMigrations.length - 1;
-          const shouldAutoOpenStakeModal = shouldAutoOpenIndex === index;
+        {visibleMigrations.map(({ migration, originalIndex }, displayIndex) => {
+          const isLast = displayIndex === visibleMigrations.length - 1;
+          const shouldAutoOpenStakeModal = shouldAutoOpenIndex === originalIndex;
           return (
-            <React.Fragment key={index}>
-              <MigrationItem migration={migration} index={index} shouldAutoOpenStakeModal={shouldAutoOpenStakeModal} />
+            <React.Fragment key={originalIndex}>
+              <MigrationItem
+                migration={migration}
+                index={originalIndex}
+                shouldAutoOpenStakeModal={shouldAutoOpenStakeModal}
+              />
               {!isLast && <Divider my={3} />}
             </React.Fragment>
           );

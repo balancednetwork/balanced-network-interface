@@ -125,3 +125,18 @@ test('collateral and loan transaction handlers guard disabled increases', async 
   );
   assert.match(xLoanModal, /if \(storedModalValues\.action === XLoanAction\.BORROW && !increaseEnabled\) return/);
 });
+
+test('collateral and loan panels use safe slider bounds', async () => {
+  const collateralPanelSource = await readFile(
+    new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
+    'utf8',
+  );
+  const loanPanelSource = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
+
+  assert.match(collateralPanelSource, /getSafeSliderBounds/);
+  assert.match(collateralPanelSource, /collateralSliderBounds\.padding/);
+  assert.match(collateralPanelSource, /collateralSliderBounds\.hasMovableRange/);
+  assert.match(loanPanelSource, /getSafeSliderBounds/);
+  assert.match(loanPanelSource, /loanSliderBounds\.padding/);
+  assert.match(loanPanelSource, /loanSliderBounds\.hasMovableRange/);
+});

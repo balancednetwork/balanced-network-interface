@@ -34,7 +34,12 @@ import {
   useIsHandlingICX,
   useSupportedCollateralTokens,
 } from '@/store/collateral/hooks';
-import { getActionMaximum, isCollateralEnabled, isIncreaseAllowed } from '@/store/collateral/eligibility';
+import {
+  getActionMaximum,
+  getSafeSliderBounds,
+  isCollateralEnabled,
+  isIncreaseAllowed,
+} from '@/store/collateral/eligibility';
 import { Field } from '@/store/collateral/reducer';
 import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/hooks';
 import { useRatio } from '@/store/ratio/hooks';
@@ -157,7 +162,17 @@ const CollateralPanel = () => {
   const contractSymbol = useWrongSymbol(collateralType);
   const increaseEnabled = isCollateralEnabled(supportedCollateralTokens, contractSymbol);
   const actionMaximum = getActionMaximum(collateralDeposit, collateralTotal, increaseEnabled);
-  const canAdjustCollateral = increaseEnabled || collateralDeposit.isGreaterThan(0);
+  const lockedCollateral = useLockedCollateralAmount();
+  const shouldShowLock = !lockedCollateral.isZero();
+
+  // add small amount of collateral to lock to avoid tx errors.
+  const tLockedAmount = React.useMemo(
+    () => BigNumber.min(lockedCollateral.times(shouldShowLock ? 1.005 : 1), collateralDeposit),
+    [lockedCollateral, collateralDeposit, shouldShowLock],
+  );
+  const collateralSliderBounds = getSafeSliderBounds(actionMaximum, tLockedAmount, collateralDecimalPlaces);
+  const canAdjustCollateral = collateralSliderBounds.hasMovableRange;
+  const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
@@ -366,17 +381,6 @@ const CollateralPanel = () => {
     );
   }, [collateralDecimalPlaces, sliderInstance.current]);
 
-  const lockedCollateral = useLockedCollateralAmount();
-  const shouldShowLock = !lockedCollateral.isZero();
-
-  // add small amount of collateral to lock to avoid tx errors.
-  const tLockedAmount = React.useMemo(
-    () => BigNumber.min(lockedCollateral.times(shouldShowLock ? 1.005 : 1), actionMaximum),
-    [lockedCollateral, actionMaximum, shouldShowLock],
-  );
-
-  const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
-
   const hasEnoughICX = useHasEnoughICX();
 
   const [ref, width] = useWidth();
@@ -463,9 +467,9 @@ const CollateralPanel = () => {
               <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
                 <Nouislider
                   id="slider-collateral"
-                  disabled={!isAdjusting}
+                  disabled={!isAdjusting || !collateralSliderBounds.hasMovableRange}
                   start={collateralDeposit.toNumber()}
-                  padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
+                  padding={collateralSliderBounds.padding}
                   connect={[true, false]}
                   range={{
                     min: [0],

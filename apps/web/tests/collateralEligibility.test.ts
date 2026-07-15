@@ -6,12 +6,20 @@ import BigNumber from 'bignumber.js';
 
 import {
   getActionMaximum,
+  hasPositiveDebtCeiling,
   isCollateralEnabled,
   isIncreaseAllowed,
   selectEnabledCollateralTokens,
 } from '../src/store/collateral/eligibility.ts';
 
 const tokens = { sICX: 'cx-sicx', ETH: 'cx-eth', BTCB: 'cx-btcb' };
+
+test('debt ceiling eligibility fails closed', () => {
+  assert.equal(hasPositiveDebtCeiling(null), false);
+  assert.equal(hasPositiveDebtCeiling(undefined), false);
+  assert.equal(hasPositiveDebtCeiling('0x0'), false);
+  assert.equal(hasPositiveDebtCeiling('0x1'), true);
+});
 
 test('keeps registered tokens separate from debt-ceiling-enabled tokens', () => {
   const enabled = selectEnabledCollateralTokens(tokens, new Set<string>());
@@ -53,4 +61,28 @@ test('position reads use registered collateral tokens', async () => {
   assert.match(fetchInfoHook, /useCollateralTokens\(\)/);
   assert.doesNotMatch(fetchInfoHook, /supportedCollateralTokens\[symbol\]/);
   assert.doesNotMatch(hooks, /new Set\(\['BTCB'\]\)/);
+});
+
+test('collateral and loan transaction handlers guard disabled increases', async () => {
+  const collateralPanel = await readFile(
+    new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
+    'utf8',
+  );
+  const loanPanel = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
+  const xCollateralModal = await readFile(
+    new URL('../src/app/components/home/_components/xCollateralModal/index.tsx', import.meta.url),
+    'utf8',
+  );
+  const xLoanModal = await readFile(
+    new URL('../src/app/components/home/_components/xLoanModal/index.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(collateralPanel, /if \(shouldDeposit && !increaseEnabled\) return/);
+  assert.match(loanPanel, /if \(shouldBorrow && !increaseEnabled\) return/);
+  assert.match(
+    xCollateralModal,
+    /if \(storedModalValues\.action === XCollateralAction\.DEPOSIT && !increaseEnabled\) return/,
+  );
+  assert.match(xLoanModal, /if \(storedModalValues\.action === XLoanAction\.BORROW && !increaseEnabled\) return/);
 });

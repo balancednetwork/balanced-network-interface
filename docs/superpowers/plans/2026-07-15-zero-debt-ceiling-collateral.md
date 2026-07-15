@@ -393,7 +393,7 @@ Disable the corresponding confirmation button when the stored action is an incre
 
 Run: `node --test apps/web/tests/collateralEligibility.test.ts && pnpm --filter web checkTs`
 
-Expected: 5 tests pass, then TypeScript exits 0.
+Expected: 6 tests pass, then TypeScript exits 0.
 
 - [ ] **Step 7: Commit the action restrictions**
 
@@ -415,7 +415,7 @@ git commit -m "fix: restrict zero ceiling collateral to exits"
 
 Run: `node --test apps/web/tests/collateralEligibility.test.ts`
 
-Expected: 5 tests pass, 0 fail.
+Expected: 6 tests pass, 0 fail.
 
 - [ ] **Step 2: Run the repository TypeScript checks**
 

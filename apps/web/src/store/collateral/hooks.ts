@@ -31,7 +31,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
-import { CollateralTokenMap, selectEnabledCollateralTokens } from './eligibility';
+import { CollateralTokenMap, hasPositiveDebtCeiling, selectEnabledCollateralTokens } from './eligibility';
 import {
   Field,
   adjust,
@@ -400,7 +400,7 @@ export function useSupportedCollateralTokens(): UseQueryResult<CollateralTokenMa
       const enabledSymbols = new Set(
         Object.keys(collateralTokens).filter((symbol, index) => {
           const ceiling = debtCeilingsData[index];
-          return ceiling === null || parseInt(formatUnits(ceiling)) > 0;
+          return hasPositiveDebtCeiling(ceiling);
         }),
       );
 

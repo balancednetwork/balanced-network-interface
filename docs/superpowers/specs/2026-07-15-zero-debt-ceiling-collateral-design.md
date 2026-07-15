@@ -48,6 +48,7 @@ Read-only queries must not use an address from the filtered map to process a reg
 Add focused regression coverage for pure eligibility and range calculations:
 
 - zero-ceiling tokens remain in the registered-token set but not the enabled-token set;
+- missing or failed debt-ceiling reads fail closed;
 - a disabled collateral can decrease but not increase its deposited amount;
 - disabled collateral debt can decrease but not increase;
 - enabled collateral retains both directions;

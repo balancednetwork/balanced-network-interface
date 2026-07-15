@@ -10,7 +10,7 @@ Keep legacy collateral positions visible and withdrawable after a debt ceiling b
 
 ## Data model and hooks
 
-Introduce an unfiltered collateral-token query that returns `Loans.getCollateralTokens()` unchanged. Keep the existing supported-collateral query as the action-eligibility view: it derives its result from the unfiltered map and retains only tokens with a positive debt ceiling, including any deliberately retained compatibility exceptions.
+Introduce an unfiltered collateral-token query that returns `Loans.getCollateralTokens()` unchanged. Keep the existing supported-collateral query as the action-eligibility view: it derives its result from the unfiltered map and retains only tokens with a positive debt ceiling.
 
 Read-only consumers use the unfiltered token map:
 

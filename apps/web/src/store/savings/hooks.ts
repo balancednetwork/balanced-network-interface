@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from '@/constants/tokens';
 import { useTokenPrices } from '@/queries/backendv2';
-import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { ICON_XCALL_NETWORK_ID, bnJs, xTokenMap } from '@balancednetwork/xwagmi';
 

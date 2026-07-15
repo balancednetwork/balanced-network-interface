@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import BigNumber from 'bignumber.js';
@@ -13,10 +14,10 @@ import {
 const tokens = { sICX: 'cx-sicx', ETH: 'cx-eth', BTCB: 'cx-btcb' };
 
 test('keeps registered tokens separate from debt-ceiling-enabled tokens', () => {
-  const enabled = selectEnabledCollateralTokens(tokens, new Set<string>(), new Set(['BTCB']));
+  const enabled = selectEnabledCollateralTokens(tokens, new Set<string>());
 
   assert.deepEqual(tokens, { sICX: 'cx-sicx', ETH: 'cx-eth', BTCB: 'cx-btcb' });
-  assert.deepEqual(enabled, { BTCB: 'cx-btcb' });
+  assert.deepEqual(enabled, {});
   assert.equal(isCollateralEnabled(enabled, 'sICX'), false);
 });
 
@@ -35,4 +36,21 @@ test('enabled collateral retains increases and the full available maximum', () =
 
   assert.equal(isIncreaseAllowed(current, new BigNumber(11), true), true);
   assert.equal(getActionMaximum(current, maximum, true).toFixed(), '25');
+});
+
+test('position reads use registered collateral tokens', async () => {
+  const hooks = await readFile(new URL('../src/store/collateral/hooks.ts', import.meta.url), 'utf8');
+  const totalDataHook = hooks.slice(
+    hooks.indexOf('export function useTotalCollateralData'),
+    hooks.indexOf('export function useCollateralFetchInfo'),
+  );
+  const fetchInfoHook = hooks.slice(
+    hooks.indexOf('export function useCollateralFetchInfo'),
+    hooks.indexOf('export function useCollateralState'),
+  );
+
+  assert.match(totalDataHook, /useCollateralTokens\(\)/);
+  assert.match(fetchInfoHook, /useCollateralTokens\(\)/);
+  assert.doesNotMatch(fetchInfoHook, /supportedCollateralTokens\[symbol\]/);
+  assert.doesNotMatch(hooks, /new Set\(\['BTCB'\]\)/);
 });

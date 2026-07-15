@@ -39,7 +39,7 @@
 
 **Interfaces:**
 - Produces: `CollateralTokenMap = Record<string, string>`
-- Produces: `selectEnabledCollateralTokens(tokens, enabledSymbols, zeroCeilingExceptions?): CollateralTokenMap`
+- Produces: `selectEnabledCollateralTokens(tokens, enabledSymbols): CollateralTokenMap`
 - Produces: `isCollateralEnabled(tokens, symbol): boolean`
 - Produces: `getActionMaximum(currentAmount, availableMaximum, increaseEnabled): BigNumber`
 - Produces: `isIncreaseAllowed(currentAmount, nextAmount, increaseEnabled): boolean`
@@ -61,10 +61,10 @@ import {
 const tokens = { sICX: 'cx-sicx', ETH: 'cx-eth', BTCB: 'cx-btcb' };
 
 test('keeps registered tokens separate from debt-ceiling-enabled tokens', () => {
-  const enabled = selectEnabledCollateralTokens(tokens, new Set<string>(), new Set(['BTCB']));
+  const enabled = selectEnabledCollateralTokens(tokens, new Set<string>());
 
   assert.deepEqual(tokens, { sICX: 'cx-sicx', ETH: 'cx-eth', BTCB: 'cx-btcb' });
-  assert.deepEqual(enabled, { BTCB: 'cx-btcb' });
+  assert.deepEqual(enabled, {});
   assert.equal(isCollateralEnabled(enabled, 'sICX'), false);
 });
 
@@ -102,11 +102,8 @@ export type CollateralTokenMap = Record<string, string>;
 export function selectEnabledCollateralTokens(
   tokens: CollateralTokenMap,
   enabledSymbols: ReadonlySet<string>,
-  zeroCeilingExceptions: ReadonlySet<string> = new Set(),
 ): CollateralTokenMap {
-  return Object.fromEntries(
-    Object.entries(tokens).filter(([symbol]) => enabledSymbols.has(symbol) || zeroCeilingExceptions.has(symbol)),
-  );
+  return Object.fromEntries(Object.entries(tokens).filter(([symbol]) => enabledSymbols.has(symbol)));
 }
 
 export function isCollateralEnabled(tokens: CollateralTokenMap | undefined, symbol: string): boolean {
@@ -219,7 +216,7 @@ export function useSupportedCollateralTokens(): UseQueryResult<Record<string, st
         }),
       );
 
-      return selectEnabledCollateralTokens(collateralTokens, enabledSymbols, new Set(['BTCB']));
+      return selectEnabledCollateralTokens(collateralTokens, enabledSymbols);
     },
     enabled: Boolean(collateralTokens),
   });

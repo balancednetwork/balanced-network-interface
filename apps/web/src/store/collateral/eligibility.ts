@@ -5,11 +5,8 @@ export type CollateralTokenMap = Record<string, string>;
 export function selectEnabledCollateralTokens(
   tokens: CollateralTokenMap,
   enabledSymbols: ReadonlySet<string>,
-  zeroCeilingExceptions: ReadonlySet<string> = new Set(),
 ): CollateralTokenMap {
-  return Object.fromEntries(
-    Object.entries(tokens).filter(([symbol]) => enabledSymbols.has(symbol) || zeroCeilingExceptions.has(symbol)),
-  );
+  return Object.fromEntries(Object.entries(tokens).filter(([symbol]) => enabledSymbols.has(symbol)));
 }
 
 export function isCollateralEnabled(tokens: CollateralTokenMap | undefined, symbol: string): boolean {

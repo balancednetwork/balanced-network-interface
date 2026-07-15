@@ -46,6 +46,45 @@ test('enabled collateral retains increases and the full available maximum', () =
   assert.equal(getActionMaximum(current, maximum, true).toFixed(), '25');
 });
 
+test('collapses slider bounds when protected minimum consumes the range', async () => {
+  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
+
+  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.32'), 2), {
+    padding: [0, 0],
+    hasMovableRange: false,
+  });
+  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), 2), {
+    padding: [0, 0],
+    hasMovableRange: false,
+  });
+});
+
+test('preserves valid repayment and withdrawal slider ranges', async () => {
+  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
+
+  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('500'), 2), {
+    padding: [500, 0],
+    hasMovableRange: true,
+  });
+  assert.deepEqual(getSafeSliderBounds(new BigNumber('237.736999'), new BigNumber('32.97'), 6), {
+    padding: [32.97, 0],
+    hasMovableRange: true,
+  });
+});
+
+test('fails closed for invalid slider bounds', async () => {
+  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
+
+  assert.deepEqual(getSafeSliderBounds(new BigNumber(0), new BigNumber(0), 2), {
+    padding: [0, 0],
+    hasMovableRange: false,
+  });
+  assert.deepEqual(getSafeSliderBounds(new BigNumber(Number.POSITIVE_INFINITY), new BigNumber(0), 2), {
+    padding: [0, 0],
+    hasMovableRange: false,
+  });
+});
+
 test('position reads use registered collateral tokens', async () => {
   const hooks = await readFile(new URL('../src/store/collateral/hooks.ts', import.meta.url), 'utf8');
   const totalDataHook = hooks.slice(

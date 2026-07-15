@@ -25,6 +25,69 @@ export function getActionMaximum(
   return increaseEnabled ? availableMaximum : currentAmount;
 }
 
+export type SafeSliderBounds = {
+  start: number;
+  maximum: number;
+  padding: [number, number];
+  hasMovableRange: boolean;
+};
+
+const FALLBACK_SLIDER_MAXIMUM = 0.001;
+
+export function getSafeSliderBounds(
+  currentAmount: BigNumber,
+  maximum: BigNumber,
+  requestedMinimum: BigNumber,
+  decimalPlaces: number,
+): SafeSliderBounds {
+  const roundedCurrentAmount = currentAmount.dp(decimalPlaces);
+  const roundedMaximum = maximum.dp(decimalPlaces);
+  const roundedRequestedMinimum = requestedMinimum.dp(decimalPlaces);
+  const start = roundedCurrentAmount.toNumber();
+  const numericMaximum = roundedMaximum.toNumber();
+
+  if (
+    !roundedCurrentAmount.isFinite() ||
+    !roundedMaximum.isFinite() ||
+    !Number.isFinite(start) ||
+    !Number.isFinite(numericMaximum) ||
+    roundedCurrentAmount.isNegative() ||
+    roundedMaximum.isLessThanOrEqualTo(0) ||
+    start > numericMaximum
+  ) {
+    return {
+      start: 0,
+      maximum: FALLBACK_SLIDER_MAXIMUM,
+      padding: [0, 0],
+      hasMovableRange: false,
+    };
+  }
+
+  const collapsedBounds: SafeSliderBounds = {
+    start,
+    maximum: numericMaximum,
+    padding: [0, 0],
+    hasMovableRange: false,
+  };
+
+  if (!roundedRequestedMinimum.isFinite() || roundedRequestedMinimum.isNegative()) {
+    return collapsedBounds;
+  }
+
+  const numericMinimum = BigNumber.min(roundedRequestedMinimum, roundedCurrentAmount).toNumber();
+
+  if (!Number.isFinite(numericMinimum) || numericMinimum >= numericMaximum) {
+    return collapsedBounds;
+  }
+
+  return {
+    start,
+    maximum: numericMaximum,
+    padding: [numericMinimum, 0],
+    hasMovableRange: true,
+  };
+}
+
 export function isIncreaseAllowed(currentAmount: BigNumber, nextAmount: BigNumber, increaseEnabled: boolean): boolean {
   return increaseEnabled || nextAmount.isLessThanOrEqualTo(currentAmount);
 }

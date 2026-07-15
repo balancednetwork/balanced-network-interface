@@ -11,7 +11,6 @@ import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
 import {
@@ -19,7 +18,12 @@ import {
   useDerivedCollateralInfo,
   useSupportedCollateralTokens,
 } from '@/store/collateral/hooks';
-import { getActionMaximum, isCollateralEnabled, isIncreaseAllowed } from '@/store/collateral/eligibility';
+import {
+  getActionMaximum,
+  getSafeSliderBounds,
+  isCollateralEnabled,
+  isIncreaseAllowed,
+} from '@/store/collateral/eligibility';
 import {
   useActiveLoanAddress,
   useDerivedLoanInfo,
@@ -64,7 +68,10 @@ const LoanPanel = () => {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const increaseEnabled = isCollateralEnabled(supportedCollateralTokens, useWrongSymbol(collateralType));
   const actionMaximum = getActionMaximum(borrowedAmount, borrowableAmountWithReserve, increaseEnabled);
-  const canAdjustLoan = increaseEnabled || borrowedAmount.isGreaterThan(0);
+  const activeLoanAccount = useActiveLoanAddress();
+  const usedAmount = useLoanUsedAmount(activeLoanAccount);
+  const loanSliderBounds = getSafeSliderBounds(borrowedAmount, actionMaximum, usedAmount, 2);
+  const canAdjustLoan = loanSliderBounds.hasMovableRange;
 
   const { isAdjusting, inputType } = useLoanState();
 
@@ -234,8 +241,6 @@ const LoanPanel = () => {
 
   const roundedDisplayDiffAmount = parsedAmount[Field.LEFT].minus(borrowedAmount.dp(2));
 
-  const activeLoanAccount = useActiveLoanAddress();
-  const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const percent = borrowableAmountWithReserve.isZero()
     ? 0
     : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
@@ -316,22 +321,15 @@ const LoanPanel = () => {
 
           <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
             <Nouislider
-              disabled={!isAdjusting}
+              disabled={!isAdjusting || !loanSliderBounds.hasMovableRange}
               id="slider-loan"
-              start={[borrowedAmount.dp(2).toNumber()]}
-              padding={[
-                Math.max(Math.min(usedAmount.dp(2).toNumber(), borrowableAmountWithReserve.dp(2).toNumber()), 0),
-                0,
-              ]}
+              start={[loanSliderBounds.start]}
+              padding={loanSliderBounds.padding}
               connect={[true, false]}
               range={{
                 min: [0],
                 // https://github.com/balancednetwork/balanced-network-interface/issues/50
-                max: [
-                  Number.isNaN(borrowableAmountWithReserve.dp(2).toNumber()) || actionMaximum.dp(2).isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : actionMaximum.dp(2).toNumber(),
-                ],
+                max: [loanSliderBounds.maximum],
               }}
               instanceRef={instance => {
                 if (instance) {

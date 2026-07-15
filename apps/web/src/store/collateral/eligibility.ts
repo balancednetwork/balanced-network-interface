@@ -26,29 +26,64 @@ export function getActionMaximum(
 }
 
 export type SafeSliderBounds = {
+  start: number;
+  maximum: number;
   padding: [number, number];
   hasMovableRange: boolean;
 };
 
+const FALLBACK_SLIDER_MAXIMUM = 0.001;
+
 export function getSafeSliderBounds(
+  currentAmount: BigNumber,
   maximum: BigNumber,
   requestedMinimum: BigNumber,
   decimalPlaces: number,
 ): SafeSliderBounds {
+  const roundedCurrentAmount = currentAmount.dp(decimalPlaces);
   const roundedMaximum = maximum.dp(decimalPlaces);
-  const roundedMinimum = BigNumber.max(requestedMinimum.dp(decimalPlaces), 0);
+  const roundedRequestedMinimum = requestedMinimum.dp(decimalPlaces);
+  const start = roundedCurrentAmount.toNumber();
+  const numericMaximum = roundedMaximum.toNumber();
 
   if (
+    !roundedCurrentAmount.isFinite() ||
     !roundedMaximum.isFinite() ||
-    !roundedMinimum.isFinite() ||
+    !Number.isFinite(start) ||
+    !Number.isFinite(numericMaximum) ||
+    roundedCurrentAmount.isNegative() ||
     roundedMaximum.isLessThanOrEqualTo(0) ||
-    roundedMinimum.isGreaterThanOrEqualTo(roundedMaximum)
+    start > numericMaximum
   ) {
-    return { padding: [0, 0], hasMovableRange: false };
+    return {
+      start: 0,
+      maximum: FALLBACK_SLIDER_MAXIMUM,
+      padding: [0, 0],
+      hasMovableRange: false,
+    };
+  }
+
+  const collapsedBounds: SafeSliderBounds = {
+    start,
+    maximum: numericMaximum,
+    padding: [0, 0],
+    hasMovableRange: false,
+  };
+
+  if (!roundedRequestedMinimum.isFinite() || roundedRequestedMinimum.isNegative()) {
+    return collapsedBounds;
+  }
+
+  const numericMinimum = BigNumber.min(roundedRequestedMinimum, roundedCurrentAmount).toNumber();
+
+  if (!Number.isFinite(numericMinimum) || numericMinimum >= numericMaximum) {
+    return collapsedBounds;
   }
 
   return {
-    padding: [roundedMinimum.toNumber(), 0],
+    start,
+    maximum: numericMaximum,
+    padding: [numericMinimum, 0],
     hasMovableRange: true,
   };
 }

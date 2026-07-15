@@ -22,7 +22,6 @@ import { Typography } from '@/app/theme';
 import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
 import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import { NETWORK_ID } from '@/constants/config';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useICXUnstakingTime } from '@/store/application/hooks';
@@ -170,7 +169,12 @@ const CollateralPanel = () => {
     () => BigNumber.min(lockedCollateral.times(shouldShowLock ? 1.005 : 1), collateralDeposit),
     [lockedCollateral, collateralDeposit, shouldShowLock],
   );
-  const collateralSliderBounds = getSafeSliderBounds(actionMaximum, tLockedAmount, collateralDecimalPlaces);
+  const collateralSliderBounds = getSafeSliderBounds(
+    collateralDeposit,
+    actionMaximum,
+    tLockedAmount,
+    collateralDecimalPlaces,
+  );
   const canAdjustCollateral = collateralSliderBounds.hasMovableRange;
   const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
@@ -468,16 +472,12 @@ const CollateralPanel = () => {
                 <Nouislider
                   id="slider-collateral"
                   disabled={!isAdjusting || !collateralSliderBounds.hasMovableRange}
-                  start={collateralDeposit.toNumber()}
+                  start={collateralSliderBounds.start}
                   padding={collateralSliderBounds.padding}
                   connect={[true, false]}
                   range={{
                     min: [0],
-                    max: [
-                      actionMaximum.isZero()
-                        ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                        : actionMaximum.dp(collateralDecimalPlaces).toNumber(),
-                    ],
+                    max: [collateralSliderBounds.maximum],
                   }}
                   instanceRef={instance => {
                     if (instance) {

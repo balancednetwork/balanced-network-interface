@@ -11,7 +11,6 @@ import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
 import {
@@ -71,7 +70,7 @@ const LoanPanel = () => {
   const actionMaximum = getActionMaximum(borrowedAmount, borrowableAmountWithReserve, increaseEnabled);
   const activeLoanAccount = useActiveLoanAddress();
   const usedAmount = useLoanUsedAmount(activeLoanAccount);
-  const loanSliderBounds = getSafeSliderBounds(actionMaximum, usedAmount, 2);
+  const loanSliderBounds = getSafeSliderBounds(borrowedAmount, actionMaximum, usedAmount, 2);
   const canAdjustLoan = loanSliderBounds.hasMovableRange;
 
   const { isAdjusting, inputType } = useLoanState();
@@ -324,17 +323,13 @@ const LoanPanel = () => {
             <Nouislider
               disabled={!isAdjusting || !loanSliderBounds.hasMovableRange}
               id="slider-loan"
-              start={[borrowedAmount.dp(2).toNumber()]}
+              start={[loanSliderBounds.start]}
               padding={loanSliderBounds.padding}
               connect={[true, false]}
               range={{
                 min: [0],
                 // https://github.com/balancednetwork/balanced-network-interface/issues/50
-                max: [
-                  Number.isNaN(borrowableAmountWithReserve.dp(2).toNumber()) || actionMaximum.dp(2).isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : actionMaximum.dp(2).toNumber(),
-                ],
+                max: [loanSliderBounds.maximum],
               }}
               instanceRef={instance => {
                 if (instance) {

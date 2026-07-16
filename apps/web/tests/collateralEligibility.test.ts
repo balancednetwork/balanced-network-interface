@@ -202,3 +202,21 @@ test('collateral and loan panels use safe slider bounds', async () => {
   assert.match(loanPanelSource, /loanSliderBounds\.padding/);
   assert.match(loanPanelSource, /loanSliderBounds\.hasMovableRange/);
 });
+
+test('position adjustment controls are independent of slider movability', async () => {
+  const collateralPanelSource = await readFile(
+    new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
+    'utf8',
+  );
+  const loanPanelSource = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
+
+  assert.doesNotMatch(collateralPanelSource, /const canAdjustCollateral =/);
+  assert.doesNotMatch(collateralPanelSource, /if \(!canAdjustCollateral\) return/);
+  assert.match(collateralPanelSource, /account && collateralTotal\?\.isGreaterThan\(0\) && \(/);
+  assert.match(collateralPanelSource, /disabled=\{!isAdjusting \|\| !collateralSliderBounds\.hasMovableRange\}/);
+
+  assert.doesNotMatch(loanPanelSource, /const canAdjustLoan =/);
+  assert.doesNotMatch(loanPanelSource, /if \(!canAdjustLoan\) return/);
+  assert.match(loanPanelSource, /\{account && \(/);
+  assert.match(loanPanelSource, /disabled=\{!isAdjusting \|\| !loanSliderBounds\.hasMovableRange\}/);
+});

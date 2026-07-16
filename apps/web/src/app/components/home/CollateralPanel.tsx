@@ -175,7 +175,6 @@ const CollateralPanel = () => {
     tLockedAmount,
     collateralDecimalPlaces,
   );
-  const canAdjustCollateral = collateralSliderBounds.hasMovableRange;
   const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
@@ -203,7 +202,6 @@ const CollateralPanel = () => {
   });
 
   const handleEnableAdjusting = () => {
-    if (!canAdjustCollateral) return;
     adjust(true);
     adjustLoan(false);
   };
@@ -414,7 +412,7 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            {account && collateralTotal?.isGreaterThan(0) && canAdjustCollateral && (
+            {account && collateralTotal?.isGreaterThan(0) && (
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>

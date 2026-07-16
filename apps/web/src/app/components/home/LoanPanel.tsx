@@ -71,7 +71,6 @@ const LoanPanel = () => {
   const activeLoanAccount = useActiveLoanAddress();
   const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const loanSliderBounds = getSafeSliderBounds(borrowedAmount, actionMaximum, usedAmount, 2);
-  const canAdjustLoan = loanSliderBounds.hasMovableRange;
 
   const { isAdjusting, inputType } = useLoanState();
 
@@ -111,7 +110,6 @@ const LoanPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleEnableAdjusting = () => {
-    if (!canAdjustLoan) return;
     adjust(true);
     adjustCollateral(false);
   };
@@ -282,7 +280,7 @@ const LoanPanel = () => {
             <Typography variant="h2">
               <Trans>Loan</Trans>
             </Typography>
-            {account && canAdjustLoan && (
+            {account && (
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>

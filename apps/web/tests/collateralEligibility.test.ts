@@ -46,18 +46,20 @@ test('enabled collateral retains increases and the full available maximum', () =
   assert.equal(getActionMaximum(current, maximum, true).toFixed(), '25');
 });
 
-test('collapses slider bounds when protected minimum consumes the range', async () => {
+test('clamps the slider floor when the protected minimum consumes the range', async () => {
   const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
 
   assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('605.32'), 2), {
     start: 605.31,
+    minimum: 605.31,
     maximum: 605.31,
-    padding: [0, 0],
+    padding: [605.31, 0],
   });
   assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('605.31'), 2), {
     start: 605.31,
+    minimum: 605.31,
     maximum: 605.31,
-    padding: [0, 0],
+    padding: [605.31, 0],
   });
 });
 
@@ -66,6 +68,7 @@ test('preserves upward borrowing headroom when the requested minimum exceeds the
 
   assert.deepEqual(getSafeSliderBounds(new BigNumber('100'), new BigNumber('100.05'), new BigNumber('100.10'), 2), {
     start: 100,
+    minimum: 100,
     maximum: 100.05,
     padding: [100, 0],
   });
@@ -76,6 +79,7 @@ test('preserves valid repayment and withdrawal slider ranges', async () => {
 
   assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('500'), 2), {
     start: 605.31,
+    minimum: 500,
     maximum: 605.31,
     padding: [500, 0],
   });
@@ -83,6 +87,7 @@ test('preserves valid repayment and withdrawal slider ranges', async () => {
     getSafeSliderBounds(new BigNumber('237.736999'), new BigNumber('237.736999'), new BigNumber('32.97'), 6),
     {
       start: 237.736999,
+      minimum: 32.97,
       maximum: 237.736999,
       padding: [32.97, 0],
     },
@@ -94,6 +99,7 @@ test('fails closed with safe numeric options for invalid slider bounds', async (
 
   const fallbackBounds = {
     start: 0,
+    minimum: 0,
     maximum: 0.001,
     padding: [0, 0],
   };
@@ -114,13 +120,15 @@ test('fails closed with safe numeric options for invalid slider bounds', async (
   );
   assert.deepEqual(getSafeSliderBounds(new BigNumber(10), new BigNumber(20), new BigNumber(-1), 2), {
     start: 10,
+    minimum: 10,
     maximum: 20,
-    padding: [0, 0],
+    padding: [10, 0],
   });
   assert.deepEqual(getSafeSliderBounds(new BigNumber(10), new BigNumber(20), new BigNumber(Number.NaN), 2), {
     start: 10,
+    minimum: 10,
     maximum: 20,
-    padding: [0, 0],
+    padding: [10, 0],
   });
 });
 

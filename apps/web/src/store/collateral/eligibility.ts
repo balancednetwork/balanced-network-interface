@@ -27,6 +27,7 @@ export function getActionMaximum(
 
 export type SafeSliderBounds = {
   start: number;
+  minimum: number;
   maximum: number;
   padding: [number, number];
 };
@@ -56,31 +57,23 @@ export function getSafeSliderBounds(
   ) {
     return {
       start: 0,
+      minimum: 0,
       maximum: FALLBACK_SLIDER_MAXIMUM,
       padding: [0, 0],
     };
   }
 
-  const collapsedBounds: SafeSliderBounds = {
-    start,
-    maximum: numericMaximum,
-    padding: [0, 0],
-  };
-
-  if (!roundedRequestedMinimum.isFinite() || roundedRequestedMinimum.isNegative()) {
-    return collapsedBounds;
-  }
-
-  const numericMinimum = BigNumber.min(roundedRequestedMinimum, roundedCurrentAmount).toNumber();
-
-  if (!Number.isFinite(numericMinimum) || numericMinimum >= numericMaximum) {
-    return collapsedBounds;
-  }
+  const minimum =
+    roundedRequestedMinimum.isFinite() && !roundedRequestedMinimum.isNegative()
+      ? BigNumber.min(roundedRequestedMinimum, roundedCurrentAmount).toNumber()
+      : start;
+  const safeMinimum = Number.isFinite(minimum) ? minimum : start;
 
   return {
     start,
+    minimum: safeMinimum,
     maximum: numericMaximum,
-    padding: [numericMinimum, 0],
+    padding: [safeMinimum, 0],
   };
 }
 

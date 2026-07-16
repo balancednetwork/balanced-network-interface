@@ -32,9 +32,7 @@ import {
   useCollateralTokens,
   useDerivedCollateralInfo,
   useIsHandlingICX,
-  useSupportedCollateralTokens,
 } from '@/store/collateral/hooks';
-import { isCollateralEnabled, isIncreaseAllowed } from '@/store/collateral/eligibility';
 import { Field } from '@/store/collateral/reducer';
 import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/hooks';
 import { useRatio } from '@/store/ratio/hooks';
@@ -153,20 +151,6 @@ const CollateralPanel = () => {
   const ratio = useRatio();
   const isHandlingICX = useIsHandlingICX();
   const { data: collateralTokens } = useCollateralTokens();
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const contractSymbol = useWrongSymbol(collateralType);
-  const increaseEnabled = isCollateralEnabled(supportedCollateralTokens, contractSymbol);
-  const lockedCollateral = useLockedCollateralAmount();
-  const shouldShowLock = !lockedCollateral.isZero();
-
-  // add small amount of collateral to lock to avoid tx errors.
-  const tLockedAmount = React.useMemo(
-    () => BigNumber.min(lockedCollateral.times(shouldShowLock ? 1.005 : 1), collateralDeposit),
-    [lockedCollateral, collateralDeposit, shouldShowLock],
-  );
-  const collateralMinimum = BigNumber.max(tLockedAmount.dp(collateralDecimalPlaces), 0);
-  const walletMaximum = BigNumber.max(collateralTotal.minus(collateralMinimum), 0);
-  const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
@@ -209,11 +193,6 @@ const CollateralPanel = () => {
   const isCrossChain = !(sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
 
   const toggleOpen = () => {
-    if (open) {
-      setOpen(false);
-      return;
-    }
-    if (!isIncreaseAllowed(collateralDeposit, parsedAmount[Field.LEFT], increaseEnabled)) return;
     if (isCrossChain) {
       setStoredModalValues({
         amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
@@ -230,12 +209,9 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
-    if (shouldDeposit && !increaseEnabled) return;
-    const collateralTokenAddress = collateralTokens?.[contractSymbol];
-    if (!collateralTokenAddress) return;
-
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    const cx = bnJs.inject({ account }).getContract(collateralTokenAddress);
+    const collateralTokenAddress = collateralTokens && collateralTokens[useWrongSymbol(collateralType)];
+    const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
     const decimals: string = await cx.decimals();
 
     if (shouldDeposit) {
@@ -374,6 +350,17 @@ const CollateralPanel = () => {
     );
   }, [collateralDecimalPlaces, sliderInstance.current]);
 
+  const lockedCollateral = useLockedCollateralAmount();
+  const shouldShowLock = !lockedCollateral.isZero();
+
+  // add small amount of collateral to lock to avoid tx errors.
+  const tLockedAmount = React.useMemo(
+    () => BigNumber.min(lockedCollateral.times(shouldShowLock ? 1.005 : 1), collateralTotal),
+    [lockedCollateral, collateralTotal, shouldShowLock],
+  );
+
+  const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
+
   const hasEnoughICX = useHasEnoughICX();
 
   const [ref, width] = useWidth();
@@ -415,11 +402,7 @@ const CollateralPanel = () => {
                     >
                       <Trans>Cancel</Trans>
                     </TextButton>
-                    <Button
-                      onClick={toggleOpen}
-                      fontSize={14}
-                      disabled={!isSliderStateChanged || (shouldDeposit && !increaseEnabled)}
-                    >
+                    <Button onClick={toggleOpen} fontSize={14} disabled={!isSliderStateChanged}>
                       <Trans>Confirm</Trans>
                     </Button>
                   </>
@@ -462,7 +445,7 @@ const CollateralPanel = () => {
                   id="slider-collateral"
                   disabled={!isAdjusting}
                   start={collateralDeposit.toNumber()}
-                  padding={[collateralMinimum.toNumber(), 0]}
+                  padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
                   connect={[true, false]}
                   range={{
                     min: [0],
@@ -491,7 +474,6 @@ const CollateralPanel = () => {
                     value={formattedAmounts[Field.LEFT]}
                     decimalPlaces={collateralDecimalPlaces}
                     currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
-                    minValue={collateralMinimum}
                     maxValue={collateralTotal}
                     onUserInput={onFieldAInput}
                   />
@@ -499,7 +481,7 @@ const CollateralPanel = () => {
 
                 <PanelInfoItem>
                   <CurrencyField
-                    editable={isAdjusting && increaseEnabled}
+                    editable={isAdjusting}
                     isActive={false}
                     label="Wallet"
                     tooltipText={
@@ -508,7 +490,7 @@ const CollateralPanel = () => {
                     value={formattedAmounts[Field.RIGHT]}
                     decimalPlaces={collateralDecimalPlaces}
                     currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
-                    maxValue={walletMaximum}
+                    maxValue={collateralTotal}
                     onUserInput={onFieldBInput}
                   />
                 </PanelInfoItem>
@@ -527,7 +509,6 @@ const CollateralPanel = () => {
       <XCollateralModal
         account={account}
         currencyAmount={xTokenAmount}
-        increaseEnabled={increaseEnabled}
         sourceChain={sourceChain}
         storedModalValues={storedModalValues}
       />
@@ -635,9 +616,7 @@ const CollateralPanel = () => {
               onClick={handleCollateralConfirm}
               fontSize={14}
               disabled={
-                !hasEnoughICX ||
-                (shouldDeposit && !increaseEnabled) ||
-                (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
+                !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
               }
             >
               {shouldDeposit ? t`Deposit` : t`Withdraw`}

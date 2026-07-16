@@ -14,12 +14,7 @@ import { Typography } from '@/app/theme';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
-import {
-  useCollateralActionHandlers,
-  useDerivedCollateralInfo,
-  useSupportedCollateralTokens,
-} from '@/store/collateral/hooks';
-import { isCollateralEnabled, isIncreaseAllowed } from '@/store/collateral/eligibility';
+import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import {
   useActiveLoanAddress,
   useDerivedLoanInfo,
@@ -61,12 +56,6 @@ const LoanPanel = () => {
     totalBorrowableAmount,
     bnUSDAmount,
   } = useDerivedLoanInfo();
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const increaseEnabled = isCollateralEnabled(supportedCollateralTokens, useWrongSymbol(collateralType));
-  const activeLoanAccount = useActiveLoanAddress();
-  const usedAmount = useLoanUsedAmount(activeLoanAccount);
-  const loanMinimum = BigNumber.max(BigNumber.min(usedAmount.dp(2), borrowableAmountWithReserve.dp(2)), 0);
-  const availableMaximum = BigNumber.max(borrowableAmountWithReserve.minus(loanMinimum), 0);
 
   const { isAdjusting, inputType } = useLoanState();
 
@@ -135,11 +124,6 @@ const LoanPanel = () => {
     (loanNetwork !== ICON_XCALL_NETWORK_ID || sourceChain !== ICON_XCALL_NETWORK_ID);
 
   const toggleOpen = () => {
-    if (open) {
-      setOpen(false);
-      return;
-    }
-    if (!isIncreaseAllowed(borrowedAmount, parsedAmount[Field.LEFT], increaseEnabled)) return;
     if (isCrossChain) {
       setStoredModalValues({
         amount: roundedDisplayDiffAmount.dp(2).toFormat(),
@@ -155,7 +139,6 @@ const LoanPanel = () => {
   };
 
   const handleLoanConfirm = () => {
-    if (shouldBorrow && !increaseEnabled) return;
     if (!iconAccount) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -235,6 +218,8 @@ const LoanPanel = () => {
 
   const roundedDisplayDiffAmount = parsedAmount[Field.LEFT].minus(borrowedAmount.dp(2));
 
+  const activeLoanAccount = useActiveLoanAddress();
+  const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const percent = borrowableAmountWithReserve.isZero()
     ? 0
     : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
@@ -291,7 +276,6 @@ const LoanPanel = () => {
                     <Button
                       disabled={
                         !isSliderStateChanged ||
-                        (shouldBorrow && !increaseEnabled) ||
                         (borrowedAmount.isLessThanOrEqualTo(0)
                           ? currentValue >= 0 && currentValue < 10
                           : currentValue < 0)
@@ -318,7 +302,10 @@ const LoanPanel = () => {
               disabled={!isAdjusting}
               id="slider-loan"
               start={[borrowedAmount.dp(2).toNumber()]}
-              padding={[loanMinimum.toNumber(), 0]}
+              padding={[
+                Math.max(Math.min(usedAmount.dp(2).toNumber(), borrowableAmountWithReserve.dp(2).toNumber()), 0),
+                0,
+              ]}
               connect={[true, false]}
               range={{
                 min: [0],
@@ -350,8 +337,6 @@ const LoanPanel = () => {
                   noticeText={'10 bnUSD minimum'}
                   value={formattedAmounts[Field.LEFT]}
                   currency={'bnUSD'}
-                  minValue={loanMinimum}
-                  maxValue={borrowableAmountWithReserve}
                   onUserInput={onFieldAInput}
                 />
               ) : (
@@ -362,8 +347,6 @@ const LoanPanel = () => {
                   tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
                   value={formattedAmounts[Field.LEFT]}
                   currency={'bnUSD'}
-                  minValue={loanMinimum}
-                  maxValue={borrowableAmountWithReserve}
                   onUserInput={onFieldAInput}
                 />
               )}
@@ -371,13 +354,12 @@ const LoanPanel = () => {
 
             <PanelInfoItem>
               <CurrencyField
-                editable={isAdjusting && increaseEnabled}
+                editable={isAdjusting}
                 isActive={false}
                 label="Available"
                 tooltipText="The amount of ICX available to deposit from your wallet."
                 value={formattedAmounts[Field.RIGHT]}
                 currency={'bnUSD'}
-                maxValue={availableMaximum}
                 onUserInput={onFieldBInput}
               />
             </PanelInfoItem>
@@ -393,7 +375,6 @@ const LoanPanel = () => {
       <XLoanModal
         collateralAccount={account}
         bnUSDAmount={bnUSDAmount}
-        increaseEnabled={increaseEnabled}
         sourceChain={sourceChain}
         interestRate={interestRate}
         storedModalValues={storedModalValues}
@@ -449,11 +430,7 @@ const LoanPanel = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               <Trans>Cancel</Trans>
             </TextButton>
-            <Button
-              disabled={!hasEnoughICX || (shouldBorrow && !increaseEnabled)}
-              onClick={handleLoanConfirm}
-              fontSize={14}
-            >
+            <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
               <Trans>{shouldBorrow ? t`Borrow` : t`Repay`}</Trans>
             </Button>
           </Flex>

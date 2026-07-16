@@ -200,11 +200,25 @@ test('collateral and loan panels use safe slider bounds without frontend movabil
   assert.match(collateralPanelSource, /start=\{collateralSliderBounds\.start\}/);
   assert.match(collateralPanelSource, /max: \[collateralSliderBounds\.maximum\]/);
   assert.match(collateralPanelSource, /disabled=\{!isAdjusting\}/);
+  assert.match(collateralPanelSource, /const collateralMinimum = new BigNumber\(collateralSliderBounds\.minimum\)/);
+  assert.match(
+    collateralPanelSource,
+    /const walletMaximum = BigNumber\.max\(collateralTotal\.minus\(collateralMinimum\), 0\)/,
+  );
+  assert.match(collateralPanelSource, /label="Deposited"[\s\S]*?minValue=\{collateralMinimum\}/);
+  assert.match(collateralPanelSource, /label="Wallet"[\s\S]*?maxValue=\{walletMaximum\}/);
 
   assert.match(loanPanelSource, /loanSliderBounds\.padding/);
   assert.match(loanPanelSource, /start=\{\[loanSliderBounds\.start\]\}/);
   assert.match(loanPanelSource, /max: \[loanSliderBounds\.maximum\]/);
   assert.match(loanPanelSource, /disabled=\{!isAdjusting\}/);
+  assert.match(loanPanelSource, /const loanMinimum = new BigNumber\(loanSliderBounds\.minimum\)/);
+  assert.match(
+    loanPanelSource,
+    /const availableMaximum = BigNumber\.max\(borrowableAmountWithReserve\.minus\(loanMinimum\), 0\)/,
+  );
+  assert.equal(loanPanelSource.match(/minValue=\{loanMinimum\}/g)?.length, 2);
+  assert.match(loanPanelSource, /label="Available"[\s\S]*?maxValue=\{availableMaximum\}/);
 
   assert.doesNotMatch(collateralPanelSource, /hasMovableRange/);
   assert.doesNotMatch(loanPanelSource, /hasMovableRange/);

@@ -175,6 +175,8 @@ const CollateralPanel = () => {
     tLockedAmount,
     collateralDecimalPlaces,
   );
+  const collateralMinimum = new BigNumber(collateralSliderBounds.minimum);
+  const walletMaximum = BigNumber.max(collateralTotal.minus(collateralMinimum), 0);
   const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
@@ -496,6 +498,7 @@ const CollateralPanel = () => {
                     value={formattedAmounts[Field.LEFT]}
                     decimalPlaces={collateralDecimalPlaces}
                     currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
+                    minValue={collateralMinimum}
                     maxValue={actionMaximum}
                     onUserInput={onFieldAInput}
                   />
@@ -512,7 +515,7 @@ const CollateralPanel = () => {
                     value={formattedAmounts[Field.RIGHT]}
                     decimalPlaces={collateralDecimalPlaces}
                     currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
-                    maxValue={collateralTotal}
+                    maxValue={walletMaximum}
                     onUserInput={onFieldBInput}
                   />
                 </PanelInfoItem>

@@ -71,6 +71,8 @@ const LoanPanel = () => {
   const activeLoanAccount = useActiveLoanAddress();
   const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const loanSliderBounds = getSafeSliderBounds(borrowedAmount, actionMaximum, usedAmount, 2);
+  const loanMinimum = new BigNumber(loanSliderBounds.minimum);
+  const availableMaximum = BigNumber.max(borrowableAmountWithReserve.minus(loanMinimum), 0);
 
   const { isAdjusting, inputType } = useLoanState();
 
@@ -349,6 +351,7 @@ const LoanPanel = () => {
                   noticeText={'10 bnUSD minimum'}
                   value={formattedAmounts[Field.LEFT]}
                   currency={'bnUSD'}
+                  minValue={loanMinimum}
                   maxValue={actionMaximum}
                   onUserInput={onFieldAInput}
                 />
@@ -360,6 +363,7 @@ const LoanPanel = () => {
                   tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
                   value={formattedAmounts[Field.LEFT]}
                   currency={'bnUSD'}
+                  minValue={loanMinimum}
                   maxValue={actionMaximum}
                   onUserInput={onFieldAInput}
                 />
@@ -374,6 +378,7 @@ const LoanPanel = () => {
                 tooltipText="The amount of ICX available to deposit from your wallet."
                 value={formattedAmounts[Field.RIGHT]}
                 currency={'bnUSD'}
+                maxValue={availableMaximum}
                 onUserInput={onFieldBInput}
               />
             </PanelInfoItem>

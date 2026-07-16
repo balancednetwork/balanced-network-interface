@@ -469,7 +469,7 @@ const CollateralPanel = () => {
               <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
                 <Nouislider
                   id="slider-collateral"
-                  disabled={!isAdjusting || !collateralSliderBounds.hasMovableRange}
+                  disabled={!isAdjusting}
                   start={collateralSliderBounds.start}
                   padding={collateralSliderBounds.padding}
                   connect={[true, false]}

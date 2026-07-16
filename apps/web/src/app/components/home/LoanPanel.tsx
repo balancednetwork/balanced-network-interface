@@ -319,7 +319,7 @@ const LoanPanel = () => {
 
           <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
             <Nouislider
-              disabled={!isAdjusting || !loanSliderBounds.hasMovableRange}
+              disabled={!isAdjusting}
               id="slider-loan"
               start={[loanSliderBounds.start]}
               padding={loanSliderBounds.padding}

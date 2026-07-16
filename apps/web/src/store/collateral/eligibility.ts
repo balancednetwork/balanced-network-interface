@@ -29,7 +29,6 @@ export type SafeSliderBounds = {
   start: number;
   maximum: number;
   padding: [number, number];
-  hasMovableRange: boolean;
 };
 
 const FALLBACK_SLIDER_MAXIMUM = 0.001;
@@ -59,7 +58,6 @@ export function getSafeSliderBounds(
       start: 0,
       maximum: FALLBACK_SLIDER_MAXIMUM,
       padding: [0, 0],
-      hasMovableRange: false,
     };
   }
 
@@ -67,7 +65,6 @@ export function getSafeSliderBounds(
     start,
     maximum: numericMaximum,
     padding: [0, 0],
-    hasMovableRange: false,
   };
 
   if (!roundedRequestedMinimum.isFinite() || roundedRequestedMinimum.isNegative()) {
@@ -84,7 +81,6 @@ export function getSafeSliderBounds(
     start,
     maximum: numericMaximum,
     padding: [numericMinimum, 0],
-    hasMovableRange: true,
   };
 }
 

@@ -53,13 +53,11 @@ test('collapses slider bounds when protected minimum consumes the range', async 
     start: 605.31,
     maximum: 605.31,
     padding: [0, 0],
-    hasMovableRange: false,
   });
   assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('605.31'), 2), {
     start: 605.31,
     maximum: 605.31,
     padding: [0, 0],
-    hasMovableRange: false,
   });
 });
 
@@ -70,7 +68,6 @@ test('preserves upward borrowing headroom when the requested minimum exceeds the
     start: 100,
     maximum: 100.05,
     padding: [100, 0],
-    hasMovableRange: true,
   });
 });
 
@@ -81,7 +78,6 @@ test('preserves valid repayment and withdrawal slider ranges', async () => {
     start: 605.31,
     maximum: 605.31,
     padding: [500, 0],
-    hasMovableRange: true,
   });
   assert.deepEqual(
     getSafeSliderBounds(new BigNumber('237.736999'), new BigNumber('237.736999'), new BigNumber('32.97'), 6),
@@ -89,7 +85,6 @@ test('preserves valid repayment and withdrawal slider ranges', async () => {
       start: 237.736999,
       maximum: 237.736999,
       padding: [32.97, 0],
-      hasMovableRange: true,
     },
   );
 });
@@ -101,7 +96,6 @@ test('fails closed with safe numeric options for invalid slider bounds', async (
     start: 0,
     maximum: 0.001,
     padding: [0, 0],
-    hasMovableRange: false,
   };
 
   assert.deepEqual(getSafeSliderBounds(new BigNumber(0), new BigNumber(0), new BigNumber(0), 2), fallbackBounds);
@@ -122,13 +116,11 @@ test('fails closed with safe numeric options for invalid slider bounds', async (
     start: 10,
     maximum: 20,
     padding: [0, 0],
-    hasMovableRange: false,
   });
   assert.deepEqual(getSafeSliderBounds(new BigNumber(10), new BigNumber(20), new BigNumber(Number.NaN), 2), {
     start: 10,
     maximum: 20,
     padding: [0, 0],
-    hasMovableRange: false,
   });
 });
 
@@ -188,19 +180,27 @@ test('collateral and loan transaction handlers guard disabled increases', async 
   assert.match(xLoanModal, /if \(storedModalValues\.action === XLoanAction\.BORROW && !increaseEnabled\) return/);
 });
 
-test('collateral and loan panels use safe slider bounds', async () => {
+test('collateral and loan panels use safe slider bounds without frontend movability gating', async () => {
   const collateralPanelSource = await readFile(
     new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
     'utf8',
   );
   const loanPanelSource = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
+  const eligibilitySource = await readFile(new URL('../src/store/collateral/eligibility.ts', import.meta.url), 'utf8');
 
-  assert.match(collateralPanelSource, /getSafeSliderBounds/);
   assert.match(collateralPanelSource, /collateralSliderBounds\.padding/);
-  assert.match(collateralPanelSource, /collateralSliderBounds\.hasMovableRange/);
-  assert.match(loanPanelSource, /getSafeSliderBounds/);
+  assert.match(collateralPanelSource, /start=\{collateralSliderBounds\.start\}/);
+  assert.match(collateralPanelSource, /max: \[collateralSliderBounds\.maximum\]/);
+  assert.match(collateralPanelSource, /disabled=\{!isAdjusting\}/);
+
   assert.match(loanPanelSource, /loanSliderBounds\.padding/);
-  assert.match(loanPanelSource, /loanSliderBounds\.hasMovableRange/);
+  assert.match(loanPanelSource, /start=\{\[loanSliderBounds\.start\]\}/);
+  assert.match(loanPanelSource, /max: \[loanSliderBounds\.maximum\]/);
+  assert.match(loanPanelSource, /disabled=\{!isAdjusting\}/);
+
+  assert.doesNotMatch(collateralPanelSource, /hasMovableRange/);
+  assert.doesNotMatch(loanPanelSource, /hasMovableRange/);
+  assert.doesNotMatch(eligibilitySource, /hasMovableRange/);
 });
 
 test('position adjustment controls are independent of slider movability', async () => {
@@ -213,10 +213,10 @@ test('position adjustment controls are independent of slider movability', async 
   assert.doesNotMatch(collateralPanelSource, /const canAdjustCollateral =/);
   assert.doesNotMatch(collateralPanelSource, /if \(!canAdjustCollateral\) return/);
   assert.match(collateralPanelSource, /account && collateralTotal\?\.isGreaterThan\(0\) && \(/);
-  assert.match(collateralPanelSource, /disabled=\{!isAdjusting \|\| !collateralSliderBounds\.hasMovableRange\}/);
+  assert.match(collateralPanelSource, /disabled=\{!isAdjusting\}/);
 
   assert.doesNotMatch(loanPanelSource, /const canAdjustLoan =/);
   assert.doesNotMatch(loanPanelSource, /if \(!canAdjustLoan\) return/);
   assert.match(loanPanelSource, /\{account && \(/);
-  assert.match(loanPanelSource, /disabled=\{!isAdjusting \|\| !loanSliderBounds\.hasMovableRange\}/);
+  assert.match(loanPanelSource, /disabled=\{!isAdjusting\}/);
 });

@@ -5,7 +5,6 @@ import test from 'node:test';
 import BigNumber from 'bignumber.js';
 
 import {
-  getActionMaximum,
   hasPositiveDebtCeiling,
   isCollateralEnabled,
   isIncreaseAllowed,
@@ -35,116 +34,38 @@ test('disabled collateral can decrease but not increase its deposited amount or 
   assert.equal(isIncreaseAllowed(current, new BigNumber(5), false), true);
   assert.equal(isIncreaseAllowed(current, new BigNumber(10), false), true);
   assert.equal(isIncreaseAllowed(current, new BigNumber(11), false), false);
-  assert.equal(getActionMaximum(current, new BigNumber(25), false).toFixed(), '10');
 });
 
-test('enabled collateral retains increases and the full available maximum', () => {
+test('enabled collateral retains increases', () => {
   const current = new BigNumber(10);
-  const maximum = new BigNumber(25);
 
   assert.equal(isIncreaseAllowed(current, new BigNumber(11), true), true);
-  assert.equal(getActionMaximum(current, maximum, true).toFixed(), '25');
 });
 
-test('clamps the slider floor when the protected minimum consumes the range', async () => {
-  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
-
-  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('605.32'), 2), {
-    start: 605.31,
-    minimum: 605.31,
-    maximum: 605.31,
-    padding: [605.31, 0],
-  });
-  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('605.31'), 2), {
-    start: 605.31,
-    minimum: 605.31,
-    maximum: 605.31,
-    padding: [605.31, 0],
-  });
-});
-
-test('preserves upward borrowing headroom when the requested minimum exceeds the current debt', async () => {
-  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
-
-  assert.deepEqual(getSafeSliderBounds(new BigNumber('100'), new BigNumber('100.05'), new BigNumber('100.10'), 2), {
-    start: 100,
-    minimum: 100,
-    maximum: 100.05,
-    padding: [100, 0],
-  });
-});
-
-test('preserves valid repayment and withdrawal slider ranges', async () => {
-  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
-
-  assert.deepEqual(getSafeSliderBounds(new BigNumber('605.31'), new BigNumber('605.31'), new BigNumber('500'), 2), {
-    start: 605.31,
-    minimum: 500,
-    maximum: 605.31,
-    padding: [500, 0],
-  });
-  assert.deepEqual(
-    getSafeSliderBounds(new BigNumber('237.736999'), new BigNumber('237.736999'), new BigNumber('32.97'), 6),
-    {
-      start: 237.736999,
-      minimum: 32.97,
-      maximum: 237.736999,
-      padding: [32.97, 0],
-    },
-  );
-});
-
-test('fails closed with safe numeric options for invalid slider bounds', async () => {
-  const { getSafeSliderBounds } = await import('../src/store/collateral/eligibility.ts');
-
-  const fallbackBounds = {
-    start: 0,
-    minimum: 0,
-    maximum: 0.001,
-    padding: [0, 0],
-  };
-
-  assert.deepEqual(getSafeSliderBounds(new BigNumber(0), new BigNumber(0), new BigNumber(0), 2), fallbackBounds);
-  assert.deepEqual(
-    getSafeSliderBounds(
-      new BigNumber(Number.POSITIVE_INFINITY),
-      new BigNumber(Number.POSITIVE_INFINITY),
-      new BigNumber(0),
-      2,
-    ),
-    fallbackBounds,
-  );
-  assert.deepEqual(
-    getSafeSliderBounds(new BigNumber('1e400'), new BigNumber('1e400'), new BigNumber(0), 2),
-    fallbackBounds,
-  );
-  assert.deepEqual(getSafeSliderBounds(new BigNumber(10), new BigNumber(20), new BigNumber(-1), 2), {
-    start: 10,
-    minimum: 10,
-    maximum: 20,
-    padding: [10, 0],
-  });
-  assert.deepEqual(getSafeSliderBounds(new BigNumber(10), new BigNumber(20), new BigNumber(Number.NaN), 2), {
-    start: 10,
-    minimum: 10,
-    maximum: 20,
-    padding: [10, 0],
-  });
-});
-
-test('slider panels consume all normalized noUiSlider options', async () => {
+test('position sliders use their historical full ranges and displayed thresholds', async () => {
   const collateralPanelSource = await readFile(
     new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
     'utf8',
   );
   const loanPanelSource = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
 
-  assert.match(collateralPanelSource, /start=\{collateralSliderBounds\.start\}/);
-  assert.match(collateralPanelSource, /max: \[collateralSliderBounds\.maximum\]/);
-  assert.match(loanPanelSource, /start=\{\[loanSliderBounds\.start\]\}/);
-  assert.match(loanPanelSource, /max: \[loanSliderBounds\.maximum\]/);
-  assert.doesNotMatch(collateralPanelSource, /SLIDER_RANGE_MAX_BOTTOM_THRESHOLD/);
-  assert.doesNotMatch(loanPanelSource, /SLIDER_RANGE_MAX_BOTTOM_THRESHOLD/);
+  assert.match(
+    collateralPanelSource,
+    /const collateralMinimum = BigNumber\.max\(tLockedAmount\.dp\(collateralDecimalPlaces\), 0\)/,
+  );
+  assert.match(collateralPanelSource, /start=\{collateralDeposit\.toNumber\(\)\}/);
+  assert.match(collateralPanelSource, /padding=\{\[collateralMinimum\.toNumber\(\), 0\]\}/);
+  assert.match(collateralPanelSource, /collateralTotal\.dp\(collateralDecimalPlaces\)\.toNumber\(\)/);
+  assert.doesNotMatch(collateralPanelSource, /actionMaximum|getSafeSliderBounds|collateralSliderBounds/);
+
+  assert.match(
+    loanPanelSource,
+    /const loanMinimum = BigNumber\.max\(\s*BigNumber\.min\(usedAmount\.dp\(2\), borrowableAmountWithReserve\.dp\(2\)\),\s*0,?\s*\)/,
+  );
+  assert.match(loanPanelSource, /start=\{\[borrowedAmount\.dp\(2\)\.toNumber\(\)\]\}/);
+  assert.match(loanPanelSource, /padding=\{\[loanMinimum\.toNumber\(\), 0\]\}/);
+  assert.match(loanPanelSource, /borrowableAmountWithReserve\.dp\(2\)\.toNumber\(\)/);
+  assert.doesNotMatch(loanPanelSource, /actionMaximum|getSafeSliderBounds|loanSliderBounds/);
 });
 
 test('position reads use registered collateral tokens', async () => {
@@ -188,7 +109,7 @@ test('collateral and loan transaction handlers guard disabled increases', async 
   assert.match(xLoanModal, /if \(storedModalValues\.action === XLoanAction\.BORROW && !increaseEnabled\) return/);
 });
 
-test('collateral and loan panels use safe slider bounds without frontend movability gating', async () => {
+test('collateral and loan panels clamp manual input to the displayed thresholds', async () => {
   const collateralPanelSource = await readFile(
     new URL('../src/app/components/home/CollateralPanel.tsx', import.meta.url),
     'utf8',
@@ -196,11 +117,11 @@ test('collateral and loan panels use safe slider bounds without frontend movabil
   const loanPanelSource = await readFile(new URL('../src/app/components/home/LoanPanel.tsx', import.meta.url), 'utf8');
   const eligibilitySource = await readFile(new URL('../src/store/collateral/eligibility.ts', import.meta.url), 'utf8');
 
-  assert.match(collateralPanelSource, /collateralSliderBounds\.padding/);
-  assert.match(collateralPanelSource, /start=\{collateralSliderBounds\.start\}/);
-  assert.match(collateralPanelSource, /max: \[collateralSliderBounds\.maximum\]/);
   assert.match(collateralPanelSource, /disabled=\{!isAdjusting\}/);
-  assert.match(collateralPanelSource, /const collateralMinimum = new BigNumber\(collateralSliderBounds\.minimum\)/);
+  assert.match(
+    collateralPanelSource,
+    /const collateralMinimum = BigNumber\.max\(tLockedAmount\.dp\(collateralDecimalPlaces\), 0\)/,
+  );
   assert.match(
     collateralPanelSource,
     /const walletMaximum = BigNumber\.max\(collateralTotal\.minus\(collateralMinimum\), 0\)/,
@@ -208,11 +129,11 @@ test('collateral and loan panels use safe slider bounds without frontend movabil
   assert.match(collateralPanelSource, /label="Deposited"[\s\S]*?minValue=\{collateralMinimum\}/);
   assert.match(collateralPanelSource, /label="Wallet"[\s\S]*?maxValue=\{walletMaximum\}/);
 
-  assert.match(loanPanelSource, /loanSliderBounds\.padding/);
-  assert.match(loanPanelSource, /start=\{\[loanSliderBounds\.start\]\}/);
-  assert.match(loanPanelSource, /max: \[loanSliderBounds\.maximum\]/);
   assert.match(loanPanelSource, /disabled=\{!isAdjusting\}/);
-  assert.match(loanPanelSource, /const loanMinimum = new BigNumber\(loanSliderBounds\.minimum\)/);
+  assert.match(
+    loanPanelSource,
+    /const loanMinimum = BigNumber\.max\(\s*BigNumber\.min\(usedAmount\.dp\(2\), borrowableAmountWithReserve\.dp\(2\)\),\s*0,?\s*\)/,
+  );
   assert.match(
     loanPanelSource,
     /const availableMaximum = BigNumber\.max\(borrowableAmountWithReserve\.minus\(loanMinimum\), 0\)/,
@@ -222,7 +143,7 @@ test('collateral and loan panels use safe slider bounds without frontend movabil
 
   assert.doesNotMatch(collateralPanelSource, /hasMovableRange/);
   assert.doesNotMatch(loanPanelSource, /hasMovableRange/);
-  assert.doesNotMatch(eligibilitySource, /hasMovableRange/);
+  assert.doesNotMatch(eligibilitySource, /hasMovableRange|getSafeSliderBounds|getActionMaximum/);
 });
 
 test('position adjustment controls are independent of slider movability', async () => {

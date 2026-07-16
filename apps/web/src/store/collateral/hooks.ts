@@ -31,7 +31,6 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
-import { CollateralTokenMap, hasPositiveDebtCeiling, selectEnabledCollateralTokens } from './eligibility';
 import {
   Field,
   adjust,
@@ -376,37 +375,10 @@ export function useCollateralInputAmountInUSD() {
   }, [collateralInputAmount, oraclePrice]);
 }
 
-export function useCollateralTokens(): UseQueryResult<CollateralTokenMap> {
+export function useCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({
     queryKey: ['getCollateralTokens'],
     queryFn: () => bnJs.Loans.getCollateralTokens(),
-  });
-}
-
-export function useSupportedCollateralTokens(): UseQueryResult<CollateralTokenMap> {
-  const { data: collateralTokens } = useCollateralTokens();
-
-  return useQuery({
-    queryKey: ['getSupportedCollateralTokens', collateralTokens],
-    queryFn: async () => {
-      if (!collateralTokens) return {};
-
-      const cds: CallData[] = Object.keys(collateralTokens).map(symbol => ({
-        target: addresses[NETWORK_ID].loans,
-        method: 'getDebtCeiling',
-        params: [symbol],
-      }));
-      const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
-      const enabledSymbols = new Set(
-        Object.keys(collateralTokens).filter((symbol, index) => {
-          const ceiling = debtCeilingsData[index];
-          return hasPositiveDebtCeiling(ceiling);
-        }),
-      );
-
-      return selectEnabledCollateralTokens(collateralTokens, enabledSymbols);
-    },
-    enabled: Boolean(collateralTokens),
   });
 }
 

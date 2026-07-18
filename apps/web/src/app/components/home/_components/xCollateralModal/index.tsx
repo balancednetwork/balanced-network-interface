@@ -34,7 +34,6 @@ export enum XCollateralAction {
 type XCollateralModalProps = {
   modalId?: MODAL_ID;
   account: string | undefined;
-  increaseEnabled: boolean;
   sourceChain: XChainId;
   storedModalValues: {
     amount: string;
@@ -49,7 +48,6 @@ const XCollateralModal = ({
   modalId = MODAL_ID.XCOLLATERAL_CONFIRM_MODAL,
   account,
   currencyAmount,
-  increaseEnabled,
   sourceChain,
   storedModalValues,
 }: XCollateralModalProps) => {
@@ -104,7 +102,6 @@ const XCollateralModal = ({
 
   const sendXTransaction = useSendXTransaction();
   const handleXCollateralAction = async () => {
-    if (storedModalValues.action === XCollateralAction.DEPOSIT && !increaseEnabled) return;
     if (!account) return;
     if (!xCallFee) return;
     if (!_inputAmount) return;
@@ -143,7 +140,6 @@ const XCollateralModal = ({
 
   useLoanWalletServiceHandler();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(sourceChain);
-  const increaseDisabled = storedModalValues.action === XCollateralAction.DEPOSIT && !increaseEnabled;
 
   return (
     <>
@@ -220,10 +216,7 @@ const XCollateralModal = ({
                     ) : (
                       <>
                         {approvalState !== ApprovalState.APPROVED ? (
-                          <Button
-                            onClick={approveCallback}
-                            disabled={approvalState === ApprovalState.PENDING || increaseDisabled}
-                          >
+                          <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
                             {approvalState === ApprovalState.PENDING ? (
                               <Trans>Approving</Trans>
                             ) : (
@@ -233,7 +226,7 @@ const XCollateralModal = ({
                         ) : (
                           <StyledButton
                             onClick={handleXCollateralAction}
-                            disabled={!gasChecker.hasEnoughGas || isWalletPrompting || increaseDisabled}
+                            disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
                           >
                             {isWalletPrompting ? (
                               <Trans>Waiting for wallet...</Trans>

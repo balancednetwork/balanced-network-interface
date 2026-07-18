@@ -31,7 +31,6 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
-import { CollateralTokenMap, hasPositiveDebtCeiling, selectEnabledCollateralTokens } from './eligibility';
 import {
   Field,
   adjust,
@@ -119,14 +118,14 @@ export function useAllCollateralData(): XPositionsRecord[] | undefined {
 }
 
 export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Position }> {
-  const { data: collateralTokens } = useCollateralTokens();
+  const { data: supportedTokens } = useSupportedCollateralTokens();
 
   return useQuery({
-    queryKey: ['totalCollateralData', collateralTokens],
+    queryKey: ['totalCollateralData', supportedTokens],
     queryFn: async () => {
-      if (!collateralTokens) return;
+      if (!supportedTokens) return;
 
-      const cds: CallData[] = Object.entries(collateralTokens).flatMap(([symbol, address]) => [
+      const cds: CallData[] = Object.entries(supportedTokens).flatMap(([symbol, address]) => [
         {
           target: address,
           method: 'balanceOf',
@@ -141,7 +140,7 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
 
       const data = await bnJs.Multicall.getAggregateData(cds);
 
-      const totalData = Object.entries(collateralTokens)
+      const totalData = Object.entries(supportedTokens)
         .map(([, address], index) => {
           const baseToken = xTokenMap['0x1.icon'].find(token => token.address.toLowerCase() === address.toLowerCase());
 
@@ -160,7 +159,7 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
         return acc;
       }, {});
     },
-    enabled: !!collateralTokens,
+    enabled: !!supportedTokens,
     placeholderData: keepPreviousData,
   });
 }
@@ -168,12 +167,22 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
 export function useCollateralFetchInfo(account?: string | null) {
   const { changeDepositedAmount } = useCollateralActionHandlers();
   const transactions = useAllTransactions();
-  const { data: collateralTokens } = useCollateralTokens();
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const allWallets = useSignedInWallets();
   const { getPendingTransactions } = useXTransactionStore();
   const pendingTxs = getPendingTransactions(allWallets);
 
-  const isRegistered = React.useCallback((symbol: string) => Boolean(collateralTokens?.[symbol]), [collateralTokens]);
+  const isSupported = React.useCallback(
+    (symbol: string) => {
+      return (
+        symbol === 'sICX' ||
+        (supportedCollateralTokens &&
+          Object.keys(supportedCollateralTokens).includes(symbol) &&
+          supportedCollateralTokens[symbol])
+      );
+    },
+    [supportedCollateralTokens],
+  );
 
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
@@ -186,13 +195,11 @@ export function useCollateralFetchInfo(account?: string | null) {
           : `${wallet.xChainId}/${wallet.address}`;
       bnJs.Loans.getAccountPositions(address)
         .then(res => {
-          collateralTokens &&
+          supportedCollateralTokens &&
             res.holdings &&
             Object.keys(res.holdings).forEach(async symbol => {
-              if (isRegistered(symbol)) {
-                const tokenAddress = collateralTokens[symbol];
-                if (!tokenAddress) return;
-                const decimals: string = await bnJs.getContract(tokenAddress).decimals();
+              if (isSupported(symbol)) {
+                const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
                 const depositedAmount = new BigNumber(
                   formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
                 );
@@ -202,16 +209,16 @@ export function useCollateralFetchInfo(account?: string | null) {
         })
         .catch(e => {
           if (e.toString().indexOf('does not have a position')) {
-            collateralTokens &&
-              Object.keys(collateralTokens).forEach(symbol => {
-                if (isRegistered(symbol)) {
+            supportedCollateralTokens &&
+              Object.keys(supportedCollateralTokens).forEach(symbol => {
+                if (isSupported(symbol)) {
                   changeDepositedAmount(new BigNumber(0), formatSymbol(symbol), wallet.xChainId);
                 }
               });
           }
         });
     },
-    [changeDepositedAmount, collateralTokens, isRegistered],
+    [changeDepositedAmount, supportedCollateralTokens, isSupported],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -376,37 +383,32 @@ export function useCollateralInputAmountInUSD() {
   }, [collateralInputAmount, oraclePrice]);
 }
 
-export function useCollateralTokens(): UseQueryResult<CollateralTokenMap> {
+export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({
     queryKey: ['getCollateralTokens'],
-    queryFn: () => bnJs.Loans.getCollateralTokens(),
-  });
-}
-
-export function useSupportedCollateralTokens(): UseQueryResult<CollateralTokenMap> {
-  const { data: collateralTokens } = useCollateralTokens();
-
-  return useQuery({
-    queryKey: ['getSupportedCollateralTokens', collateralTokens],
     queryFn: async () => {
-      if (!collateralTokens) return {};
+      const data = await bnJs.Loans.getCollateralTokens();
 
-      const cds: CallData[] = Object.keys(collateralTokens).map(symbol => ({
+      const cds: CallData[] = Object.keys(data).map(symbol => ({
         target: addresses[NETWORK_ID].loans,
         method: 'getDebtCeiling',
         params: [symbol],
       }));
-      const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
-      const enabledSymbols = new Set(
-        Object.keys(collateralTokens).filter((symbol, index) => {
-          const ceiling = debtCeilingsData[index];
-          return hasPositiveDebtCeiling(ceiling);
-        }),
-      );
 
-      return selectEnabledCollateralTokens(collateralTokens, enabledSymbols);
+      const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
+
+      const debtCeilings = debtCeilingsData.map(ceiling => (ceiling === null ? 1 : parseInt(formatUnits(ceiling))));
+
+      const supportedTokens = {};
+      Object.keys(data).forEach((symbol, index) => {
+        //temporarily allow BTCB with 0 debt ceiling
+        if (debtCeilings[index] > 0 || symbol === 'BTCB') {
+          supportedTokens[symbol] = data[symbol];
+        }
+      });
+
+      return supportedTokens;
     },
-    enabled: Boolean(collateralTokens),
   });
 }
 
@@ -589,7 +591,7 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   };
 
   return useQuery({
-    queryKey: ['xPositionsData', allWallets, prices, xDepositedAmounts],
+    queryKey: ['xPositionsData', allWallets, prices],
     queryFn: () => {
       return Object.entries(
         Object.entries(xDepositedAmounts).reduce((acc, [xChainId, xChainDeposits]) => {

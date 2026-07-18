@@ -14,10 +14,10 @@ import { useBnJsContractQuery } from '@/queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
   useCollateralInputAmountAbsolute,
-  useCollateralTokens,
   useCollateralType,
   useCollateralXChain,
   useIsHandlingICX,
+  useSupportedCollateralTokens,
 } from '@/store/collateral/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
@@ -85,7 +85,7 @@ export function useActiveLoanAddress(): string | undefined {
 export function useLoanFetchInfo(account?: string | null) {
   const dispatch = useDispatch();
   const { changeBorrowedAmount, changeBadDebt, changeTotalSupply } = useLoanActionHandlers();
-  const { data: collateralTokens } = useCollateralTokens();
+  const { data: collateralTokens } = useSupportedCollateralTokens();
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
   const transactions = useAllTransactions();
   const allWallets = useSignedInWallets();

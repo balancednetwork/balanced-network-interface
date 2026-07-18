@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 
 import { NETWORK_ID } from '@/constants/config';
 import { ORACLE_PRICED_TOKENS, PYTH_PRICED_TOKENS } from '@/constants/tokens';
-import { useCollateralTokens, useCollateralType } from '@/store/collateral/hooks';
+import { useCollateralType, useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
 import { fixWrongSymbol } from '@/utils/formatter';
 import axios from 'axios';
@@ -25,9 +25,12 @@ export function useOraclePrice(symbol?: string): BigNumber | undefined {
 const PERIOD = 10 * 1000;
 
 export function useOraclePrices() {
-  const { data: collateralTokens } = useCollateralTokens();
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
-  const supportedSymbols = useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
+  const supportedSymbols = useMemo(
+    () => supportedCollateralTokens && Object.keys(supportedCollateralTokens),
+    [supportedCollateralTokens],
+  );
 
   const oracleSymbols = useMemo(
     () => (supportedSymbols ? [...ORACLE_PRICED_TOKENS, ...supportedSymbols] : undefined),

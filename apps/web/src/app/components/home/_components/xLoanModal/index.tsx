@@ -36,7 +36,6 @@ export enum XLoanAction {
 type XLoanModalProps = {
   modalId?: MODAL_ID;
   collateralAccount: string | undefined;
-  increaseEnabled: boolean;
   sourceChain: XChainId;
   storedModalValues: {
     amount: string;
@@ -53,7 +52,6 @@ const XLoanModal = ({
   modalId = MODAL_ID.XLOAN_CONFIRM_MODAL,
   collateralAccount,
   bnUSDAmount,
-  increaseEnabled,
   sourceChain,
   interestRate,
   storedModalValues,
@@ -118,7 +116,6 @@ const XLoanModal = ({
 
   const sendXTransaction = useSendXTransaction();
   const handleXLoanAction = async () => {
-    if (storedModalValues.action === XLoanAction.BORROW && !increaseEnabled) return;
     if (!collateralAccount) return;
     if (!loanNetworkAddress) return;
     if (!xCallFee) return;
@@ -150,7 +147,6 @@ const XLoanModal = ({
   const gasChecker = useXCallGasChecker(activeChain, _inputAmount);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(activeChain);
-  const increaseDisabled = storedModalValues.action === XLoanAction.BORROW && !increaseEnabled;
 
   return (
     <>
@@ -251,7 +247,7 @@ const XLoanModal = ({
                     ) : (
                       <StyledButton
                         onClick={handleXLoanAction}
-                        disabled={!gasChecker.hasEnoughGas || isWalletPrompting || increaseDisabled}
+                        disabled={!gasChecker.hasEnoughGas || isWalletPrompting}
                       >
                         {isWalletPrompting ? (
                           <Trans>Waiting for wallet...</Trans>

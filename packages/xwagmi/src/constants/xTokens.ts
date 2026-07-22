@@ -169,7 +169,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       56,
       '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
       18,
-      'BTCB',
+      'BTC',
       'Binance-Peg BTCB Token',
       'BTC1',
     ),

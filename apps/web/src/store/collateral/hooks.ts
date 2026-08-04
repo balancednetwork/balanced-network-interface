@@ -31,6 +31,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
+import { filterCollateralTokensByDebtLimit } from './filterCollateralTokens';
 import {
   Field,
   adjust,
@@ -399,15 +400,7 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
 
       const debtCeilings = debtCeilingsData.map(ceiling => (ceiling === null ? 1 : parseInt(formatUnits(ceiling))));
 
-      const supportedTokens = {};
-      Object.keys(data).forEach((symbol, index) => {
-        //temporarily allow BTCB with 0 debt ceiling
-        if (debtCeilings[index] > 0 || symbol === 'BTCB') {
-          supportedTokens[symbol] = data[symbol];
-        }
-      });
-
-      return supportedTokens;
+      return filterCollateralTokensByDebtLimit(data, debtCeilings);
     },
   });
 }

@@ -53,15 +53,13 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        <Banner messageID="legacy-offline-end-2026">
+        <Banner messageID="legacy-shutdown-december-1-2026">
           <Typography as="span">
-            <strong>Balanced v1 is a legacy app that will go offline at the end of 2026.</strong> Withdraw your funds
-            from the loan, Savings Rate, and liquidity pool features as soon as possible.
+            <strong>Balanced v1 shuts down on December 1, 2026.</strong>
             <br />
-            <br />
-            Can’t repay your loan?{' '}
-            <Link href="https://docs.balanced.network/move-loan" target="_blank" rel="noreferrer">
-              Learn how to move your loan to Balanced v2.
+            Withdraw your funds and migrate any legacy assets as soon as possible.{' '}
+            <Link href="https://docs.balanced.network/" target="_blank" rel="noreferrer">
+              View the v1 transition guide.
             </Link>
           </Typography>
         </Banner>

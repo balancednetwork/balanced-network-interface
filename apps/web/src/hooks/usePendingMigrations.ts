@@ -1,11 +1,34 @@
 import { useQuery, UseQueryResult, keepPreviousData } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { sodax } from '@/lib/sodax';
-import { DetailedLock } from '@sodax/sdk';
+import { DetailedLock, getHubChainConfig } from '@sodax/sdk';
+import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 import { EvmXService, useXAccount, useXService, XChainId } from '@balancednetwork/xwagmi';
 import { getWagmiChainId } from '@/hooks/useWalletProviderOptions';
 
 export const PENDING_MIGRATIONS_QUERY_KEY = 'pendingMigrations';
+const BALN_SWAP_ADDRESS = getHubChainConfig(SONIC_MAINNET_CHAIN_ID).addresses.balnSwap;
+
+const legacySwapEvent = {
+  type: 'event',
+  name: 'Swap',
+  inputs: [
+    { name: 'user', type: 'address', indexed: true },
+    { name: 'balnAmount', type: 'uint256', indexed: false },
+    { name: 'sodaAmount', type: 'uint256', indexed: false },
+    { name: 'lockupPeriod', type: 'uint256', indexed: false },
+  ],
+} as const;
+
+const swapEvent = {
+  type: 'event',
+  name: 'Swap',
+  inputs: [
+    { name: 'user', type: 'address', indexed: true },
+    { name: 'balnAmount', type: 'uint256', indexed: false },
+    { name: 'sodaAmount', type: 'uint256', indexed: false },
+  ],
+} as const;
 
 export const toBigInt = (value: bigint | number | string | undefined): bigint => {
   if (typeof value === 'bigint') return value;
@@ -66,5 +89,56 @@ export function usePendingMigrations(userAddress?: string): UseQueryResult<reado
     refetchInterval: 3000,
     placeholderData: isSignedIn ? keepPreviousData : undefined,
     staleTime: 1000,
+  });
+}
+
+export function useInitialMigrationSodaAmounts(
+  lockCount: number,
+  userAddress?: string,
+): UseQueryResult<readonly bigint[], Error> {
+  const evmAccount = useXAccount('EVM');
+  // Use the SDK's hub client for historical logs. The wallet service uses the
+  // free dRPC endpoint, which rejects eth_getLogs ranges over 10,000 blocks.
+  const publicClient = sodax.hubProvider.publicClient;
+  const address = userAddress || evmAccount?.address;
+  const isSignedIn = !!evmAccount?.address;
+
+  return useQuery({
+    queryKey: [PENDING_MIGRATIONS_QUERY_KEY, 'initialSodaAmounts', address, lockCount],
+    queryFn: async (): Promise<readonly bigint[]> => {
+      if (!address) return [];
+
+      const [legacyLogs, currentLogs] = await Promise.all([
+        (publicClient as any).getLogs({
+          address: BALN_SWAP_ADDRESS,
+          event: legacySwapEvent,
+          args: { user: address as `0x${string}` },
+          fromBlock: 0n,
+          toBlock: 'latest',
+        }),
+        (publicClient as any).getLogs({
+          address: BALN_SWAP_ADDRESS,
+          event: swapEvent,
+          args: { user: address as `0x${string}` },
+          fromBlock: 0n,
+          toBlock: 'latest',
+        }),
+      ]);
+
+      // No-lockup swaps are transferred immediately and never receive a lock
+      // index, so exclude them before aligning event order with the lock array.
+      const lockedLegacyLogs = legacyLogs.filter(log => log.args.lockupPeriod > 0n);
+
+      return [...lockedLegacyLogs, ...currentLogs]
+        .sort((a, b) => {
+          const blockA = a.blockNumber ?? 0n;
+          const blockB = b.blockNumber ?? 0n;
+          if (blockA !== blockB) return blockA < blockB ? -1 : 1;
+          return (a.logIndex ?? 0) - (b.logIndex ?? 0);
+        })
+        .map(log => log.args.sodaAmount);
+    },
+    enabled: !!address && isSignedIn && lockCount > 0,
+    staleTime: Infinity,
   });
 }

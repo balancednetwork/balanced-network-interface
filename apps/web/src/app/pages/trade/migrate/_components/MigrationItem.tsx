@@ -16,6 +16,7 @@ import { xChainMap } from '@balancednetwork/xwagmi';
 import { DetailedLock, SonicSpokeProvider } from '@sodax/sdk';
 import { SONIC_MAINNET_CHAIN_ID } from '@sodax/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Flex } from 'rebass/styled-components';
@@ -23,6 +24,18 @@ import { Flex as FlexBox } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 const UNSTAKE_TIME = 180 * 24 * 60 * 60; // 180 days
+const TOKEN_SCALE = new BigNumber(10).pow(18);
+
+const formatAmount = (amount: string | number | bigint) => {
+  try {
+    const value = new BigNumber(amount.toString()).dividedBy(TOKEN_SCALE);
+    const decimals = value.isGreaterThan(1000) ? 0 : value.isGreaterThan(100) ? 2 : 4;
+
+    return value.decimalPlaces(decimals, BigNumber.ROUND_DOWN).toFormat();
+  } catch {
+    return '0';
+  }
+};
 
 enum MigrationStatus {
   None,
@@ -92,10 +105,16 @@ const StyledMigrationItem = styled(Flex)`
 interface MigrationItemProps {
   migration: DetailedLock;
   index: number;
+  initialSodaAmount?: bigint;
   shouldAutoOpenStakeModal?: boolean;
 }
 
-const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldAutoOpenStakeModal = false }) => {
+const MigrationItem: React.FC<MigrationItemProps> = ({
+  migration,
+  index,
+  initialSodaAmount,
+  shouldAutoOpenStakeModal = false,
+}) => {
   const toNumber = (value: number | string | bigint): number => {
     if (typeof value === 'number') return value;
     if (typeof value === 'string') return Number(value);
@@ -138,20 +157,17 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
   });
 
   const currentValueSoda = convertedAssetsQuery.data ?? migration.stakedSodaAmount;
-  // Top-row title always shows the migrated SODA amount. For rows that have
-  // been fully moved into an unstake request, sodaAmount can be 0 — fall back
-  // to the unstake amount, and finally to the current staked value — so the
-  // heading never reads "0 SODA" when there's actually a balance to see.
+  // The contract zeroes sodaAmount after staking, so use the original amount
+  // recovered from the lock's Swap event for the heading whenever possible.
   const baseDisplayedSodaAmount =
-    toBigInt(migration.sodaAmount) > 0n
-      ? migration.sodaAmount
-      : toBigInt(migration.unstakeRequest.amount) > 0n
-        ? migration.unstakeRequest.amount
-        : migration.sodaAmount;
-  const displayedSodaAmount =
-    toBigInt(baseDisplayedSodaAmount) === 0n && toBigInt(currentValueSoda) > 0n
-      ? currentValueSoda
-      : baseDisplayedSodaAmount;
+    initialSodaAmount !== undefined && initialSodaAmount > 0n
+      ? initialSodaAmount
+      : toBigInt(migration.sodaAmount) > 0n
+        ? migration.sodaAmount
+        : toBigInt(migration.unstakeRequest.amount) > 0n
+          ? migration.unstakeRequest.amount
+          : migration.sodaAmount;
+  const displayedSodaAmount = baseDisplayedSodaAmount;
 
   // Check if user has EVM address signed in
   const evmAccount = useXAccount('EVM');
@@ -243,27 +259,6 @@ const MigrationItem: React.FC<MigrationItemProps> = ({ migration, index, shouldA
       });
     } catch {
       return 'Unknown date';
-    }
-  };
-
-  const formatAmount = (amount: string | number | bigint) => {
-    try {
-      let amountBN: number;
-      if (typeof amount === 'bigint') {
-        amountBN = Number(amount);
-      } else if (typeof amount === 'string') {
-        amountBN = parseFloat(amount);
-      } else {
-        amountBN = amount;
-      }
-      const value = amountBN / 10 ** 18;
-      const decimals = value >= 10 ? 0 : 2;
-      return value.toLocaleString('en-US', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      });
-    } catch {
-      return '0';
     }
   };
 
@@ -432,27 +427,6 @@ const StakeSodaModal: React.FC<{
     }, 3000);
   }, [handleDismiss]);
 
-  const formatAmount = (amount: string | number | bigint) => {
-    try {
-      let amountBN: number;
-      if (typeof amount === 'bigint') {
-        amountBN = Number(amount);
-      } else if (typeof amount === 'string') {
-        amountBN = parseFloat(amount);
-      } else {
-        amountBN = amount;
-      }
-      const value = amountBN / 10 ** 18;
-      const decimals = value >= 10 ? 0 : 2;
-      return value.toLocaleString('en-US', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      });
-    } catch {
-      return '0';
-    }
-  };
-
   const handleStake = async () => {
     if (!evmAccount?.address || !spokeProvider) {
       setError('Wallet not connected');
@@ -613,27 +587,6 @@ const UnstakeSodaModal: React.FC<{
       handleDismiss();
     }, 3000);
   }, [handleDismiss]);
-
-  const formatAmount = (amount: string | number | bigint) => {
-    try {
-      let amountBN: number;
-      if (typeof amount === 'bigint') {
-        amountBN = Number(amount);
-      } else if (typeof amount === 'string') {
-        amountBN = parseFloat(amount);
-      } else {
-        amountBN = amount;
-      }
-      const value = amountBN / 10 ** 18;
-      const decimals = value >= 10 ? 0 : 2;
-      return value.toLocaleString('en-US', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      });
-    } catch {
-      return '0';
-    }
-  };
 
   const formatUnlockDate = (unlockTime: number | string | bigint) => {
     try {
@@ -810,25 +763,6 @@ const ClaimSodaModal: React.FC<{
       handleDismiss();
     }, 3000);
   }, [handleDismiss]);
-
-  const formatAmount = (amount: string | number | bigint) => {
-    try {
-      let amountBN: number;
-      if (typeof amount === 'bigint') {
-        amountBN = Number(amount);
-      } else if (typeof amount === 'string') {
-        amountBN = parseFloat(amount);
-      } else {
-        amountBN = amount;
-      }
-      return (amountBN / 10 ** 18).toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    } catch {
-      return '0';
-    }
-  };
 
   const formatUnlockDate = (unlockTime: number | string | bigint) => {
     try {

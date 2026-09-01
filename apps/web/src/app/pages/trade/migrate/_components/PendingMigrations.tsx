@@ -1,6 +1,10 @@
 import Divider from '@/app/components/Divider';
 import { Typography } from '@/app/theme';
-import { isClearedMigrationLock, usePendingMigrations } from '@/hooks/usePendingMigrations';
+import {
+  isClearedMigrationLock,
+  useInitialMigrationSodaAmounts,
+  usePendingMigrations,
+} from '@/hooks/usePendingMigrations';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { DetailedLock } from '@sodax/sdk';
 import React, { useCallback, useMemo } from 'react';
@@ -26,6 +30,11 @@ interface PendingMigrationsProps {
 const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) => {
   const evmAccount = useXAccount('EVM');
   const { data: pendingMigrations = [], isLoading: loading, error } = usePendingMigrations(userAddress);
+  const {
+    data: initialSodaAmounts = [],
+    isLoading: initialSodaAmountsLoading,
+    error: initialSodaAmountsError,
+  } = useInitialMigrationSodaAmounts(pendingMigrations.length, userAddress);
 
   // Keep the SDK-assigned index (the lock id used by transactions) while
   // hiding fully claimed/drained locks from the UI.
@@ -118,7 +127,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
     return null;
   }
 
-  if (loading) {
+  if (loading || initialSodaAmountsLoading) {
     return (
       <>
         <Divider mt={5} />
@@ -132,7 +141,9 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
     );
   }
 
-  if (error) {
+  const migrationsError = error || initialSodaAmountsError;
+
+  if (migrationsError) {
     return (
       <>
         <Divider mt={5} />
@@ -140,7 +151,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
           SODA migrated and locked
         </Typography>
         <Typography color="alert" textAlign="center" mt={4}>
-          {error?.message || 'Failed to fetch pending migrations'}
+          {migrationsError.message || 'Failed to fetch pending migrations'}
         </Typography>
       </>
     );
@@ -166,6 +177,7 @@ const PendingMigrations: React.FC<PendingMigrationsProps> = ({ userAddress }) =>
               <MigrationItem
                 migration={migration}
                 index={originalIndex}
+                initialSodaAmount={initialSodaAmounts[originalIndex]}
                 shouldAutoOpenStakeModal={shouldAutoOpenStakeModal}
               />
               {!isLast && <Divider my={3} />}

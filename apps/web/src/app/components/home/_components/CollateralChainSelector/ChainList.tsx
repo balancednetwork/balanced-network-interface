@@ -43,13 +43,34 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const crossChainBalances = useCrossChainWalletBalances();
   const collateralType = useCollateralType();
-  const xToken = xTokenMap[chain.xChainId].find(xToken => xToken.symbol === collateralType);
+  const selectedCollateralType = useCollateralType();
+  const isSmall = useMedia('(max-width: 440px)');
+
+  // Find token by symbol or by identifier (for BTC/BTCB case)
+  const findTokenForCollateral = useMemo(() => {
+    const chainTokens = xTokenMap[chain.xChainId] || [];
+    // First try to find by symbol
+    let token = chainTokens.find(xToken => xToken.symbol === collateralType);
+
+    // If not found, find tokens that share the same identifier
+    if (!token) {
+      // Get identifiers from tokens with matching symbol across all chains
+      const allTokens = Object.values(xTokenMap).flat();
+      const matchingTokens = allTokens.filter(t => t.symbol === collateralType);
+      const matchingIdentifiers = new Set(matchingTokens.map(t => t.identifier));
+
+      // Find token on this chain that shares the identifier
+      token = chainTokens.find(t => matchingIdentifiers.has(t.identifier));
+    }
+
+    return token;
+  }, [chain.xChainId, collateralType]);
+
+  const xToken = findTokenForCollateral;
   const depositedAmounts = useCollateralAmounts(chain.xChainId);
   const existingPosition = depositedAmounts[collateralType];
   const prices = useOraclePrices();
   const xTokenPrice = prices?.[xToken?.symbol || ''];
-  const selectedCollateralType = useCollateralType();
-  const isSmall = useMedia('(max-width: 440px)');
 
   const formattedWalletBalance = useMemo(() => {
     if (existingPosition?.isGreaterThan(0) || !xToken) return;
@@ -66,9 +87,22 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     return xTokenPrice ? formatValue(existingPosition.times(xTokenPrice).toFixed()) : '-';
   }, [existingPosition, xTokenPrice]);
 
-  const spokeAssetVersion = xTokenMap[chain.xChainId].find(
-    xToken => xToken.symbol === selectedCollateralType,
-  )?.spokeVersion;
+  // Find spoke version using the same logic
+  const spokeAssetVersion = useMemo(() => {
+    const chainTokens = xTokenMap[chain.xChainId] || [];
+    // First try to find by symbol
+    let token = chainTokens.find(xToken => xToken.symbol === selectedCollateralType);
+
+    // If not found, find tokens that share the same identifier
+    if (!token) {
+      const allTokens = Object.values(xTokenMap).flat();
+      const matchingTokens = allTokens.filter(t => t.symbol === selectedCollateralType);
+      const matchingIdentifiers = new Set(matchingTokens.map(t => t.identifier));
+      token = chainTokens.find(t => matchingIdentifiers.has(t.identifier));
+    }
+
+    return token?.spokeVersion;
+  }, [chain.xChainId, selectedCollateralType]);
 
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>

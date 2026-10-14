@@ -217,6 +217,10 @@ msgstr "Swapping {0} for {1}..."
 msgid "Wallet:"
 msgstr "Wallet:"
 
+#: src/app/components/home/Savings/index.tsx
+msgid "You can no longer earn Savings Rate rewards."
+msgstr "You can no longer earn Savings Rate rewards."
+
 #: src/app/Routes.tsx
 msgid "Intent orders"
 msgstr "Intent orders"
@@ -803,6 +807,10 @@ msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete th
 msgid "Connect Wallet"
 msgstr "Connect Wallet"
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "You can no longer earn liquidity rewards."
+msgstr "You can no longer earn liquidity rewards."
+
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/layoutLegacy.tsx
 #~ msgid "Trade on the {0} exchange"
@@ -995,8 +1003,8 @@ msgid "Locked"
 msgstr "Locked"
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Sign in on {0}"
-msgstr "Sign in on {0}"
+#~ msgid "Sign in on {0}"
+#~ msgstr "Sign in on {0}"
 
 #: src/app/components/Wallet/index.tsx
 msgid "Search assets and blockchains..."
@@ -1026,8 +1034,8 @@ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral
 msgstr "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 
 #: src/app/components/home/Savings/index.tsx
-msgid ", then deposit bnUSD to earn rewards."
-msgstr ", then deposit bnUSD to earn rewards."
+#~ msgid ", then deposit bnUSD to earn rewards."
+#~ msgstr ", then deposit bnUSD to earn rewards."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -1609,8 +1617,8 @@ msgid "Send {0}"
 msgstr "Send {0}"
 
 #: src/app/components/home/Savings/index.tsx
-msgid "distributed over the last 30 days."
-msgstr "distributed over the last 30 days."
+#~ msgid "distributed over the last 30 days."
+#~ msgstr "distributed over the last 30 days."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "{0} {1} for {2} {3}"
@@ -1695,8 +1703,8 @@ msgid "Transfer fee:"
 msgstr "Transfer fee:"
 
 #: src/app/components/Header/index.tsx
-msgid "Legacy"
-msgstr "Legacy"
+#~ msgid "Legacy"
+#~ msgstr "Legacy"
 
 #: src/app/components/home/Savings/SavingsModal.tsx
 msgid "Withdraw bnUSD?"
@@ -2324,8 +2332,8 @@ msgstr "Borrow. Swap. Supply. Earn."
 #~ msgstr "To deposit {collateralType}"
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
-msgstr "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
+#~ msgid "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
+#~ msgstr "Buy or borrow bnUSD(old), then deposit it here to earn rewards."
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2825,6 +2833,10 @@ msgstr "Unstake BALN?"
 #: src/app/components/RecentActivity/transactions/IntentSwap.tsx
 msgid "Cancel swap?"
 msgstr "Cancel swap?"
+
+#: src/app/components/Header/index.tsx
+msgid "Legacy v1"
+msgstr "Legacy v1"
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx

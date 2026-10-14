@@ -170,11 +170,18 @@ const StyledFlex = styled(Flex)`
     align-items: start;
     flex-direction: column;
 
-    .legacy-text {
+    .version-badge {
       padding-top: 0;
       margin-left: 0;
     }
   }
+`;
+
+const VersionBadge = styled(Typography)`
+  opacity: 0.75;
+  margin-left: 12px;
+  padding-top: 17px;
+  white-space: nowrap;
 `;
 
 const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
@@ -356,14 +363,12 @@ export default function Header(props: { title?: string; className?: string }) {
               {/* @ts-ignore */}
               <Trans id={title} />
             </Typography>
+            <VersionBadge className="version-badge" color="text2" fontSize={upSmall ? 18 : 16}>
+              {isTradeLegacy ? t`Legacy v1` : 'v1'}
+            </VersionBadge>
             {NETWORK_ID !== NetworkId.MAINNET && (
               <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
                 {CHAIN_INFO[NETWORK_ID].name}
-              </Typography>
-            )}
-            {isTradeLegacy && (
-              <Typography className="legacy-text" color="text2" fontSize={16} ml={2} pt={'17px'}>
-                {t`Legacy`}
               </Typography>
             )}
           </StyledFlex>

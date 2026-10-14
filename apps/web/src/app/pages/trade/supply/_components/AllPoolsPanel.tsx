@@ -16,7 +16,6 @@ import { Field } from '@/store/mint/reducer';
 import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 
 import DropdownLink from '@/app/components/DropdownLink';
-import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { PairInfo } from '@/types';
@@ -152,7 +151,6 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
         </DataText>
         <DataText>
           <Flex flexDirection="column" py={2} alignItems="flex-end">
-            <RewardsDisplay pair={pair} />
             {pair.feesApy !== 0 ? (
               <APYItem>
                 <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>

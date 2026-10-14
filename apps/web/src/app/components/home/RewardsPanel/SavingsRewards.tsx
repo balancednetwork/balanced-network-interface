@@ -55,7 +55,7 @@ const SavingsRewards = () => {
           <RewardsGrid rewards={savingsRewards[savingsXChainId]} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
-            Deposit bnUSD into the savings rate to earn interest.
+            You can no longer earn Savings Rate rewards.
           </Typography>
         )}
       </Box>

@@ -237,8 +237,17 @@ export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>):
   return value ? `0x${value.quotient.toString(16)}` : '0x0';
 }
 
+/** bignumber.js `toFraction()` returns a single BigNumber for NaN/±Infinity (`!xc`), not `[n, d]`. */
+function bignumberNumeratorDenominator(amount: BigNumber): [BigNumber, BigNumber] {
+  if (!amount.isFinite()) {
+    return [new BigNumber(0), new BigNumber(1)];
+  }
+  const frac = amount.toFraction();
+  return Array.isArray(frac) ? frac : [frac, new BigNumber(1)];
+}
+
 export function toCurrencyAmount(token: Token, amount: BigNumber): CurrencyAmount<Token> {
-  const [amountNum, amountDeno] = amount.toFraction();
+  const [amountNum, amountDeno] = bignumberNumeratorDenominator(amount);
   return CurrencyAmount.fromFractionalAmount(
     token,
     amountNum.times(TEN.pow(token.decimals)).toFixed(),
@@ -247,12 +256,12 @@ export function toCurrencyAmount(token: Token, amount: BigNumber): CurrencyAmoun
 }
 
 export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): CurrencyAmount<Token> {
-  const [amountNum, amountDeno] = amount.toFraction();
+  const [amountNum, amountDeno] = bignumberNumeratorDenominator(amount);
   return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
 }
 
 export function toFraction(amount: BigNumber | undefined): Fraction {
-  const [amountNum, amountDeno] = amount ? amount.toFraction() : [0, 1];
+  const [amountNum, amountDeno] = amount ? bignumberNumeratorDenominator(amount) : [new BigNumber(0), new BigNumber(1)];
   return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
 }
 

@@ -53,14 +53,16 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        {false && (
-          <Banner messageID="solana-outage">
-            <Typography as="span">
-              Solana activities are temporarily unavailable. Functionality will be restored after an issue has been
-              resolved.
-            </Typography>
-          </Banner>
-        )}
+        <Banner messageID="legacy-shutdown-december-1-2026">
+          <Typography as="span">
+            <strong>Balanced v1 shuts down on December 1, 2026.</strong>
+            <br />
+            Withdraw your funds and migrate any legacy assets as soon as possible.{' '}
+            <Link href="https://docs.balanced.network/" target="_blank" rel="noreferrer">
+              View the v1 transition guide.
+            </Link>
+          </Typography>
+        </Banner>
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
         <RootRoutes />

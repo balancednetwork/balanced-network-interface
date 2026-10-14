@@ -767,33 +767,29 @@ function MigrateDescription({
           equivalence: '1 BALN = 0.5 - 1.5 SODA',
           description: (
             <>
-              <Typography variant="p" color="text2" mb={2}>
-                Balanced is transitioning to a new technology stack, powered by{' '}
-                <a
-                  href="https://www.sodax.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: theme.colors.primary }}
-                >
-                  <StyledUnderlineText>SODAX</StyledUnderlineText>
-                </a>
-                .
-              </Typography>
-              <Typography variant="p" color="text2" mb={2}>
-                <a
-                  href="https://blog.balanced.network/governance-retirement/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: theme.colors.primary }}
-                >
-                  <StyledUnderlineText>Governance has been retired</StyledUnderlineText>
-                </a>{' '}
-                so you can now migrate BALN to SODA. Lock it for up to 2 years to get a better rate.
-              </Typography>
-              <Typography variant="p" color="text2" mb={2}>
-                Locked SODA holders will receive a share of the DAO Fund in May 2026. You can also stake SODA to earn
-                rewards, but it takes 6 months to unstake.
-              </Typography>
+              Balanced is now powered by{' '}
+              <a
+                href="https://www.sodax.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: theme.colors.primary }}
+              >
+                <StyledUnderlineText>SODAX</StyledUnderlineText>
+              </a>
+              , so{' '}
+              <a
+                href="https://blog.balanced.network/governance-retirement/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: theme.colors.primary }}
+              >
+                <StyledUnderlineText>governance has been retired</StyledUnderlineText>
+              </a>
+              . Migrate your BALN to SODA and lock it up to get a better rate.
+              <br />
+              <br />
+              Locked SODA holders will receive a share of the DAO Fund in May 2026. You can also stake SODA to earn
+              rewards, but it takes 6 months to unstake.
             </>
           ),
           importantNote: (

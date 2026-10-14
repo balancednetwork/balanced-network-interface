@@ -25,8 +25,8 @@ import type {
 } from '@sodax/types';
 import { useMemo } from 'react';
 
+import { XChainId, getXChainType } from '@balancednetwork/xwagmi';
 import { useWalletProvider } from './useWalletProvider';
-import { getXChainType, XChainId } from '@balancednetwork/xwagmi';
 
 export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeProvider | undefined {
   const xChainType = getXChainType(spokeChainId as XChainId);
@@ -76,7 +76,7 @@ export function useSpokeProvider(spokeChainId: SpokeChainId | undefined): SpokeP
     if (xChainType === 'SOLANA') {
       return new SolanaSpokeProvider(walletProvider as ISolanaWalletProvider, {
         ...solanaConfig,
-        rpcUrl: 'https://solana-mainnet.g.alchemy.com/v2/i3q5fE3cYSFBE4Lcg1kS5',
+        rpcUrl: 'https://solana-mainnet.g.alchemy.com/v2/5hHzlycXLEPf4NWvTgXNd',
       });
     }
 

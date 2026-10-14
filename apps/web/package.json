@@ -84,6 +84,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:coingecko": "node api/dev-server.js",
     "build": "vite build",
     "preview": "vite preview",
     "start:prod": "pnpm run build && serve -s build",

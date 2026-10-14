@@ -1,10 +1,10 @@
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import { ZERO } from '@/constants/misc';
 import { PairData } from '@/queries/backendv2';
-import { formatBigNumber } from '@/utils';
+import { formatBigNumber, toFraction } from '@/utils';
 import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
@@ -59,11 +59,7 @@ export function withdrawMessage(
   return { pendingMessage, successMessage, failureMessage };
 }
 
-export const stakedFraction = stakedLPPercent => {
-  const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
-  const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());
-  return stakedFraction;
-};
+export const stakedFraction = (stakedLPPercent?: BigNumber) => toFraction(stakedLPPercent);
 
 export const totalSupply = (withdrawValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
   !!withdrawValue ? suppliedValue?.subtract(withdrawValue) : suppliedValue;

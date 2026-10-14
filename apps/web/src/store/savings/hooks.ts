@@ -236,71 +236,20 @@ export function useSavingsRateInfo(): UseQueryResult<
     }
   | undefined
 > {
-  const { data: tokenPrices } = useTokenPrices();
   const { data: totalLocked } = useTotalBnUSDLocked();
-  const { data: tokenList } = useTricklerAllowedTokens();
-  const { data: periodInBlocks } = useTricklerDistributionPeriod();
-  const { data: collateralTokens } = useSupportedCollateralTokens();
 
   return useQuery({
-    queryKey: [`savingsRate`, totalLocked, tokenPrices, tokenList, collateralTokens, periodInBlocks],
+    queryKey: [`savingsRate`, totalLocked],
     queryFn: async () => {
-      if (!tokenPrices || !tokenList || !collateralTokens || !totalLocked || !periodInBlocks) return;
+      const dailyPayout = new BigNumber(0);
 
-      let sICXtricklerBalance: BigNumber | undefined = new BigNumber(0);
-      let BALNtricklerBalance: BigNumber | undefined = new BigNumber(0);
+      const APR = new BigNumber(0);
 
-      async function getTricklerBalance(): Promise<BigNumber> {
-        const amounts: BigNumber[] = await Promise.all(
-          tokenList!.map(async tokenAddress => {
-            const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress];
-            const cx = bnJs.getContract(tokenAddress);
-            try {
-              const balanceRaw = await cx.balanceOf(bnJs.Trickler.address);
-              const symbol = await cx.symbol();
-              const currencyAmount = CurrencyAmount.fromRawAmount(token, balanceRaw);
-              const price = tokenPrices?.[symbol];
-              const amount = price?.times(new BigNumber(currencyAmount.toFixed())) ?? new BigNumber(0);
-              if (symbol === 'sICX') sICXtricklerBalance = amount;
-              if (symbol === 'BALN') BALNtricklerBalance = amount;
-              return amount;
-            } catch (e) {
-              console.error('Error while fetching bnUSD payout stats: ', e);
-              return new BigNumber(0);
-            }
-          }),
-        );
-        return amounts.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
-      }
+      const percentAPRBALN = new BigNumber(0);
 
-      const tricklerBalance = await getTricklerBalance();
-      const distributionPeriodInSeconds = periodInBlocks * 2;
-      const yearlyRatio = (60 * 60 * 24 * 365) / distributionPeriodInSeconds;
-      const tricklerPayoutPerYear = tricklerBalance.times(yearlyRatio);
+      const percentAPRsICX = new BigNumber(0);
 
-      const rewardsFromInterests = await Promise.all(
-        Object.keys(collateralTokens).map(async symbol => {
-          const totalDebtRaw = await bnJs.Loans.getTotalCollateralDebt(symbol, 'bnUSD');
-          const interest = await bnJs.Loans.getInterestRate(symbol);
-          const rate = new BigNumber(interest ?? 0).div(10000);
-          const totalDebt = CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], totalDebtRaw);
-          return rate.times(new BigNumber(totalDebt.toFixed()));
-        }),
-      );
-
-      const totalBnUSDLocked = new BigNumber(totalLocked.toFixed());
-
-      const interestPayoutPerYear = rewardsFromInterests.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
-
-      const dailyPayout = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(365);
-
-      const APR = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(totalBnUSDLocked).times(100);
-
-      const percentAPRBALN = BALNtricklerBalance.times(yearlyRatio).div(totalBnUSDLocked).times(100);
-
-      const percentAPRsICX = sICXtricklerBalance.times(yearlyRatio).div(totalBnUSDLocked).times(100);
-
-      const percentAPRbnUSD = APR.minus(percentAPRsICX).minus(percentAPRBALN);
+      const percentAPRbnUSD = new BigNumber(0);
 
       return {
         totalLocked,
@@ -312,7 +261,7 @@ export function useSavingsRateInfo(): UseQueryResult<
       };
     },
     placeholderData: keepPreviousData,
-    enabled: !!tokenPrices && !!tokenList && !!collateralTokens && !!totalLocked && !!periodInBlocks,
+    enabled: !!totalLocked,
   });
 }
 export function useSavingsActionHandlers() {

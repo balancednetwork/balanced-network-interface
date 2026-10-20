@@ -1,18 +1,24 @@
-import { useCallback, useMemo, useEffect, useState } from 'react';
-import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { ApprovalState } from '@/hooks/useApproveCallback';
+import { useSpokeProvider } from '@/hooks/useSpokeProvider';
 import { sodax } from '@/lib/sodax';
-import { IcxCreateRevertMigrationParams, SpokeChainId, UnifiedBnUSDMigrateParams } from '@sodax/sdk';
-import { getXChainType, XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, getXChainType } from '@balancednetwork/xwagmi';
+import { SpokeChainId, UnifiedBnUSDMigrateParams } from '@sodax/sdk';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+type AllowanceState = {
+  params?: UnifiedBnUSDMigrateParams;
+  hasAllowance: boolean;
+};
 
 export const useMigrationAllowance = (
-  revertParams: IcxCreateRevertMigrationParams | UnifiedBnUSDMigrateParams | undefined,
+  revertParams: UnifiedBnUSDMigrateParams | undefined,
   sourceChain: SpokeChainId | undefined,
 ) => {
   const sourceSpokeProvider = useSpokeProvider(sourceChain);
   const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
-  const [hasAllowance, setHasAllowance] = useState(false);
+  const [allowanceState, setAllowanceState] = useState<AllowanceState>({ hasAllowance: false });
+  const hasAllowance = allowanceState.params === revertParams && allowanceState.hasAllowance;
 
   // Check if this is an EVM chain
   const isEVMChain = useMemo(() => {
@@ -46,8 +52,8 @@ export const useMigrationAllowance = (
         const receipt = await (sourceSpokeProvider.walletProvider as any).waitForTransactionReceipt(
           result.value as `0x${string}`,
         );
-        console.log('ICX revert approval successful!', { receipt });
-        setHasAllowance(true);
+        console.log('Reverse migration approval successful!', { receipt });
+        setAllowanceState({ params: revertParams, hasAllowance: true });
       }
       return result;
     } catch (error) {
@@ -60,29 +66,39 @@ export const useMigrationAllowance = (
 
   // Check allowance on mount and when dependencies change (only for EVM chains)
   useEffect(() => {
+    let cancelled = false;
+
     const checkAllowanceStatus = async () => {
       if (!isEVMChain || !revertParams || !sourceChain) {
+        setIsCheckingAllowance(false);
         return;
       }
 
       setIsCheckingAllowance(true);
       try {
         const result = await checkAllowance();
+        if (cancelled) return;
+
         if (result.ok && 'value' in result) {
-          setHasAllowance(result.value);
+          setAllowanceState({ params: revertParams, hasAllowance: result.value });
         } else {
           console.error('Error checking allowance:', result.error);
-          setHasAllowance(false);
+          setAllowanceState({ params: revertParams, hasAllowance: false });
         }
       } catch (error) {
+        if (cancelled) return;
         console.error('Error checking allowance:', error);
-        setHasAllowance(false);
+        setAllowanceState({ params: revertParams, hasAllowance: false });
       } finally {
-        setIsCheckingAllowance(false);
+        if (!cancelled) setIsCheckingAllowance(false);
       }
     };
 
     checkAllowanceStatus();
+
+    return () => {
+      cancelled = true;
+    };
   }, [isEVMChain, revertParams, sourceChain, checkAllowance]);
 
   const approvalState = useMemo(() => {
@@ -106,7 +122,6 @@ export const useMigrationAllowance = (
     isCheckingAllowance,
     isApproving,
     hasAllowance,
-    setHasAllowance,
     sourceSpokeProvider,
   };
 };

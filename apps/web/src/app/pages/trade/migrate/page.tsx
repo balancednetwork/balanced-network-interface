@@ -78,7 +78,7 @@ function findTokenBySymbol(symbol: string): Currency | undefined {
 const MIGRATION_LABELS: Record<MigrationType, string> = {
   BALN: 'BALN > SODA',
   bnUSD: 'bnUSD (old <> new)',
-  ICX: 'ICX <> SODA',
+  ICX: 'ICX > SODA',
 };
 
 const StyledUnderlineText = styled(UnderlineText)`
@@ -97,17 +97,23 @@ function useMigrationState() {
   const initialMigrationType =
     urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) ? urlMigrationType : 'BALN';
 
-  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(bnUSD[0]);
-  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(bnUSD_new[0]);
+  const [inputCurrency, setInputCurrency] = React.useState<Currency | undefined>(() => {
+    if (initialMigrationType === 'ICX') return ICX;
+    if (initialMigrationType === 'BALN') return BALN[1];
+    return bnUSD[1];
+  });
+  const [outputCurrency, setOutputCurrency] = React.useState<Currency | undefined>(() =>
+    initialMigrationType === 'bnUSD' ? bnUSD_new[1] : SODA[1],
+  );
   const [inputChain, setInputChain] = React.useState<XChainId>('0x1.icon');
   const [outputChain, setOutputChain] = React.useState<XChainId>('sonic');
   const [migrationType, setMigrationType] = React.useState<MigrationType>(initialMigrationType);
   const [revert, setRevert] = React.useState<boolean>(false);
-  const [currencySelectionInput, setCurrencySelectionInput] = React.useState<CurrencySelectionType>(
-    CurrencySelectionType.MIGRATE_BNUSD_OLD,
+  const [currencySelectionInput, setCurrencySelectionInput] = React.useState<CurrencySelectionType>(() =>
+    initialMigrationType === 'bnUSD' ? CurrencySelectionType.MIGRATE_BNUSD_OLD : CurrencySelectionType.MIGRATE_ICX,
   );
-  const [currencySelectionOutput, setCurrencySelectionOutput] = React.useState<CurrencySelectionType>(
-    CurrencySelectionType.MIGRATE_BNUSD_NEW,
+  const [currencySelectionOutput, setCurrencySelectionOutput] = React.useState<CurrencySelectionType>(() =>
+    initialMigrationType === 'bnUSD' ? CurrencySelectionType.MIGRATE_BNUSD_NEW : CurrencySelectionType.MIGRATE_SODAX,
   );
   const [inputPercent, setInputPercent] = React.useState<number>(0);
   const [lockupPeriod, setLockupPeriod] = React.useState<LockupPeriod>(LockupPeriod.SIX_MONTHS);
@@ -138,18 +144,41 @@ function useMigrationState() {
     [inputPercent],
   );
 
-  const setMigrationTypeCB = React.useCallback(
+  const applyMigrationType = React.useCallback(
     (type: MigrationType) => {
       setMigrationType(type);
-      // Update URL with the new migration type
+      setInputChain('0x1.icon');
+      setOutputChain('sonic');
+      setRevert(false);
+
+      if (type === 'bnUSD') {
+        setCurrencySelectionInput(CurrencySelectionType.MIGRATE_BNUSD_OLD);
+        setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_BNUSD_NEW);
+        setInputCurrency(bnUSD[1]);
+        setOutputCurrency(bnUSD_new[1]);
+      } else {
+        setCurrencySelectionInput(CurrencySelectionType.MIGRATE_ICX);
+        setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_SODAX);
+        setInputCurrency(type === 'ICX' ? ICX : BALN[1]);
+        setOutputCurrency(SODA[1]);
+      }
+    },
+    [ICX],
+  );
+
+  const setMigrationTypeCB = React.useCallback(
+    (type: MigrationType) => {
+      applyMigrationType(type);
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set('type', type);
       setSearchParams(newSearchParams, { replace: true });
     },
-    [searchParams, setSearchParams],
+    [applyMigrationType, searchParams, setSearchParams],
   );
 
   const onTokenSwitch = React.useCallback(() => {
+    if (migrationType !== 'bnUSD') return;
+
     const prevInputCurrency = inputCurrency;
     const prevInputChain = inputChain;
     const prevInputCurrencySelection = currencySelectionInput;
@@ -161,7 +190,15 @@ function useMigrationState() {
     setCurrencySelectionInput(currencySelectionOutput);
     setCurrencySelectionOutput(prevInputCurrencySelection);
     setRevert(prev => !prev);
-  }, [inputCurrency, outputCurrency, inputChain, outputChain, currencySelectionInput, currencySelectionOutput]);
+  }, [
+    migrationType,
+    inputCurrency,
+    outputCurrency,
+    inputChain,
+    outputChain,
+    currencySelectionInput,
+    currencySelectionOutput,
+  ]);
 
   const onInputPercentSelect = React.useCallback((percent: number) => {
     setInputPercent(percent);
@@ -171,37 +208,9 @@ function useMigrationState() {
   React.useEffect(() => {
     const urlMigrationType = searchParams.get('type') as MigrationType;
     if (urlMigrationType && MIGRATION_TYPES.includes(urlMigrationType) && urlMigrationType !== migrationType) {
-      setMigrationType(urlMigrationType);
+      applyMigrationType(urlMigrationType);
     }
-  }, [searchParams, migrationType]);
-
-  React.useEffect(() => {
-    if (migrationType === 'bnUSD') {
-      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_BNUSD_OLD);
-      setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_BNUSD_NEW);
-      setInputCurrency(bnUSD[1]);
-      setInputChain('0x1.icon');
-      setOutputCurrency(bnUSD_new[1]);
-      setOutputChain('sonic');
-      setRevert(false);
-    } else if (migrationType === 'ICX') {
-      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_ICX);
-      setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_SODAX);
-      setInputCurrency(ICX);
-      setInputChain('0x1.icon');
-      setOutputCurrency(SODA[1]);
-      setOutputChain('sonic');
-      setRevert(false);
-    } else if (migrationType === 'BALN') {
-      setCurrencySelectionInput(CurrencySelectionType.MIGRATE_ICX); // We'll need to add BALN specific types
-      setCurrencySelectionOutput(CurrencySelectionType.MIGRATE_SODAX);
-      setInputCurrency(BALN[1]);
-      setInputChain('0x1.icon');
-      setOutputCurrency(SODA[1]);
-      setOutputChain('sonic');
-      setRevert(false);
-    }
-  }, [migrationType, ICX]);
+  }, [applyMigrationType, searchParams, migrationType]);
 
   return {
     inputCurrency,
@@ -529,13 +538,13 @@ function MigratePanel({
             />
           </Flex>
 
-          {migrationType === 'BALN' ? null : (
+          {migrationType === 'bnUSD' ? (
             <Flex alignItems="center" justifyContent="center" mt={1}>
               <FlipButton onClick={onTokenSwitch}>
                 <FlipIcon width={25} height={17} />
               </FlipButton>
             </Flex>
-          )}
+          ) : null}
 
           <Flex alignItems="center" justifyContent="flex-end" mt={migrationType === 'BALN' ? 3 : 0}>
             {signedInWallets.length > 0 && outputCurrencyBalance ? (
@@ -743,7 +752,7 @@ function MigrateDescription({
         };
       case 'ICX':
         return {
-          title: 'ICX <> SODA',
+          title: 'ICX > SODA',
           equivalence: '1 ICX = 1 SODA',
           description: (
             <>

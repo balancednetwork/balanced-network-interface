@@ -27,10 +27,8 @@ import {
   BalnMigrateParams,
   IEvmWalletProvider,
   IconSpokeProvider,
-  IcxCreateRevertMigrationParams,
   IcxMigrateParams,
   IcxTokenType,
-  SonicSpokeProvider,
   SpokeChainId,
   UnifiedBnUSDMigrateParams,
   getSupportedSolverTokens,
@@ -195,31 +193,15 @@ const MigrationModal = ({
     [],
   );
 
-  // Create revert params for ICX revert migration
-  const revertParams: IcxCreateRevertMigrationParams | UnifiedBnUSDMigrateParams | undefined = useMemo(() => {
-    if (!revert || !inputAmount || !inputCurrency || !accountReceiver?.address) {
+  const revertParams: UnifiedBnUSDMigrateParams | undefined = useMemo(() => {
+    if (migrationType !== 'bnUSD' || !revert || !inputAmount || !inputCurrency || !accountReceiver?.address) {
       return undefined;
     }
 
-    if (migrationType === 'ICX') {
-      return {
-        amount: BigInt(new BigNumber(inputAmount).times(10 ** inputCurrency.decimals).toFixed()),
-        to: accountReceiver.address as `hx${string}`,
-      } satisfies IcxCreateRevertMigrationParams;
-    }
-
-    if (migrationType === 'bnUSD') {
-      return createBnUSDMigrationParams(true, inputAmount, inputCurrency, accountReceiver.address);
-    }
-
-    if (migrationType === 'BALN') {
-      // For BALN migration, we'll need to implement the BALN-specific logic
-      // This is a placeholder for now
-      return undefined;
-    }
+    return createBnUSDMigrationParams(true, inputAmount, inputCurrency, accountReceiver.address);
   }, [revert, migrationType, inputAmount, inputCurrency, accountReceiver?.address, createBnUSDMigrationParams]);
 
-  // Use allowance hook for ICX revert migration
+  // Use allowance hook for reverse bnUSD migration
   const {
     approve: approveAllowance,
     approvalState,
@@ -275,29 +257,25 @@ const MigrationModal = ({
           throw result.error;
         }
       } else if (migrationType === 'ICX') {
-        if (!revert) {
-          const migrationParams = createIcxMigrationParams(inputAmount, inputCurrency, accountReceiver.address);
-          const result = await sodax.migration.migrateIcxToSoda(
-            migrationParams,
-            sourceSpokeProvider as IconSpokeProvider,
-          );
-          if (result.ok) {
-            const [spokeTxHash, hubTxHash] = result.value;
-          } else {
-            throw result.error;
-          }
-        } else {
-          // For ICX revert migration, allowance is handled separately in the UI
-          const result = await sodax.migration.revertMigrateSodaToIcx(
-            revertParams as IcxCreateRevertMigrationParams,
-            sourceSpokeProvider as SonicSpokeProvider,
-          );
+        if (
+          revert ||
+          sourceChain !== '0x1.icon' ||
+          receiverChain !== 'sonic' ||
+          inputCurrency.symbol !== 'ICX' ||
+          outputCurrency.symbol !== 'SODA'
+        ) {
+          throw new Error('ICX migration is only supported from ICX on ICON to SODA on Sonic');
+        }
 
-          if (result.ok) {
-            const [hubTxHash, spokeTxHash] = result.value;
-          } else {
-            throw result.error;
-          }
+        const migrationParams = createIcxMigrationParams(inputAmount, inputCurrency, accountReceiver.address);
+        const result = await sodax.migration.migrateIcxToSoda(
+          migrationParams,
+          sourceSpokeProvider as IconSpokeProvider,
+        );
+        if (result.ok) {
+          const [spokeTxHash, hubTxHash] = result.value;
+        } else {
+          throw result.error;
         }
       } else if (migrationType === 'BALN') {
         if (!lockupPeriod && lockupPeriod !== 0) {

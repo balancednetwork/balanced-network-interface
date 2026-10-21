@@ -767,6 +767,10 @@ function MigrateDescription({
               </a>
               , a unified liquidity layer and DeFi platform on Sonic. Swap your ICX 1:1 for SODA on the Sonic
               blockchain.
+              <br />
+              <br />
+              When you migrate ICX, you enter a migration queue. You'll receive your SODA once the queue clears, which
+              may take several days.
             </>
           ),
         };

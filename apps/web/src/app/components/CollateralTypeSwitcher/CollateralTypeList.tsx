@@ -5,7 +5,6 @@ import { useMedia } from 'react-use';
 import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
 import useSortXCollateralTypes from '@/hooks/useSortXCollateralTypes';
-import { useHasSignedIn } from '@/hooks/useWallets';
 import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
@@ -52,7 +51,6 @@ const CollateralTypeList = ({
   const { onAdjust: adjust, changeCollateralType, changeCollateralXChain } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan, setRecipientNetwork: setLoanNetwork } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const isSignedIn = useHasSignedIn();
   const prices = useOraclePrices();
 
   const areOraclePricesLoaded = Object.keys(prices).length > 0;
@@ -89,9 +87,7 @@ const CollateralTypeList = ({
     );
   }, [positions, query]);
 
-  const { sortBy, handleSortSelect, sortData } = useSortXCollateralTypes(
-    isSignedIn ? { key: 'collateral', order: 'DESC' } : { key: 'name', order: 'ASC' },
-  );
+  const { sortBy, handleSortSelect, sortData } = useSortXCollateralTypes();
 
   const sortedFilteredPositions = useMemo(
     () => sortData(filteredPositions, collateralTab),

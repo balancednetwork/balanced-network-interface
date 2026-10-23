@@ -1,8 +1,6 @@
 import { Typography } from '@/app/theme';
 import { useICX } from '@/constants/tokens';
 import { useIcxDisplayType } from '@/store/collateral/hooks';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import { toFraction } from '@/utils';
 import { formatSymbol, formatValue } from '@/utils/formatter';
 import { Token } from '@balancednetwork/sdk-core';
 import { xChainMap } from '@balancednetwork/xwagmi';
@@ -31,7 +29,6 @@ const SingleChainItemOverview = ({
   isNested = false,
   hideNetworkIcon = false,
 }: SingleChainItemOverviewProps) => {
-  const prices = useOraclePrices();
   const [xChainId, position] = Object.entries(networkPosition)[0];
   const { collateral, loan } = position;
   const { currency } = collateral || {};
@@ -39,11 +36,6 @@ const SingleChainItemOverview = ({
   const theme = useTheme();
   const ICX = useICX();
   const icxDisplayType = useIcxDisplayType();
-
-  const price = React.useMemo(() => {
-    if (!prices || (symbol && !prices[symbol])) return;
-    return toFraction(prices[symbol!]);
-  }, [prices, symbol]);
 
   return (
     <>
@@ -72,7 +64,9 @@ const SingleChainItemOverview = ({
         </AssetSymbol>
         <BalanceAndValueWrap>
           {collateral && collateral.greaterThan(0) ? (
-            <DataText as="div">{price && formatValue(collateral?.multiply(price || 1).toFixed())}</DataText>
+            <DataText as="div">
+              {collateral.toSignificant(6, { groupSeparator: ',' })} {formatSymbol(collateral.currency.symbol)}
+            </DataText>
           ) : (
             <DataText as="div">-</DataText>
           )}

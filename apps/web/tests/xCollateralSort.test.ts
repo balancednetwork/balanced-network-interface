@@ -66,16 +66,23 @@ test('a missing Your collateral price sorts as zero instead of pinning the row',
   assert.deepEqual(symbols(ascending), ['afSUI', 'ETH']);
 });
 
-test('actual Your collateral sorts ahead of potential wallet balances', () => {
+test('actual Your collateral sorts ahead of potential wallet balances in both directions', () => {
   const records = [
     record('POTENTIAL', '0', '0', { wallet: position({ collateral: '100', isPotential: true }) }),
-    record('DEPOSITED', '0', '0', { position: position({ collateral: '1' }) }),
+    record('DEPOSITED_HIGH', '0', '0', { position: position({ collateral: '10' }) }),
+    record('DEPOSITED_LOW', '0', '0', { position: position({ collateral: '1' }) }),
   ];
-  const prices = { POTENTIAL: new BigNumber(1), DEPOSITED: new BigNumber(1) };
+  const prices = {
+    POTENTIAL: new BigNumber(1),
+    DEPOSITED_HIGH: new BigNumber(1),
+    DEPOSITED_LOW: new BigNumber(1),
+  };
 
-  const sorted = sortXCollateralTypes(records, 'your', { key: 'collateral', order: 'DESC' }, prices, true);
+  const descending = sortXCollateralTypes(records, 'your', { key: 'collateral', order: 'DESC' }, prices, true);
+  const ascending = sortXCollateralTypes(records, 'your', { key: 'collateral', order: 'ASC' }, prices, true);
 
-  assert.deepEqual(symbols(sorted), ['DEPOSITED', 'POTENTIAL']);
+  assert.deepEqual(symbols(descending), ['DEPOSITED_HIGH', 'DEPOSITED_LOW', 'POTENTIAL']);
+  assert.deepEqual(symbols(ascending), ['DEPOSITED_LOW', 'DEPOSITED_HIGH', 'POTENTIAL']);
 });
 
 test('equal names, collateral amounts, and loans preserve input order', () => {

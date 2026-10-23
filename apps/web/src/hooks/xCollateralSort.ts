@@ -8,25 +8,32 @@ export type XCollateralPrices = Record<string, BigNumber | undefined>;
 
 export const DEFAULT_X_COLLATERAL_SORT: SortingType = { key: 'loan', order: 'DESC' };
 
-const getPositionCollateral = (
+const getPositionCollateralAmount = (
   xPositionsRecord: XPositionsRecord,
   collateralTab: XCollateralSortTab,
-  price: BigNumber | undefined,
   checkPotential = false,
 ): BigNumber => {
   if (collateralTab === 'all') {
     return new BigNumber(xPositionsRecord.total?.collateral?.toFixed() || 0);
   }
 
-  const total = Object.values(xPositionsRecord.positions).reduce((acc, position) => {
+  return Object.values(xPositionsRecord.positions).reduce((acc, position) => {
     const currentPosition = position as Position;
     if (currentPosition.collateral && checkPotential === !!currentPosition.isPotential) {
       return acc.plus(currentPosition.collateral.toFixed());
     }
     return acc;
   }, new BigNumber(0));
+};
 
-  return total.times(price || 0);
+const getPositionCollateralValue = (
+  xPositionsRecord: XPositionsRecord,
+  collateralTab: XCollateralSortTab,
+  price: BigNumber | undefined,
+  checkPotential = false,
+): BigNumber => {
+  const amount = getPositionCollateralAmount(xPositionsRecord, collateralTab, checkPotential);
+  return collateralTab === 'all' ? amount : amount.times(price || 0);
 };
 
 const getPositionLoan = (xPositionsRecord: XPositionsRecord, collateralTab: XCollateralSortTab): BigNumber => {
@@ -66,14 +73,21 @@ export function sortXCollateralTypes(
 
   if (sortBy.key === 'collateral') {
     return dataToSort.sort((a, b) => {
-      const aPosition = getPositionCollateral(a, tab, prices?.[a.baseToken.symbol]);
-      const bPosition = getPositionCollateral(b, tab, prices?.[b.baseToken.symbol]);
+      const aAmount = getPositionCollateralAmount(a, tab);
+      const bAmount = getPositionCollateralAmount(b, tab);
+
+      if (tab === 'your' && aAmount.isGreaterThan(0) !== bAmount.isGreaterThan(0)) {
+        return aAmount.isGreaterThan(0) ? -1 : 1;
+      }
+
+      const aPosition = getPositionCollateralValue(a, tab, prices?.[a.baseToken.symbol]);
+      const bPosition = getPositionCollateralValue(b, tab, prices?.[b.baseToken.symbol]);
       const positionComparison = compareValues(aPosition, bPosition, sortBy.order);
 
       if (!aPosition.isZero() || !bPosition.isZero()) return positionComparison;
 
-      const aPotential = getPositionCollateral(a, tab, prices?.[a.baseToken.symbol], true);
-      const bPotential = getPositionCollateral(b, tab, prices?.[b.baseToken.symbol], true);
+      const aPotential = getPositionCollateralValue(a, tab, prices?.[a.baseToken.symbol], true);
+      const bPotential = getPositionCollateralValue(b, tab, prices?.[b.baseToken.symbol], true);
       return compareValues(aPotential, bPotential, sortBy.order);
     });
   }

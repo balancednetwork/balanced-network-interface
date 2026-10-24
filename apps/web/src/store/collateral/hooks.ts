@@ -31,6 +31,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
+import { filterCollateralTokensByDebtLimit } from './filterCollateralTokens';
 import {
   Field,
   adjust,

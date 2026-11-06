@@ -11,6 +11,7 @@ import { ZERO } from '@/constants/index';
 import { bnUSD } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useBnJsContractQuery } from '@/queries/utils';
+import { AccountPosition } from '@/queries/useLegacyAccountPositions';
 import {
   DEFAULT_COLLATERAL_TOKEN,
   useCollateralInputAmountAbsolute,
@@ -22,7 +23,6 @@ import {
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useRewards } from '@/store/reward/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 import { fixWrongSymbol, useWrongSymbol } from '@/utils/formatter';
@@ -31,11 +31,11 @@ import { getXChainType } from '@balancednetwork/xwagmi';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
-import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '..';
 import {
   Field,
+  replaceBorrowedAmounts,
   adjust,
   cancel,
   changeBadDebt as changeBadDebtAction,
@@ -82,69 +82,34 @@ export function useActiveLoanAddress(): string | undefined {
   return collateralXChain === ICON_XCALL_NETWORK_ID ? account : `${collateralXChain}/${account}`;
 }
 
-export function useLoanFetchInfo(account?: string | null) {
+export function useLoanFetchInfo(positions: AccountPosition[]) {
   const dispatch = useDispatch();
-  const { changeBorrowedAmount, changeBadDebt, changeTotalSupply } = useLoanActionHandlers();
+  const { changeBadDebt, changeTotalSupply } = useLoanActionHandlers();
   const { data: collateralTokens } = useSupportedCollateralTokens();
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
-  const transactions = useAllTransactions();
-  const allWallets = useSignedInWallets();
-  const { getPendingTransactions } = useXTransactionStore();
-  const pendingTxs = getPendingTransactions(allWallets);
 
-  const fetchLoanInfo = React.useCallback(
-    (wallet: {
-      address: string;
-      xChainId: XChainId | undefined;
-    }) => {
-      const address =
-        wallet.xChainId === '0x1.icon' || wallet.xChainId === '0x2.icon'
-          ? wallet.address
-          : `${wallet.xChainId}/${wallet.address}`;
-      if (address) {
-        Promise.all([
-          bnJs.Loans.getAvailableAssets(),
-          bnJs.bnUSD.totalSupply(),
-          bnJs.Loans.getAccountPositions(address),
-        ])
-          .then(([resultAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-            const bnUSDbadDebt = resultAvailableAssets['bnUSD']
-              ? BalancedJs.utils.toIcx(resultAvailableAssets['bnUSD']['bad_debt'] || '0')
-              : new BigNumber(0);
-            const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
-
-            resultDebt.holdings &&
-              Object.keys(resultDebt.holdings).forEach(token => {
-                const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
-                changeBorrowedAmount(depositedAmount, address, fixWrongSymbol(token));
-              });
-
-            changeBadDebt(bnUSDbadDebt);
-            changeTotalSupply(bnUSDTotalSupply);
-          })
-          .catch(e => {
-            if (e.toString().indexOf('does not have a position')) {
-              supportedSymbols?.forEach(token =>
-                changeBorrowedAmount(new BigNumber(0), address, fixWrongSymbol(token)),
-              );
-            }
-          });
-      }
-    },
-    [changeBadDebt, changeTotalSupply, changeBorrowedAmount, supportedSymbols],
-  );
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await Promise.all(allWallets.filter(wallet => !!wallet.xChainId).map(fetchLoanInfo));
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchData();
-  }, [fetchLoanInfo, allWallets.length, pendingTxs.length, transactions]);
+    const amounts: AppState['loan']['borrowedAmounts'] = {};
+    positions.forEach(position => {
+      Object.entries(position.amounts).forEach(([symbol, amount]) => {
+        const key = fixWrongSymbol(symbol);
+        amounts[key] = { ...amounts[key], [position.owner]: new BigNumber(amount.loan) };
+      });
+    });
+    dispatch(replaceBorrowedAmounts(amounts));
+  }, [positions, dispatch]);
+
+  const { data: loanTotals } = useQuery({
+    queryKey: ['legacyLoanTotals'],
+    queryFn: () => Promise.all([bnJs.Loans.getAvailableAssets(), bnJs.bnUSD.totalSupply()]),
+    refetchInterval: 15_000,
+  });
+  React.useEffect(() => {
+    if (!loanTotals) return;
+    const [assets, supply] = loanTotals;
+    changeBadDebt(BalancedJs.utils.toIcx(assets.bnUSD?.bad_debt || '0'));
+    changeTotalSupply(BalancedJs.utils.toIcx(supply));
+  }, [loanTotals, changeBadDebt, changeTotalSupply]);
 
   React.useEffect(() => {
     (async () => {

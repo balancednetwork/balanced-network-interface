@@ -14,6 +14,7 @@
     "pretty": "turbo run pretty",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo",
     "checkTs": "turbo run checkTs",
+    "test:legacy": "node --require ./scripts/register-typescript.cjs --test apps/web/src/queries/legacyPositions.test.ts apps/web/src/store/oracle/*.test.ts apps/web/src/store/collateral/filterCollateralTokens.test.ts packages/xwagmi/src/xcall/utils/chainHeights.test.ts",
     "lint": "turbo run lint",
     "prepare": "husky"
   },

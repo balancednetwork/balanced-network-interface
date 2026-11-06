@@ -134,6 +134,9 @@ export const formatValue = (value: string | number, showDollarSign: boolean = tr
   }
 
   const number = toBigNumber(value);
+  if (!number.isFinite()) {
+    return showDollarSign ? '$-.--' : '-.--';
+  }
 
   let decimals = 0;
 

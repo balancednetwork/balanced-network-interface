@@ -1,72 +1,15 @@
 import { CollateralTab } from '@/app/components/CollateralTypeSwitcher/CollateralTypeListWrap';
 import { useRatesWithOracle } from '@/queries/reward';
-import { Position, XChain, XChainId, XPositionsRecord } from '@balancednetwork/xwagmi';
-import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useState } from 'react';
+import { XPositionsRecord } from '@balancednetwork/xwagmi';
+import { useCallback, useState } from 'react';
 import { SortingType } from './useSort';
 import { useSignedInWallets } from './useWallets';
+import { DEFAULT_X_COLLATERAL_SORT, sortXCollateralTypes } from './xCollateralSort';
 
-const getPositionValue = (
-  xPositionsRecord: XPositionsRecord,
-  collateralTab: CollateralTab,
-  price: BigNumber,
-  checkPotential?: boolean,
-): BigNumber | undefined => {
-  if (!xPositionsRecord) return;
-
-  let total = new BigNumber(0);
-
-  if (collateralTab === CollateralTab.ALL) {
-    total = new BigNumber(xPositionsRecord.total?.collateral?.toFixed() || 0);
-  }
-
-  if (collateralTab === CollateralTab.YOUR) {
-    total = Object.values(xPositionsRecord.positions).reduce((acc, position) => {
-      const currentPosition = position as Position;
-      if (currentPosition.collateral && !!checkPotential === !!currentPosition.isPotential) {
-        acc = acc.plus(new BigNumber(currentPosition.collateral.toFixed()));
-      }
-      return acc;
-    }, total);
-  }
-
-  return total.times(price);
-};
-
-const getPositionLoan = (xPositionsRecord: XPositionsRecord, collateralTab: CollateralTab): BigNumber | undefined => {
-  if (!xPositionsRecord) return;
-
-  let total = new BigNumber(0);
-
-  if (collateralTab === CollateralTab.ALL) {
-    total = new BigNumber(xPositionsRecord.total?.loan?.toFixed() || 0);
-  }
-
-  if (collateralTab === CollateralTab.YOUR) {
-    total = Object.values(xPositionsRecord.positions).reduce((acc, position) => {
-      const currentPosition = position as Position;
-      if (currentPosition.loan) {
-        acc = acc.plus(new BigNumber(currentPosition.loan.toFixed()));
-      }
-      return acc;
-    }, total);
-  }
-
-  return total;
-};
-
-export default function useSortXCollateralTypes(initialState: SortingType) {
+export default function useSortXCollateralTypes() {
   const signedInWallets = useSignedInWallets();
   const prices = useRatesWithOracle();
-  const [sortBy, setSortBy] = useState<SortingType>(initialState);
-
-  useEffect(() => {
-    if (signedInWallets.length > 0) {
-      setSortBy({ key: 'collateral', order: 'DESC' });
-    } else {
-      setSortBy({ key: 'name', order: 'ASC' });
-    }
-  }, [signedInWallets.length]);
+  const [sortBy, setSortBy] = useState<SortingType>({ ...DEFAULT_X_COLLATERAL_SORT });
 
   const handleSortSelect = useCallback(
     (clickedSortBy: SortingType) => {
@@ -85,56 +28,7 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
   );
 
   const sortData = (data: XPositionsRecord[] | undefined, tab: CollateralTab) => {
-    const dataToSort = [...(data || [])];
-    const direction = sortBy.order === 'ASC' ? -1 : 1;
-
-    if (sortBy.key === 'name') {
-      dataToSort.sort((a, b) => {
-        const symbolA = a.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
-        const symbolB = b.baseToken.symbol.replace('sICX', 'ICX').toUpperCase();
-        return symbolA > symbolB ? -1 * direction : 1 * direction;
-      });
-    }
-
-    if ((signedInWallets.length > 0 || tab === CollateralTab.ALL) && sortBy.key === 'collateral') {
-      dataToSort.sort((a, b) => {
-        if (!prices || !prices[a.baseToken.symbol] || !prices[b.baseToken.symbol]) return 0;
-
-        const aPosition = getPositionValue(a, tab, prices[a.baseToken.symbol]);
-        const bPosition = getPositionValue(b, tab, prices[b.baseToken.symbol]);
-        const aPositionPotential = getPositionValue(a, tab, prices[a.baseToken.symbol], true);
-        const bPositionPotential = getPositionValue(b, tab, prices[b.baseToken.symbol], true);
-
-        // First compare actual positions
-        if (aPosition?.isGreaterThan(0) || bPosition?.isGreaterThan(0)) {
-          if (!aPosition?.isGreaterThan(0)) return 1 * direction;
-          if (!bPosition?.isGreaterThan(0)) return -1 * direction;
-          return aPosition.isGreaterThan(bPosition) ? -1 * direction : 1 * direction;
-        }
-
-        // If no actual positions, compare potential positions
-        if (aPositionPotential?.isGreaterThan(0) || bPositionPotential?.isGreaterThan(0)) {
-          if (!aPositionPotential?.isGreaterThan(0)) return 1 * direction;
-          if (!bPositionPotential?.isGreaterThan(0)) return -1 * direction;
-          return aPositionPotential.isGreaterThan(bPositionPotential) ? -1 * direction : 1 * direction;
-        }
-
-        return 0;
-      });
-    }
-
-    if ((signedInWallets.length > 0 || tab === CollateralTab.ALL) && sortBy.key === 'loan') {
-      dataToSort.sort((a, b) => {
-        const aLoan = getPositionLoan(a, tab);
-        const bLoan = getPositionLoan(b, tab);
-
-        if (!aLoan || !bLoan) return 0;
-
-        return aLoan.isGreaterThan(bLoan) ? -1 * direction : 1 * direction;
-      });
-    }
-
-    return dataToSort;
+    return sortXCollateralTypes(data, tab, sortBy, prices, signedInWallets.length > 0 || tab === CollateralTab.ALL);
   };
 
   return { sortBy, handleSortSelect, sortData };

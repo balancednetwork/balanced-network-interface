@@ -177,7 +177,7 @@ export const useRatesWithOracle = () => {
   const oraclePrices = useOraclePrices();
 
   return useMemo(() => {
-    if (!rates || !oraclePrices) return;
+    if (!rates && Object.keys(oraclePrices).length === 0) return;
 
     const combinedRates = { ...rates };
 

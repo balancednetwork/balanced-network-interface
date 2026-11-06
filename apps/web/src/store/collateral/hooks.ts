@@ -12,15 +12,15 @@ import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
 import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
+import { AccountPosition } from '@/queries/useLegacyAccountPositions';
 import { useBorrowedAmounts } from '@/store/loan/hooks';
 import { setRecipientNetwork } from '@/store/loan/reducer';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
-import { formatSymbol, getBalanceDecimals } from '@/utils/formatter';
+import { fixWrongSymbol, getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
@@ -28,12 +28,12 @@ import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { Position, XPositions, XPositionsRecord, XToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
 import { filterCollateralTokensByDebtLimit } from './filterCollateralTokens';
 import {
   Field,
+  replaceDepositedAmounts,
   adjust,
   cancel,
   changeCollateralType as changeCollateralTypeAction,
@@ -165,74 +165,20 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
   });
 }
 
-export function useCollateralFetchInfo(account?: string | null) {
-  const { changeDepositedAmount } = useCollateralActionHandlers();
-  const transactions = useAllTransactions();
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const allWallets = useSignedInWallets();
-  const { getPendingTransactions } = useXTransactionStore();
-  const pendingTxs = getPendingTransactions(allWallets);
-
-  const isSupported = React.useCallback(
-    (symbol: string) => {
-      return (
-        symbol === 'sICX' ||
-        (supportedCollateralTokens &&
-          Object.keys(supportedCollateralTokens).includes(symbol) &&
-          supportedCollateralTokens[symbol])
-      );
-    },
-    [supportedCollateralTokens],
-  );
-
-  const fetchCollateralInfo = React.useCallback(
-    async (wallet: {
-      address: string;
-      xChainId: XChainId | undefined;
-    }) => {
-      const address =
-        wallet.xChainId === '0x1.icon' || wallet.xChainId === '0x2.icon'
-          ? wallet.address
-          : `${wallet.xChainId}/${wallet.address}`;
-      bnJs.Loans.getAccountPositions(address)
-        .then(res => {
-          supportedCollateralTokens &&
-            res.holdings &&
-            Object.keys(res.holdings).forEach(async symbol => {
-              if (isSupported(symbol)) {
-                const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
-                const depositedAmount = new BigNumber(
-                  formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
-                );
-                changeDepositedAmount(depositedAmount, formatSymbol(symbol), wallet.xChainId);
-              }
-            });
-        })
-        .catch(e => {
-          if (e.toString().indexOf('does not have a position')) {
-            supportedCollateralTokens &&
-              Object.keys(supportedCollateralTokens).forEach(symbol => {
-                if (isSupported(symbol)) {
-                  changeDepositedAmount(new BigNumber(0), formatSymbol(symbol), wallet.xChainId);
-                }
-              });
-          }
-        });
-    },
-    [changeDepositedAmount, supportedCollateralTokens, isSupported],
-  );
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+export function useCollateralFetchInfo(positions: AccountPosition[]) {
+  const dispatch = useDispatch();
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await Promise.all(allWallets.filter(wallet => !!wallet.xChainId).map(fetchCollateralInfo));
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchData();
-  }, [fetchCollateralInfo, allWallets.length, pendingTxs.length, transactions]);
+    const amounts: AppState['collateral']['depositedAmounts'] = {};
+    positions.forEach(position => {
+      amounts[position.xChainId] = Object.fromEntries(
+        Object.entries(position.amounts).map(([symbol, amount]) => [
+          fixWrongSymbol(symbol),
+          new BigNumber(amount.collateral),
+        ]),
+      );
+    });
+    dispatch(replaceDepositedAmounts(amounts));
+  }, [positions, dispatch]);
 }
 
 export function useCollateralState() {

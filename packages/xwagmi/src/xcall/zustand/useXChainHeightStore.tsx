@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect } from 'react';
 
 import { XChainId } from '@balancednetwork/sdk-core';
@@ -7,6 +6,8 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChain } from '@/types';
+import { getXPublicClient } from '@/actions/getXPublicClient';
+import { readChainHeights } from '../utils/chainHeights';
 
 type XChainHeightStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;
@@ -39,59 +40,23 @@ export const xChainHeightActions = {
   },
 };
 
-const xChainIdMap: Record<XChainId, string> = {
-  'archway-1': 'ibc_archway',
-  archway: 'ibc_archway',
-  '0x1.icon': 'icon',
-  '0x2.icon': 'icon',
-  '0x100.icon': 'havah',
-  '0xa86a.avax': 'avax',
-  '0xa869.fuji': 'avax',
-  '0x38.bsc': 'bsc',
-  '0xa4b1.arbitrum': 'arbitrum',
-  '0x2105.base': 'base',
-  '0xa.optimism': 'optimism',
-  'injective-1': 'ibc_injective',
-  sui: 'sui',
-  stellar: 'stellar',
-  solana: 'solana',
-  '0x89.polygon': 'polygon',
-  sonic: 'sonic',
-  hyper: 'hyper',
-};
-
 export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {
-  const { data: _xChainHeights } = useQuery({
-    queryKey: ['xChainHeights'],
-    queryFn: async () => {
-      const apiUrl = `https://xcallscan.xyz/api/rpc/block_height`;
-      try {
-        const res = await axios.get(apiUrl);
-        if (res.data && res.data.length > 0 && res.status === 200) {
-          return res.data;
-        }
-      } catch (e) {
-        console.log(e);
-      }
-      return null;
-    },
-    refetchInterval: 2000,
+  const chainIds = xChains.map(chain => chain.xChainId);
+  const { data: heights } = useQuery({
+    queryKey: ['xChainHeights', chainIds],
+    queryFn: () => readChainHeights(chainIds, getXPublicClient),
+    refetchInterval: 5_000,
   });
 
   useEffect(() => {
-    if (_xChainHeights) {
-      xChains.forEach(({ xChainId }) => {
-        try {
-          const height = BigInt(_xChainHeights.find(x => x.network === xChainIdMap[xChainId])?.block_height || 0);
-          if (height > xChainHeightActions.getXChainHeight(xChainId)) {
-            xChainHeightActions.setXChainHeight(xChainId, BigInt(height));
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      });
-    }
-  }, [_xChainHeights, xChains]);
+    if (!heights) return;
+    Object.entries(heights).forEach(([chainId, height]) => {
+      const xChainId = chainId as XChainId;
+      if (height !== undefined && height > xChainHeightActions.getXChainHeight(xChainId)) {
+        xChainHeightActions.setXChainHeight(xChainId, height);
+      }
+    });
+  }, [heights]);
 
   return null;
 };

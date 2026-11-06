@@ -56,6 +56,9 @@ const loanSlice = createSlice({
   name: 'loan',
   initialState,
   reducers: create => ({
+    replaceBorrowedAmounts: create.reducer<LoanState['borrowedAmounts']>((state, { payload }) => {
+      state.borrowedAmounts = payload;
+    }),
     adjust: create.reducer<void>(state => {
       state.state.isAdjusting = true;
     }),
@@ -96,6 +99,7 @@ const loanSlice = createSlice({
 });
 
 export const {
+  replaceBorrowedAmounts,
   changeBorrowedAmount,
   changeBadDebt,
   changeTotalSupply,

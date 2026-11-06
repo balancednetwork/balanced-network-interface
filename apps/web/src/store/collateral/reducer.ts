@@ -43,6 +43,9 @@ const collateralSlice = createSlice({
   name: 'collateral',
   initialState,
   reducers: create => ({
+    replaceDepositedAmounts: create.reducer<CollateralState['depositedAmounts']>((state, { payload }) => {
+      state.depositedAmounts = payload;
+    }),
     adjust: create.reducer<void>(state => {
       state.state.isAdjusting = true;
     }),
@@ -84,6 +87,7 @@ const collateralSlice = createSlice({
 });
 
 export const {
+  replaceDepositedAmounts,
   changeDepositedAmount,
   changeCollateralType,
   changeCollateralXChain,
